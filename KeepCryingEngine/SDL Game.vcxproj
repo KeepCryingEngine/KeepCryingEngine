@@ -41,8 +41,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)Space-Harriers-Clone\SDL_gfx\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Space-Harriers-Clone\SDL_gfx\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)\external\SDL\include;$(ProjectDir)\external\SDL2-2.0.5\include;$(ProjectDir)\external\SDL_mixer\include;$(ProjectDir)\external\SDL_image\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\external\SDL2-2.0.5\libx86;$(ProjectDir)\external\SDL_mixer\libx86;$(ProjectDir)\external\SDL_image\libx86;$(ProjectDir)\external\SDL\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -54,7 +54,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
