@@ -1,10 +1,8 @@
 #include "ModuleTime.h"
 #include "SDL/include/SDL.h"
 
-
 ModuleTime::ModuleTime(bool enabled) : Module(enabled)
 {}
-
 
 ModuleTime::~ModuleTime()
 {

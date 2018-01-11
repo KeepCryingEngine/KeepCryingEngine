@@ -4,7 +4,6 @@
 #include "Globals.h"
 
 class Application;
-class Collider;
 
 class Module
 {
@@ -21,7 +20,7 @@ public:
 		return enabled;
 	}
 
-	 bool Enable()
+	bool Enable()
 	{
 		if(enabled == false)
 			return enabled = Start();
@@ -39,7 +38,7 @@ public:
 
 	virtual bool Init() 
 	{
-		return true; 
+		return true;
 	}
 
 	virtual bool Start()
@@ -68,6 +67,7 @@ public:
 	}
 
 private:
+
 	bool enabled = true;
 };
 
