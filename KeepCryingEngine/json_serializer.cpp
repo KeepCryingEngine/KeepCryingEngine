@@ -1,4 +1,7 @@
 #include "json_serializer.h"
+
+#include <SDL.h>
+
 #include "json.hpp"
 #include "Vector3.h"
 #include "Vector2.h"
