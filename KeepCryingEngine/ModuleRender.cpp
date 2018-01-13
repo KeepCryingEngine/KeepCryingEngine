@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 
+#include "Application.h"
 #include "ModuleWindow.h"
 
 ModuleRender::ModuleRender()
