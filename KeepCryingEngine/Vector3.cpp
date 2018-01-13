@@ -29,7 +29,6 @@ Vector3 MoveTowards(const Vector3& current, const Vector3& target, float maxDist
 
 std::ostream & operator<<(std::ostream & os, const Vector3 & v)
 {
-	// TODO: insertar una instrucción return aquí
 	os << "x:" << v.x << ",";
 	os << "y:" << v.y << ",";
 	os << "z:" << v.z;

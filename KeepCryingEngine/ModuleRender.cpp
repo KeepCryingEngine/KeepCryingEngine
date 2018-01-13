@@ -1,7 +1,6 @@
 #include "ModuleRender.h"
 
 #include <SDL.h>
-
 #include "Application.h"
 #include "ModuleWindow.h"
 
@@ -9,25 +8,23 @@ ModuleRender::ModuleRender()
 {
 }
 
-// Destructor
 ModuleRender::~ModuleRender()
 {}
 
-// Called before render is available
 bool ModuleRender::Init()
 {
 	LOG("Creating Renderer context");
 	bool ret = true;
 	Uint32 flags = 0;
 
-	if(VSYNC == true)
+	if(VSYNC)
 	{
 		flags |= SDL_RENDERER_PRESENTVSYNC;
 	}
 
 	renderer = SDL_CreateRenderer(App->window->window, -1, flags);
 	
-	if(renderer == nullptr)
+	if(!renderer)
 	{
 		LOG("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
@@ -49,13 +46,11 @@ update_status ModuleRender::PostUpdate()
 	return update_status::UPDATE_CONTINUE;
 }
 
-// Called before quitting
 bool ModuleRender::CleanUp()
 {
 	LOG("Destroying renderer");
 
-	//Destroy window
-	if(renderer != nullptr)
+	if(renderer)
 	{
 		SDL_DestroyRenderer(renderer);
 	}

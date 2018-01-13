@@ -3,8 +3,6 @@
 #include "Globals.h"
 
 #include <SDL.h>
-#pragma comment( lib, "SDL/libx86/SDL2.lib" )
-#pragma comment( lib, "SDL/libx86/SDL2main.lib" )
 
 enum main_states
 {
@@ -38,7 +36,7 @@ int main(int argc, char ** argv)
 		case MAIN_START:
 
 			LOG("Application Init --------------");
-			if (App->Init() == false)
+			if (!App->Init())
 			{
 				LOG("Application Init exits with error -----");
 				state = MAIN_EXIT;
@@ -69,7 +67,7 @@ int main(int argc, char ** argv)
 		case MAIN_FINISH:
 
 			LOG("Application CleanUp --------------");
-			if (App->CleanUp() == false)
+			if (!App->CleanUp())
 			{
 				LOG("Application CleanUp exits with error -----");
 			}

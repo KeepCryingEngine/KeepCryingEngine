@@ -25,11 +25,11 @@ bool Application::Init()
 	bool ret = true;
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; it++)
-		ret = (*it)->Init(); // we init everything, even if not anabled
+		ret = (*it)->Init();
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; it++)
 	{
-		if((*it)->IsEnabled() == true)
+		if((*it)->IsEnabled())
 			ret = (*it)->Start();
 	}
 
@@ -41,15 +41,15 @@ update_status Application::Update()
 	update_status ret = update_status::UPDATE_CONTINUE;
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == update_status::UPDATE_CONTINUE; ++it)
-		if((*it)->IsEnabled() == true) 
+		if((*it)->IsEnabled()) 
 			ret = (*it)->PreUpdate();
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == update_status::UPDATE_CONTINUE; ++it)
-		if((*it)->IsEnabled() == true) 
+		if((*it)->IsEnabled()) 
 			ret = (*it)->Update();
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == update_status::UPDATE_CONTINUE; ++it)
-		if((*it)->IsEnabled() == true) 
+		if((*it)->IsEnabled()) 
 			ret = (*it)->PostUpdate();
 
 	return ret;
@@ -60,7 +60,7 @@ bool Application::CleanUp()
 	bool ret = true;
 
 	for(list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
-		if((*it)->IsEnabled() == true) 
+		if((*it)->IsEnabled()) 
 			ret = (*it)->CleanUp();
 
 	return ret;

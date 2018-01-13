@@ -19,5 +19,6 @@ public:
 public:
 	SDL_Renderer * renderer = nullptr;
 
-}
+};
+
 #endif // __MODULERENDER_H__

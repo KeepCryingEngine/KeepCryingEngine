@@ -22,7 +22,7 @@ public:
 
 	bool Enable()
 	{
-		if(enabled == false)
+		if(!enabled)
 			return enabled = Start();
 
 		return true;
@@ -30,7 +30,7 @@ public:
 
 	 bool Disable()
 	 {
-		 if(enabled == true)
+		 if(enabled)
 			 return enabled = !CleanUp();
 
 		 return true;

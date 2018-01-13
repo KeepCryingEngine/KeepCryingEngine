@@ -19,8 +19,9 @@ typedef unsigned int uint;
 
 // Deletes a buffer
 template<typename T>
-inline void RELEASE(T*& x) {
-	if (x != nullptr)
+inline void RELEASE(T*& x)
+{
+	if(x)
 	{
 		delete x;
 		x = nullptr;
@@ -29,8 +30,10 @@ inline void RELEASE(T*& x) {
 
 // Deletes an array of buffers
 template<typename T>
-inline void RELEASE_ARRAY(T*& x) {
-	if( x != nullptr ) {
+inline void RELEASE_ARRAY(T*& x)
+{
+	if(x)
+	{
 		delete[] x;
 		x = nullptr;
 	}
