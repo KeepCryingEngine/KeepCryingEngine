@@ -157,12 +157,12 @@ bool ModuleInput::GetWindowEvent(EventWindow ev) const
 	return windowEvents[ev];
 }
 
-const iPoint& ModuleInput::GetMousePosition() const
+const Vector2& ModuleInput::GetMousePosition() const
 {
 	return mouse;
 }
 
-const iPoint& ModuleInput::GetMouseMotion() const
+const Vector2& ModuleInput::GetMouseMotion() const
 {
 	return mouse_motion;
 }

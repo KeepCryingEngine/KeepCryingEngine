@@ -2,8 +2,7 @@
 #define __MODULEINPUT_H__
 
 #include "Module.h"
-#include "Point.h"
-
+#include "Vector2.h"
 #include "SDL/include/SDL_scancode.h"
 
 #define NUM_MOUSE_BUTTONS 5
@@ -24,7 +23,8 @@ enum KeyState
 	KEY_UP
 };
 
-enum Axis {
+enum Axis 
+{
 	Horizontal,
 	Vertical
 };
@@ -68,15 +68,15 @@ public:
 	bool GetWindowEvent(EventWindow code) const;
 
 	// Get mouse / axis position
-	const iPoint& GetMouseMotion() const;
-	const iPoint& GetMousePosition() const;
+	const Vector2& GetMouseMotion() const;
+	const Vector2& GetMousePosition() const;
 
 private:
 	bool		windowEvents[WE_COUNT];
 	KeyState*	keyboard;
 	KeyState	mouse_buttons[NUM_MOUSE_BUTTONS];
-	iPoint mouse_motion;
-	iPoint mouse;
+	Vector2 mouse_motion;
+	Vector2 mouse;
 };
 
 #endif // __MODULEINPUT_H__
