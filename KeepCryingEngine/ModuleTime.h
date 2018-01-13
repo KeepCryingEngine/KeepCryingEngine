@@ -2,6 +2,7 @@
 #define _MODULE_TIME_H_
 
 #include "Module.h"
+#include <SDL.h>
 
 class ModuleTime :
 	public Module

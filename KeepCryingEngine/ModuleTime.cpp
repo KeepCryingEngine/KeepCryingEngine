@@ -1,5 +1,4 @@
 #include "ModuleTime.h"
-#include <SDL.h>
 
 ModuleTime::ModuleTime(bool enabled) : Module(enabled)
 {}
