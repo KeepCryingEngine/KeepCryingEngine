@@ -1,7 +1,7 @@
-#ifndef __APPLICATION_CPP__
-#define __APPLICATION_CPP__
+#ifndef _APPLICATION_H_
+#define _APPLICATION_H_
 
-#include<list>
+#include <list>
 #include "Globals.h"
 #include "Module.h"
 
@@ -34,4 +34,4 @@ private:
 
 extern Application* App;
 
-#endif // __APPLICATION_CPP__
+#endif // !_APPLICATION_H_

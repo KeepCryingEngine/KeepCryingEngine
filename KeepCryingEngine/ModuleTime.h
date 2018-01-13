@@ -1,8 +1,8 @@
-#ifndef _MODULE_TIME_H_
-#define _MODULE_TIME_H_
+#ifndef _MODULETIME_H_
+#define _MODULETIME_H_
 
 #include "Module.h"
-#include <SDL.h>
+#include <SDL_timer.h>
 
 class ModuleTime :
 	public Module
@@ -20,4 +20,4 @@ private:
 	Uint32 previousTicks;
 };
 
-#endif // !_MODULE_TIME_H_
+#endif // !_MODULETIME_H_

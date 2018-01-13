@@ -1,5 +1,5 @@
-#ifndef __MODULETESTJSON_H__
-#define __MODULETESTJSON_H__
+#ifndef _MODULETESTJSON_H_
+#define _MODULETESTJSON_H_
 
 #include "Module.h"
 
@@ -14,4 +14,4 @@ public:
 	bool Start();
 };
 
-#endif
+#endif // !_MODULETESTJSON_H_

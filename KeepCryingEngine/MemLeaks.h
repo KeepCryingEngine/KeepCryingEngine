@@ -1,5 +1,5 @@
-#ifndef __MEMLEAKS_H__
-#define __MEMLEAKS_H__
+#ifndef _MEMLEAKS_H_
+#define _MEMLEAKS_H_
 
 	#define _CRTDBG_MAP_ALLOC
 	#include <stdlib.h>
@@ -14,4 +14,4 @@
 
 	#define ReportMemoryLeaks() _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF)
 
-#endif // __MEMLEAKS_H__
+#endif // !_MEMLEAKS_H_

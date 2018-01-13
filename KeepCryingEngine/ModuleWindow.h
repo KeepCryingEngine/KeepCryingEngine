@@ -1,5 +1,5 @@
-#ifndef __MODULEWINDOW_H__
-#define __MODULEWINDOW_H__
+#ifndef _MODULEWINDOW_H_
+#define _MODULEWINDOW_H_
 
 #include "Module.h"
 
@@ -22,4 +22,4 @@ public:
 	SDL_Window* window = nullptr;
 };
 
-#endif // __MODULEWINDOW_H__
+#endif // !_MODULEWINDOW_H_

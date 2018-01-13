@@ -1,5 +1,5 @@
-#ifndef __GLOBALS_H__
-#define __GLOBALS_H__
+#ifndef _GLOBALS_H_
+#define _GLOBALS_H_
 
 #include "MemLeaks.h"
 
@@ -46,4 +46,4 @@ inline void RELEASE_ARRAY(T*& x)
 #define VSYNC true
 #define TITLE "KeepCryingEngine"
 
-#endif //__GLOBALS_H__
+#endif // !_GLOBALS_H_

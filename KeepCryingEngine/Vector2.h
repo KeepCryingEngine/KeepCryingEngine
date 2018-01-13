@@ -1,5 +1,5 @@
-#ifndef _VECTOR2_H__
-#define _VECTOR2_H__
+#ifndef _VECTOR2_H_
+#define _VECTOR2_H_
 
 #include <cmath>
 #include <algorithm>
@@ -146,4 +146,4 @@ inline Vector2 LerpUnclamped(const Vector2& a, const Vector2& b, float t) {
 std::ostream & operator<<(std::ostream & os, const Vector2 & v);
 string to_string(const Vector2 & v);
 
-#endif // !_VECTOR2_H__
+#endif // !_VECTOR2_H_

@@ -1,5 +1,5 @@
-#ifndef _VECTOR3_H__
-#define _VECTOR3_H__
+#ifndef _VECTOR3_H_
+#define _VECTOR3_H_
 
 #include <cmath>
 #include <algorithm>
@@ -30,7 +30,6 @@ Vector3 Lerp(const Vector3& a, const Vector3& b, float t);
 Vector3 LerpUnclamped(const Vector3& a, const Vector3& b, float t);
 
 Vector3 MoveTowards(const Vector3& current, const Vector3& target, float maxDistanceDelta);
-
 
 class Vector3 {
 public:
@@ -159,4 +158,4 @@ inline Vector3 LerpUnclamped(const Vector3& a, const Vector3& b, float t) {
 std::ostream& operator<<(std::ostream& os, const Vector3& x);
 string to_string(const Vector3& v);
 
-#endif // !_VECTOR3_H__
+#endif // !_VECTOR3_H_

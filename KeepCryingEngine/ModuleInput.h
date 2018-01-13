@@ -1,5 +1,5 @@
-#ifndef __MODULEINPUT_H__
-#define __MODULEINPUT_H__
+#ifndef _MODULEINPUT_H_
+#define _MODULEINPUT_H_
 
 #include "Module.h"
 #include "Vector2.h"
@@ -71,4 +71,4 @@ private:
 	Vector2 mouse;
 };
 
-#endif // __MODULEINPUT_H__
+#endif // !_MODULEINPUT_H_

@@ -1,5 +1,5 @@
-#ifndef __MODULERENDER_H__
-#define __MODULERENDER_H__
+#ifndef _MODULERENDER_H_
+#define _MODULERENDER_H_
 
 #include "Module.h"
 
@@ -21,4 +21,4 @@ public:
 
 };
 
-#endif // __MODULERENDER_H__
+#endif // !_MODULERENDER_H_
