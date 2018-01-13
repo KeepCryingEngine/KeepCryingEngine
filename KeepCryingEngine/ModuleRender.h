@@ -3,9 +3,6 @@
 
 #include "Module.h"
 
-#include <queue>
-#include <utility>
-
 struct SDL_Renderer;
 
 class ModuleRender : public Module
@@ -20,7 +17,7 @@ public:
 	bool CleanUp();
 
 public:
-	SDL_Renderer* renderer = nullptr;
+	SDL_Renderer * renderer = nullptr;
 
-
+}
 #endif // __MODULERENDER_H__

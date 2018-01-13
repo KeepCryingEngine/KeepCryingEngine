@@ -2,10 +2,7 @@
 
 #include <SDL.h>
 
-#include "Application.h"
 #include "ModuleWindow.h"
-
-#include "Vector3.h"
 
 ModuleRender::ModuleRender()
 {
