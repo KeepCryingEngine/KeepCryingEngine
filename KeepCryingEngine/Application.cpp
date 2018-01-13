@@ -3,6 +3,7 @@
 #include "ModuleRender.h"
 #include "ModuleInput.h"
 #include "ModuleTime.h"
+#include "ModuleTestJson.h"
 
 using namespace std;
 
@@ -12,6 +13,7 @@ Application::Application()
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(time = new ModuleTime());
+	modules.push_back(new ModuleTestJson());
 }
 
 Application::~Application()

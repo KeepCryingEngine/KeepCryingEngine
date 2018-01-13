@@ -44,6 +44,6 @@ inline void RELEASE_ARRAY(T*& x)
 #define SCREEN_HEIGHT 720
 #define FULLSCREEN false
 #define VSYNC true
-#define TITLE "Space Harriers Clone"
+#define TITLE "KeepCryingEngine"
 
 #endif //__GLOBALS_H__

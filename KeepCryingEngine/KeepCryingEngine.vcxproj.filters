@@ -23,6 +23,7 @@
     <ClCompile Include="Vector2.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleTestJson.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -50,6 +51,7 @@
     <ClInclude Include="Vector2.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleTestJson.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">
