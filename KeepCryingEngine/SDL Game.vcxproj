@@ -41,7 +41,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)\external\SDL\include;$(ProjectDir)\external\SDL2-2.0.5\include;$(ProjectDir)\external\SDL_mixer\include;$(ProjectDir)\external\SDL_image\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\external\SDL\include;$(ProjectDir)\external\SDL2-2.0.5\include;$(ProjectDir)\external\SDL_mixer\include;$(ProjectDir)\external\SDL_image\include;$(IncludePath);$(ProjectDir)\external\json;$(ProjectDir)\external\MathGeoLib-1.5</IncludePath>
     <LibraryPath>$(ProjectDir)\external\SDL2-2.0.5\libx86;$(ProjectDir)\external\SDL_mixer\libx86;$(ProjectDir)\external\SDL_image\libx86;$(ProjectDir)\external\SDL\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
