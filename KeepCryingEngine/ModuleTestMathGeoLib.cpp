@@ -1,10 +1,8 @@
 #include "ModuleTestMathGeoLib.h"
 
-// #include <MathBuildConfig.h>
-// #include <MathGeoLibFwd.h>
-// #include <MathGeoLib.h>
+#include <MathGeoLib.h>
 
-// using namespace std;
+using namespace std;
 
 ModuleTestMathGeoLib::ModuleTestMathGeoLib()
 {
@@ -16,7 +14,7 @@ ModuleTestMathGeoLib::~ModuleTestMathGeoLib()
 
 bool ModuleTestMathGeoLib::Start()
 {
-	/* cout << "ModuleTestMathGeoLib" << endl;
+	cout << "ModuleTestMathGeoLib" << endl;
 
 	float3 float3(1.0f, 2.0f, 3.0f);
 
@@ -29,8 +27,6 @@ bool ModuleTestMathGeoLib::Start()
 	Quat quat(1.0f, 2.0f, 3.0f, 4.0f);
 
 	cout << "\tquat: " << quat << endl;
-
-	*/
 
 	return true;
 }
