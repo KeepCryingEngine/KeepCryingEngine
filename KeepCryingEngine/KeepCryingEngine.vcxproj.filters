@@ -24,6 +24,7 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="ModuleTestJson.cpp" />
+    <ClCompile Include="ModuleTestMathGeoLib.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -52,6 +53,7 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="ModuleTestJson.h" />
+    <ClInclude Include="ModuleTestMathGeoLib.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">

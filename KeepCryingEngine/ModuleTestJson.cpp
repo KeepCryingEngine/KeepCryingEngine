@@ -19,6 +19,8 @@ ModuleTestJson::~ModuleTestJson()
 
 bool ModuleTestJson::Start()
 {
+	cout << "ModuleTestJson" << endl;
+
 	ifstream jsonFile("Assets/jsonTest.json");
 
 	json json;
@@ -27,7 +29,7 @@ bool ModuleTestJson::Start()
 
 	Vector3 v3 = json.get<Vector3>();
 
-	cout << v3 << endl;
+	cout << "\t" << v3 << endl;
 
 	return true;
 }
