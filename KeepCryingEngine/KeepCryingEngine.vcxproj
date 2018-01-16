@@ -41,7 +41,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)external\MathGeoLib-1.5\src\Time;$(ProjectDir)external\MathGeoLib-1.5\src\Math;$(ProjectDir)external\MathGeoLib-1.5\src\Algorithm\Random;$(ProjectDir)external\MathGeoLib-1.5\src\Geometry;$(ProjectDir)external\MathGeoLib-1.5\src;$(ProjectDir)external\SDL\include;$(ProjectDir)external\json;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)external\MathGeoLib-1.5\src\Time;$(ProjectDir)external\MathGeoLib-1.5\src\Math;$(ProjectDir)external\MathGeoLib-1.5\src\Algorithm\Random;$(ProjectDir)external\MathGeoLib-1.5\src\Geometry;$(ProjectDir)external\MathGeoLib-1.5\src;$(ProjectDir)external\SDL\include;$(ProjectDir)external\Glew\include;$(ProjectDir)external\json;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)external\SDL\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
