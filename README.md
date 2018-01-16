@@ -1,16 +1,14 @@
 # KeepCryingEngine
 
-###Description:
+### Description:
 
-Game Engine made for the UPC Master's degree in videogame creation and design.
-This engine features C++ and OpenGL.
-
-Repository: https://github.com/PereViader/KeepCryingEngine
+Game Engine made for the UPC Master's degree in videogame creation and design. This engine features C++ and OpenGL.
+Repository: https://github.com/PereViader/KeepCryingEngine  
 License: MIT License
 
-###Authors:
+### Authors:
 
-Pere Viader  
-Adrián Leroy  
-Gerard Pros  
-Xavier Bravo
+ - Pere Viader  
+ - Adrián Leroy  
+ - Gerard Pros  
+ - Xavier Bravo
