@@ -2,8 +2,6 @@
 
 #include <MathGeoLib.h>
 
-using namespace std;
-
 ModuleTestMathGeoLib::ModuleTestMathGeoLib()
 {
 }
@@ -14,19 +12,19 @@ ModuleTestMathGeoLib::~ModuleTestMathGeoLib()
 
 bool ModuleTestMathGeoLib::Start()
 {
-	cout << "ModuleTestMathGeoLib" << endl;
+	LOG_DEBUG("ModuleTestMathGeoLib");
 
 	float3 float3(1.0f, 2.0f, 3.0f);
 
-	cout << "\tfloat3: " << float3 << endl;
+	LOG_DEBUG("float3: %s", float3.ToString().c_str());
 
 	Sphere sphere(float3, 5.0f);
 
-	cout << "\tsphere: " << sphere << endl;
+	LOG_DEBUG("sphere: %s", sphere.ToString().c_str());
 
 	Quat quat(1.0f, 2.0f, 3.0f, 4.0f);
 
-	cout << "\tquat: " << quat << endl;
+	LOG_DEBUG("quat: %s", quat.ToString().c_str());
 
 	return true;
 }
