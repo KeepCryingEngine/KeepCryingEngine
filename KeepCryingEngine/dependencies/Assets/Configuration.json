@@ -1,0 +1,6 @@
+{
+	"maxRealDeltaTimeS" : 1.0,
+	
+	"limitFps" : false,
+	"desiredFps" : 60.0
+}

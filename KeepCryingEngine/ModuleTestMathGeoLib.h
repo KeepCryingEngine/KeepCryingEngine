@@ -11,7 +11,7 @@ public:
 
 	virtual ~ModuleTestMathGeoLib();
 
-	bool Start();
+	bool Start() override;
 };
 
 #endif // !_MODULETESTMATHGEOLIB_H_

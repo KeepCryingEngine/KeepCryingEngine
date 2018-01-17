@@ -37,7 +37,7 @@ bool ModuleInput::Start()
 	return true;
 }
 
-update_status ModuleInput::PreUpdate()
+update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	static SDL_Event event;
 

@@ -38,13 +38,13 @@ public:
 
 	virtual ~ModuleInput();
 
-	bool Init();
+	bool Init() override;
 
-	bool Start();
+	bool Start() override;
 
-	update_status PreUpdate();
+	update_status PreUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
-	bool CleanUp();
+	bool CleanUp() override;
 
 	KeyState GetKey(int id) const
 	{

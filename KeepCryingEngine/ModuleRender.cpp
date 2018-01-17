@@ -72,7 +72,7 @@ bool ModuleRender::Init()
 	return ret;
 }
 
-update_status ModuleRender::PreUpdate()
+update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	/*SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);*/
@@ -80,7 +80,7 @@ update_status ModuleRender::PreUpdate()
 	return update_status::UPDATE_CONTINUE;
 }
 
-update_status ModuleRender::PostUpdate()
+update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	//SDL_RenderPresent(renderer);
 	glBegin(GL_TRIANGLES);

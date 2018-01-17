@@ -12,7 +12,7 @@ public:
 	~ModuleTime();
 
 	bool Init() override;
-	update_status PreUpdate() override;
+	update_status PreUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
 	float GetDeltaTime() const;
 private:

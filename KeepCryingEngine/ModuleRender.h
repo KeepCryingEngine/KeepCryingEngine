@@ -15,10 +15,10 @@ public:
 	ModuleRender();
 	~ModuleRender();
 
-	bool Init();
-	update_status PreUpdate();
-	update_status PostUpdate();
-	bool CleanUp();
+	bool Init() override;
+	update_status PreUpdate(float deltaTimeS, float realDeltaTimeS) override;
+	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
+	bool CleanUp() override;
 
 public:
 	//SDL_Renderer * renderer = nullptr;

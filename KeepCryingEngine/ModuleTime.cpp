@@ -13,7 +13,7 @@ bool ModuleTime::Init()
 	return true;
 }
 
-update_status ModuleTime::PreUpdate()
+update_status ModuleTime::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	Uint32 currentTicks = SDL_GetTicks();
 	currentDeltaTime = (currentTicks - previousTicks) / 1000.0f;

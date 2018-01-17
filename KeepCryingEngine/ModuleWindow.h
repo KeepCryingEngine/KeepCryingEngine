@@ -13,9 +13,9 @@ public:
 
 	virtual ~ModuleWindow();
 
-	bool Init();
+	bool Init() override;
 
-	bool CleanUp();
+	bool CleanUp() override;
 
 public:
 
