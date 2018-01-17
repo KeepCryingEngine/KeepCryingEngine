@@ -1,8 +1,12 @@
 #include "ModuleRender.h"
-
 #include <SDL.h>
 #include "Application.h"
 #include "ModuleWindow.h"
+
+#include "GL/glew.h"
+#include "SDL_opengl.h"
+#include <gl/GL.h>
+#include <gl/GLU.h>
 
 ModuleRender::ModuleRender()
 {
@@ -13,7 +17,7 @@ ModuleRender::~ModuleRender()
 
 bool ModuleRender::Init()
 {
-	LOG("Creating Renderer context");
+	// LOG("Creating Renderer context");
 	bool ret = true;
 	Uint32 flags = 0;
 
@@ -26,7 +30,7 @@ bool ModuleRender::Init()
 	
 	if(!renderer)
 	{
-		LOG("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
+		// LOG("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
@@ -48,7 +52,7 @@ update_status ModuleRender::PostUpdate()
 
 bool ModuleRender::CleanUp()
 {
-	LOG("Destroying renderer");
+	// LOG("Destroying renderer");
 
 	if(renderer)
 	{
