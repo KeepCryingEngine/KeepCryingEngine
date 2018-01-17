@@ -19,8 +19,6 @@ ModuleTestJson::~ModuleTestJson()
 
 bool ModuleTestJson::Start()
 {
-	LOG_DEBUG("ModuleTestJson");
-
 	ifstream jsonFile("Assets/jsonTest.json");
 
 	json json;
@@ -29,7 +27,7 @@ bool ModuleTestJson::Start()
 
 	Vector3 v3 = json.get<Vector3>();
 
-	LOG_DEBUG("%s", to_string(v3).c_str());
+	cout << v3 << endl;
 
 	return true;
 }
