@@ -26,15 +26,15 @@ public:
 		return true;
 	}
 
-	 bool Disable()
-	 {
-		 if(enabled)
-			 return enabled = !CleanUp();
+	bool Disable()
+	{
+		if(enabled)
+			return enabled = !CleanUp();
 
-		 return true;
-	 }
+		return true;
+	}
 
-	virtual bool Init() 
+	virtual bool Init()
 	{
 		return true;
 	}
@@ -59,9 +59,9 @@ public:
 		return update_status::UPDATE_CONTINUE;
 	}
 
-	virtual bool CleanUp() 
-	{ 
-		return true; 
+	virtual bool CleanUp()
+	{
+		return true;
 	}
 
 private:

@@ -4,12 +4,10 @@
 #include <SDL.h>
 
 ModuleWindow::ModuleWindow()
-{
-}
+{}
 
 ModuleWindow::~ModuleWindow()
-{
-}
+{}
 
 bool ModuleWindow::Init()
 {
@@ -23,7 +21,7 @@ bool ModuleWindow::Init()
 	}
 	else
 	{
-		
+
 		int width = SCREEN_WIDTH;
 		int height = SCREEN_HEIGHT;
 		Uint32 flags = SDL_WINDOW_SHOWN;

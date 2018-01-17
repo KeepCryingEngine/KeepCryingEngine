@@ -18,7 +18,7 @@ public:
 	bool CleanUp();
 
 public:
-	
+
 	SDL_Window* window = nullptr;
 };
 

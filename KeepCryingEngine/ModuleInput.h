@@ -23,7 +23,7 @@ enum KeyState
 	KEY_UP
 };
 
-enum Axis 
+enum Axis
 {
 	Horizontal,
 	Vertical

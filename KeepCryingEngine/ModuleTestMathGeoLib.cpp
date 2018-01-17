@@ -3,12 +3,10 @@
 #include <MathGeoLib.h>
 
 ModuleTestMathGeoLib::ModuleTestMathGeoLib()
-{
-}
+{}
 
 ModuleTestMathGeoLib::~ModuleTestMathGeoLib()
-{
-}
+{}
 
 bool ModuleTestMathGeoLib::Start()
 {

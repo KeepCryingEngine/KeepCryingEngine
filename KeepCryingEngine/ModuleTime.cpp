@@ -4,8 +4,7 @@ ModuleTime::ModuleTime(bool enabled) : Module(enabled)
 {}
 
 ModuleTime::~ModuleTime()
-{
-}
+{}
 
 bool ModuleTime::Init()
 {
@@ -17,7 +16,7 @@ bool ModuleTime::Init()
 update_status ModuleTime::PreUpdate()
 {
 	Uint32 currentTicks = SDL_GetTicks();
-	currentDeltaTime = (currentTicks - previousTicks)/1000.0f;
+	currentDeltaTime = (currentTicks - previousTicks) / 1000.0f;
 	previousTicks = currentTicks;
 	return update_status::UPDATE_CONTINUE;
 }

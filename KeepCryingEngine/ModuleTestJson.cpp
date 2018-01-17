@@ -10,12 +10,10 @@ using namespace std;
 using nlohmann::json;
 
 ModuleTestJson::ModuleTestJson()
-{
-}
+{}
 
 ModuleTestJson::~ModuleTestJson()
-{
-}
+{}
 
 bool ModuleTestJson::Start()
 {

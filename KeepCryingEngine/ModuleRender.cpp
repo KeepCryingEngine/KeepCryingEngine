@@ -9,8 +9,7 @@
 #include <gl/GLU.h>
 
 ModuleRender::ModuleRender()
-{
-}
+{}
 
 ModuleRender::~ModuleRender()
 {}
@@ -27,7 +26,7 @@ bool ModuleRender::Init()
 	}
 
 	renderer = SDL_CreateRenderer(App->window->window, -1, flags);
-	
+
 	if(!renderer)
 	{
 		// LOG("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());

@@ -5,7 +5,7 @@
 
 #define MAX_KEYS 300
 
-ModuleInput::ModuleInput() : Module(), mouse({0, 0}), mouse_motion({0,0})
+ModuleInput::ModuleInput() : Module(), mouse({ 0, 0 }), mouse_motion({ 0,0 })
 {
 	keyboard = new KeyState[MAX_KEYS];
 	memset(keyboard, KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
@@ -41,9 +41,9 @@ update_status ModuleInput::PreUpdate()
 {
 	static SDL_Event event;
 
-	mouse_motion = {0, 0};
+	mouse_motion = { 0, 0 };
 	memset(windowEvents, false, WE_COUNT * sizeof(bool));
-	
+
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
 	for(int i = 0; i < MAX_KEYS; ++i)
@@ -79,7 +79,7 @@ update_status ModuleInput::PreUpdate()
 		{
 			case SDL_QUIT:
 				windowEvents[WE_QUIT] = true;
-			break;
+				break;
 
 			case SDL_WINDOWEVENT:
 				switch(event.window.event)
@@ -88,33 +88,33 @@ update_status ModuleInput::PreUpdate()
 					case SDL_WINDOWEVENT_HIDDEN:
 					case SDL_WINDOWEVENT_MINIMIZED:
 					case SDL_WINDOWEVENT_FOCUS_LOST:
-					windowEvents[WE_HIDE] = true;
-					break;
+						windowEvents[WE_HIDE] = true;
+						break;
 
-					//case SDL_WINDOWEVENT_ENTER:
+						//case SDL_WINDOWEVENT_ENTER:
 					case SDL_WINDOWEVENT_SHOWN:
 					case SDL_WINDOWEVENT_FOCUS_GAINED:
 					case SDL_WINDOWEVENT_MAXIMIZED:
 					case SDL_WINDOWEVENT_RESTORED:
-					windowEvents[WE_SHOW] = true;
-					break;
+						windowEvents[WE_SHOW] = true;
+						break;
 				}
-			break;
+				break;
 
 			case SDL_MOUSEBUTTONDOWN:
 				mouse_buttons[event.button.button - 1] = KEY_DOWN;
-			break;
+				break;
 
 			case SDL_MOUSEBUTTONUP:
 				mouse_buttons[event.button.button - 1] = KEY_UP;
-			break;
+				break;
 
 			case SDL_MOUSEMOTION:
 				mouse_motion.x = event.motion.xrel;
 				mouse_motion.y = event.motion.yrel;
 				mouse.x = event.motion.x;
 				mouse.y = event.motion.y;
-			break;
+				break;
 		}
 	}
 
@@ -134,11 +134,13 @@ bool ModuleInput::CleanUp()
 float ModuleInput::GetAxis(Axis axis) const
 {
 	float ret = 0.0f;
-	if (axis == Axis::Horizontal) {
+	if(axis == Axis::Horizontal)
+	{
 		ret -= GetKey(SDL_SCANCODE_A) == KEY_REPEAT ? 1 : 0;
 		ret += GetKey(SDL_SCANCODE_D) == KEY_REPEAT ? 1 : 0;
 	}
-	else {
+	else
+	{
 		ret -= GetKey(SDL_SCANCODE_W) == KEY_REPEAT ? 1 : 0;
 		ret += GetKey(SDL_SCANCODE_S) == KEY_REPEAT ? 1 : 0;
 	}
