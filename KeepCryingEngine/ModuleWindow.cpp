@@ -1,7 +1,13 @@
+#include "ModuleWindow.h"
+
+#include <SDL.h>
+#include "GL/glew.h"
+#include "SDL_opengl.h"
+#include <gl/GL.h>
+#include <gl/GLU.h>
+
 #include "Globals.h"
 #include "Application.h"
-#include "ModuleWindow.h"
-#include <SDL.h>
 
 ModuleWindow::ModuleWindow()
 {}
@@ -24,7 +30,7 @@ bool ModuleWindow::Init()
 
 		int width = SCREEN_WIDTH;
 		int height = SCREEN_HEIGHT;
-		Uint32 flags = SDL_WINDOW_SHOWN;
+		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 
 		if(FULLSCREEN)
 		{

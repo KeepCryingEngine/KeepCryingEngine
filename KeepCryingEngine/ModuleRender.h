@@ -1,7 +1,11 @@
 #ifndef _MODULERENDER_H_
 #define _MODULERENDER_H_
 
+#include <SDL.h>
+
+
 #include "Module.h"
+
 
 struct SDL_Renderer;
 
@@ -17,8 +21,8 @@ public:
 	bool CleanUp();
 
 public:
-	SDL_Renderer * renderer = nullptr;
-
+	//SDL_Renderer * renderer = nullptr;
+	SDL_GLContext glcontext;
 };
 
 #endif // !_MODULERENDER_H_
