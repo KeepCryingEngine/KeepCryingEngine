@@ -4,6 +4,7 @@
 #include "ModuleInput.h"
 #include "ModuleTime.h"
 #include "ModuleTestJson.h"
+#include "ModuleTestMathGeoLib.h"
 
 using namespace std;
 
@@ -15,6 +16,7 @@ Application::Application()
 	modules.push_back(time = new ModuleTime());
 	
 	modules.push_back(new ModuleTestJson());
+	modules.push_back(new ModuleTestMathGeoLib());
 }
 
 Application::~Application()
