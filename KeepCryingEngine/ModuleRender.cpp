@@ -84,11 +84,12 @@ update_status ModuleRender::PostUpdate()
 {
 	//SDL_RenderPresent(renderer);
 	glBegin(GL_TRIANGLES);
-	glColor3f(0.5f, 0.5f, 0.5f);
-	glVertex3f(-1.0f, -0.5f, -4.0f); // lower left vertex
-	glVertex3f(1.0f, -0.5f, -4.0f); // lower right vertex
-	glVertex3f(0.0f, 0.5f, -4.0f); // upper vertex
+	glColor3f(255.0f, 0.0f, 0.0f);
+	glVertex3f(-1.0f, -0.5f, 0.0f); // lower left vertex
+	glVertex3f(1.0f, -0.5f, 0.0f); // lower right vertex
+	glVertex3f(0.0f, 0.5f, 0.0f); // upper vertex
 	glEnd();
+
 	SDL_GL_SwapWindow(App->window->window);
 	return update_status::UPDATE_CONTINUE;
 }
