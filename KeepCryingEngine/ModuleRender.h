@@ -20,8 +20,20 @@ public:
 	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
 	bool CleanUp() override;
 
+private:
+	void setupBigArray();
+	void setupIndicesArray();
+
+	void drawCubeDirect();
+	void drawCubeBigArray();
+	void drawCubeIndices();
+
 public:
-	//SDL_Renderer * renderer = nullptr;
+	uint bigArrayCube = 0;
+
+	uint vertexArrayBuffer = 0;
+	uint indicesArrayBuffer = 0;
+
 	SDL_GLContext glcontext;
 };
 
