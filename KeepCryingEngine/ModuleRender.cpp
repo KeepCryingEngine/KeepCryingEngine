@@ -168,8 +168,8 @@ void ModuleRender::setupIndicesArray()
 		3, 2, 7,
 		2, 6, 7,
 
-		4, 0, 5,
-		0, 1, 5
+		4, 5, 0,
+		5, 1, 0
 	};
 
 	glGenBuffers(1, (GLuint*) &(indicesArrayBuffer));
