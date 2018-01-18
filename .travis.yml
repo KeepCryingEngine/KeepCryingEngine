@@ -15,3 +15,4 @@ addons:
       name: "KeepCryingEngine/KeepCryingEngine"
     notification_email: pere.viader22@gmail.com
     branch_pattern: coverity_scan
+    build_command:   "msbuild .\KeepCryingEngine\KeepCryingEngine.sln"
