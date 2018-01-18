@@ -13,6 +13,7 @@ addons:
   coverity_scan:
     project:
       name: "KeepCryingEngine/KeepCryingEngine"
+      description: "Build submitted via Travis CI"
     notification_email: pere.viader22@gmail.com
+    build_command:   ""
     branch_pattern: coverity_scan
-    build_command:   "msbuild ./KeepCryingEngine/KeepCryingEngine.sln"
