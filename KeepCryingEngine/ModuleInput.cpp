@@ -110,10 +110,10 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 				break;
 
 			case SDL_MOUSEMOTION:
-				mouse_motion.x = event.motion.xrel;
-				mouse_motion.y = event.motion.yrel;
-				mouse.x = event.motion.x;
-				mouse.y = event.motion.y;
+				mouse_motion.x = (float)event.motion.xrel;
+				mouse_motion.y = (float)event.motion.yrel;
+				mouse.x = (float)event.motion.x;
+				mouse.y = (float)event.motion.y;
 				break;
 		}
 	}
