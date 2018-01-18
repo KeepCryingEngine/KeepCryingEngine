@@ -85,7 +85,7 @@ update_status Application::Update()
 
 	float deltaTimeS = deltaTimeScale * realDeltaTimeS;
 
-	LOG_DEBUG("%f, %i, %f", realDeltaTimeS, configuration.limitFps, desiredS); // Test
+	//LOG_DEBUG("%f, %i, %f", realDeltaTimeS, configuration.limitFps, desiredS); // Test
 
 	lastTimeMs = currentTimeMs;
 
