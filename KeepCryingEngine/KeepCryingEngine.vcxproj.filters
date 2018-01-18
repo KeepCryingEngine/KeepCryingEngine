@@ -55,6 +55,9 @@
     <ClCompile Include="external\MathGeoLib-1.5\src\Math\SSEMath.cpp" />
     <ClCompile Include="external\MathGeoLib-1.5\src\Math\TransformOps.cpp" />
     <ClCompile Include="external\MathGeoLib-1.5\src\Time\Clock.cpp" />
+    <ClCompile Include="external\ImGui\imgui.cpp" />
+    <ClCompile Include="external\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="external\ImGui\imgui_draw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -142,6 +145,12 @@
     <ClInclude Include="external\MathGeoLib-1.5\src\MathBuildConfig.h" />
     <ClInclude Include="external\MathGeoLib-1.5\src\MathGeoLib.h" />
     <ClInclude Include="external\MathGeoLib-1.5\src\MathGeoLibFwd.h" />
+    <ClInclude Include="external\ImGui\imconfig.h" />
+    <ClInclude Include="external\ImGui\imgui.h" />
+    <ClInclude Include="external\ImGui\imgui_internal.h" />
+    <ClInclude Include="external\ImGui\stb_rect_pack.h" />
+    <ClInclude Include="external\ImGui\stb_textedit.h" />
+    <ClInclude Include="external\ImGui\stb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">
