@@ -4,6 +4,8 @@
   <img alt="Coverity Scan Build Status"
        src="https://img.shields.io/coverity/scan/14897.svg"/>
 </a>
+<img alt="Appveyor Build Status"
+       src="https://ci.appveyor.com/api/projects/status/github/keepcryingengine?branch=master&svg=true"/>
 
 ### Description:
 
