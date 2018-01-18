@@ -15,5 +15,5 @@ addons:
       name: "KeepCryingEngine/KeepCryingEngine"
       description: "Build submitted via Travis CI"
     notification_email: pere.viader22@gmail.com
-    build_command:   "OK"
+    build_command:   "echo OK"
     branch_pattern: coverity_scan
