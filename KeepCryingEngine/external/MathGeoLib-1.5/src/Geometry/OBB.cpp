@@ -1021,7 +1021,7 @@ bool OBB::Intersects(const Polyhedron &polyhedron) const
 std::string OBB::ToString() const
 {
 	char str[256];
-	sprintf(str, "OBB(Pos:(%.2f, %.2f, %.2f) Size:(%.2f, %.2f, %.2f) X:(%.2f, %.2f, %.2f) Y:(%.2f, %.2f, %.2f) Z:(%.2f, %.2f, %.2f))",
+	sprintf_s(str, "OBB(Pos:(%.2f, %.2f, %.2f) Size:(%.2f, %.2f, %.2f) X:(%.2f, %.2f, %.2f) Y:(%.2f, %.2f, %.2f) Z:(%.2f, %.2f, %.2f))",
 		pos.x, pos.y, pos.z, r.x*2.f, r.y*2.f, r.z*2.f, axis[0].x, axis[0].y, axis[0].z, axis[1].x, axis[1].y, axis[1].z, axis[2].x, axis[2].y, axis[2].z);
 	return str;
 }
