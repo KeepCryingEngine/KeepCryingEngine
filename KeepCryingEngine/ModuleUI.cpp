@@ -46,7 +46,14 @@ update_status ModuleUI::Update(float deltaTimeS, float realDeltaTimeS)
 	if(show_another_window)
 	{
 		ImGui::Begin("About", &show_another_window);
-		ImGui::Text("Authors");
+		if(ImGui::Button("KeepCryingEngine"))
+		{
+			ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine"), NULL, NULL, 0);
+		}
+		ImGui::Text("Improved CryEngine version");
+
+		ImGui::Text("Authors:");
+		ImGui::Indent();
 		if(ImGui::Button("Adrian Leroy Calle"))
 		{
 			ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/Moaif"), NULL, NULL, 0);
@@ -63,6 +70,25 @@ update_status ModuleUI::Update(float deltaTimeS, float realDeltaTimeS)
 		{
 			ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/BravoXavi"), NULL, NULL, 0);
 		}
+		ImGui::Unindent();
+
+		ImGui::Text("3rd Party Libraries used:");
+		ImGui::Indent();
+		ImGui::BulletText("SLD 2.0");
+		ImGui::BulletText("Glew 2.1");
+		ImGui::BulletText("ImGui 1.53");
+		ImGui::BulletText("MathGeolib 1.5");
+		ImGui::BulletText("OpenGL 3.1");
+		ImGui::Unindent();
+
+		ImGui::Text("License:");
+		ImGui::Indent();
+		if(ImGui::Button("MIT License"))
+		{
+			ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine/blob/master/LICENSE"), NULL, NULL, 0);
+		}
+		ImGui::Unindent();
+
 		ImGui::End();
 	}
 
