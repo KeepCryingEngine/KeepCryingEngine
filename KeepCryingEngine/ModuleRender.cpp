@@ -58,7 +58,7 @@ bool ModuleRender::Init()
 
 	setupBigArray();
 	setupIndicesArray();
-	setUpSphere(0.5,100,100);
+	setUpSphere(0.25f,100,100);
 
 	return ret;
 }
@@ -72,13 +72,12 @@ update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-
 	glRotatef(20.0f * deltaTimeS, 0.0f, 1.0f, 0.2f);
 
-	//drawCubeDirect(0,0,0);
-	//drawCubeBigArray(0,0,0);
-	//drawCubeIndices(0,0,0);
-	//drawSphere(0, 0, 0);
+	// drawCubeDirect(-0.5f,0,0);
+	// drawCubeBigArray(-0.5f,0,0);
+	// drawCubeIndices(-0.5f,0.0f,0);
+	// drawSphere(-0.5f, -0.5f, 0);
 
 	SDL_GL_SwapWindow(App->window->window);
 	return update_status::UPDATE_CONTINUE;
@@ -143,14 +142,14 @@ void ModuleRender::setupIndicesArray() const
 {
 	float half = 0.5f;
 	float uniqueVertex[8 * 3] = {
-		-0.5f, 0.0f, 0.0f, //0
-		0.5f, 0.0f, 0.0f,  //1
-		0.5f, 0.5f, 0.0f,  //2
-		-0.5f, 0.5f, 0.0f, //3
-		-0.5f, 0.0f, 0.5f, //4
-		0.5f, 0.0f, 0.5f,  //5
-		0.5f, 0.5f, 0.5f,  //6
-		-0.5f, 0.5f, 0.5f  //7
+		-half, -half, -half, //0
+		half, -half, -half,  //1
+		half, half, -half,  //2
+		-half, half, -half, //3
+		-half, -half, half, //4
+		half, -half, half,  //5
+		half, half, half,  //6
+		-half, half, half  //7
 	};
 
 	glGenBuffers(1, (GLuint*) &(vertexArrayBuffer));
@@ -245,6 +244,9 @@ void ModuleRender::drawCubeDirect(float x, float y, float z) const
 {
 	float half = 0.5f;
 
+	glPushMatrix();
+	glTranslatef(x, y, z);
+
 	glBegin(GL_TRIANGLES);
 
 	glColor3f(100.0f, 0.0f, 0.0f);
@@ -295,14 +297,15 @@ void ModuleRender::drawCubeDirect(float x, float y, float z) const
 	glVertex3f(-half, -half, half);
 	glVertex3f(half, -half, half);
 
-	glTranslatef(x, y, z);
-
 	glEnd();
+
+	glPopMatrix();
 }
 
 void ModuleRender::drawCubeBigArray(float x, float y, float z) const
 {
 	glColor3f(255.0f, 0.0f, 1.0f);
+	glPushMatrix();
 	glTranslatef(x, y, z);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -313,11 +316,13 @@ void ModuleRender::drawCubeBigArray(float x, float y, float z) const
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glPopMatrix();
 }
 
 void ModuleRender::drawCubeIndices(float x, float y, float z) const
 {
 	glColor3f(255.0f, 0.0f, 1.0f);
+	glPushMatrix();
 	glTranslatef(x, y, z);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
@@ -328,6 +333,7 @@ void ModuleRender::drawCubeIndices(float x, float y, float z) const
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glPopMatrix();
 }
 
 void ModuleRender::drawSphere(float x, float y, float z)const
@@ -336,6 +342,7 @@ void ModuleRender::drawSphere(float x, float y, float z)const
 	glPushMatrix();
 	glColor3f(255.0f, 0.0f, 1.0f);
 	glTranslatef(x, y, z);
+	
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	//glEnableClientState(GL_NORMAL_ARRAY);
@@ -347,4 +354,5 @@ void ModuleRender::drawSphere(float x, float y, float z)const
 	//glTexCoordPointer(2, GL_FLOAT, 0, &texcoords[0]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereIndex);
 	glDrawElements(GL_QUADS, sphereIndicesSize, GL_UNSIGNED_SHORT, NULL);
+	glPopMatrix();
 }
