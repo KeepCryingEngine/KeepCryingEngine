@@ -1,6 +1,9 @@
 #ifndef _MODULERENDER_H_
 #define _MODULERENDER_H_
 
+#define HAVE_M_PI
+#define _CRTDBG_MAP_ALLOC
+
 #include <SDL.h>
 
 

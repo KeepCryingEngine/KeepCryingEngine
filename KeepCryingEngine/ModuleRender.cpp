@@ -186,9 +186,9 @@ void ModuleRender::setupIndicesArray() const
 
 void ModuleRender::setUpSphere(float radius, unsigned int rings, unsigned int sectors) 
 {
-	float const R = 1. / (float)(rings - 1);
-	float const S = 1. / (float)(sectors - 1);
-	int r, s;
+	float R = 1.f / (float)(rings - 1);
+	float S = 1.f / (float)(sectors - 1);
+	// int r, s;
 
 	vector<GLfloat>vertices;
 	//vector<GLfloat>normals;
@@ -201,12 +201,12 @@ void ModuleRender::setUpSphere(float radius, unsigned int rings, unsigned int se
 	vector<GLfloat>::iterator v = vertices.begin();
 	//vector<GLfloat>::iterator n = normals.begin();
 	//vector<GLfloat>::iterator t = texcoords.begin();
-	for(r = 0; r < rings; r++) for(s = 0; s < sectors; s++)
+	for(unsigned int r = 0; r < rings; r++) for(unsigned int s = 0; s < sectors; s++)
 	{
 		//Not sure about those formulas:Adrian
-		float const y = sin(-M_PI_2 + M_PI * r * R);
-		float const x = cos(2 * M_PI * s * S) * sin(M_PI * r * R);
-		float const z = sin(2 * M_PI * s * S) * sin(M_PI * r * R);
+		float y = (float)sin(-M_PI_2 + M_PI * r * R);
+		float x = (float)cos(2 * M_PI * s * S) * (float)sin(M_PI * r * R);
+		float z = (float)sin(2 * M_PI * s * S) * (float)sin(M_PI * r * R);
 
 		//*t++ = s * S;
 		//*t++ = r * R;
@@ -228,7 +228,7 @@ void ModuleRender::setUpSphere(float radius, unsigned int rings, unsigned int se
 	indices.resize(rings * sectors * 4);
 	sphereIndicesSize = indices.size();
 	std::vector<GLushort>::iterator i = indices.begin();
-	for(r = 0; r < rings - 1; r++) for(s = 0; s < sectors - 1; s++)
+	for(unsigned int r = 0; r < rings - 1; r++) for(unsigned int s = 0; s < sectors - 1; s++)
 	{
 		*i++ = r * sectors + s;
 		*i++ = r * sectors + (s + 1);
