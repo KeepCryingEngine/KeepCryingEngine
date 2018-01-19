@@ -41,11 +41,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)external\MathGeoLib-1.5\src\Time;$(ProjectDir)external\MathGeoLib-1.5\src\Math;$(ProjectDir)external\MathGeoLib-1.5\src\Algorithm\Random;$(ProjectDir)external\MathGeoLib-1.5\src\Geometry;$(ProjectDir)external\MathGeoLib-1.5\src;$(ProjectDir)external\SDL\include;$(ProjectDir)external\Glew\include;$(ProjectDir)external\json;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)external\ImGui;$(ProjectDir)external\MathGeoLib-1.5\src\Time;$(ProjectDir)external\MathGeoLib-1.5\src\Math;$(ProjectDir)external\MathGeoLib-1.5\src\Algorithm\Random;$(ProjectDir)external\MathGeoLib-1.5\src\Geometry;$(ProjectDir)external\MathGeoLib-1.5\src;$(ProjectDir)external\SDL\include;$(ProjectDir)external\Glew\include;$(ProjectDir)external\json;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)external\Glew\lib\Win32;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir);$(ProjectDir)external\SDL\libx86</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)external\MathGeoLib-1.5\src\Time;$(ProjectDir)external\MathGeoLib-1.5\src\Math;$(ProjectDir)external\MathGeoLib-1.5\src\Algorithm\Random;$(ProjectDir)external\MathGeoLib-1.5\src\Geometry;$(ProjectDir)external\MathGeoLib-1.5\src;$(ProjectDir)external\SDL\include;$(ProjectDir)external\Glew\include;$(ProjectDir)external\json;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)external\ImGui;$(ProjectDir)external\MathGeoLib-1.5\src\Time;$(ProjectDir)external\MathGeoLib-1.5\src\Math;$(ProjectDir)external\MathGeoLib-1.5\src\Algorithm\Random;$(ProjectDir)external\MathGeoLib-1.5\src\Geometry;$(ProjectDir)external\MathGeoLib-1.5\src;$(ProjectDir)external\SDL\include;$(ProjectDir)external\Glew\include;$(ProjectDir)external\json;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)external\Glew\lib\Win32;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir);$(ProjectDir)external\SDL\libx86</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -85,6 +85,8 @@
     <ClInclude Include="external\ImGui\imconfig.h" />
     <ClInclude Include="external\ImGui\imgui.h" />
     <ClInclude Include="external\ImGui\imgui_internal.h" />
+    <ClInclude Include="external\ImGui\ModuleUI.h" />
+    <ClInclude Include="external\ImGui\ModuloUI.h" />
     <ClInclude Include="external\ImGui\stb_rect_pack.h" />
     <ClInclude Include="external\ImGui\stb_textedit.h" />
     <ClInclude Include="external\ImGui\stb_truetype.h" />
@@ -155,6 +157,7 @@
     <ClInclude Include="ModuleTestJson.h" />
     <ClInclude Include="ModuleTestMathGeoLib.h" />
     <ClInclude Include="ModuleTime.h" />
+    <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
@@ -164,6 +167,7 @@
     <ClCompile Include="external\ImGui\imgui.cpp" />
     <ClCompile Include="external\ImGui\imgui_demo.cpp" />
     <ClCompile Include="external\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="external\ImGui\imgui_impl_sdl_gl3.cpp" />
     <ClCompile Include="external\MathGeoLib-1.5\src\Algorithm\Random\LCG.cpp" />
     <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\AABB.cpp" />
     <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\Capsule.cpp" />
@@ -202,6 +206,7 @@
     <ClCompile Include="ModuleTestJson.cpp" />
     <ClCompile Include="ModuleTestMathGeoLib.cpp" />
     <ClCompile Include="ModuleTime.cpp" />
+    <ClCompile Include="ModuleUI.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />

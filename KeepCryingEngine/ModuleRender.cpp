@@ -78,7 +78,7 @@ update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 	//drawCubeDirect(0,0,0);
 	//drawCubeBigArray(0,0,0);
 	//drawCubeIndices(0,0,0);
-	drawSphere(0, 0, 0);
+	//drawSphere(0, 0, 0);
 
 	SDL_GL_SwapWindow(App->window->window);
 	return update_status::UPDATE_CONTINUE;

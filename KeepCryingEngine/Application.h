@@ -9,6 +9,7 @@ class ModuleRender;
 class ModuleWindow;
 class ModuleInput;
 class ModuleTime;
+class ModuleUI;
 
 class Application
 {
@@ -33,6 +34,7 @@ public:
 	ModuleWindow* window;
 	ModuleInput* input;
 	ModuleTime* time;
+	ModuleUI* ui;
 
 	// Cargar información desde json
 	// Tamaño pantalla, nombre, fps, etc

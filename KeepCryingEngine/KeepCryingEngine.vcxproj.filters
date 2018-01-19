@@ -58,6 +58,8 @@
     <ClCompile Include="external\ImGui\imgui.cpp" />
     <ClCompile Include="external\ImGui\imgui_demo.cpp" />
     <ClCompile Include="external\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="ModuleUI.cpp" />
+    <ClCompile Include="external\ImGui\imgui_impl_sdl_gl3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -151,6 +153,9 @@
     <ClInclude Include="external\ImGui\stb_rect_pack.h" />
     <ClInclude Include="external\ImGui\stb_textedit.h" />
     <ClInclude Include="external\ImGui\stb_truetype.h" />
+    <ClInclude Include="external\ImGui\ModuloUI.h" />
+    <ClInclude Include="external\ImGui\ModuleUI.h" />
+    <ClInclude Include="ModuleUI.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">
