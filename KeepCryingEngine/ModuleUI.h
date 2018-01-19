@@ -15,9 +15,14 @@ public:
 	bool CleanUp() override;
 	update_status Update(float deltaTimeS, float realDeltaTimeS)override;
 private:
-	bool show_demo_window = true;
-	bool show_another_window = false;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	void DrawMainFrame();
+	void DrawDemoFrame();
+	void DrawAboutFrame();
+
+private:
+	bool showDemoFrame = true;
+	bool showAboutFrame = false;
+	ImVec4 clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 };
 
 #endif // !_MODULEUI_H_

@@ -29,77 +29,20 @@ bool ModuleUI::Init()
 
 update_status ModuleUI::Update(float deltaTimeS, float realDeltaTimeS)
 {
+	DrawMainFrame();
 	
-	ImGui_ImplSdlGL3_NewFrame(App->window->window);
+	if(showAboutFrame)
 	{
-		static float f = 0.0f;
-		ImGui::Text("Hello, world!");                           // Some text (you can use a format string too)
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float as a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats as a color
-		if(ImGui::Button("Demo Window"))                       // Use buttons to toggle our bools. We could use Checkbox() as well.
-			show_demo_window ^= 1;
-		if(ImGui::Button("About"))
-			show_another_window ^= 1;
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		DrawAboutFrame();
 	}
 
-	if(show_another_window)
+	if(showDemoFrame)
 	{
-		ImGui::Begin("About", &show_another_window);
-		if(ImGui::Button("KeepCryingEngine"))
-		{
-			ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine"), NULL, NULL, 0);
-		}
-		ImGui::Text("Improved CryEngine version");
-
-		ImGui::Text("Authors:");
-		ImGui::Indent();
-		if(ImGui::Button("Adrian Leroy Calle"))
-		{
-			ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/Moaif"), NULL, NULL, 0);
-		}
-		if(ImGui::Button("Gerard Pros Figueras"))
-		{
-			ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/gerardpf2"), NULL, NULL, 0);
-		}
-		if(ImGui::Button("Pere Senor de los Loros"))
-		{
-			ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/PereViader"), NULL, NULL, 0);
-		}
-		if(ImGui::Button("Xavier Bravo Guillen"))
-		{
-			ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/BravoXavi"), NULL, NULL, 0);
-		}
-		ImGui::Unindent();
-
-		ImGui::Text("3rd Party Libraries used:");
-		ImGui::Indent();
-		ImGui::BulletText("SLD 2.0");
-		ImGui::BulletText("Glew 2.1");
-		ImGui::BulletText("ImGui 1.53");
-		ImGui::BulletText("MathGeolib 1.5");
-		ImGui::BulletText("OpenGL 3.1");
-		ImGui::Unindent();
-
-		ImGui::Text("License:");
-		ImGui::Indent();
-		if(ImGui::Button("MIT License"))
-		{
-			ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine/blob/master/LICENSE"), NULL, NULL, 0);
-		}
-		ImGui::Unindent();
-
-		ImGui::End();
-	}
-
-	if(show_demo_window)
-	{
-		ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver); // Normally user code doesn't need/want to call this because positions are saved in .ini file anyway. Here we just want to make the demo initial state a bit more friendly!
-		ImGui::ShowDemoWindow(&show_demo_window);
+		DrawDemoFrame();
 	}
 
 	glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
-	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+	glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT);
 	ImGui::Render();
 
@@ -110,4 +53,75 @@ bool ModuleUI::CleanUp()
 {
 	ImGui_ImplSdlGL3_Shutdown();
 	return true;
+}
+
+void ModuleUI::DrawMainFrame()
+{
+	ImGui_ImplSdlGL3_NewFrame(App->window->window);
+	{
+		static float f = 0.0f;
+		ImGui::Text("Hello, world!");                           // Some text (you can use a format string too)
+		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float as a slider from 0.0f to 1.0f
+		ImGui::ColorEdit3("clear color", (float*)&clearColor); // Edit 3 floats as a color
+		if(ImGui::Button("Demo Window"))                       // Use buttons to toggle our bools. We could use Checkbox() as well.
+			showDemoFrame ^= 1;
+		if(ImGui::Button("About"))
+			showAboutFrame ^= 1;
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	}
+}
+
+void ModuleUI::DrawDemoFrame()
+{
+	ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver); // Normally user code doesn't need/want to call this because positions are saved in .ini file anyway. Here we just want to make the demo initial state a bit more friendly!
+	ImGui::ShowDemoWindow(&showDemoFrame);
+}
+
+void ModuleUI::DrawAboutFrame()
+{
+	ImGui::Begin("About", &showAboutFrame);
+	if(ImGui::Button("KeepCryingEngine"))
+	{
+		ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine"), NULL, NULL, 0);
+	}
+	ImGui::Text("Improved CryEngine version");
+
+	ImGui::Text("Authors:");
+	ImGui::Indent();
+	if(ImGui::Button("Adrian Leroy Calle"))
+	{
+		ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/Moaif"), NULL, NULL, 0);
+	}
+	if(ImGui::Button("Gerard Pros Figueras"))
+	{
+		ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/gerardpf2"), NULL, NULL, 0);
+	}
+	if(ImGui::Button("Pere Senor de los Loros"))
+	{
+		ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/PereViader"), NULL, NULL, 0);
+	}
+	if(ImGui::Button("Xavier Bravo Guillen"))
+	{
+		ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/BravoXavi"), NULL, NULL, 0);
+	}
+	ImGui::Unindent();
+
+	ImGui::Text("3rd Party Libraries used:");
+	ImGui::Indent();
+	ImGui::BulletText("SLD 2.0");
+	ImGui::BulletText("Glew 2.1");
+	ImGui::BulletText("ImGui 1.53");
+	ImGui::BulletText("MathGeolib 1.5");
+	ImGui::BulletText("OpenGL 3.1");
+	ImGui::Unindent();
+
+	ImGui::Text("License:");
+	ImGui::Indent();
+	if(ImGui::Button("MIT License"))
+	{
+		ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine/blob/master/LICENSE"), NULL, NULL, 0);
+	}
+	ImGui::Unindent();
+
+	ImGui::End();
 }
