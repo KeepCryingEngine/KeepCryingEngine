@@ -1,5 +1,8 @@
 #include "ModuleRender.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <vector>
 #include "GL/glew.h"
 #include "SDL_opengl.h"
 #include <gl/GL.h>
@@ -7,6 +10,8 @@
 
 #include "Application.h"
 #include "ModuleWindow.h"
+
+using namespace std;
 
 ModuleRender::ModuleRender()
 {}
@@ -53,6 +58,7 @@ bool ModuleRender::Init()
 
 	setupBigArray();
 	setupIndicesArray();
+	setUpSphere(0.5,100,100);
 
 	return ret;
 }
@@ -66,13 +72,13 @@ update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-	float half = 0.5f;
 
 	glRotatef(20.0f * deltaTimeS, 0.0f, 1.0f, 0.2f);
 
-	//drawCubeDirect();
-	//drawCubeBigArray();
-	drawCubeIndices();
+	//drawCubeDirect(0,0,0);
+	//drawCubeBigArray(0,0,0);
+	//drawCubeIndices(0,0,0);
+	drawSphere(0, 0, 0);
 
 	SDL_GL_SwapWindow(App->window->window);
 	return update_status::UPDATE_CONTINUE;
@@ -178,7 +184,64 @@ void ModuleRender::setupIndicesArray() const
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void ModuleRender::drawCubeDirect() const
+void ModuleRender::setUpSphere(float radius, unsigned int rings, unsigned int sectors) 
+{
+	float const R = 1. / (float)(rings - 1);
+	float const S = 1. / (float)(sectors - 1);
+	int r, s;
+
+	vector<GLfloat>vertices;
+	//vector<GLfloat>normals;
+	//vector<GLfloat>textcord;
+	vector<GLushort>indices;
+
+	vertices.resize(rings * sectors * 3);
+	//normals.resize(rings * sectors * 3);
+	//texcoords.resize(rings * sectors * 2);
+	vector<GLfloat>::iterator v = vertices.begin();
+	//vector<GLfloat>::iterator n = normals.begin();
+	//vector<GLfloat>::iterator t = texcoords.begin();
+	for(r = 0; r < rings; r++) for(s = 0; s < sectors; s++)
+	{
+		//Not sure about those formulas:Adrian
+		float const y = sin(-M_PI_2 + M_PI * r * R);
+		float const x = cos(2 * M_PI * s * S) * sin(M_PI * r * R);
+		float const z = sin(2 * M_PI * s * S) * sin(M_PI * r * R);
+
+		//*t++ = s * S;
+		//*t++ = r * R;
+
+		*v++ = x * radius;
+		*v++ = y * radius;
+		*v++ = z * radius;
+		//Not sure about normal vector being filled with points like this:Adrian
+		//*n++ = x;
+		//*n++ = y;
+		//*n++ = z;
+	}
+
+	glGenBuffers(1, (GLuint*) &(sphereVertex));
+	glBindBuffer(GL_ARRAY_BUFFER, sphereVertex);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * rings * sectors * 3, ((void*)&vertices[0]), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	indices.resize(rings * sectors * 4);
+	sphereIndicesSize = indices.size();
+	std::vector<GLushort>::iterator i = indices.begin();
+	for(r = 0; r < rings - 1; r++) for(s = 0; s < sectors - 1; s++)
+	{
+		*i++ = r * sectors + s;
+		*i++ = r * sectors + (s + 1);
+		*i++ = (r + 1) * sectors + (s + 1);
+		*i++ = (r + 1) * sectors + s;
+	}
+	glGenBuffers(1, (GLuint*) &(sphereIndex));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereIndex);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLshort) *sphereIndicesSize, ((void*)&indices[0]), GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void ModuleRender::drawCubeDirect(float x, float y, float z) const
 {
 	float half = 0.5f;
 
@@ -232,12 +295,15 @@ void ModuleRender::drawCubeDirect() const
 	glVertex3f(-half, -half, half);
 	glVertex3f(half, -half, half);
 
+	glTranslatef(x, y, z);
+
 	glEnd();
 }
 
-void ModuleRender::drawCubeBigArray() const
+void ModuleRender::drawCubeBigArray(float x, float y, float z) const
 {
-	glColor3f(0.0f, 0.0f, 1.0f);
+	glColor3f(255.0f, 0.0f, 1.0f);
+	glTranslatef(x, y, z);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, bigArrayCube);
@@ -249,8 +315,10 @@ void ModuleRender::drawCubeBigArray() const
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void ModuleRender::drawCubeIndices() const
+void ModuleRender::drawCubeIndices(float x, float y, float z) const
 {
+	glColor3f(255.0f, 0.0f, 1.0f);
+	glTranslatef(x, y, z);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
 	glVertexPointer(3, GL_FLOAT, 0, nullptr);
@@ -260,4 +328,23 @@ void ModuleRender::drawCubeIndices() const
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void ModuleRender::drawSphere(float x, float y, float z)const
+{
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glColor3f(255.0f, 0.0f, 1.0f);
+	glTranslatef(x, y, z);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	//glEnableClientState(GL_NORMAL_ARRAY);
+	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glBindBuffer(GL_ARRAY_BUFFER, sphereVertex);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	//glNormalPointer(GL_FLOAT, 0, &normals[0]);
+	//glTexCoordPointer(2, GL_FLOAT, 0, &texcoords[0]);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereIndex);
+	glDrawElements(GL_QUADS, sphereIndicesSize, GL_UNSIGNED_SHORT, NULL);
 }

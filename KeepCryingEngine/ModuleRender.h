@@ -23,9 +23,12 @@ public:
 private:
 	void setupBigArray() const;
 	void setupIndicesArray() const;
-	void drawCubeDirect() const;
-	void drawCubeBigArray() const;
-	void drawCubeIndices() const;
+	void setUpSphere(float radius, unsigned int rings, unsigned int sectors);
+	void drawCubeDirect(float x, float y, float z) const;
+	void drawCubeBigArray(float x, float y, float z) const;
+	void drawCubeIndices(float x, float y, float z) const;
+	void drawSphere(float x, float y, float z) const;
+
 
 public:
 	SDL_GLContext glcontext;
@@ -34,6 +37,10 @@ private:
 	uint bigArrayCube = 0;
 	uint vertexArrayBuffer = 0;
 	uint indicesArrayBuffer = 0;
+	uint sphereIndex = 0;
+	uint sphereVertex = 0;
+
+	int sphereIndicesSize = 0;
 };
 
 #endif // !_MODULERENDER_H_
