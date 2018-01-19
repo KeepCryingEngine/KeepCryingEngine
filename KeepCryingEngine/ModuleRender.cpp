@@ -70,9 +70,9 @@ update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 
 	glRotatef(20.0f * deltaTimeS, 0.0f, 1.0f, 0.2f);
 
-	drawCubeDirect();
+	//drawCubeDirect();
 	//drawCubeBigArray();
-	//drawCubeIndices();
+	drawCubeIndices();
 
 	SDL_GL_SwapWindow(App->window->window);
 	return update_status::UPDATE_CONTINUE;
@@ -84,7 +84,7 @@ bool ModuleRender::CleanUp()
 	return true;
 }
 
-void ModuleRender::setupBigArray()
+void ModuleRender::setupBigArray() const
 {
 	float half = 0.5f;
 
@@ -133,7 +133,7 @@ void ModuleRender::setupBigArray()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void ModuleRender::setupIndicesArray()
+void ModuleRender::setupIndicesArray() const
 {
 	float half = 0.5f;
 	float uniqueVertex[8 * 3] = {
@@ -178,7 +178,7 @@ void ModuleRender::setupIndicesArray()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void ModuleRender::drawCubeDirect()
+void ModuleRender::drawCubeDirect() const
 {
 	float half = 0.5f;
 
@@ -235,7 +235,7 @@ void ModuleRender::drawCubeDirect()
 	glEnd();
 }
 
-void ModuleRender::drawCubeBigArray()
+void ModuleRender::drawCubeBigArray() const
 {
 	glColor3f(0.0f, 0.0f, 1.0f);
 
@@ -249,7 +249,7 @@ void ModuleRender::drawCubeBigArray()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void ModuleRender::drawCubeIndices()
+void ModuleRender::drawCubeIndices() const
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);

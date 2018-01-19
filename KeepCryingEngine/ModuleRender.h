@@ -21,20 +21,19 @@ public:
 	bool CleanUp() override;
 
 private:
-	void setupBigArray();
-	void setupIndicesArray();
-
-	void drawCubeDirect();
-	void drawCubeBigArray();
-	void drawCubeIndices();
+	void setupBigArray() const;
+	void setupIndicesArray() const;
+	void drawCubeDirect() const;
+	void drawCubeBigArray() const;
+	void drawCubeIndices() const;
 
 public:
-	uint bigArrayCube = 0;
+	SDL_GLContext glcontext;
 
+private:
+	uint bigArrayCube = 0;
 	uint vertexArrayBuffer = 0;
 	uint indicesArrayBuffer = 0;
-
-	SDL_GLContext glcontext;
 };
 
 #endif // !_MODULERENDER_H_
