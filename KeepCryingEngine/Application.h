@@ -2,14 +2,16 @@
 #define _APPLICATION_H_
 
 #include <list>
+
 #include "Globals.h"
 #include "Module.h"
-
-class ModuleRender;
-class ModuleWindow;
-class ModuleInput;
-class ModuleTime;
-class ModuleUI;
+#include "ModuleWindow.h"
+#include "ModuleRender.h"
+#include "ModuleInput.h"
+#include "ModuleTime.h"
+#include "ModuleTestJson.h"
+#include "ModuleTestMathGeoLib.h"
+#include "ModuleUI.h"
 
 class Application
 {
@@ -22,12 +24,12 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	float getDeltaTimeScale() const;
-	void setDeltaTimeScale(float deltaTimeScale);
+	float GetDeltaTimeScale() const;
+	void SetDeltaTimeScale(float deltaTimeScale);
 
 private:
 
-	void loadConfiguration();
+	void LoadConfiguration();
 
 public:
 	ModuleRender* renderer;

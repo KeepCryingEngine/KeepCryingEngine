@@ -1,7 +1,8 @@
+#include <SDL.h>
+
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleInput.h"
-#include <SDL.h>
 
 #define MAX_KEYS 300
 
@@ -153,12 +154,12 @@ bool ModuleInput::GetWindowEvent(EventWindow ev) const
 	return windowEvents[ev];
 }
 
-const Vector2& ModuleInput::GetMousePosition() const
+const float2& ModuleInput::GetMousePosition() const
 {
 	return mouse;
 }
 
-const Vector2& ModuleInput::GetMouseMotion() const
+const float2& ModuleInput::GetMouseMotion() const
 {
 	return mouse_motion;
 }

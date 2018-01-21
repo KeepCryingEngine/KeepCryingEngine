@@ -1,11 +1,4 @@
 #include "Application.h"
-#include "ModuleWindow.h"
-#include "ModuleRender.h"
-#include "ModuleInput.h"
-#include "ModuleTime.h"
-#include "ModuleTestJson.h"
-#include "ModuleTestMathGeoLib.h"
-#include "ModuleUI.h"
 
 using namespace std;
 
@@ -37,7 +30,7 @@ Application::~Application()
 using namespace std;
 using nlohmann::json;
 
-void Application::loadConfiguration()
+void Application::LoadConfiguration()
 {
 	// Update global variables
 
@@ -56,7 +49,7 @@ void Application::loadConfiguration()
 
 bool Application::Init()
 {
-	loadConfiguration();
+	LoadConfiguration();
 
 	bool ret = true;
 
@@ -127,12 +120,12 @@ bool Application::CleanUp()
 	return ret;
 }
 
-float Application::getDeltaTimeScale() const
+float Application::GetDeltaTimeScale() const
 {
 	return deltaTimeScale;
 }
 
-void Application::setDeltaTimeScale(float deltaTimeScale)
+void Application::SetDeltaTimeScale(float deltaTimeScale)
 {
 	this->deltaTimeScale = fmaxf(fminf(deltaTimeScale, 1.0f), 0.0f);
 }

@@ -1,9 +1,10 @@
 #ifndef _MODULEINPUT_H_
 #define _MODULEINPUT_H_
 
-#include "Module.h"
-#include "Vector2.h"
 #include <SDL_scancode.h>
+#include <MathGeoLib.h>
+
+#include "Module.h"
 
 #define NUM_MOUSE_BUTTONS 5
 
@@ -60,15 +61,15 @@ public:
 
 	bool GetWindowEvent(EventWindow code) const;
 
-	const Vector2& GetMouseMotion() const;
-	const Vector2& GetMousePosition() const;
+	const float2& GetMouseMotion() const;
+	const float2& GetMousePosition() const;
 
 private:
 	bool		windowEvents[WE_COUNT];
 	KeyState*	keyboard;
 	KeyState	mouse_buttons[NUM_MOUSE_BUTTONS];
-	Vector2 mouse_motion;
-	Vector2 mouse;
+	float2 mouse_motion;
+	float2 mouse;
 };
 
 #endif // !_MODULEINPUT_H_
