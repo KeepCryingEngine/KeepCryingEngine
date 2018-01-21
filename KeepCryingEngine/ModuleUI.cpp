@@ -10,14 +10,10 @@
 #include "ModuleWindow.h"
 
 ModuleUI::ModuleUI()
-{
-
-}
+{ }
 
 ModuleUI::~ModuleUI()
-{
-
-}
+{ }
 
 bool ModuleUI::Init()
 {
@@ -60,10 +56,10 @@ void ModuleUI::DrawMainFrame()
 	ImGui_ImplSdlGL3_NewFrame(App->window->window);
 	{
 		static float f = 0.0f;
-		ImGui::Text("Hello, world!");                           // Some text (you can use a format string too)
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float as a slider from 0.0f to 1.0f
+		ImGui::Text("Hello, world!"); // Some text (you can use a format string too)
+		ImGui::SliderFloat("float", &f, 0.0f, 1.0f); // Edit 1 float as a slider from 0.0f to 1.0f
 		ImGui::ColorEdit3("clear color", (float*)&clearColor); // Edit 3 floats as a color
-		if(ImGui::Button("Demo Window"))                       // Use buttons to toggle our bools. We could use Checkbox() as well.
+		if(ImGui::Button("Demo Window")) // Use buttons to toggle our bools. We could use Checkbox() as well.
 			showDemoFrame ^= 1;
 		if(ImGui::Button("About"))
 			showAboutFrame ^= 1;
@@ -80,33 +76,37 @@ void ModuleUI::DrawDemoFrame()
 void ModuleUI::DrawAboutFrame()
 {
 	ImGui::Begin("About", &showAboutFrame);
+
 	if(ImGui::Button("KeepCryingEngine"))
 	{
-		ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine"), NULL, NULL, 0);
+		ShellExecute(nullptr, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine"), nullptr, nullptr, 0);
 	}
+
 	ImGui::Text("Improved CryEngine version");
 
 	ImGui::Text("Authors:");
+
 	ImGui::Indent();
 	if(ImGui::Button("Adrian Leroy Calle"))
 	{
-		ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/Moaif"), NULL, NULL, 0);
+		ShellExecute(nullptr, TEXT("open"), TEXT("https://github.com/Moaif"), nullptr, nullptr, 0);
 	}
 	if(ImGui::Button("Gerard Pros Figueras"))
 	{
-		ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/gerardpf2"), NULL, NULL, 0);
+		ShellExecute(nullptr, TEXT("open"), TEXT("https://github.com/gerardpf2"), nullptr, nullptr, 0);
 	}
 	if(ImGui::Button("Pere Senor de los Loros"))
 	{
-		ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/PereViader"), NULL, NULL, 0);
+		ShellExecute(nullptr, TEXT("open"), TEXT("https://github.com/PereViader"), nullptr, nullptr, 0);
 	}
 	if(ImGui::Button("Xavier Bravo Guillen"))
 	{
-		ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/BravoXavi"), NULL, NULL, 0);
+		ShellExecute(nullptr, TEXT("open"), TEXT("https://github.com/BravoXavi"), nullptr, nullptr, 0);
 	}
 	ImGui::Unindent();
 
 	ImGui::Text("3rd Party Libraries used:");
+
 	ImGui::Indent();
 	ImGui::BulletText("SLD 2.0");
 	ImGui::BulletText("Glew 2.1");
@@ -116,10 +116,11 @@ void ModuleUI::DrawAboutFrame()
 	ImGui::Unindent();
 
 	ImGui::Text("License:");
+
 	ImGui::Indent();
 	if(ImGui::Button("MIT License"))
 	{
-		ShellExecute(NULL, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine/blob/master/LICENSE"), NULL, NULL, 0);
+		ShellExecute(nullptr, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine/blob/master/LICENSE"), nullptr, nullptr, 0);
 	}
 	ImGui::Unindent();
 

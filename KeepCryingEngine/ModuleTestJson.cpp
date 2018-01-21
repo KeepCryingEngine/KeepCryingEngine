@@ -23,10 +23,12 @@ bool ModuleTestJson::Start()
 	ifstream jsonFile("Assets/jsonTest.json");
 
 	json json;
-
 	jsonFile >> json;
-
-	float3 v3 = json.get<float3>();
+	
+	float3 v3;
+	from_json(json, v3);
+	
+	// float3 v3 = json.get<float3>();
 
 	LOG_DEBUG("%s", v3.ToString().c_str());
 

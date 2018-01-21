@@ -1,9 +1,6 @@
 #include <stdlib.h>
 
-#include <SDL.h>
-
 #include "Application.h"
-#include "Globals.h"
 
 enum main_states
 {

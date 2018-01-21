@@ -1,15 +1,15 @@
 #include "ModuleRender.h"
 
 #define _USE_MATH_DEFINES
-#include <math.h>
-#include <vector>
+//#include <math.h>
+//#include <vector>
 #include "GL/glew.h"
-#include "SDL_opengl.h"
-#include <gl/GL.h>
-#include <gl/GLU.h>
+//#include "SDL_opengl.h"
+//#include <gl/GL.h>
+//#include <gl/GLU.h>
 
 #include "Application.h"
-#include "ModuleWindow.h"
+//#include "ModuleWindow.h"
 
 using namespace std;
 
@@ -46,7 +46,7 @@ bool ModuleRender::Init()
 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glClearDepth(1.0f);
-	glClearColor(0.f, 0.f, 0.f, 1.f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -56,9 +56,15 @@ bool ModuleRender::Init()
 
 	GLenum err = glewInit();
 
-	setupBigArray();
-	setupIndicesArray();
-	setUpSphere(0.25f,100,100);
+	if(GLEW_OK != err)
+	{
+		LOG_DEBUG("GLEW could not initialize! GLEW_Error: %s", glewGetErrorString(err));
+		ret = false;
+	}
+
+	SetUpBigArray();
+	SetUpIndicesArray();
+	SetUpSphere(0.25f, 100, 100);
 
 	return ret;
 }
@@ -74,26 +80,29 @@ update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	glRotatef(20.0f * deltaTimeS, 0.0f, 1.0f, 0.2f);
 
-	// drawCubeDirect(-0.5f,0,0);
-	// drawCubeBigArray(-0.5f,0,0);
-	// drawCubeIndices(-0.5f,0.0f,0);
-	// drawSphere(-0.5f, -0.5f, 0);
+	// DrawCubeDirect(-0.5f, 0.0f, 0.0f);
+	// DrawCubeBigArray(-0.5f, 0.0f, 0.0f);
+	// DrawCubeIndices(-0.5f, 0.0f, 0.0f);
+	// DrawSphere(-0.5f, -0.5f, 0.0f);
 
 	SDL_GL_SwapWindow(App->window->window);
+
 	return update_status::UPDATE_CONTINUE;
 }
 
 bool ModuleRender::CleanUp()
 {
 	SDL_GL_DeleteContext(glcontext);
+
 	return true;
 }
 
-void ModuleRender::setupBigArray() const
+void ModuleRender::SetUpBigArray() const
 {
 	float half = 0.5f;
 
-	float vertices[36 * 3] = {
+	float vertices[36 * 3] =
+	{
 		-half, -half, -half,
 		half, -half, -half,
 		-half, half, -half,
@@ -138,18 +147,19 @@ void ModuleRender::setupBigArray() const
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void ModuleRender::setupIndicesArray() const
+void ModuleRender::SetUpIndicesArray() const
 {
 	float half = 0.5f;
-	float uniqueVertex[8 * 3] = {
-		-half, -half, -half, //0
-		half, -half, -half,  //1
-		half, half, -half,  //2
-		-half, half, -half, //3
-		-half, -half, half, //4
-		half, -half, half,  //5
-		half, half, half,  //6
-		-half, half, half  //7
+	float uniqueVertex[8 * 3] =
+	{
+		-half, -half, -half, // 0
+		half, -half, -half,  // 1
+		half, half, -half,  // 2
+		-half, half, -half, // 3
+		-half, -half, half, // 4
+		half, -half, half,  // 5
+		half, half, half,  // 6
+		-half, half, half  // 7
 	};
 
 	glGenBuffers(1, (GLuint*) &(vertexArrayBuffer));
@@ -157,7 +167,8 @@ void ModuleRender::setupIndicesArray() const
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8 * 3, uniqueVertex, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	uint indicesArray[36 * 3] = {
+	uint indicesArray[36 * 3] =
+	{
 		0, 1, 3,
 		1, 2, 3,
 
@@ -183,40 +194,29 @@ void ModuleRender::setupIndicesArray() const
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void ModuleRender::setUpSphere(float radius, unsigned int rings, unsigned int sectors) 
+void ModuleRender::SetUpSphere(float radius, unsigned int rings, unsigned int sectors) 
 {
-	float R = 1.f / (float)(rings - 1);
-	float S = 1.f / (float)(sectors - 1);
-	// int r, s;
+	float R = 1.0f / (float)(rings - 1);
+	float S = 1.0f / (float)(sectors - 1);
 
-	vector<GLfloat>vertices;
-	//vector<GLfloat>normals;
-	//vector<GLfloat>textcord;
-	vector<GLushort>indices;
+	vector<GLfloat> vertices;
+	vector<GLushort> indices;
 
 	vertices.resize(rings * sectors * 3);
-	//normals.resize(rings * sectors * 3);
-	//texcoords.resize(rings * sectors * 2);
 	vector<GLfloat>::iterator v = vertices.begin();
-	//vector<GLfloat>::iterator n = normals.begin();
-	//vector<GLfloat>::iterator t = texcoords.begin();
-	for(unsigned int r = 0; r < rings; r++) for(unsigned int s = 0; s < sectors; s++)
+
+	for(unsigned int r = 0; r < rings; r++)
 	{
-		//Not sure about those formulas:Adrian
-		float y = (float)sin(-M_PI_2 + M_PI * r * R);
-		float x = (float)cos(2 * M_PI * s * S) * (float)sin(M_PI * r * R);
-		float z = (float)sin(2 * M_PI * s * S) * (float)sin(M_PI * r * R);
+		for(unsigned int s = 0; s < sectors; s++)
+		{
+			float y = (float)sin(-M_PI_2 + M_PI * r * R);
+			float x = (float)cos(2 * M_PI * s * S) * (float)sin(M_PI * r * R);
+			float z = (float)sin(2 * M_PI * s * S) * (float)sin(M_PI * r * R);
 
-		//*t++ = s * S;
-		//*t++ = r * R;
-
-		*v++ = x * radius;
-		*v++ = y * radius;
-		*v++ = z * radius;
-		//Not sure about normal vector being filled with points like this:Adrian
-		//*n++ = x;
-		//*n++ = y;
-		//*n++ = z;
+			*v++ = x * radius;
+			*v++ = y * radius;
+			*v++ = z * radius;
+		}
 	}
 
 	glGenBuffers(1, (GLuint*) &(sphereVertex));
@@ -226,21 +226,26 @@ void ModuleRender::setUpSphere(float radius, unsigned int rings, unsigned int se
 
 	indices.resize(rings * sectors * 4);
 	sphereIndicesSize = indices.size();
+
 	std::vector<GLushort>::iterator i = indices.begin();
-	for(unsigned int r = 0; r < rings - 1; r++) for(unsigned int s = 0; s < sectors - 1; s++)
+
+	for(unsigned int r = 0; r < rings - 1; r++)
 	{
-		*i++ = r * sectors + s;
-		*i++ = r * sectors + (s + 1);
-		*i++ = (r + 1) * sectors + (s + 1);
-		*i++ = (r + 1) * sectors + s;
+		for(unsigned int s = 0; s < sectors - 1; s++)
+		{
+			*i++ = r * sectors + s;
+			*i++ = r * sectors + s + 1;
+			*i++ = (r + 1) * sectors + s + 1;
+			*i++ = (r + 1) * sectors + s;
+		}
 	}
 	glGenBuffers(1, (GLuint*) &(sphereIndex));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereIndex);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLshort) *sphereIndicesSize, ((void*)&indices[0]), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLshort) * sphereIndicesSize, ((void*)&indices[0]), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void ModuleRender::drawCubeDirect(float x, float y, float z) const
+void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 {
 	float half = 0.5f;
 
@@ -302,9 +307,10 @@ void ModuleRender::drawCubeDirect(float x, float y, float z) const
 	glPopMatrix();
 }
 
-void ModuleRender::drawCubeBigArray(float x, float y, float z) const
+void ModuleRender::DrawCubeBigArray(float x, float y, float z) const
 {
 	glColor3f(255.0f, 0.0f, 1.0f);
+
 	glPushMatrix();
 	glTranslatef(x, y, z);
 
@@ -316,43 +322,45 @@ void ModuleRender::drawCubeBigArray(float x, float y, float z) const
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	glPopMatrix();
 }
 
-void ModuleRender::drawCubeIndices(float x, float y, float z) const
+void ModuleRender::DrawCubeIndices(float x, float y, float z) const
 {
 	glColor3f(255.0f, 0.0f, 1.0f);
+
 	glPushMatrix();
 	glTranslatef(x, y, z);
+
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
 	glVertexPointer(3, GL_FLOAT, 0, nullptr);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesArrayBuffer);
-	glDrawElements(GL_TRIANGLES, 36 * 3, GL_UNSIGNED_INT, nullptr); //The nullptr means 'take the last binded buffer'
+	glDrawElements(GL_TRIANGLES, 36 * 3, GL_UNSIGNED_INT, nullptr); // The nullptr means 'take the last binded buffer'
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	glPopMatrix();
 }
 
-void ModuleRender::drawSphere(float x, float y, float z)const
+void ModuleRender::DrawSphere(float x, float y, float z)const
 {
 	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
+
 	glColor3f(255.0f, 0.0f, 1.0f);
+
+	glPushMatrix();
 	glTranslatef(x, y, z);
-	
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	//glEnableClientState(GL_NORMAL_ARRAY);
-	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glBindBuffer(GL_ARRAY_BUFFER, sphereVertex);
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
-	//glNormalPointer(GL_FLOAT, 0, &normals[0]);
-	//glTexCoordPointer(2, GL_FLOAT, 0, &texcoords[0]);
+	glVertexPointer(3, GL_FLOAT, 0, nullptr);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereIndex);
-	glDrawElements(GL_QUADS, sphereIndicesSize, GL_UNSIGNED_SHORT, NULL);
+	glDrawElements(GL_QUADS, sphereIndicesSize, GL_UNSIGNED_SHORT, nullptr);
+
 	glPopMatrix();
 }

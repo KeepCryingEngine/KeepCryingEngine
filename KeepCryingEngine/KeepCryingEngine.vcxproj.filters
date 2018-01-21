@@ -7,9 +7,6 @@
     <ClCompile Include="ModuleWindow.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleTime.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleRender.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -60,9 +57,6 @@
     <ClInclude Include="Globals.h" />
     <ClInclude Include="MemLeaks.h" />
     <ClInclude Include="ModuleWindow.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleTime.h">
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="ModuleRender.h">

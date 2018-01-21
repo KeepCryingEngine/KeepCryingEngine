@@ -156,7 +156,6 @@
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleTestJson.h" />
     <ClInclude Include="ModuleTestMathGeoLib.h" />
-    <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="ModuleWindow.h" />
   </ItemGroup>
@@ -203,7 +202,6 @@
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleTestJson.cpp" />
     <ClCompile Include="ModuleTestMathGeoLib.cpp" />
-    <ClCompile Include="ModuleTime.cpp" />
     <ClCompile Include="ModuleUI.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
   </ItemGroup>

@@ -17,17 +17,16 @@ ModuleWindow::~ModuleWindow()
 
 bool ModuleWindow::Init()
 {
-	// LOG("Init SDL window & surface");
+	LOG_DEBUG("Init SDL window & surface");
 	bool ret = true;
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-		// LOG("SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
+		LOG_DEBUG("SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 	else
 	{
-
 		int width = SCREEN_WIDTH;
 		int height = SCREEN_HEIGHT;
 		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
@@ -41,7 +40,7 @@ bool ModuleWindow::Init()
 
 		if(!window)
 		{
-			// LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+			LOG_DEBUG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 			ret = false;
 		}
 	}
@@ -51,7 +50,7 @@ bool ModuleWindow::Init()
 
 bool ModuleWindow::CleanUp()
 {
-	// LOG("Destroying SDL window and quitting all SDL systems");
+	LOG_DEBUG("Destroying SDL window and quitting all SDL systems");
 
 	if(window)
 	{

@@ -1,8 +1,7 @@
 #ifndef _MODULEINPUT_H_
 #define _MODULEINPUT_H_
 
-#include <SDL_scancode.h>
-#include <MathGeoLib.h>
+#include <float2.h>
 
 #include "Module.h"
 
@@ -65,9 +64,9 @@ public:
 	const float2& GetMousePosition() const;
 
 private:
-	bool		windowEvents[WE_COUNT];
-	KeyState*	keyboard;
-	KeyState	mouse_buttons[NUM_MOUSE_BUTTONS];
+	bool windowEvents[WE_COUNT];
+	KeyState* keyboard;
+	KeyState mouse_buttons[NUM_MOUSE_BUTTONS];
 	float2 mouse_motion;
 	float2 mouse;
 };

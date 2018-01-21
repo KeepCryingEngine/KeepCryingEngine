@@ -13,7 +13,8 @@ public:
 
 	bool Init() override;
 	bool CleanUp() override;
-	update_status Update(float deltaTimeS, float realDeltaTimeS)override;
+	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
+
 private:
 	void DrawMainFrame();
 	void DrawDemoFrame();
@@ -26,4 +27,3 @@ private:
 };
 
 #endif // !_MODULEUI_H_
-

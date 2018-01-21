@@ -8,7 +8,6 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleInput.h"
-#include "ModuleTime.h"
 #include "ModuleTestJson.h"
 #include "ModuleTestMathGeoLib.h"
 #include "ModuleUI.h"
@@ -35,7 +34,6 @@ public:
 	ModuleRender* renderer;
 	ModuleWindow* window;
 	ModuleInput* input;
-	ModuleTime* time;
 	ModuleUI* ui;
 
 	// Cargar información desde json

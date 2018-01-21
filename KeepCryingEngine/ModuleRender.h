@@ -6,11 +6,7 @@
 
 #include <SDL.h>
 
-
 #include "Module.h"
-
-
-struct SDL_Renderer;
 
 class ModuleRender : public Module
 {
@@ -24,17 +20,13 @@ public:
 	bool CleanUp() override;
 
 private:
-	void setupBigArray() const;
-	void setupIndicesArray() const;
-	void setUpSphere(float radius, unsigned int rings, unsigned int sectors);
-	void drawCubeDirect(float x, float y, float z) const;
-	void drawCubeBigArray(float x, float y, float z) const;
-	void drawCubeIndices(float x, float y, float z) const;
-	void drawSphere(float x, float y, float z) const;
-
-
-public:
-	SDL_GLContext glcontext;
+	void SetUpBigArray() const;
+	void SetUpIndicesArray() const;
+	void SetUpSphere(float radius, unsigned int rings, unsigned int sectors);
+	void DrawCubeDirect(float x, float y, float z) const;
+	void DrawCubeBigArray(float x, float y, float z) const;
+	void DrawCubeIndices(float x, float y, float z) const;
+	void DrawSphere(float x, float y, float z) const;
 
 private:
 	uint bigArrayCube = 0;
@@ -44,6 +36,8 @@ private:
 	uint sphereVertex = 0;
 
 	int sphereIndicesSize = 0;
+
+	SDL_GLContext glcontext = nullptr;
 };
 
 #endif // !_MODULERENDER_H_

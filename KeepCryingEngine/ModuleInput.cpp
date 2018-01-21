@@ -1,8 +1,6 @@
-#include <SDL.h>
-
-#include "Globals.h"
-#include "Application.h"
 #include "ModuleInput.h"
+
+#include "Application.h"
 
 #define MAX_KEYS 300
 
@@ -20,13 +18,13 @@ ModuleInput::~ModuleInput()
 
 bool ModuleInput::Init()
 {
-	// LOG("Init SDL input event system");
+	LOG_DEBUG("Init SDL input event system");
 	bool ret = true;
 	SDL_Init(0);
 
 	if(SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
 	{
-		// LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
+		LOG_DEBUG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
@@ -45,7 +43,7 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 	mouse_motion = { 0, 0 };
 	memset(windowEvents, false, WE_COUNT * sizeof(bool));
 
-	const Uint8* keys = SDL_GetKeyboardState(NULL);
+	const Uint8* keys = SDL_GetKeyboardState(nullptr);
 
 	for(int i = 0; i < MAX_KEYS; ++i)
 	{
@@ -127,7 +125,7 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 bool ModuleInput::CleanUp()
 {
-	// LOG("Quitting SDL event subsystem");
+	LOG_DEBUG("Quitting SDL event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
 }
