@@ -8,6 +8,7 @@
 
 #include "Application.h"
 #include "ModuleWindow.h"
+#include "Globals.h"
 
 ModuleUI::ModuleUI()
 { }
@@ -24,21 +25,11 @@ bool ModuleUI::Init()
 }
 
 update_status ModuleUI::Update(float deltaTimeS, float realDeltaTimeS)
-{
-	DrawMainFrame();
-	
-	if(showAboutFrame)
-	{
-		DrawAboutFrame();
-	}
-
-	if(showDemoFrame)
-	{
-		DrawDemoFrame();
-	}
+{	
+	DrawMainMenu();
 
 	glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
-	glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
+	glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	ImGui::Render();
 
@@ -51,32 +42,42 @@ bool ModuleUI::CleanUp()
 	return true;
 }
 
-void ModuleUI::DrawMainFrame()
+void ModuleUI::DrawMainMenu()
 {
 	ImGui_ImplSdlGL3_NewFrame(App->window->window);
 	{
-		static float f = 0.0f;
-		ImGui::Text("Hello, world!"); // Some text (you can use a format string too)
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f); // Edit 1 float as a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&clearColor); // Edit 3 floats as a color
-		if(ImGui::Button("Demo Window")) // Use buttons to toggle our bools. We could use Checkbox() as well.
-			showDemoFrame ^= 1;
-		if(ImGui::Button("About"))
-			showAboutFrame ^= 1;
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		if(ImGui::BeginMainMenuBar())
+		{
+			if(ImGui::BeginMenu("Tools"))
+			{
+				DrawToolsMenu();
+				ImGui::EndMenu();
+			}
+
+			if(ImGui::BeginMenu("About"))
+			{
+				DrawAboutMenu();
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMainMenuBar();
+		}
 	}
 }
 
-void ModuleUI::DrawDemoFrame()
+void ModuleUI::DrawToolsMenu()
 {
-	ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver); // Normally user code doesn't need/want to call this because positions are saved in .ini file anyway. Here we just want to make the demo initial state a bit more friendly!
-	ImGui::ShowDemoWindow(&showDemoFrame);
+	ImGui::DragFloat("Near plane", &nearPlane, 0.5f, 0.0f, 100.0f, "%.2f");
+	ImGui::DragFloat("Far plane", &farPlane, 0.5f, 0.0f, 100.0f, "%.2f");
+	ImGui::SliderFloat("Field of View", &FOV, 1.0f, 179.0f);
+	ImGui::InputFloat("Aspect ratio", &aspectRatio);
+	ImGui::DragFloat("Mov. speed", &movSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+	ImGui::DragFloat("Rot. speed", &rotSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+	ImGui::DragFloat3("Background color", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
 }
 
-void ModuleUI::DrawAboutFrame()
+void ModuleUI::DrawAboutMenu()
 {
-	ImGui::Begin("About", &showAboutFrame);
-
 	if(ImGui::Button("KeepCryingEngine"))
 	{
 		ShellExecute(nullptr, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine"), nullptr, nullptr, 0);
@@ -123,6 +124,4 @@ void ModuleUI::DrawAboutFrame()
 		ShellExecute(nullptr, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine/blob/master/LICENSE"), nullptr, nullptr, 0);
 	}
 	ImGui::Unindent();
-
-	ImGui::End();
 }
