@@ -17,7 +17,7 @@ public:
 	void SetNearPlane(float distance);
 	void SetFarPlane(float distance);
 	void SetPosition(float3 position);
-	void SetOrientation(float3 rotation);
+	float3 Orientation();
 	void LookAt(float3 point);
 
 	float4x4 GetViewMatrix()const;
