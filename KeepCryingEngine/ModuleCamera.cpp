@@ -35,7 +35,7 @@ void ModuleCamera::SetFOV(float radians)
 void ModuleCamera::SetAspectRatio(float aspect)
 {
 	float fovH = 2 * atan(tan(frustum.verticalFov / 2)*aspect);
-	frustum.AspectRatio = aspect;
+	frustum.horizontalFov = fovH;
 }
 void ModuleCamera::SetNearPlane(float distance)
 {
