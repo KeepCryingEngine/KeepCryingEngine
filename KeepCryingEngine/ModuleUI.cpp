@@ -29,7 +29,7 @@ update_status ModuleUI::Update(float deltaTimeS, float realDeltaTimeS)
 	DrawMainMenu();
 
 	glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
-	glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
+	glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	ImGui::Render();
 
@@ -50,7 +50,7 @@ void ModuleUI::DrawMainMenu()
 		{
 			if(ImGui::BeginMenu("Tools"))
 			{
-				DrawAboutMenu();
+				DrawToolsMenu();
 				ImGui::EndMenu();
 			}
 
@@ -62,10 +62,18 @@ void ModuleUI::DrawMainMenu()
 
 			ImGui::EndMainMenuBar();
 		}
-
-		/*static float f = 0.0f;
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);*/
 	}
+}
+
+void ModuleUI::DrawToolsMenu()
+{
+	ImGui::DragFloat("Near plane", &nearPlane, 0.5f, 0.0f, 100.0f, "%.2f");
+	ImGui::DragFloat("Far plane", &farPlane, 0.5f, 0.0f, 100.0f, "%.2f");
+	ImGui::SliderFloat("Field of View", &FOV, 1.0f, 179.0f);
+	ImGui::InputFloat("Aspect ratio", &aspectRatio);
+	ImGui::DragFloat("Mov. speed", &movSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+	ImGui::DragFloat("Rot. speed", &rotSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+	ImGui::DragFloat3("Background color", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
 }
 
 void ModuleUI::DrawAboutMenu()

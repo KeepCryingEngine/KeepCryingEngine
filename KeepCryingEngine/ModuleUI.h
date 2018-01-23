@@ -18,9 +18,18 @@ public:
 private:
 	void DrawMainMenu();
 	void DrawAboutMenu();
+	void DrawToolsMenu();
+
+public:
+	float FOV = 1.0f;
+	float aspectRatio = 0.0f;
+	float nearPlane = 0.0f;
+	float farPlane = 0.0f;
+	float movSpeed = 0.0f;
+	float rotSpeed = 0.0f;
 
 private:
-	ImVec4 clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	float clearColor[3] = { 0.0f, 0.0f, 0.0f };
 };
 
 #endif // !_MODULEUI_H_
