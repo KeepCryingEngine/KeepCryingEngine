@@ -24,6 +24,17 @@ bool ModuleUI::Init()
 	return true;
 }
 
+bool ModuleUI::Start()
+{
+	nearPlane = App->camera->GetNearPlane();
+	farPlane = App->camera->GetFarPlane();
+	aspectRatio = App->camera->GetAspectRatio();
+	verticalFOV = App->camera->GetFOV();
+	position = App->camera->GetPosition();
+
+	return true;
+}
+
 update_status ModuleUI::Update(float deltaTimeS, float realDeltaTimeS)
 {	
 	DrawMainMenu();
@@ -33,6 +44,11 @@ update_status ModuleUI::Update(float deltaTimeS, float realDeltaTimeS)
 	glClear(GL_COLOR_BUFFER_BIT);
 	ImGui::Render();
 
+	return update_status::UPDATE_CONTINUE;
+}
+
+update_status ModuleUI::PostUpdate(float deltaTimeS, float realDeltaTimeS)
+{
 	return update_status::UPDATE_CONTINUE;
 }
 
@@ -67,13 +83,26 @@ void ModuleUI::DrawMainMenu()
 
 void ModuleUI::DrawToolsMenu()
 {
-	ImGui::DragFloat("Near plane", &nearPlane, 0.5f, 0.0f, 100.0f, "%.2f");
-	ImGui::DragFloat("Far plane", &farPlane, 0.5f, 0.0f, 100.0f, "%.2f");
-	ImGui::SliderFloat("Field of View", &FOV, 1.0f, 179.0f);
+	ImGui::DragFloat("Near plane", &nearPlane, 0.01f, 0.01f, 2.0f, "%.2f");
+	App->camera->SetNearPlane(nearPlane);
+
+	ImGui::DragFloat("Far plane", &farPlane, 2.0f, 50.0f, 300.0f, "%.2f");
+	App->camera->SetFarPlane(farPlane);
+
+	ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi);
+	App->camera->SetFOV(verticalFOV);
+
 	ImGui::InputFloat("Aspect ratio", &aspectRatio);
+	App->camera->SetAspectRatio(aspectRatio);
+
+	//No usable until having the camera move
 	ImGui::DragFloat("Mov. speed", &movSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
 	ImGui::DragFloat("Rot. speed", &rotSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+
+	ImGui::InputFloat3("Position", position.ptr(), 2);
 	ImGui::DragFloat3("Background color", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
+
+	//Add LookAt
 }
 
 void ModuleUI::DrawAboutMenu()
@@ -109,7 +138,7 @@ void ModuleUI::DrawAboutMenu()
 	ImGui::Text("3rd Party Libraries used:");
 
 	ImGui::Indent();
-	ImGui::BulletText("SLD 2.0");
+	ImGui::BulletText("SDL 2.0");
 	ImGui::BulletText("Glew 2.1");
 	ImGui::BulletText("ImGui 1.53");
 	ImGui::BulletText("MathGeolib 1.5");

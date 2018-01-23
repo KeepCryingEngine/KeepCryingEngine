@@ -17,6 +17,11 @@ public:
 	void SetNearPlane(float distance);
 	void SetFarPlane(float distance);
 	void SetPosition(float3 position);
+	float GetFOV() const;
+	float GetAspectRatio() const;
+	float GetNearPlane() const;
+	float GetFarPlane() const;
+	float3 GetPosition() const;
 	float3 Orientation();
 	void LookAt(float3 point);
 

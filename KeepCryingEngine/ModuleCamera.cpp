@@ -20,7 +20,7 @@ bool ModuleCamera::Init()
 	frustum.front = float3(0, 0, 1);
 	frustum.up = float3(0, 1, 0);
 	frustum.nearPlaneDistance = 0.1;
-	frustum.farPlaneDistance = 500;
+	frustum.farPlaneDistance = 50;
 	frustum.horizontalFov = pi/2;
 	frustum.verticalFov = pi/2;
 	return true;
@@ -49,6 +49,27 @@ void ModuleCamera::SetPosition(float3 position)
 {
 	frustum.pos = position;
 }
+float ModuleCamera::GetFOV() const
+{
+	return frustum.verticalFov;
+}
+float ModuleCamera::GetAspectRatio() const
+{
+	return frustum.AspectRatio();
+}
+float ModuleCamera::GetNearPlane() const
+{
+	return frustum.nearPlaneDistance;
+}
+float ModuleCamera::GetFarPlane() const
+{
+	return frustum.farPlaneDistance;
+}
+float3 ModuleCamera::GetPosition() const
+{
+	return frustum.pos;
+}
+
 float3 ModuleCamera::Orientation()
 {
 	return frustum.front;
