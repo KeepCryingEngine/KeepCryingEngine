@@ -11,8 +11,14 @@ public:
 	~ModuleCamera();
 
 	bool Init() override;
-	bool CleanUp() override;
-	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
+
+	void SetFOV(float radians);
+	void SetAspectRatio(float aspect);
+	void SetNearPlane(float distance);
+	void SetFarPlane(float distance);
+	void SetPosition(float3 position);
+	void SetOrientation(float3 rotation);
+	void LookAt(float3 point);
 
 	float4x4 GetViewMatrix()const;
 	float4x4 GetProyectionMatrix()const;

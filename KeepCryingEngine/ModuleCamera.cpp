@@ -1,5 +1,7 @@
 #include "ModuleCamera.h"
 #include "Application.h"
+#include "Globals.h"
+
 
 ModuleCamera::ModuleCamera()
 {
@@ -24,14 +26,35 @@ bool ModuleCamera::Init()
 	return true;
 }
 
-bool ModuleCamera::CleanUp()
+void ModuleCamera::SetFOV(float radians)
 {
-	return true;
+	float fovH = 2 * atan(tan(radians / 2)*(SCREEN_WIDTH / SCREEN_HEIGHT));
+	frustum.horizontalFov = fovH;
+	frustum.verticalFov = radians;
 }
-
-update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
+void ModuleCamera::SetAspectRatio(float aspect)
 {
-	return update_status::UPDATE_CONTINUE;
+	float fovH = 2 * atan(tan(radians / 2)*(SCREEN_WIDTH / SCREEN_HEIGHT));
+}
+void ModuleCamera::SetNearPlane(float distance)
+{
+	frustum.nearPlaneDistance = distance;
+}
+void ModuleCamera::SetFarPlane(float distance)
+{
+	frustum.farPlaneDistance = distance;
+}
+void ModuleCamera::SetPosition(float3 position)
+{
+	frustum.pos = position;
+}
+void ModuleCamera::SetOrientation(float3 rotation)
+{
+
+}
+void ModuleCamera::LookAt(float3 point)
+{
+
 }
 
 float4x4 ModuleCamera::GetViewMatrix()const
