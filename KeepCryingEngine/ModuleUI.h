@@ -16,13 +16,10 @@ public:
 	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
 
 private:
-	void DrawMainFrame();
-	void DrawDemoFrame();
-	void DrawAboutFrame();
+	void DrawMainMenu();
+	void DrawAboutMenu();
 
 private:
-	bool showDemoFrame = true;
-	bool showAboutFrame = false;
 	ImVec4 clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 };
 
