@@ -152,6 +152,7 @@
     <ClInclude Include="json_serializer.h" />
     <ClInclude Include="MemLeaks.h" />
     <ClInclude Include="Module.h" />
+    <ClInclude Include="ModuleCamera.h" />
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleTestJson.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="json_serializer.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="ModuleCamera.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleTestJson.cpp" />

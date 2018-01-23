@@ -11,6 +11,7 @@
 #include "ModuleTestJson.h"
 #include "ModuleTestMathGeoLib.h"
 #include "ModuleUI.h"
+#include "ModuleCamera.h"
 
 class Application
 {
@@ -35,6 +36,7 @@ public:
 	ModuleWindow* window;
 	ModuleInput* input;
 	ModuleUI* ui;
+	ModuleCamera* camera;
 
 	// Cargar información desde json
 	// Tamaño pantalla, nombre, fps, etc

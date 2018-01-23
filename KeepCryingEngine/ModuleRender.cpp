@@ -72,18 +72,20 @@ bool ModuleRender::Init()
 update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(App->camera->GetProyectionMatrix().ptr());
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(App->camera->GetViewMatrix().ptr());
+	
 	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-	glRotatef(20.0f * deltaTimeS, 0.0f, 1.0f, 0.2f);
-
-	// DrawCubeDirect(-0.5f, 0.0f, 0.0f);
-	// DrawCubeBigArray(-0.5f, 0.0f, 0.0f);
-	// DrawCubeIndices(-0.5f, 0.0f, 0.0f);
-	// DrawSphere(-0.5f, -0.5f, 0.0f);
+	 //DrawCubeDirect(-0.5f, 0.0f, 10.0f);
+	 DrawCubeBigArray(-5.0f, 0.0f, 10.0f);
+	 DrawCubeIndices(0.0f, 0.0f, 2.0f);
+	 DrawSphere(-0.5f, -5.0f, 0.0f);
 
 	SDL_GL_SwapWindow(App->window->window);
 

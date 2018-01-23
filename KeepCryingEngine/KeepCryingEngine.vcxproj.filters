@@ -51,6 +51,7 @@
     <ClCompile Include="ModuleUI.cpp" />
     <ClCompile Include="external\ImGui\imgui_impl_sdl_gl3.cpp" />
     <ClCompile Include="json_serializer.cpp" />
+    <ClCompile Include="ModuleCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="external\ImGui\ModuleUI.h" />
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="json_serializer.h" />
+    <ClInclude Include="ModuleCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">
