@@ -81,10 +81,12 @@ update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-	DrawCubeDirect(0.0f, 0.0f, -10.0f);
+	DrawGrid();
+	DrawCubeDirect(2.0f, 2.0f, -10.0f);
+		
 	 //DrawCubeBigArray(-5.0f, 0.0f, -10.0f);
 	 //DrawCubeIndices(0.0f, 0.0f, -2.0f);
-	 //DrawSphere(-0.5f, -5.0f, 0.0f);
+	 //DrawSphere(0.0f, -2.0f, 2.0f);
 
 	SDL_GL_SwapWindow(App->window->window);
 
@@ -249,60 +251,66 @@ void ModuleRender::SetUpSphere(float radius, unsigned int rings, unsigned int se
 void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 {
 	float half = 0.5f;
-
+	
 	glPushMatrix();
 	glTranslatef(x, y, z);
 
 	glBegin(GL_TRIANGLES);
 
+	//FRONT FACE
+	glColor3f(100.0f, 100.0f, 100.0f);
+	glVertex3f(half, -half, half);
+	glVertex3f(-half, half, half);
+	glVertex3f(-half, -half, half);
+	glVertex3f(half, half, half);
+	glVertex3f(-half, half, half);
+	glVertex3f(half, -half, half);
+
+	//BACK FACE
 	glColor3f(100.0f, 0.0f, 0.0f);
+	glVertex3f(-half, half, -half);
+	glVertex3f(half, -half, -half);
 	glVertex3f(-half, -half, -half);
-	glVertex3f(half, -half, -half);
 	glVertex3f(-half, half, -half);
-	glVertex3f(half, -half, -half);
 	glVertex3f(half, half, -half);
-	glVertex3f(-half, half, -half);
-
-	glColor3f(0.0f, 100.0f, 0.0f);
 	glVertex3f(half, -half, -half);
-	glVertex3f(half, -half, half);
+	
+	//LEFT FACE
+	glColor3f(50.0f, 50.0f, 0.0f);
 	glVertex3f(half, half, -half);
 	glVertex3f(half, -half, half);
+	glVertex3f(half, -half, -half);
+	glVertex3f(half, half, -half);
 	glVertex3f(half, half, half);
-	glVertex3f(half, half, -half);
-
+	glVertex3f(half, -half, half);
+	
+	//TOP FACE
 	glColor3f(0.0f, 0.0f, 100.0f);
+	glVertex3f(-half, half, half);
+	glVertex3f(half, half, -half);
 	glVertex3f(-half, half, -half);
-	glVertex3f(half, half, -half);
-	glVertex3f(-half, half, half);
-	glVertex3f(half, half, -half);
-	glVertex3f(half, half, half);
-	glVertex3f(-half, half, half);
-
-	glColor3f(100.0f, 0.0f, 0.0f);
-	glVertex3f(-half, -half, half);
-	glVertex3f(-half, half, half);
-	glVertex3f(half, -half, half);
-	glVertex3f(half, -half, half);
 	glVertex3f(-half, half, half);
 	glVertex3f(half, half, half);
-
+	glVertex3f(half, half, -half);
+	
+	//RIGHT FACE
 	glColor3f(0.0f, 100.0f, 0.0f);
+	glVertex3f(-half, -half, half);
+	glVertex3f(-half, half, -half);
 	glVertex3f(-half, -half, -half);
-	glVertex3f(-half, half, -half);
-	glVertex3f(-half, -half, half);
-	glVertex3f(-half, -half, half);
-	glVertex3f(-half, half, -half);
 	glVertex3f(-half, half, half);
-
-	glColor3f(0.0f, 0.0f, 100.0f);
+	glVertex3f(-half, half, -half);
+	glVertex3f(-half, -half, half);
+	
+	//BOTTOM FACE
+	glColor3f(0.0f, 50.0f, 50.0f);
+	glVertex3f(half, -half, -half);
+	glVertex3f(-half, -half, half);
 	glVertex3f(-half, -half, -half);
-	glVertex3f(-half, -half, half);
-	glVertex3f(half, -half, -half);
-	glVertex3f(half, -half, -half);
-	glVertex3f(-half, -half, half);
 	glVertex3f(half, -half, half);
-
+	glVertex3f(-half, -half, half);
+	glVertex3f(half, -half, -half);
+	
 	glEnd();
 
 	glPopMatrix();
@@ -362,6 +370,34 @@ void ModuleRender::DrawSphere(float x, float y, float z)const
 	glVertexPointer(3, GL_FLOAT, 0, nullptr);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereIndex);
 	glDrawElements(GL_QUADS, sphereIndicesSize, GL_UNSIGNED_SHORT, nullptr);
+
+	glPopMatrix();
+}
+
+void ModuleRender::SetUpGrid() const
+{
+}
+
+void ModuleRender::DrawGrid() const
+{
+	glPushMatrix();
+
+	glBegin(GL_LINES);
+	glColor3f(220, 220, 220);
+
+	float step = 1.0f;
+	float length = 1000.0f;
+
+	for (float r = -length; r <= length; r += step)
+	{
+		glVertex3f(-length, 0, r);
+		glVertex3f(length, 0, r);
+
+		glVertex3f(r, 0, -length);
+		glVertex3f(r, 0, length);
+	}
+
+	glEnd();
 
 	glPopMatrix();
 }

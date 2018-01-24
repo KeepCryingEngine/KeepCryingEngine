@@ -28,6 +28,9 @@ private:
 	void DrawCubeIndices(float x, float y, float z) const;
 	void DrawSphere(float x, float y, float z) const;
 
+	void SetUpGrid() const;
+	void DrawGrid() const;
+
 private:
 	uint bigArrayCube = 0;
 	uint vertexArrayBuffer = 0;

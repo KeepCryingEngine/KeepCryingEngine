@@ -16,12 +16,12 @@ ModuleCamera::~ModuleCamera()
 bool ModuleCamera::Init()
 {
 	frustum.type = PerspectiveFrustum;
-	frustum.pos = float3(0, 0, 0);
+	frustum.pos = float3(0, 1, 0);
 	frustum.front = float3(0, 0, -1);
 	frustum.up = float3(0, 1, 0);
 	frustum.nearPlaneDistance = 0.1;
 	frustum.farPlaneDistance = 50;
-	frustum.verticalFov = 0.523599f; //30 degrees in radians
+	frustum.verticalFov = 1.0472f; //60 degrees in radians
 	frustum.horizontalFov = 2.0f * atan(tan(frustum.verticalFov / 2.0f)*((float)SCREEN_WIDTH/(float)SCREEN_HEIGHT));
 	return true;
 }
@@ -150,8 +150,9 @@ void ModuleCamera::LookAt(float3 point)
 
 float4x4 ModuleCamera::GetViewMatrix()const
 {
-	return float4x4(frustum.ViewMatrix().Transposed3());
+	return float4x4(frustum.ViewMatrix()).Transposed();
 }
+
 float4x4 ModuleCamera::GetProyectionMatrix()const
 {
 	return frustum.ProjectionMatrix().Transposed();
