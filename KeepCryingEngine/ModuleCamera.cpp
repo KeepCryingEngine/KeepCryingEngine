@@ -202,11 +202,16 @@ void ModuleCamera::MovementMouse(float shiftDeltaMultiplier)
 
 void ModuleCamera::MovementMouseDrag(float shiftDeltaMultiplier)
 {
-	float3 translateVector = float3(App->input->GetMouseMotion(), 0.0f);
+	float2 translateVector = App->input->GetMouseMotion();
+
+	translateVector *= movementDragSpeed * shiftDeltaMultiplier;
 
 	translateVector.x *= -1.0f;
 
-	frustum.Translate(translateVector * movementDragSpeed * shiftDeltaMultiplier);
+	float3 upMovement = translateVector.y * frustum.up;
+	float3 rightMovement = translateVector.x * frustum.WorldRight();
+
+	frustum.Translate(upMovement + rightMovement);
 }
 
 void ModuleCamera::MovementMouseOrbit(float shiftDeltaMultiplier)
@@ -216,37 +221,12 @@ void ModuleCamera::MovementMouseZoom(float shiftDeltaMultiplier)
 {
 	float2 translateVector = App->input->GetMouseMotion();
 
+	// Input is the inverse of what we need
 	translateVector.x *= -1.0f;
 
 	float movementZ = translateVector.y - translateVector.x;
 
 	frustum.Translate(frustum.front * movementZ * shiftDeltaMultiplier);
-
-	// frustum.Translate(translateVector * movementZoomSpeed * shiftDeltaMultiplier);
-
-	// +y, -x -> z+
-	// z-
-
-	/*
-	
-	if(+y, -x)
-	{
-		translateVector += (abs(x) + abs(y)) * frustum.front;
-	}
-	
-	*/
-
-	/*if(App->input->GetKey(SDL_SCANCODE_W))
-	{
-		translateVector += frustum.front;
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_S))
-	{
-		translateVector -= frustum.front;
-	}
-
-	frustum.Translate(translateVector * movementZoomSpeed * shiftDeltaMultiplier);*/
 }
 
 void ModuleCamera::MovementKeyBoard(float shiftDeltaMultiplier)
