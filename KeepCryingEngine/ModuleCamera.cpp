@@ -318,7 +318,7 @@ void ModuleCamera::MovementMouseZoom(float shiftDeltaMultiplier)
 
 	float movementZ = translateVector.y - translateVector.x;
 
-	frustum.Translate(frustum.front * movementZ * shiftDeltaMultiplier);
+	frustum.Translate(frustum.front * movementZoomSpeed * movementZ * shiftDeltaMultiplier);
 }
 
 void ModuleCamera::MovementKeyBoard(float shiftDeltaMultiplier)
