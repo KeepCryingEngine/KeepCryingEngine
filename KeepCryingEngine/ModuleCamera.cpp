@@ -202,11 +202,16 @@ void ModuleCamera::MovementMouse(float shiftDeltaMultiplier)
 
 void ModuleCamera::MovementMouseDrag(float shiftDeltaMultiplier)
 {
-	float3 translateVector = float3(App->input->GetMouseMotion(), 0.0f);
+	float2 translateVector = App->input->GetMouseMotion();
+
+	translateVector *= movementDragSpeed * shiftDeltaMultiplier;
 
 	translateVector.x *= -1.0f;
 
-	frustum.Translate(translateVector * movementDragSpeed * shiftDeltaMultiplier);
+	float3 upMovement = translateVector.y * frustum.up;
+	float3 rightMovement = translateVector.x * frustum.WorldRight();
+
+	frustum.Translate(upMovement + rightMovement);
 }
 
 void ModuleCamera::MovementMouseOrbit(float shiftDeltaMultiplier)
