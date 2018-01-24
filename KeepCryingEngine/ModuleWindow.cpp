@@ -27,16 +27,14 @@ bool ModuleWindow::Init()
 	}
 	else
 	{
-		int width = SCREEN_WIDTH;
-		int height = SCREEN_HEIGHT;
-		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
 		if(FULLSCREEN)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
 
-		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
 
 		if(!window)
 		{

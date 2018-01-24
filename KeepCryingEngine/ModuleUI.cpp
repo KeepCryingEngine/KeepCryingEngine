@@ -92,8 +92,8 @@ void ModuleUI::DrawToolsMenu()
 	ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi);
 	App->camera->SetFOV(verticalFOV);
 
+	aspectRatio = App->camera->GetAspectRatio();
 	ImGui::InputFloat("Aspect ratio", &aspectRatio);
-	App->camera->SetAspectRatio(aspectRatio);
 
 	//No usable until having the camera move
 	ImGui::DragFloat("Mov. speed", &movSpeed, 0.5f, 0.0f, 100.0f, "%.2f");

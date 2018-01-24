@@ -13,7 +13,7 @@ public:
 	bool Init() override;
 
 	void SetFOV(float radians);
-	void SetAspectRatio(float aspect);
+	void SetAspectRatio();
 	void SetNearPlane(float distance);
 	void SetFarPlane(float distance);
 	void SetPosition(float3 position);

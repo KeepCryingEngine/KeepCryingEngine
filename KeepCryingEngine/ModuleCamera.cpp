@@ -17,24 +17,24 @@ bool ModuleCamera::Init()
 {
 	frustum.type = PerspectiveFrustum;
 	frustum.pos = float3(0, 0, 0);
-	frustum.front = float3(0, 0, 1);
+	frustum.front = float3(0, 0, -1);
 	frustum.up = float3(0, 1, 0);
 	frustum.nearPlaneDistance = 0.1;
 	frustum.farPlaneDistance = 50;
-	frustum.horizontalFov = pi/2;
-	frustum.verticalFov = pi/2;
+	frustum.verticalFov = 0.523599f; //30 degrees in radians
+	frustum.horizontalFov = 2.0f * atan(tan(frustum.verticalFov / 2.0f)*((float)SCREEN_WIDTH/(float)SCREEN_HEIGHT));
 	return true;
 }
 
 void ModuleCamera::SetFOV(float radians)
 {
-	float fovH = 2 * atan(tan(radians / 2)*(SCREEN_WIDTH / SCREEN_HEIGHT));
+	float fovH = 2.0f * atan(tan(radians / 2.0f)*((float)App->window->width / (float)App->window->height));
 	frustum.horizontalFov = fovH;
 	frustum.verticalFov = radians;
 }
-void ModuleCamera::SetAspectRatio(float aspect)
+void ModuleCamera::SetAspectRatio()
 {
-	float fovH = 2 * atan(tan(frustum.verticalFov / 2)*aspect);
+	float fovH = 2 * atan(tan(frustum.verticalFov / 2)*((float)App->window->width/(float)App->window->height));
 	frustum.horizontalFov = fovH;
 }
 void ModuleCamera::SetNearPlane(float distance)
@@ -81,7 +81,6 @@ void ModuleCamera::LookAt(float3 point)
 	float3 up_camera = Cross(forward_camera,left_camera).Normalized();
 	frustum.front = forward_camera;
 	frustum.up = up_camera;
-
 }
 
 float4x4 ModuleCamera::GetViewMatrix()const

@@ -84,6 +84,11 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 				switch(event.window.event)
 				{
 					//case SDL_WINDOWEVENT_LEAVE:
+					case SDL_WINDOWEVENT_RESIZED:
+						SDL_GetWindowSize(App->window->window, &App->window->width, &App->window->height);
+						App->camera->SetAspectRatio();
+						break;
+
 					case SDL_WINDOWEVENT_HIDDEN:
 					case SDL_WINDOWEVENT_MINIMIZED:
 					case SDL_WINDOWEVENT_FOCUS_LOST:

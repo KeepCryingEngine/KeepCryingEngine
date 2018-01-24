@@ -18,8 +18,9 @@ public:
 	bool CleanUp() override;
 
 public:
-
 	SDL_Window* window = nullptr;
+	int width = SCREEN_WIDTH;
+	int height = SCREEN_HEIGHT;
 };
 
 #endif // !_MODULEWINDOW_H_

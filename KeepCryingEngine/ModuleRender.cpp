@@ -43,7 +43,6 @@ bool ModuleRender::Init()
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glClearDepth(1.0f);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -82,10 +81,10 @@ update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-	 //DrawCubeDirect(-0.5f, 0.0f, 10.0f);
-	 DrawCubeBigArray(-5.0f, 0.0f, 10.0f);
-	 DrawCubeIndices(0.0f, 0.0f, 2.0f);
-	 DrawSphere(-0.5f, -5.0f, 0.0f);
+	DrawCubeDirect(0.0f, 0.0f, -10.0f);
+	 //DrawCubeBigArray(-5.0f, 0.0f, -10.0f);
+	 //DrawCubeIndices(0.0f, 0.0f, -2.0f);
+	 //DrawSphere(-0.5f, -5.0f, 0.0f);
 
 	SDL_GL_SwapWindow(App->window->window);
 
@@ -264,45 +263,45 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	glVertex3f(half, half, -half);
 	glVertex3f(-half, half, -half);
 
-	glColor3f(0.0f, 100.0f, 0.0f);
-	glVertex3f(half, -half, -half);
-	glVertex3f(half, -half, half);
-	glVertex3f(half, half, -half);
-	glVertex3f(half, -half, half);
-	glVertex3f(half, half, half);
-	glVertex3f(half, half, -half);
+	//glColor3f(0.0f, 100.0f, 0.0f);
+	//glVertex3f(half, -half, -half);
+	//glVertex3f(half, -half, half);
+	//glVertex3f(half, half, -half);
+	//glVertex3f(half, -half, half);
+	//glVertex3f(half, half, half);
+	//glVertex3f(half, half, -half);
 
-	glColor3f(0.0f, 0.0f, 100.0f);
-	glVertex3f(-half, half, -half);
-	glVertex3f(half, half, -half);
-	glVertex3f(-half, half, half);
-	glVertex3f(half, half, -half);
-	glVertex3f(half, half, half);
-	glVertex3f(-half, half, half);
+	//glColor3f(0.0f, 0.0f, 100.0f);
+	//glVertex3f(-half, half, -half);
+	//glVertex3f(half, half, -half);
+	//glVertex3f(-half, half, half);
+	//glVertex3f(half, half, -half);
+	//glVertex3f(half, half, half);
+	//glVertex3f(-half, half, half);
 
-	glColor3f(100.0f, 0.0f, 0.0f);
-	glVertex3f(-half, -half, half);
-	glVertex3f(-half, half, half);
-	glVertex3f(half, -half, half);
-	glVertex3f(half, -half, half);
-	glVertex3f(-half, half, half);
-	glVertex3f(half, half, half);
+	//glColor3f(100.0f, 0.0f, 0.0f);
+	//glVertex3f(-half, -half, half);
+	//glVertex3f(-half, half, half);
+	//glVertex3f(half, -half, half);
+	//glVertex3f(half, -half, half);
+	//glVertex3f(-half, half, half);
+	//glVertex3f(half, half, half);
 
-	glColor3f(0.0f, 100.0f, 0.0f);
-	glVertex3f(-half, -half, -half);
-	glVertex3f(-half, half, -half);
-	glVertex3f(-half, -half, half);
-	glVertex3f(-half, -half, half);
-	glVertex3f(-half, half, -half);
-	glVertex3f(-half, half, half);
+	//glColor3f(0.0f, 100.0f, 0.0f);
+	//glVertex3f(-half, -half, -half);
+	//glVertex3f(-half, half, -half);
+	//glVertex3f(-half, -half, half);
+	//glVertex3f(-half, -half, half);
+	//glVertex3f(-half, half, -half);
+	//glVertex3f(-half, half, half);
 
-	glColor3f(0.0f, 0.0f, 100.0f);
-	glVertex3f(-half, -half, -half);
-	glVertex3f(-half, -half, half);
-	glVertex3f(half, -half, -half);
-	glVertex3f(half, -half, -half);
-	glVertex3f(-half, -half, half);
-	glVertex3f(half, -half, half);
+	//glColor3f(0.0f, 0.0f, 100.0f);
+	//glVertex3f(-half, -half, -half);
+	//glVertex3f(-half, -half, half);
+	//glVertex3f(half, -half, -half);
+	//glVertex3f(half, -half, -half);
+	//glVertex3f(-half, -half, half);
+	//glVertex3f(half, -half, half);
 
 	glEnd();
 
