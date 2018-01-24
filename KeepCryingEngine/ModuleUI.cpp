@@ -84,24 +84,38 @@ void ModuleUI::DrawMainMenu()
 
 void ModuleUI::DrawToolsMenu()
 {
-	ImGui::DragFloat("Near plane", &nearPlane, 0.01f, 0.01f, 2.0f, "%.2f");
-	App->camera->SetNearPlane(nearPlane);
+	if(ImGui::BeginMenu("Frustum"))
+	{
+		ImGui::InputFloat3("Position", position.ptr(), 2);
 
-	ImGui::DragFloat("Far plane", &farPlane, 2.0f, 50.0f, 300.0f, "%.2f");
-	App->camera->SetFarPlane(farPlane);
+		ImGui::DragFloat("Near plane", &nearPlane, 0.01f, 0.01f, 2.0f, "%.2f");
+		App->camera->SetNearPlane(nearPlane);
+		ImGui::DragFloat("Far plane", &farPlane, 2.0f, 50.0f, 300.0f, "%.2f");
+		App->camera->SetFarPlane(farPlane);
 
-	ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi);
-	App->camera->SetFOV(verticalFOV);
+		ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi);
+		App->camera->SetFOV(verticalFOV);
 
-	aspectRatio = App->camera->GetAspectRatio();
-	ImGui::InputFloat("Aspect ratio", &aspectRatio);
+		aspectRatio = App->camera->GetAspectRatio();
+		ImGui::InputFloat("Aspect ratio", &aspectRatio);
+		
+		ImGui::EndMenu();
+	}
+	if(ImGui::BeginMenu("Speeds"))
+	{
+		//No usable until having the camera move
+		ImGui::DragFloat("Mov. speed", &movSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+		ImGui::DragFloat("Rot. speed", &rotSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+		ImGui::EndMenu();
+	}
+	if(ImGui::BeginMenu("Style"))
+	{
+		ImGui::DragFloat3("Background color", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
+		ImGui::EndMenu();
+	}
 
-	//No usable until having the camera move
-	ImGui::DragFloat("Mov. speed", &movSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
-	ImGui::DragFloat("Rot. speed", &rotSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
 
-	ImGui::InputFloat3("Position", position.ptr(), 2);
-	ImGui::DragFloat3("Background color", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
+	
 
 	//Add LookAt
 }
