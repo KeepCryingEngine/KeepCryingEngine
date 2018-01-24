@@ -19,13 +19,20 @@ public:
 	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
 private:
+	void CallWindows();
 	void DrawMainMenu();
 	void DrawAboutMenu();
-	void DrawToolsMenu();
+	void DrawCameraWindow();
+	void DrawSpeedWindow();
+	void DrawStyleWindow();
 
 private:
-	bool cameraWindow = false;
+	//One bool control for each window
+	bool cameraWindow = true;
+	bool speedWindow = true;
+	bool styleWindow = true;
 
+	//Probably there's a better way of doing this thing...
 	float movementSpeed = 10.0f;
 	float rotationSpeed = 2.0f;
 	float dragSpeed = 3.0f;
