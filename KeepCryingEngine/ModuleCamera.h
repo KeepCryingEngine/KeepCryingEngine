@@ -18,16 +18,31 @@ public:
 	void SetNearPlane(float distance);
 	void SetFarPlane(float distance);
 	void SetPosition(float3 position);
+	void SetMoveSpeed(float speed);
+	void SetRotationSpeed(float speed);
+	void SetDragSpeed(float speed);
+	void SetOrbitSpeed(float speed);
+	void SetZoomSpeed(float speed);
+
+	float GetMoveSpeed() const;
+	float GetRotationSpeed() const;
+	float GetDragSpeed() const;
+	float GetOrbitSpeed() const;
+	float GetZoomSpeed() const;
 	float GetFOV() const;
 	float GetAspectRatio() const;
 	float GetNearPlane() const;
 	float GetFarPlane() const;
 	float3 GetPosition() const;
-	float3 Orientation() const;
-	void LookAt(float3 point);
-
 	float4x4 GetViewMatrix() const;
 	float4x4 GetProyectionMatrix() const;
+
+	float3 GetUpVector() const;
+	float3 GetSideVector() const;
+	float3 GetFrontVector() const;
+	void LookAt(float3 point);
+
+
 
 private:
 	void SetUpFrustum();

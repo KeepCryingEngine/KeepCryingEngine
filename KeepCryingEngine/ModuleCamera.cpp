@@ -38,6 +38,31 @@ update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
 	return update_status::UPDATE_CONTINUE;
 }
 
+void ModuleCamera::SetMoveSpeed(float speed)
+{
+	movementSpeed = speed;
+}
+
+void ModuleCamera::SetRotationSpeed(float speed)
+{
+	rotationSpeed = speed;
+}
+
+void ModuleCamera::SetDragSpeed(float speed)
+{
+	movementDragSpeed = speed;
+}
+
+void ModuleCamera::SetOrbitSpeed(float speed)
+{
+	movementOrbitSpeed = speed;
+}
+
+void ModuleCamera::SetZoomSpeed(float speed)
+{
+	movementZoomSpeed = speed;
+}
+
 void ModuleCamera::SetFOV(float radians)
 {
 	frustum.horizontalFov = ComputeHorizontalFov(radians, (float)App->window->width, (float)App->window->height);
@@ -62,6 +87,31 @@ void ModuleCamera::SetFarPlane(float distance)
 void ModuleCamera::SetPosition(float3 position)
 {
 	frustum.pos = position;
+}
+
+float ModuleCamera::GetMoveSpeed() const
+{
+	return movementSpeed;
+}
+
+float ModuleCamera::GetRotationSpeed() const
+{
+	return rotationSpeed;
+}
+
+float ModuleCamera::GetDragSpeed() const
+{
+	return movementDragSpeed;
+}
+
+float ModuleCamera::GetOrbitSpeed() const
+{
+	return movementOrbitSpeed;
+}
+
+float ModuleCamera::GetZoomSpeed() const
+{
+	return movementZoomSpeed;
 }
 
 float ModuleCamera::GetFOV() const
@@ -89,9 +139,19 @@ float3 ModuleCamera::GetPosition() const
 	return frustum.pos;
 }
 
-float3 ModuleCamera::Orientation() const
+float3 ModuleCamera::GetFrontVector() const
 {
 	return frustum.front;
+}
+
+float3 ModuleCamera::GetUpVector() const
+{
+	return frustum.up;
+}
+
+float3 ModuleCamera::GetSideVector() const
+{
+	return Cross(frustum.front, frustum.up);
 }
 
 void ModuleCamera::LookAt(float3 point)
