@@ -30,11 +30,26 @@ public:
 	float4x4 GetProyectionMatrix() const;
 
 private:
-	Frustum frustum;
-	float movementSpeed = 10.0f;
-	float rotationSpeed = 10.0f;
+	void SetUpFrustum();
+	float ComputeHorizontalFov(float radians, float width, float height) const;
 
-	static const float SHIFT_MOVEMENT_MULTIPLIER;
+	void MovementMouse(float shiftDeltaMultiplier);
+	void MovementMouseDrag(float shiftDeltaMultiplier);
+	void MovementMouseOrbit(float shiftDeltaMultiplier);
+	void MovementMouseZoom(float shiftDeltaMultiplier);
+
+	void MovementKeyBoard(float shiftDeltaMultiplier);
+
+private:
+	Frustum frustum;
+
+	float movementSpeed = 10.0f;
+	float rotationSpeed = 2.0f;
+	float movementDragSpeed = 3.0f;
+	float movementObritSpeed = 3.0f;
+	float movementZoomSpeed = 3.0f;
+
+	static const float SHIFT_MULTIPLIER;
 };
 
 #endif // !_MODULECAMERA_H_
