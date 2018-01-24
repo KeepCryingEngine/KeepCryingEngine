@@ -81,13 +81,9 @@ update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-<<<<<<< HEAD
-	 DrawCubeDirect(5.0f, -5.0f, -10.0f);
-=======
 	DrawGrid();
-
-	DrawCubeDirect(0.0f, 0.0f, -10.0f);
->>>>>>> 6f933176a75a6c94b2416b0603f5cb4e2a7f6c40
+	DrawCubeDirect(2.0f, 2.0f, -10.0f);
+		
 	 //DrawCubeBigArray(-5.0f, 0.0f, -10.0f);
 	 //DrawCubeIndices(0.0f, 0.0f, -2.0f);
 	 //DrawSphere(0.0f, -2.0f, 2.0f);
