@@ -71,6 +71,7 @@ void ModuleCamera::SetFOV(float radians)
 
 void ModuleCamera::SetAspectRatio()
 {
+	//Aspect ratio IS NOT set directly. To modify it, we must modify HorizontalFOV -> As a result, the Aspect Ratio (tan(hFOV/2)*tan(vFOV/2)) will be modified.
 	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->window->width, (float)App->window->height);
 }
 
