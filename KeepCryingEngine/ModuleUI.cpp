@@ -31,6 +31,14 @@ bool ModuleUI::Start()
 	aspectRatio = App->camera->GetAspectRatio();
 	verticalFOV = App->camera->GetFOV();
 	position = App->camera->GetPosition();
+	up = App->camera->GetUpVector();
+	front = App->camera->GetFrontVector();
+	side = App->camera->GetSideVector();
+	movementSpeed = App->camera->GetMoveSpeed();
+	rotationSpeed = App->camera->GetRotationSpeed();
+	dragSpeed = App->camera->GetDragSpeed();
+	orbitSpeed = App->camera->GetOrbitSpeed();
+	zoomSpeed = App->camera->GetZoomSpeed();
 
 	return true;
 }
@@ -65,7 +73,7 @@ void ModuleUI::DrawMainMenu()
 	{
 		if(ImGui::BeginMainMenuBar())
 		{
-			if(ImGui::BeginMenu("Tools"))
+			if(ImGui::BeginMenu("Windows"))
 			{
 				DrawToolsMenu();
 				ImGui::EndMenu();
@@ -84,28 +92,41 @@ void ModuleUI::DrawMainMenu()
 
 void ModuleUI::DrawToolsMenu()
 {
-	if(ImGui::BeginMenu("Frustum"))
+	if(ImGui::BeginMenu("Tools"))
 	{
-		ImGui::InputFloat3("Position", position.ptr(), 2);
+		ImGui::InputFloat3("Front", front.ptr(), 2);
+		front = App->camera->GetFrontVector();
+		ImGui::InputFloat3("Up", up.ptr(), 2);
+		up = App->camera->GetUpVector();
+		ImGui::InputFloat3("Side", side.ptr(), 2);
+		side = App->camera->GetSideVector();
+		ImGui::InputFloat3("Camera Pos.", position.ptr(), 2);
+		
+		ImGui::NewLine();
 
+		position = App->camera->GetPosition();
 		ImGui::DragFloat("Near plane", &nearPlane, 0.01f, 0.01f, 2.0f, "%.2f");
 		App->camera->SetNearPlane(nearPlane);
 		ImGui::DragFloat("Far plane", &farPlane, 2.0f, 50.0f, 300.0f, "%.2f");
 		App->camera->SetFarPlane(farPlane);
-
 		ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi);
 		App->camera->SetFOV(verticalFOV);
-
 		aspectRatio = App->camera->GetAspectRatio();
-		ImGui::InputFloat("Aspect ratio", &aspectRatio);
-		
+		ImGui::InputFloat("Aspect ratio", &aspectRatio);	
 		ImGui::EndMenu();
 	}
 	if(ImGui::BeginMenu("Speeds"))
 	{
-		//No usable until having the camera move
-		ImGui::DragFloat("Mov. speed", &movSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
-		ImGui::DragFloat("Rot. speed", &rotSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+		ImGui::DragFloat("Mov. speed", &movementSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+		App->camera->SetMoveSpeed(movementSpeed);
+		ImGui::DragFloat("Rot. speed", &rotationSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+		App->camera->SetRotationSpeed(rotationSpeed);
+		ImGui::DragFloat("Drag speed", &dragSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+		App->camera->SetDragSpeed(dragSpeed);
+		ImGui::DragFloat("Orbit speed", &orbitSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+		App->camera->SetOrbitSpeed(orbitSpeed);
+		ImGui::DragFloat("Zoom speed", &zoomSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
+		App->camera->SetZoomSpeed(zoomSpeed);
 		ImGui::EndMenu();
 	}
 	if(ImGui::BeginMenu("Style"))
@@ -113,11 +134,6 @@ void ModuleUI::DrawToolsMenu()
 		ImGui::DragFloat3("Background color", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
 		ImGui::EndMenu();
 	}
-
-
-	
-
-	//Add LookAt
 }
 
 void ModuleUI::DrawAboutMenu()
@@ -128,6 +144,8 @@ void ModuleUI::DrawAboutMenu()
 	}
 
 	ImGui::Text("Improved CryEngine version");
+
+	ImGui::NewLine();
 
 	ImGui::Text("Authors:");
 
@@ -140,7 +158,7 @@ void ModuleUI::DrawAboutMenu()
 	{
 		ShellExecute(nullptr, TEXT("open"), TEXT("https://github.com/gerardpf2"), nullptr, nullptr, 0);
 	}
-	if(ImGui::Button("Pere Senor de los Loros"))
+	if(ImGui::Button("Pere Viader Masuet"))
 	{
 		ShellExecute(nullptr, TEXT("open"), TEXT("https://github.com/PereViader"), nullptr, nullptr, 0);
 	}
@@ -149,6 +167,8 @@ void ModuleUI::DrawAboutMenu()
 		ShellExecute(nullptr, TEXT("open"), TEXT("https://github.com/BravoXavi"), nullptr, nullptr, 0);
 	}
 	ImGui::Unindent();
+
+	ImGui::NewLine();
 
 	ImGui::Text("3rd Party Libraries used:");
 
@@ -159,6 +179,8 @@ void ModuleUI::DrawAboutMenu()
 	ImGui::BulletText("MathGeolib 1.5");
 	ImGui::BulletText("OpenGL 3.1");
 	ImGui::Unindent();
+
+	ImGui::NewLine();
 
 	ImGui::Text("License:");
 

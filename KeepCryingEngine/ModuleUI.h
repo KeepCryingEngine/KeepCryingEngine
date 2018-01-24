@@ -24,13 +24,21 @@ private:
 	void DrawToolsMenu();
 
 private:
+	bool cameraWindow = false;
+
+	float movementSpeed = 10.0f;
+	float rotationSpeed = 2.0f;
+	float dragSpeed = 3.0f;
+	float orbitSpeed = 3.0f;
+	float zoomSpeed = 3.0f;
 	float verticalFOV = 1.0f;
 	float aspectRatio = 0.0f;
 	float nearPlane = 0.1f;
 	float farPlane = 50.0f;
-	float movSpeed = 0.0f;
-	float rotSpeed = 0.0f;
 	float3 position = { 0.0f, 0.0f, 0.0f };
+	float3 up = { 0.0f, 0.0f, 0.0f };
+	float3 front = { 0.0f, 0.0f, 0.0f };
+	float3 side = { 0.0f, 0.0f, 0.0f };
 	float clearColor[3] = { 0.0f, 0.0f, 0.0f };
 };
 
