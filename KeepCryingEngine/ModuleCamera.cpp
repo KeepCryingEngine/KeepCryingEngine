@@ -16,7 +16,7 @@ ModuleCamera::~ModuleCamera()
 bool ModuleCamera::Init()
 {
 	frustum.type = PerspectiveFrustum;
-	frustum.pos = float3(0, 0, 0);
+	frustum.pos = float3(0, 1, 0);
 	frustum.front = float3(0, 0, -1);
 	frustum.up = float3(0, 1, 0);
 	frustum.nearPlaneDistance = 0.1;
@@ -85,8 +85,9 @@ void ModuleCamera::LookAt(float3 point)
 
 float4x4 ModuleCamera::GetViewMatrix()const
 {
-	return float4x4(frustum.ViewMatrix().Transposed3());
+	return float4x4(frustum.ViewMatrix()).Transposed();
 }
+
 float4x4 ModuleCamera::GetProyectionMatrix()const
 {
 	return frustum.ProjectionMatrix().Transposed();

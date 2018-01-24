@@ -376,8 +376,6 @@ void ModuleRender::DrawGrid() const
 {
 	glPushMatrix();
 
-	glTranslatef(0, -10, 0);
-
 	glBegin(GL_LINES);
 
 	float step = 5.0f;
