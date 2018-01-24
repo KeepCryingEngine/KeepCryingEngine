@@ -189,11 +189,17 @@ float3 ModuleCamera::Orientation() const
 
 void ModuleCamera::LookAt(float3 point)
 {
-	float3 forward_camera = (point - frustum.pos).Normalized();
-	float3 left_camera = Cross(float3::unitY, forward_camera).Normalized();
-	float3 up_camera = Cross(forward_camera, left_camera).Normalized();
-	frustum.front = forward_camera;
-	frustum.up = up_camera;
+	float3 lookAtDirectionNormalized = (point - frustum.pos).Normalized();
+
+	Quat lookAtRotation = Quat::LookAt(
+		frustum.front,
+		lookAtDirectionNormalized,
+		frustum.up,
+		float3::unitY
+	);
+
+	frustum.front = lookAtRotation.Mul(frustum.front);
+	frustum.up = lookAtRotation.Mul(frustum.up);
 }
 
 float4x4 ModuleCamera::GetViewMatrix()const
