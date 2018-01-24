@@ -221,37 +221,12 @@ void ModuleCamera::MovementMouseZoom(float shiftDeltaMultiplier)
 {
 	float2 translateVector = App->input->GetMouseMotion();
 
+	// Input is the inverse of what we need
 	translateVector.x *= -1.0f;
 
 	float movementZ = translateVector.y - translateVector.x;
 
 	frustum.Translate(frustum.front * movementZ * shiftDeltaMultiplier);
-
-	// frustum.Translate(translateVector * movementZoomSpeed * shiftDeltaMultiplier);
-
-	// +y, -x -> z+
-	// z-
-
-	/*
-	
-	if(+y, -x)
-	{
-		translateVector += (abs(x) + abs(y)) * frustum.front;
-	}
-	
-	*/
-
-	/*if(App->input->GetKey(SDL_SCANCODE_W))
-	{
-		translateVector += frustum.front;
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_S))
-	{
-		translateVector -= frustum.front;
-	}
-
-	frustum.Translate(translateVector * movementZoomSpeed * shiftDeltaMultiplier);*/
 }
 
 void ModuleCamera::MovementKeyBoard(float shiftDeltaMultiplier)
