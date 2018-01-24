@@ -79,10 +79,24 @@ update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 	return update_status::UPDATE_CONTINUE;
 }
 
-update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 {
 	DrawGrid();
 	DrawCubeDirect(2.0f, 2.0f, -10.0f);
+
+	//DrawCubeBigArray(-5.0f, 0.0f, -10.0f);
+	//DrawCubeIndices(0.0f, 0.0f, -2.0f);
+	//DrawSphere(0.0f, -2.0f, 2.0f);
+
+	// SDL_GL_SwapWindow(App->window->window);
+
+	return update_status::UPDATE_CONTINUE;
+}
+
+update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
+{
+	// DrawGrid();
+	// DrawCubeDirect(2.0f, 2.0f, -10.0f);
 		
 	 //DrawCubeBigArray(-5.0f, 0.0f, -10.0f);
 	 //DrawCubeIndices(0.0f, 0.0f, -2.0f);

@@ -16,6 +16,7 @@ public:
 
 	bool Init() override;
 	update_status PreUpdate(float deltaTimeS, float realDeltaTimeS) override;
+	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
 	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
 	bool CleanUp() override;
 

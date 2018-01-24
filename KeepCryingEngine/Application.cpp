@@ -7,8 +7,8 @@ Application::Application()
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(camera = new ModuleCamera());//We need it before render
-	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(ui = new ModuleUI());
+	modules.push_back(renderer = new ModuleRender());
 	
 
 	modules.push_back(new ModuleTestJson());

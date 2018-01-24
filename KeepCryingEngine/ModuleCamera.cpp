@@ -2,16 +2,13 @@
 #include "Application.h"
 #include "Globals.h"
 
+const float ModuleCamera::SHIFT_MOVEMENT_MULTIPLIER = 10.0f;
 
 ModuleCamera::ModuleCamera()
-{
-
-}
+{ }
 
 ModuleCamera::~ModuleCamera()
-{
-
-}
+{ }
 
 bool ModuleCamera::Init()
 {
@@ -21,79 +18,113 @@ bool ModuleCamera::Init()
 	frustum.up = float3(0, 1, 0);
 	frustum.nearPlaneDistance = 0.1;
 	frustum.farPlaneDistance = 50;
-	frustum.verticalFov = 1.0472f; //60 degrees in radians
+	frustum.verticalFov = DegToRad(60.0f); // 1.0472f; //60 degrees in radians
 	frustum.horizontalFov = 2.0f * atan(tan(frustum.verticalFov / 2.0f)*((float)SCREEN_WIDTH/(float)SCREEN_HEIGHT));
+	
 	return true;
 }
 
 update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
 {
+	if(App->input->GetKey(SDL_SCANCODE_I))
+	{
+		Init(); // Jaja
+	}
+
 	//Rotation
-	float3x3 rotationMatrix;
-	rotationMatrix.SetIdentity();
+	// float3x3 rotationMatrix;
+	// rotationMatrix.SetIdentity();
+	Quat rotation = Quat::identity;
+
 	if(App->input->GetKey(SDL_SCANCODE_UP))
 	{
-		float timeBasedSpeed = rotationSpeed * deltaTimeS;
-		if(frustum.front.y < 0.9)
+		/*float deltaTimeRotation = rotationSpeed * deltaTimeS * 0.5f;
+		float angleBetween = frustum.front.AngleBetweenNorm(float3::unitY);
+		float rotationAngle = min(deltaTimeRotation, angleBetween);
+		rotation = rotation.Mul(Quat::RotateAxisAngle(frustum.WorldRight(), rotationAngle));
+		*/// frustum.Transform(rotation);
+		// frustum.up = rotation.Mul(frustum.up);
+		// frustum.front = rotation.Mul(frustum.front);
+
+		if(frustum.front.y < 1 - 0.1f*rotationSpeed * deltaTimeS)
 		{
-			float3x3 temp(1.0f, 0.0f, 0.0f, 0.0f, cos(timeBasedSpeed), -sin(timeBasedSpeed), 0.0f, sin(timeBasedSpeed), cos(timeBasedSpeed));
-			rotationMatrix = rotationMatrix * temp;
+			rotation = rotation.Mul(Quat::RotateAxisAngle(frustum.WorldRight(), 0.1f*rotationSpeed * deltaTimeS));
 		}
+
+		/*if(frustum.front.y < 1 - 0.1f*rotationSpeed * deltaTimeS)
+		{
+			float timeBasedSpeed = 0.1f*rotationSpeed * deltaTimeS;
+			// Quat rotation = Quat::RotateAxisAngle(frustum.WorldRight(), timeBasedSpeed);
+			Quat rotation = Quat::RotateX(0.1f*rotationSpeed * deltaTimeS);
+			frustum.Transform(rotation);
+		}*/
 	}
 	if(App->input->GetKey(SDL_SCANCODE_DOWN))
 	{
-		float timeBasedSpeed = -rotationSpeed * deltaTimeS;
-		if(frustum.front.y > -0.9)
+		if(frustum.front.y > -1 + 0.1f*rotationSpeed * deltaTimeS)
 		{
-			float3x3 temp(1.0f, 0.0f, 0.0f, 0.0f, cos(timeBasedSpeed), -sin(timeBasedSpeed), 0.0f, sin(timeBasedSpeed), cos(timeBasedSpeed));
-			rotationMatrix = rotationMatrix * temp;
+			rotation = rotation.Mul(Quat::RotateAxisAngle(frustum.WorldRight(), -0.1f*rotationSpeed * deltaTimeS));
 		}
 	}
 	if(App->input->GetKey(SDL_SCANCODE_LEFT))
 	{
-		float timeBasedSpeed = rotationSpeed*deltaTimeS;
-		float3x3 temp(cos(timeBasedSpeed), 0.0f, sin(timeBasedSpeed),0.0f, 1.0f, 0.0f,-sin(timeBasedSpeed), 0.0f, cos(timeBasedSpeed));
-		rotationMatrix = rotationMatrix * temp;
+		float timeBasedSpeed = rotationSpeed * deltaTimeS;
+		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, timeBasedSpeed));
+		// frustum.Transform(rotation);
 	}
 	if(App->input->GetKey(SDL_SCANCODE_RIGHT))
 	{
 		float timeBasedSpeed = -rotationSpeed * deltaTimeS;
-		float3x3 temp(cos(timeBasedSpeed), 0.0f, sin(timeBasedSpeed), 0.0f, 1.0f, 0.0f, -sin(timeBasedSpeed), 0.0f, cos(timeBasedSpeed));
-		rotationMatrix = rotationMatrix * temp;
+		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, timeBasedSpeed));
 	}
 
-	//Global rotations
-	frustum.up =  rotationMatrix * frustum.up;
-	frustum.front =  rotationMatrix * frustum.front ;
+	frustum.up = rotation.Mul(frustum.up);
+	frustum.front = rotation.Mul(frustum.front);
 
+	// Movement
+	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT))
+	{
+		float speedDelta = movementSpeed * deltaTimeS;
 
-	//Movement
-	float3 translateVector = { 0, 0, 0 };
-	if(App->input->GetKey(SDL_SCANCODE_Q))
-	{
-		translateVector += frustum.up * movementSpeed*deltaTimeS;
+		if(App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT))
+		{
+			speedDelta *= SHIFT_MOVEMENT_MULTIPLIER;
+		}
+
+		float3 translateVector = float3::zero;
+
+		if(App->input->GetKey(SDL_SCANCODE_Q))
+		{
+			translateVector += frustum.up;
+		}
+
+		if(App->input->GetKey(SDL_SCANCODE_E))
+		{
+			translateVector -= frustum.up;
+		}
+
+		if(App->input->GetKey(SDL_SCANCODE_W))
+		{
+			translateVector += frustum.front;
+		}
+
+		if(App->input->GetKey(SDL_SCANCODE_S))
+		{
+			translateVector -= frustum.front;
+		}
+
+		if(App->input->GetKey(SDL_SCANCODE_D))
+		{
+			translateVector += frustum.WorldRight();
+		}
+
+		if(App->input->GetKey(SDL_SCANCODE_A))
+		{
+			translateVector -= frustum.WorldRight();
+		}
+
+		frustum.Translate(translateVector * speedDelta);
 	}
-	if(App->input->GetKey(SDL_SCANCODE_E))
-	{
-		translateVector -= frustum.up * movementSpeed*deltaTimeS;
-	}
-	if(App->input->GetKey(SDL_SCANCODE_W))
-	{
-		translateVector += frustum.front * movementSpeed*deltaTimeS;
-	}
-	if(App->input->GetKey(SDL_SCANCODE_S))
-	{
-		translateVector -= frustum.front * movementSpeed*deltaTimeS;
-	}
-	if(App->input->GetKey(SDL_SCANCODE_D))
-	{
-		translateVector += frustum.WorldRight() * movementSpeed*deltaTimeS;
-	}
-	if(App->input->GetKey(SDL_SCANCODE_A))
-	{
-		translateVector -= frustum.WorldRight() * movementSpeed*deltaTimeS;
-	}
-	frustum.Translate(translateVector);
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -104,53 +135,63 @@ void ModuleCamera::SetFOV(float radians)
 	frustum.horizontalFov = fovH;
 	frustum.verticalFov = radians;
 }
+
 void ModuleCamera::SetAspectRatio()
 {
 	float fovH = 2 * atan(tan(frustum.verticalFov / 2)*((float)App->window->width/(float)App->window->height));
 	frustum.horizontalFov = fovH;
 }
+
 void ModuleCamera::SetNearPlane(float distance)
 {
 	frustum.nearPlaneDistance = distance;
 }
+
 void ModuleCamera::SetFarPlane(float distance)
 {
 	frustum.farPlaneDistance = distance;
 }
+
 void ModuleCamera::SetPosition(float3 position)
 {
 	frustum.pos = position;
 }
+
 float ModuleCamera::GetFOV() const
 {
 	return frustum.verticalFov;
 }
+
 float ModuleCamera::GetAspectRatio() const
 {
 	return frustum.AspectRatio();
 }
+
 float ModuleCamera::GetNearPlane() const
 {
 	return frustum.nearPlaneDistance;
 }
+
 float ModuleCamera::GetFarPlane() const
 {
 	return frustum.farPlaneDistance;
 }
+
 float3 ModuleCamera::GetPosition() const
 {
 	return frustum.pos;
 }
 
-float3 ModuleCamera::Orientation()
+float3 ModuleCamera::Orientation() const
 {
 	return frustum.front;
 }
+
 void ModuleCamera::LookAt(float3 point)
 {
 	float3 forward_camera = (point - frustum.pos).Normalized();
-	float3 left_camera = Cross( float3(0,1,0),forward_camera).Normalized();
-	float3 up_camera = Cross(forward_camera,left_camera).Normalized();
+	float3 left_camera = Cross(float3::unitY, forward_camera).Normalized();
+	float3 up_camera = Cross(forward_camera, left_camera).Normalized();
 	frustum.front = forward_camera;
 	frustum.up = up_camera;
 }

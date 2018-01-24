@@ -23,16 +23,18 @@ public:
 	float GetNearPlane() const;
 	float GetFarPlane() const;
 	float3 GetPosition() const;
-	float3 Orientation();
+	float3 Orientation() const;
 	void LookAt(float3 point);
 
-	float4x4 GetViewMatrix()const;
-	float4x4 GetProyectionMatrix()const;
+	float4x4 GetViewMatrix() const;
+	float4x4 GetProyectionMatrix() const;
 
 private:
 	Frustum frustum;
-	float movementSpeed=10.0f;
+	float movementSpeed = 10.0f;
 	float rotationSpeed = 10.0f;
+
+	static const float SHIFT_MOVEMENT_MULTIPLIER;
 };
 
 #endif // !_MODULECAMERA_H_

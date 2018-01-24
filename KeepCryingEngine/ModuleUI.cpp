@@ -42,13 +42,14 @@ update_status ModuleUI::Update(float deltaTimeS, float realDeltaTimeS)
 	glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
 	glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	ImGui::Render();
 
 	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleUI::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
+	ImGui::Render();
+
 	return update_status::UPDATE_CONTINUE;
 }
 
