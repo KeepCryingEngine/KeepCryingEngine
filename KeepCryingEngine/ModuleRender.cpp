@@ -377,8 +377,9 @@ void ModuleRender::DrawGrid() const
 	glPushMatrix();
 
 	glBegin(GL_LINES);
+	glColor3f(220, 220, 220);
 
-	float step = 5.0f;
+	float step = 1.0f;
 	float length = 1000.0f;
 
 	for (float r = -length; r <= length; r += step)
