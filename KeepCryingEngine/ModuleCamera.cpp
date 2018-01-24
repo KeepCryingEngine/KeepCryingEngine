@@ -31,6 +31,24 @@ update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
 	//Rotation
 	float3x3 rotationMatrix;
 	rotationMatrix.SetIdentity();
+	if(App->input->GetKey(SDL_SCANCODE_UP))
+	{
+		float timeBasedSpeed = rotationSpeed * deltaTimeS;
+		if(frustum.front.y < 0.9)
+		{
+			float3x3 temp(1.0f, 0.0f, 0.0f, 0.0f, cos(timeBasedSpeed), -sin(timeBasedSpeed), 0.0f, sin(timeBasedSpeed), cos(timeBasedSpeed));
+			rotationMatrix = rotationMatrix * temp;
+		}
+	}
+	if(App->input->GetKey(SDL_SCANCODE_DOWN))
+	{
+		float timeBasedSpeed = -rotationSpeed * deltaTimeS;
+		if(frustum.front.y > -0.9)
+		{
+			float3x3 temp(1.0f, 0.0f, 0.0f, 0.0f, cos(timeBasedSpeed), -sin(timeBasedSpeed), 0.0f, sin(timeBasedSpeed), cos(timeBasedSpeed));
+			rotationMatrix = rotationMatrix * temp;
+		}
+	}
 	if(App->input->GetKey(SDL_SCANCODE_LEFT))
 	{
 		float timeBasedSpeed = rotationSpeed*deltaTimeS;
@@ -43,21 +61,10 @@ update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
 		float3x3 temp(cos(timeBasedSpeed), 0.0f, sin(timeBasedSpeed), 0.0f, 1.0f, 0.0f, -sin(timeBasedSpeed), 0.0f, cos(timeBasedSpeed));
 		rotationMatrix = rotationMatrix * temp;
 	}
-	if(App->input->GetKey(SDL_SCANCODE_UP))
-	{
-		float timeBasedSpeed = rotationSpeed * deltaTimeS;
-		float3x3 temp(1.0f, 0.0f, 0.0f, 0.0f, cos(timeBasedSpeed), -sin(timeBasedSpeed), 0.0f, sin(timeBasedSpeed), cos(timeBasedSpeed));
-		rotationMatrix = rotationMatrix * temp;
-	}
-	if(App->input->GetKey(SDL_SCANCODE_DOWN))
-	{
-		float timeBasedSpeed = -rotationSpeed * deltaTimeS;
-		float3x3 temp(1.0f, 0.0f, 0.0f, 0.0f, cos(timeBasedSpeed), -sin(timeBasedSpeed), 0.0f, sin(timeBasedSpeed), cos(timeBasedSpeed));
-		rotationMatrix = rotationMatrix * temp;
-	}
 
-	frustum.up = frustum.up * rotationMatrix;
-	frustum.front = frustum.front * rotationMatrix;
+	//Global rotations
+	frustum.up =  rotationMatrix * frustum.up;
+	frustum.front =  rotationMatrix * frustum.front ;
 
 
 	//Movement
@@ -78,11 +85,11 @@ update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
 	{
 		translateVector -= frustum.front * movementSpeed*deltaTimeS;
 	}
-	if(App->input->GetKey(SDL_SCANCODE_A))
+	if(App->input->GetKey(SDL_SCANCODE_D))
 	{
 		translateVector += frustum.WorldRight() * movementSpeed*deltaTimeS;
 	}
-	if(App->input->GetKey(SDL_SCANCODE_D))
+	if(App->input->GetKey(SDL_SCANCODE_A))
 	{
 		translateVector -= frustum.WorldRight() * movementSpeed*deltaTimeS;
 	}
