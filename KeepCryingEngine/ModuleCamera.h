@@ -11,6 +11,7 @@ public:
 	~ModuleCamera();
 
 	bool Init() override;
+	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
 
 	void SetFOV(float radians);
 	void SetAspectRatio();
@@ -30,6 +31,8 @@ public:
 
 private:
 	Frustum frustum;
+	float movementSpeed=10.0f;
+	float rotationSpeed = 10.0f;
 };
 
 #endif // !_MODULECAMERA_H_

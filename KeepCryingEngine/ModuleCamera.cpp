@@ -26,6 +26,71 @@ bool ModuleCamera::Init()
 	return true;
 }
 
+update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
+{
+	//Rotation
+	float3x3 rotationMatrix;
+	rotationMatrix.SetIdentity();
+	if(App->input->GetKey(SDL_SCANCODE_LEFT))
+	{
+		float timeBasedSpeed = rotationSpeed*deltaTimeS;
+		float3x3 temp(cos(timeBasedSpeed), 0.0f, sin(timeBasedSpeed),0.0f, 1.0f, 0.0f,-sin(timeBasedSpeed), 0.0f, cos(timeBasedSpeed));
+		rotationMatrix = rotationMatrix * temp;
+	}
+	if(App->input->GetKey(SDL_SCANCODE_RIGHT))
+	{
+		float timeBasedSpeed = -rotationSpeed * deltaTimeS;
+		float3x3 temp(cos(timeBasedSpeed), 0.0f, sin(timeBasedSpeed), 0.0f, 1.0f, 0.0f, -sin(timeBasedSpeed), 0.0f, cos(timeBasedSpeed));
+		rotationMatrix = rotationMatrix * temp;
+	}
+	if(App->input->GetKey(SDL_SCANCODE_UP))
+	{
+		float timeBasedSpeed = rotationSpeed * deltaTimeS;
+		float3x3 temp(1.0f, 0.0f, 0.0f, 0.0f, cos(timeBasedSpeed), -sin(timeBasedSpeed), 0.0f, sin(timeBasedSpeed), cos(timeBasedSpeed));
+		rotationMatrix = rotationMatrix * temp;
+	}
+	if(App->input->GetKey(SDL_SCANCODE_DOWN))
+	{
+		float timeBasedSpeed = -rotationSpeed * deltaTimeS;
+		float3x3 temp(1.0f, 0.0f, 0.0f, 0.0f, cos(timeBasedSpeed), -sin(timeBasedSpeed), 0.0f, sin(timeBasedSpeed), cos(timeBasedSpeed));
+		rotationMatrix = rotationMatrix * temp;
+	}
+
+	frustum.up = frustum.up * rotationMatrix;
+	frustum.front = frustum.front * rotationMatrix;
+
+
+	//Movement
+	float3 translateVector = { 0, 0, 0 };
+	if(App->input->GetKey(SDL_SCANCODE_Q))
+	{
+		translateVector += frustum.up * movementSpeed*deltaTimeS;
+	}
+	if(App->input->GetKey(SDL_SCANCODE_E))
+	{
+		translateVector -= frustum.up * movementSpeed*deltaTimeS;
+	}
+	if(App->input->GetKey(SDL_SCANCODE_W))
+	{
+		translateVector += frustum.front * movementSpeed*deltaTimeS;
+	}
+	if(App->input->GetKey(SDL_SCANCODE_S))
+	{
+		translateVector -= frustum.front * movementSpeed*deltaTimeS;
+	}
+	if(App->input->GetKey(SDL_SCANCODE_A))
+	{
+		translateVector += frustum.WorldRight() * movementSpeed*deltaTimeS;
+	}
+	if(App->input->GetKey(SDL_SCANCODE_D))
+	{
+		translateVector -= frustum.WorldRight() * movementSpeed*deltaTimeS;
+	}
+	frustum.Translate(translateVector);
+
+	return update_status::UPDATE_CONTINUE;
+}
+
 void ModuleCamera::SetFOV(float radians)
 {
 	float fovH = 2.0f * atan(tan(radians / 2.0f)*((float)App->window->width / (float)App->window->height));
