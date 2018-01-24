@@ -24,43 +24,6 @@ update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
 		SetUpFrustum();
 	}
 
-	// Rotation
-
-	Quat rotation = Quat::identity;
-
-	if(App->input->GetKey(SDL_SCANCODE_UP))
-	{
-		if(frustum.front.y < 1 - rotationSpeed * deltaTimeS)
-		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(frustum.WorldRight(), rotationSpeed * deltaTimeS));
-		}
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_DOWN))
-	{
-		if(frustum.front.y > -1 + rotationSpeed * deltaTimeS)
-		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(frustum.WorldRight(), -rotationSpeed * deltaTimeS));
-		}
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_LEFT))
-	{
-		float timeBasedSpeed = rotationSpeed * deltaTimeS;
-		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, timeBasedSpeed));
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_RIGHT))
-	{
-		float timeBasedSpeed = -rotationSpeed * deltaTimeS;
-		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, timeBasedSpeed));
-	}
-
-	frustum.up = rotation.Mul(frustum.up);
-	frustum.front = rotation.Mul(frustum.front);
-
-	// Movement
-
 	float shiftDeltaMultiplier = deltaTimeS;
 
 	if(App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT))
@@ -68,12 +31,9 @@ update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
 		shiftDeltaMultiplier *= SHIFT_MULTIPLIER;
 	}
 
-	MovementMouse(shiftDeltaMultiplier);
+	Rotation(shiftDeltaMultiplier);
 
-	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT))
-	{
-		MovementKeyBoard(shiftDeltaMultiplier);
-	}
+	Movement(shiftDeltaMultiplier);
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -86,8 +46,7 @@ void ModuleCamera::SetFOV(float radians)
 
 void ModuleCamera::SetAspectRatio()
 {
-	float fovH = 2 * atan(tan(frustum.verticalFov / 2)*((float)App->window->width/(float)App->window->height));
-	frustum.horizontalFov = fovH;
+	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->window->width, (float)App->window->height);
 }
 
 void ModuleCamera::SetNearPlane(float distance)
@@ -177,6 +136,51 @@ float ModuleCamera::ComputeHorizontalFov(float radians, float width, float heigh
 	return 2.0f * atan(tan(radians / 2.0f) * (width / height));
 }
 
+void ModuleCamera::Rotation(float shiftDeltaMultiplier)
+{
+	Quat rotation = Quat::identity;
+	float rotationDeltaSpeed = rotationSpeed * shiftDeltaMultiplier;
+
+	if(App->input->GetKey(SDL_SCANCODE_UP))
+	{
+		if(frustum.front.y < 1.0f - rotationDeltaSpeed)
+		{
+			rotation = rotation.Mul(Quat::RotateAxisAngle(frustum.WorldRight(), rotationDeltaSpeed));
+		}
+	}
+
+	if(App->input->GetKey(SDL_SCANCODE_DOWN))
+	{
+		if(frustum.front.y > rotationDeltaSpeed - 1.0f)
+		{
+			rotation = rotation.Mul(Quat::RotateAxisAngle(frustum.WorldRight(), -rotationDeltaSpeed));
+		}
+	}
+
+	if(App->input->GetKey(SDL_SCANCODE_LEFT))
+	{
+		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, rotationDeltaSpeed));
+	}
+
+	if(App->input->GetKey(SDL_SCANCODE_RIGHT))
+	{
+		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, -rotationDeltaSpeed));
+	}
+
+	frustum.up = rotation.Mul(frustum.up);
+	frustum.front = rotation.Mul(frustum.front);
+}
+
+void ModuleCamera::Movement(float shiftDeltaMultiplier)
+{
+	MovementMouse(shiftDeltaMultiplier);
+
+	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT))
+	{
+		MovementKeyBoard(shiftDeltaMultiplier);
+	}
+}
+
 void ModuleCamera::MovementMouse(float shiftDeltaMultiplier)
 {
 	bool leftPressed = App->input->GetMouseButtonDown(SDL_BUTTON_LEFT);
@@ -215,13 +219,41 @@ void ModuleCamera::MovementMouseDrag(float shiftDeltaMultiplier)
 }
 
 void ModuleCamera::MovementMouseOrbit(float shiftDeltaMultiplier)
-{}
+{
+	float2 translateVector = App->input->GetMouseMotion();
+
+	translateVector *= movementDragSpeed * shiftDeltaMultiplier;
+
+	translateVector.x *= -1.0f;
+
+	Quat rotation = Quat::identity;
+	float movementDeltaOrbitSpeed = movementOrbitSpeed * shiftDeltaMultiplier;
+
+	if(translateVector.y > 0.0f)
+	{
+		if(frustum.front.y < 1.0f - movementDeltaOrbitSpeed)
+		{
+			rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.y * frustum.WorldRight(), movementDeltaOrbitSpeed));
+		}
+	}
+	else if(translateVector.y < 0.0f)
+	{
+		if(frustum.front.y > movementDeltaOrbitSpeed - 1.0f)
+		{
+			rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.y * frustum.WorldRight(), movementDeltaOrbitSpeed));
+		}
+	}
+
+	rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.x * float3::unitY, movementDeltaOrbitSpeed));
+
+	frustum.up = rotation.Mul(frustum.up);
+	frustum.front = rotation.Mul(frustum.front);
+}
 
 void ModuleCamera::MovementMouseZoom(float shiftDeltaMultiplier)
 {
 	float2 translateVector = App->input->GetMouseMotion();
 
-	// Input is the inverse of what we need
 	translateVector.x *= -1.0f;
 
 	float movementZ = translateVector.y - translateVector.x;

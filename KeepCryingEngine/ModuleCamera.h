@@ -33,6 +33,9 @@ private:
 	void SetUpFrustum();
 	float ComputeHorizontalFov(float radians, float width, float height) const;
 
+	void Rotation(float shiftDeltaMultiplier);
+	void Movement(float shiftDeltaMultiplier);
+
 	void MovementMouse(float shiftDeltaMultiplier);
 	void MovementMouseDrag(float shiftDeltaMultiplier);
 	void MovementMouseOrbit(float shiftDeltaMultiplier);
@@ -46,7 +49,7 @@ private:
 	float movementSpeed = 10.0f;
 	float rotationSpeed = 2.0f;
 	float movementDragSpeed = 3.0f;
-	float movementObritSpeed = 3.0f;
+	float movementOrbitSpeed = 3.0f;
 	float movementZoomSpeed = 3.0f;
 
 	static const float SHIFT_MULTIPLIER;
