@@ -5,8 +5,10 @@
 #define _CRTDBG_MAP_ALLOC
 
 #include <SDL.h>
+#include <float3.h>
 
 #include "Module.h"
+
 
 class ModuleRender : public Module
 {
@@ -19,6 +21,8 @@ public:
 	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
 	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
 	bool CleanUp() override;
+
+	void DrawCross(const float3& pos) const;
 
 private:
 	void SetUpBigArray() const;

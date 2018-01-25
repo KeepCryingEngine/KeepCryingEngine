@@ -5,8 +5,10 @@
 #include "Application.h"
 #include "Globals.h"
 #include "ModuleInput.h"
+#include "ModuleRender.h"
 
 const float ModuleCamera::SHIFT_MULTIPLIER = 10.0f;
+const float ModuleCamera::ORBIT_BASE_DISTANCE = 10.0f;
 
 ModuleCamera::ModuleCamera()
 { }
@@ -274,6 +276,10 @@ void ModuleCamera::MovementMouseDrag(float shiftDeltaMultiplier)
 void ModuleCamera::RotateMouseOrbit(float deltaTimeS)
 {
 	//It rotate around a point "x" at distance "y" in front direction, "y" value increases with zoom out, and decreases with zoom in
+	float3 orbitCenter = frustum.pos +(frustum.front * ORBIT_BASE_DISTANCE * zoomScale);
+	App->renderer->DrawCross(orbitCenter);
+	MovementMouseDrag(deltaTimeS);
+	LookAt(orbitCenter);
 }
 
 void ModuleCamera::MovementMouseZoom(float shiftDeltaMultiplier)
