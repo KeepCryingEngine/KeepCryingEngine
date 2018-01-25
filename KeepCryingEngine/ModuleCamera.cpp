@@ -273,34 +273,7 @@ void ModuleCamera::MovementMouseDrag(float shiftDeltaMultiplier)
 
 void ModuleCamera::RotateMouseOrbit(float deltaTimeS)
 {
-	float2 translateVector = App->input->GetMouseMotion();
-
-	translateVector *= movementDragSpeed * deltaTimeS;
-
-	translateVector.x *= -1.0f;
-
-	Quat rotation = Quat::identity;
-	float movementDeltaOrbitSpeed = movementOrbitSpeed * deltaTimeS;
-
-	if(translateVector.y > 0.0f)
-	{
-		if(frustum.front.y < 1.0f - movementDeltaOrbitSpeed)
-		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.y * frustum.WorldRight(), movementDeltaOrbitSpeed));
-		}
-	}
-	else if(translateVector.y < 0.0f)
-	{
-		if(frustum.front.y > movementDeltaOrbitSpeed - 1.0f)
-		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.y * frustum.WorldRight(), movementDeltaOrbitSpeed));
-		}
-	}
-
-	rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.x * float3::unitY, movementDeltaOrbitSpeed));
-
-	frustum.up = rotation.Mul(frustum.up);
-	frustum.front = rotation.Mul(frustum.front);
+	//It rotate around a point "x" at distance "y" in front direction, "y" value increases with zoom out, and decreases with zoom in
 }
 
 void ModuleCamera::MovementMouseZoom(float shiftDeltaMultiplier)
