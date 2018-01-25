@@ -1,9 +1,10 @@
 #include "ModuleTestJson.h"
 
-#include "Vector3.h"
-#include <json.hpp>
 #include <iostream>
 #include <fstream>
+#include <MathGeoLib.h>
+
+#include <json.hpp>
 #include "json_serializer.h"
 
 using namespace std;
@@ -22,12 +23,14 @@ bool ModuleTestJson::Start()
 	ifstream jsonFile("Assets/jsonTest.json");
 
 	json json;
-
 	jsonFile >> json;
+	
+	float3 v3;
+	from_json(json, v3);
+	
+	// float3 v3 = json.get<float3>();
 
-	Vector3 v3 = json.get<Vector3>();
-
-	LOG_DEBUG("%s", to_string(v3).c_str());
+	LOG_DEBUG("%s", v3.ToString().c_str());
 
 	return true;
 }

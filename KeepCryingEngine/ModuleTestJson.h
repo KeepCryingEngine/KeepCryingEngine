@@ -11,7 +11,7 @@ public:
 
 	virtual ~ModuleTestJson();
 
-	bool Start();
+	bool Start() override;
 };
 
 #endif // !_MODULETESTJSON_H_

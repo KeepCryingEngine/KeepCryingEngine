@@ -40,10 +40,6 @@ inline void RELEASE_ARRAY(T*& x)
 }
 
 // Configuration -----------
-#define SCREEN_WIDTH 1152
-#define SCREEN_HEIGHT 720
-#define FULLSCREEN false
-#define VSYNC true
-#define TITLE "KeepCryingEngine"
+
 
 #endif // !_GLOBALS_H_

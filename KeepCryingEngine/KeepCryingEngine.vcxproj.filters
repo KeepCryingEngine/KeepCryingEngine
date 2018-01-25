@@ -2,13 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="json_serializer.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ModuleWindow.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleTime.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="ModuleRender.cpp">
@@ -16,12 +12,6 @@
     </ClCompile>
     <ClCompile Include="ModuleInput.cpp">
       <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector3.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector2.cpp">
-      <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="ModuleTestJson.cpp" />
     <ClCompile Include="ModuleTestMathGeoLib.cpp" />
@@ -55,16 +45,19 @@
     <ClCompile Include="external\MathGeoLib-1.5\src\Math\SSEMath.cpp" />
     <ClCompile Include="external\MathGeoLib-1.5\src\Math\TransformOps.cpp" />
     <ClCompile Include="external\MathGeoLib-1.5\src\Time\Clock.cpp" />
+    <ClCompile Include="external\ImGui\imgui.cpp" />
+    <ClCompile Include="external\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="external\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="ModuleUI.cpp" />
+    <ClCompile Include="external\ImGui\imgui_impl_sdl_gl3.cpp" />
+    <ClCompile Include="json_serializer.cpp" />
+    <ClCompile Include="ModuleCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Globals.h" />
-    <ClInclude Include="json_serializer.h" />
     <ClInclude Include="MemLeaks.h" />
     <ClInclude Include="ModuleWindow.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleTime.h">
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="ModuleRender.h">
@@ -75,12 +68,6 @@
     </ClInclude>
     <ClInclude Include="Module.h">
       <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector3.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector2.h">
-      <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="ModuleTestJson.h" />
     <ClInclude Include="ModuleTestMathGeoLib.h" />
@@ -142,6 +129,17 @@
     <ClInclude Include="external\MathGeoLib-1.5\src\MathBuildConfig.h" />
     <ClInclude Include="external\MathGeoLib-1.5\src\MathGeoLib.h" />
     <ClInclude Include="external\MathGeoLib-1.5\src\MathGeoLibFwd.h" />
+    <ClInclude Include="external\ImGui\imconfig.h" />
+    <ClInclude Include="external\ImGui\imgui.h" />
+    <ClInclude Include="external\ImGui\imgui_internal.h" />
+    <ClInclude Include="external\ImGui\stb_rect_pack.h" />
+    <ClInclude Include="external\ImGui\stb_textedit.h" />
+    <ClInclude Include="external\ImGui\stb_truetype.h" />
+    <ClInclude Include="external\ImGui\ModuloUI.h" />
+    <ClInclude Include="external\ImGui\ModuleUI.h" />
+    <ClInclude Include="ModuleUI.h" />
+    <ClInclude Include="json_serializer.h" />
+    <ClInclude Include="ModuleCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">

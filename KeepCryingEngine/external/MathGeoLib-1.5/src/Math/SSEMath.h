@@ -170,7 +170,7 @@ inline std::string ToString(simd4f vec)
 {
 	float *v = (float*)&vec;
 	char str[256];
-	sprintf(str, "[%f, %f, %f, %f]", v[3], v[2], v[1], v[0]);
+	sprintf_s(str, "[%f, %f, %f, %f]", v[3], v[2], v[1], v[0]);
 	return str;
 }
 */

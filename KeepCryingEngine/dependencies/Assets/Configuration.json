@@ -1,0 +1,10 @@
+{
+	"title" : "KeepCryingEngine",
+	"vsync" : true,
+	"screenWidth" : 1024,
+	"screenHeight" : 768,
+	"fullScreen" : false,
+	"maxRealDeltaTimeS" : 1.0,
+	"limitFps" : false,
+	"desiredFps" : 60.0
+}

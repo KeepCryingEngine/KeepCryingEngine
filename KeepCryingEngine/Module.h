@@ -44,17 +44,17 @@ public:
 		return true;
 	}
 
-	virtual update_status PreUpdate()
+	virtual update_status PreUpdate(float deltaTimeS, float realDeltaTimeS)
 	{
 		return update_status::UPDATE_CONTINUE;
 	}
 
-	virtual update_status Update()
+	virtual update_status Update(float deltaTimeS, float realDeltaTimeS)
 	{
 		return update_status::UPDATE_CONTINUE;
 	}
 
-	virtual update_status PostUpdate()
+	virtual update_status PostUpdate(float deltaTimeS, float realDeltaTimeS)
 	{
 		return update_status::UPDATE_CONTINUE;
 	}

@@ -1,9 +1,9 @@
 #ifndef _MODULEINPUT_H_
 #define _MODULEINPUT_H_
 
+#include <float2.h>
+
 #include "Module.h"
-#include "Vector2.h"
-#include <SDL_scancode.h>
 
 #define NUM_MOUSE_BUTTONS 5
 
@@ -38,13 +38,13 @@ public:
 
 	virtual ~ModuleInput();
 
-	bool Init();
+	bool Init() override;
 
-	bool Start();
+	bool Start() override;
 
-	update_status PreUpdate();
+	update_status PreUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
-	bool CleanUp();
+	bool CleanUp() override;
 
 	KeyState GetKey(int id) const
 	{
@@ -60,15 +60,15 @@ public:
 
 	bool GetWindowEvent(EventWindow code) const;
 
-	const Vector2& GetMouseMotion() const;
-	const Vector2& GetMousePosition() const;
+	const float2& GetMouseMotion() const;
+	const float2& GetMousePosition() const;
 
 private:
-	bool		windowEvents[WE_COUNT];
-	KeyState*	keyboard;
-	KeyState	mouse_buttons[NUM_MOUSE_BUTTONS];
-	Vector2 mouse_motion;
-	Vector2 mouse;
+	bool windowEvents[WE_COUNT];
+	KeyState* keyboard;
+	KeyState mouse_buttons[NUM_MOUSE_BUTTONS];
+	float2 mouse_motion;
+	float2 mouse;
 };
 
 #endif // !_MODULEINPUT_H_

@@ -1,7 +1,10 @@
-#include "Globals.h"
-#include "Application.h"
 #include "ModuleInput.h"
+
 #include <SDL.h>
+
+#include "Application.h"
+#include "ModuleCamera.h"
+#include "ModuleWindow.h"
 
 #define MAX_KEYS 300
 
@@ -19,13 +22,13 @@ ModuleInput::~ModuleInput()
 
 bool ModuleInput::Init()
 {
-	// LOG("Init SDL input event system");
+	LOG_DEBUG("Init SDL input event system");
 	bool ret = true;
 	SDL_Init(0);
 
 	if(SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
 	{
-		// LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
+		LOG_DEBUG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
@@ -37,14 +40,14 @@ bool ModuleInput::Start()
 	return true;
 }
 
-update_status ModuleInput::PreUpdate()
+update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	static SDL_Event event;
 
 	mouse_motion = { 0, 0 };
 	memset(windowEvents, false, WE_COUNT * sizeof(bool));
 
-	const Uint8* keys = SDL_GetKeyboardState(NULL);
+	const Uint8* keys = SDL_GetKeyboardState(nullptr);
 
 	for(int i = 0; i < MAX_KEYS; ++i)
 	{
@@ -85,6 +88,11 @@ update_status ModuleInput::PreUpdate()
 				switch(event.window.event)
 				{
 					//case SDL_WINDOWEVENT_LEAVE:
+					case SDL_WINDOWEVENT_RESIZED:
+						SDL_GetWindowSize(App->window->window, &App->configuration.screenWidth, &App->configuration.screenHeight);
+						App->camera->SetAspectRatio();
+						break;
+
 					case SDL_WINDOWEVENT_HIDDEN:
 					case SDL_WINDOWEVENT_MINIMIZED:
 					case SDL_WINDOWEVENT_FOCUS_LOST:
@@ -110,10 +118,10 @@ update_status ModuleInput::PreUpdate()
 				break;
 
 			case SDL_MOUSEMOTION:
-				mouse_motion.x = event.motion.xrel;
-				mouse_motion.y = event.motion.yrel;
-				mouse.x = event.motion.x;
-				mouse.y = event.motion.y;
+				mouse_motion.x = (float)event.motion.xrel;
+				mouse_motion.y = (float)event.motion.yrel;
+				mouse.x = (float)event.motion.x;
+				mouse.y = (float)event.motion.y;
 				break;
 		}
 	}
@@ -126,7 +134,7 @@ update_status ModuleInput::PreUpdate()
 
 bool ModuleInput::CleanUp()
 {
-	// LOG("Quitting SDL event subsystem");
+	LOG_DEBUG("Quitting SDL event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
 }
@@ -153,12 +161,12 @@ bool ModuleInput::GetWindowEvent(EventWindow ev) const
 	return windowEvents[ev];
 }
 
-const Vector2& ModuleInput::GetMousePosition() const
+const float2& ModuleInput::GetMousePosition() const
 {
 	return mouse;
 }
 
-const Vector2& ModuleInput::GetMouseMotion() const
+const float2& ModuleInput::GetMouseMotion() const
 {
 	return mouse_motion;
 }
