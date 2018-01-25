@@ -1,6 +1,10 @@
 #include "ModuleInput.h"
 
+#include <SDL.h>
+
 #include "Application.h"
+#include "ModuleCamera.h"
+#include "ModuleWindow.h"
 
 #define MAX_KEYS 300
 
@@ -85,7 +89,7 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 				{
 					//case SDL_WINDOWEVENT_LEAVE:
 					case SDL_WINDOWEVENT_RESIZED:
-						SDL_GetWindowSize(App->window->window, &App->window->width, &App->window->height);
+						SDL_GetWindowSize(App->window->window, &App->configuration.screenWidth, &App->configuration.screenHeight);
 						App->camera->SetAspectRatio();
 						break;
 

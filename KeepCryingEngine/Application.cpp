@@ -1,4 +1,11 @@
 #include "Application.h"
+#include "ModuleWindow.h"
+#include "ModuleRender.h"
+#include "ModuleInput.h"
+#include "ModuleTestJson.h"
+#include "ModuleTestMathGeoLib.h"
+#include "ModuleUI.h"
+#include "ModuleCamera.h"
 
 using namespace std;
 
@@ -43,6 +50,11 @@ void Application::LoadConfiguration()
 
 	// Read: maxRealDeltaTimeS, limitFps, desiredFps
 
+	configuration.title = json["title"].is_string();
+	configuration.vsync = json["vsync"];
+	configuration.screenWidth = json["screenWidth"];
+	configuration.screenHeight = json["screenHeight"];
+	configuration.fullScreen = json["fullScreen"];
 	configuration.maxRealDeltaTimeS = json["maxRealDeltaTimeS"];
 	configuration.limitFps = json["limitFps"];
 	configuration.desiredFps = json["desiredFps"];

@@ -48,15 +48,18 @@ private:
 	void SetUpFrustum();
 	float ComputeHorizontalFov(float radians, float width, float height) const;
 
-	void Rotation(float shiftDeltaMultiplier);
+	void Rotation(float deltaTimeS);
 	void Movement(float shiftDeltaMultiplier);
 
 	void MovementMouse(float shiftDeltaMultiplier);
 	void MovementMouseDrag(float shiftDeltaMultiplier);
-	void MovementMouseOrbit(float shiftDeltaMultiplier);
 	void MovementMouseZoom(float shiftDeltaMultiplier);
+	void RotateMouse(float deltaTimeS);
+	void RotateMouseOrbit(float deltaTimeS);
+	void RotateMouseRotation(float deltaTimeS);
 
 	void MovementKeyBoard(float shiftDeltaMultiplier);
+	void RotateKeyboard(float deltaTimeS);
 
 private:
 	Frustum frustum;

@@ -5,13 +5,12 @@
 
 #include "Globals.h"
 #include "Module.h"
-#include "ModuleWindow.h"
-#include "ModuleRender.h"
-#include "ModuleInput.h"
-#include "ModuleTestJson.h"
-#include "ModuleTestMathGeoLib.h"
-#include "ModuleUI.h"
-#include "ModuleCamera.h"
+
+class ModuleRender;
+class ModuleWindow;
+class ModuleInput;
+class ModuleUI;
+class ModuleCamera;
 
 class Application
 {
@@ -43,8 +42,12 @@ public:
 
 	struct
 	{
+		std::string title;
+		bool vsync;
+		int screenWidth;
+		int screenHeight;
+		bool fullScreen;
 		float maxRealDeltaTimeS;
-
 		bool limitFps;
 		float desiredFps;
 	} configuration;

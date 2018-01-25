@@ -8,6 +8,7 @@
 
 #include "Application.h"
 #include "ModuleWindow.h"
+#include "ModuleCamera.h"
 #include "Globals.h"
 
 ModuleUI::ModuleUI()

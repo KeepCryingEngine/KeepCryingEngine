@@ -29,12 +29,12 @@ bool ModuleWindow::Init()
 	{
 		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
-		if(FULLSCREEN)
+		if(App->configuration.fullScreen)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
 
-		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
+		window = SDL_CreateWindow(App->configuration.title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, App->configuration.screenWidth, App->configuration.screenHeight, flags);
 
 		if(!window)
 		{

@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+#include <SDL.h>
+
 #include "Application.h"
 
 enum main_states

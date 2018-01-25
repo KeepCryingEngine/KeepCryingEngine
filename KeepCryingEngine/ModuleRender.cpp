@@ -1,15 +1,16 @@
 #include "ModuleRender.h"
 
 #define _USE_MATH_DEFINES
-//#include <math.h>
-//#include <vector>
+#include <math.h>
+#include <vector>
 #include "GL/glew.h"
-//#include "SDL_opengl.h"
-//#include <gl/GL.h>
-//#include <gl/GLU.h>
+#include "SDL_opengl.h"
+#include <gl/GL.h>
+#include <gl/GLU.h>
 
 #include "Application.h"
-//#include "ModuleWindow.h"
+#include "ModuleWindow.h"
+#include "ModuleCamera.h"
 
 using namespace std;
 
