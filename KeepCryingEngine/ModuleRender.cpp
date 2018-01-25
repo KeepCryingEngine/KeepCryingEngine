@@ -417,9 +417,9 @@ void ModuleRender::DrawGrid() const
 	glPopMatrix();
 }
 
-void ModuleRender::DrawCross(const float3 & pos)const
+void ModuleRender::DrawCross(const float3 & pos,float scale)const
 {
-	float crossSize = 0.5f;
+	float crossSize = 0.01f * scale;
 	glPushMatrix();
 
 	glTranslatef(pos.x,pos.y,pos.z);
@@ -427,7 +427,7 @@ void ModuleRender::DrawCross(const float3 & pos)const
 
 	glBegin(GL_LINES);
 
-	glColor3f(220, 220, 220);
+	glColor3f(255, 0, 0);
 
 	glVertex3f(-crossSize, 0, 0);
 	glVertex3f(crossSize, 0, 0);

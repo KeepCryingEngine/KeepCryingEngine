@@ -8,7 +8,6 @@
 #include "ModuleRender.h"
 
 const float ModuleCamera::SHIFT_MULTIPLIER = 10.0f;
-const float ModuleCamera::ORBIT_BASE_DISTANCE = 10.0f;
 
 ModuleCamera::ModuleCamera()
 { }
@@ -208,7 +207,7 @@ void ModuleCamera::Rotation(float deltaTimeS)
 	RotateKeyboard(deltaTimeS);
 	RotateMouse(deltaTimeS);
 
-	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT))
+	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) && !(App->input->GetKey(SDL_SCANCODE_LALT) || App->input->GetKey(SDL_SCANCODE_RALT)))
 	{
 		RotateMouseRotation(deltaTimeS);
 	}
@@ -276,10 +275,17 @@ void ModuleCamera::MovementMouseDrag(float shiftDeltaMultiplier)
 void ModuleCamera::RotateMouseOrbit(float deltaTimeS)
 {
 	//It rotate around a point "x" at distance "y" in front direction, "y" value increases with zoom out, and decreases with zoom in
-	float3 orbitCenter = frustum.pos +(frustum.front * ORBIT_BASE_DISTANCE * zoomScale);
-	App->renderer->DrawCross(orbitCenter);
-	MovementMouseDrag(deltaTimeS);
-	LookAt(orbitCenter);
+	if(zoomAmount > 1)
+	{
+		float3 orbitCenter = frustum.pos + (frustum.front * zoomAmount);
+		App->renderer->DrawCross(orbitCenter,zoomAmount);
+		MovementMouseDrag(deltaTimeS);
+		LookAt(orbitCenter);
+	}
+	else
+	{
+		RotateMouseRotation(deltaTimeS);
+	}
 }
 
 void ModuleCamera::MovementMouseZoom(float shiftDeltaMultiplier)
@@ -290,7 +296,17 @@ void ModuleCamera::MovementMouseZoom(float shiftDeltaMultiplier)
 
 	float movementZ = translateVector.y - translateVector.x;
 
-	frustum.Translate(frustum.front * movementZoomSpeed * movementZ * shiftDeltaMultiplier);
+	float movementTemp = movementZoomSpeed * movementZ * shiftDeltaMultiplier;
+	zoomAmount -= movementTemp;
+	LOG_DEBUG("%f",zoomAmount);
+	if(zoomAmount >= 0.0f)
+	{
+		frustum.Translate(frustum.front * movementTemp);
+	}
+	else
+	{
+		zoomAmount = 0.0f;
+	}
 }
 
 void ModuleCamera::RotateMouseRotation(float deltaTimeS)

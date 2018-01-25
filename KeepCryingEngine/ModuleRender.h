@@ -22,7 +22,7 @@ public:
 	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
 	bool CleanUp() override;
 
-	void DrawCross(const float3& pos) const;
+	void DrawCross(const float3& pos, float scale) const;
 
 private:
 	void SetUpBigArray() const;

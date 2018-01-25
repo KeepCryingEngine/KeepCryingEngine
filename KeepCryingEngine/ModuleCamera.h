@@ -70,9 +70,8 @@ private:
 	float movementOrbitSpeed = 3.0f;
 	float movementZoomSpeed = 3.0f;
 
-	float zoomScale = 1.0f;
+	float zoomAmount = 10.0f;
 
-	static const float ORBIT_BASE_DISTANCE;
 	static const float SHIFT_MULTIPLIER;
 };
 
