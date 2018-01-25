@@ -25,6 +25,7 @@ public:
 	void DrawCross(const float3& pos, float scale) const;
 
 private:
+	void SetUpTexture();
 	void SetUpBigArray() const;
 	void SetUpIndicesArray() const;
 	void SetUpSphere(float radius, unsigned int rings, unsigned int sectors);
@@ -38,13 +39,17 @@ private:
 
 private:
 	uint bigArrayCube = 0;
+	uint bigArrayCubeUV = 0;
 	uint vertexArrayBuffer = 0;
 	uint indicesArrayBuffer = 0;
 	uint sphereIndex = 0;
 	uint sphereVertex = 0;
 
-	int sphereIndicesSize = 0;
+	uint indiceTexture = 0;
 
+	int sphereIndicesSize = 0;
+	static const uint CHECKERS_HEIGHT;
+	static const uint CHECKERS_WIDTH;
 	SDL_GLContext glcontext = nullptr;
 };
 
