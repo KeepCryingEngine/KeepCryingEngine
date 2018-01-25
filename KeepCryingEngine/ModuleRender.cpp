@@ -14,6 +14,9 @@
 
 using namespace std;
 
+const uint ModuleRender::CHECKERS_HEIGHT = 128;
+const uint ModuleRender::CHECKERS_WIDTH = 128;
+
 ModuleRender::ModuleRender()
 {}
 
@@ -65,6 +68,8 @@ bool ModuleRender::Init()
 	SetUpBigArray();
 	SetUpIndicesArray();
 	SetUpSphere(0.25f, 100, 100);
+
+	SetUpCheckerTexture();
 
 	return ret;
 }
@@ -270,63 +275,103 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	glPushMatrix();
 	glTranslatef(x, y, z);
 
+	glBindTexture(GL_TEXTURE_2D, chekerTextureId);
+
 	glBegin(GL_TRIANGLES);
 
 	//FRONT FACE
 	glColor3f(100.0f, 100.0f, 100.0f);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, -half, half);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-half, half, half);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(-half, -half, half);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(half, half, half);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-half, half, half);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, -half, half);
 
 	//BACK FACE
 	glColor3f(100.0f, 0.0f, 0.0f);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-half, half, -half);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, -half, -half);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(-half, -half, -half);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-half, half, -half);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(half, half, -half);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, -half, -half);
 	
 	//LEFT FACE
 	glColor3f(50.0f, 50.0f, 0.0f);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, half, -half);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(half, -half, half);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(half, -half, -half);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, half, -half);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(half, half, half);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(half, -half, half);
 	
 	//TOP FACE
 	glColor3f(0.0f, 0.0f, 100.0f);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-half, half, half);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, half, -half);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(-half, half, -half);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-half, half, half);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(half, half, half);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, half, -half);
 	
 	//RIGHT FACE
 	glColor3f(0.0f, 100.0f, 0.0f);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-half, -half, half);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(-half, half, -half);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(-half, -half, -half);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(-half, half, half);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(-half, half, -half);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-half, -half, half);
 	
 	//BOTTOM FACE
 	glColor3f(0.0f, 50.0f, 50.0f);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, -half, -half);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-half, -half, half);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(-half, -half, -half);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(half, -half, half);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-half, -half, half);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, -half, -half);
 	
 	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glPopMatrix();
 }
@@ -417,12 +462,41 @@ void ModuleRender::DrawGrid() const
 	glPopMatrix();
 }
 
+void ModuleRender::SetUpCheckerTexture()
+{
+	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
+	
+	for(int i = 0; i < CHECKERS_HEIGHT; i++)
+	{
+		for(int j = 0; j < CHECKERS_WIDTH; j++)
+		{
+			int c = ((((i & 0x8) == 0) ^ (((j & 0x8)) == 0))) * 255;
+			
+			checkImage[i][j][0] = (GLubyte)c;
+			checkImage[i][j][1] = (GLubyte)c;
+			checkImage[i][j][2] = (GLubyte)c;
+			checkImage[i][j][3] = (GLubyte)255;
+		}
+	}
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glGenTextures(1, &chekerTextureId);
+	glBindTexture(GL_TEXTURE_2D, chekerTextureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void ModuleRender::DrawCross(const float3 & pos,float scale)const
 {
 	float crossSize = 0.01f * scale;
 	glPushMatrix();
 
 	glTranslatef(pos.x,pos.y,pos.z);
+
 	glLineWidth(3);
 
 	glBegin(GL_LINES);
@@ -438,4 +512,6 @@ void ModuleRender::DrawCross(const float3 & pos,float scale)const
 	glEnd();
 
 	glPopMatrix();
+
+	glLineWidth(1);
 }

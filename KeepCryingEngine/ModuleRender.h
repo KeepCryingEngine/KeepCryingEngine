@@ -36,6 +36,8 @@ private:
 	void SetUpGrid() const;
 	void DrawGrid() const;
 
+	void SetUpCheckerTexture();
+
 private:
 	uint bigArrayCube = 0;
 	uint vertexArrayBuffer = 0;
@@ -46,6 +48,11 @@ private:
 	int sphereIndicesSize = 0;
 
 	SDL_GLContext glcontext = nullptr;
+
+	uint chekerTextureId = 0;
+
+	static const uint CHECKERS_HEIGHT;
+	static const uint CHECKERS_WIDTH;
 };
 
 #endif // !_MODULERENDER_H_
