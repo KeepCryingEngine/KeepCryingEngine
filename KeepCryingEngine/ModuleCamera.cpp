@@ -189,7 +189,7 @@ void ModuleCamera::SetUpFrustum()
 {
 	frustum.type = PerspectiveFrustum;
 	frustum.pos = float3::unitY;
-	frustum.front = -float3::unitZ;
+	frustum.front = float3::unitZ;
 	frustum.up = float3::unitY;
 	frustum.nearPlaneDistance = 0.1f;
 	frustum.farPlaneDistance = 50.0f;
