@@ -87,9 +87,9 @@ update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 {
 	DrawGrid();
-	DrawCubeDirect(2.0f, 2.0f, -10.0f);
-	DrawCubeBigArray(0.0f, 2.0f, -10.0f);
-	//DrawCubeIndices(0.0f, 0.0f, -2.0f);
+	DrawCubeDirect(2.0f, 2.0f, 10.0f);
+	DrawCubeBigArray(0.0f, 2.0f, 10.0f);
+	DrawCubeIndices(-2.0f, 2.0f, 10.0f);
 	//DrawSphere(0.0f, -2.0f, 2.0f);
 
 	// SDL_GL_SwapWindow(App->window->window);
@@ -118,42 +118,47 @@ void ModuleRender::SetUpBigArray() const
 
 	float vertices[36 * 3] =
 	{
-		-half, -half, -half,
-		half, -half, -half,
-		-half, half, -half,
-		half, -half, -half,
-		half, half, -half,
-		-half, half, -half,
-		half, -half, -half,
 		half, -half, half,
-		half, half, -half,
-		half, -half, half,
-		half, half, half,
-		half, half, -half,
-		-half, half, -half,
-		half, half, -half,
 		-half, half, half,
-		half, half, -half,
+		-half, -half, half,
 		half, half, half,
 		-half, half, half,
-		-half, -half, half,
+		half, -half, half,
+
+		-half, half, -half,
+		half, -half, -half,
+		-half, -half, -half,
+		-half, half, -half,
+		half, half, -half,
+		half, -half, -half,
+
+		half, half, -half,
+		half, -half, half,
+		half, -half, -half,
+		half, half, -half,
+		half, half, half,
+		half, -half, half,
+
 		-half, half, half,
-		half, -half, half,
-		half, -half, half,
+		half, half, -half,
+		-half, half, -half,
 		-half, half, half,
 		half, half, half,
+		half, half, -half,
+
+		-half, -half, half,
+		-half, half, -half,
 		-half, -half, -half,
-		-half, half, -half,
-		-half, -half, half,
-		-half, -half, half,
-		-half, half, -half,
 		-half, half, half,
+		-half, half, -half,
+		-half, -half, half,
+
+		half, -half, -half,
+		-half, -half, half,
 		-half, -half, -half,
+		half, -half, half,
 		-half, -half, half,
 		half, -half, -half,
-		half, -half, -half,
-		-half, -half, half,
-		half, -half, half
 	};
 
 	glGenBuffers(1, (GLuint*) &(bigArrayCube));
@@ -163,42 +168,42 @@ void ModuleRender::SetUpBigArray() const
 
 	float uv[36 * 2] =
 	{
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	1.0f, 0.0f
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f
 	};
 
 	glGenBuffers(1, (GLuint*) &(bigArrayCubeUV));
@@ -212,48 +217,108 @@ void ModuleRender::SetUpBigArray() const
 void ModuleRender::SetUpIndicesArray() const
 {
 	float half = 0.5f;
-	float uniqueVertex[8 * 3] =
+	float uniqueVertex[8 * 3 * 3] =
 	{
-		-half, -half, -half, // 0
-		half, -half, -half,  // 1
-		half, half, -half,  // 2
-		-half, half, -half, // 3
-		-half, -half, half, // 4
-		half, -half, half,  // 5
-		half, half, half,  // 6
-		-half, half, half  // 7
+		-half, -half, -half, // 0 Front bottom left
+		half, -half, -half,  // 1 Front bottom right
+		half, half, -half,  // 2 Front top right
+		-half, half, -half, // 3 Front top left
+
+		-half, -half, half, // 4 Left bottom left
+		-half, -half, -half, // 5 Left bottom right
+		-half, half, -half, // 6 Left top right
+		-half, half, half,  // 7 Left top left
+
+		-half, half, half,  // 8 Back top left
+		half, half, half,  // 9 Back top right
+		half, -half, half,  // 10 Back bottom right
+		-half, -half, half, // 11 Back bottom left
+
+		half, -half, -half,  // 12 Right bottom left
+		half, -half, half,  // 13 Right bottom right
+		half, half, half,  // 14 Right top right
+		half, half, -half,  // 15 Right top left
+
+		-half, -half, half, // 16 Bottom top left
+		half, -half, half,  // 17 Bottom top right
+		half, -half, -half,  // 18 Bottom bottom right
+		-half, -half, -half, // 19 Bottom bottom left
+
+		-half, half, -half, // 20 Top bottom left
+		half, half, -half,  // 21 Top bottom right
+		half, half, half,  // 22 Top top right
+		-half, half, half  // 23 Top top left
 	};
 
 	glGenBuffers(1, (GLuint*) &(vertexArrayBuffer));
 	glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8 * 3, uniqueVertex, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8 * 3 * 3, uniqueVertex, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	uint indicesArray[36 * 3] =
 	{
-		0, 1, 3,
-		1, 2, 3,
+		3, 1, 0,
+		3, 2, 1,
 
-		1, 5, 2,
-		5, 6, 2,
+		7, 5, 4,
+		7, 6, 5,
 
-		5, 4, 6,
-		4, 7, 6,
+		11, 9, 8,
+		11, 10, 9,
 
-		4, 0, 7,
-		0, 3, 7,
+		15, 13, 12,
+		15, 14, 13,
 
-		3, 2, 7,
-		2, 6, 7,
+		19, 17, 16,
+		19, 18, 17,
 
-		4, 5, 0,
-		5, 1, 0
+		23, 21, 20,
+		23, 22, 21
 	};
 
 	glGenBuffers(1, (GLuint*) &(indicesArrayBuffer));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesArrayBuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * 36 * 3, indicesArray, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	float uv[24 * 2] =
+	{
+		0.0f,0.0f,
+		1.0f,0.0f,
+		1.0f,1.0f,
+		0.0f,1.0f,
+
+		0.0f,0.0f,
+		1.0f,0.0f,
+		1.0f,1.0f,
+		0.0f,1.0f,
+
+		0.0f,0.0f,
+		1.0f,0.0f,
+		1.0f,1.0f,
+		0.0f,1.0f,
+
+		0.0f,0.0f,
+		1.0f,0.0f,
+		1.0f,1.0f,
+		0.0f,1.0f,
+
+		0.0f,0.0f,
+		1.0f,0.0f,
+		1.0f,1.0f,
+		0.0f,1.0f,
+
+		0.0f,0.0f,
+		1.0f,0.0f,
+		1.0f,1.0f,
+		0.0f,1.0f
+	};
+
+	glGenBuffers(1, (GLuint*) &(uvArrayBuffer));
+	glBindBuffer(GL_ARRAY_BUFFER, uvArrayBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 36 * 2, uv, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 
 void ModuleRender::SetUpSphere(float radius, unsigned int rings, unsigned int sectors) 
@@ -429,7 +494,7 @@ void ModuleRender::DrawCubeBigArray(float x, float y, float z) const
 
 	glVertexPointer(3, GL_FLOAT, 0, nullptr);
 
-	glEnableClientState(GL_TEXTURE_2D_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, bigArrayCubeUV);
 
 	glTexCoordPointer(2,GL_FLOAT,0,nullptr);
@@ -451,15 +516,25 @@ void ModuleRender::DrawCubeIndices(float x, float y, float z) const
 	glPushMatrix();
 	glTranslatef(x, y, z);
 
+	glBindTexture(GL_TEXTURE_2D,indiceTexture);
+
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
 	glVertexPointer(3, GL_FLOAT, 0, nullptr);
 
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, uvArrayBuffer);
+
+	glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesArrayBuffer);
 	glDrawElements(GL_TRIANGLES, 36 * 3, GL_UNSIGNED_INT, nullptr); // The nullptr means 'take the last binded buffer'
 
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindTexture(GL_TEXTURE_2D,0);
 
 	glPopMatrix();
 }

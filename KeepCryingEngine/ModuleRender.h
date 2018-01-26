@@ -42,6 +42,7 @@ private:
 	uint bigArrayCubeUV = 0;
 	uint vertexArrayBuffer = 0;
 	uint indicesArrayBuffer = 0;
+	uint uvArrayBuffer = 0;
 	uint sphereIndex = 0;
 	uint sphereVertex = 0;
 
