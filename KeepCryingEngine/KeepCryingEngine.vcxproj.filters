@@ -15,36 +15,6 @@
     </ClCompile>
     <ClCompile Include="ModuleTestJson.cpp" />
     <ClCompile Include="ModuleTestMathGeoLib.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Algorithm\Random\LCG.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\AABB.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\Capsule.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\Circle.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\Frustum.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\Line.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\LineSegment.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\OBB.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\Plane.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\Polygon.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\Polyhedron.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\Ray.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\Sphere.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\Triangle.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Geometry\TriangleMesh.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\BitOps.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\float2.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\float3.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\float3x3.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\float3x4.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\float4.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\float4x4.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\MathFunc.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\MathLog.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\MathOps.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\Polynomial.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\Quat.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\SSEMath.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Math\TransformOps.cpp" />
-    <ClCompile Include="external\MathGeoLib-1.5\src\Time\Clock.cpp" />
     <ClCompile Include="external\ImGui\imgui.cpp" />
     <ClCompile Include="external\ImGui\imgui_demo.cpp" />
     <ClCompile Include="external\ImGui\imgui_draw.cpp" />
@@ -71,64 +41,6 @@
     </ClInclude>
     <ClInclude Include="ModuleTestJson.h" />
     <ClInclude Include="ModuleTestMathGeoLib.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Algorithm\Random\LCG.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\AABB.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\AABB2D.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\Capsule.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\Circle.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\Frustum.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\GeometryAll.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\GeomType.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\HitInfo.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\KDTree.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\Line.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\LineSegment.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\OBB.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\PBVolume.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\Plane.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\Polygon.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\Polyhedron.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\QuadTree.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\Ray.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\Sphere.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\Triangle.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Geometry\TriangleMesh.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\assume.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\BitOps.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\Complex.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\CoordinateAxisConvention.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\FixedPoint.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\float2.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\float3.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\float3x3.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\float3x4.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\float4.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\float4_neon.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\float4_sse.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\float4x4.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\float4x4_neon.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\float4x4_sse.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\FloatCmp.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\MathAll.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\MathConstants.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\MathFunc.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\MathLog.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\MathNamespace.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\MathTypes.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\MatrixProxy.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\myassert.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\Polynomial.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\Quat.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\quat_simd.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\Rect.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\Reinterpret.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\sse_mathfun.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\SSEMath.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Math\TransformOps.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\Time\Clock.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\MathBuildConfig.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\MathGeoLib.h" />
-    <ClInclude Include="external\MathGeoLib-1.5\src\MathGeoLibFwd.h" />
     <ClInclude Include="external\ImGui\imconfig.h" />
     <ClInclude Include="external\ImGui\imgui.h" />
     <ClInclude Include="external\ImGui\imgui_internal.h" />
@@ -154,13 +66,5 @@
     <Filter Include="Entities">
       <UniqueIdentifier>{01380f7f-a4ed-4758-b89f-e430ec5dfc0a}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="external\MathGeoLib-1.5\src\Geometry\KDTree.inl" />
-    <None Include="external\MathGeoLib-1.5\src\Geometry\QuadTree.inl" />
-    <None Include="external\MathGeoLib-1.5\src\Geometry\TriangleMesh_IntersectRay_AVX.inl" />
-    <None Include="external\MathGeoLib-1.5\src\Geometry\TriangleMesh_IntersectRay_CPP.inl" />
-    <None Include="external\MathGeoLib-1.5\src\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
-    <None Include="external\MathGeoLib-1.5\src\Math\Matrix.inl" />
   </ItemGroup>
 </Project>
