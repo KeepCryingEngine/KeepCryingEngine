@@ -42,11 +42,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(ProjectDir)external\ImGui;$(ProjectDir)external\MathGeoLib-1.5\src\Time;$(ProjectDir)external\MathGeoLib-1.5\src\Math;$(ProjectDir)external\MathGeoLib-1.5\src\Algorithm\Random;$(ProjectDir)external\MathGeoLib-1.5\src\Geometry;$(ProjectDir)external\MathGeoLib-1.5\src;$(ProjectDir)external\devil\include;$(ProjectDir)external\SDL\include;$(ProjectDir)external\Glew\include;$(ProjectDir)external\json;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)external\Glew\lib\Win32;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir);$(ProjectDir)external\SDL\libx86;$(ProjectDir)external\devil\lib\x86\Release</LibraryPath>
+    <LibraryPath>$(ProjectDir)external\Glew\lib\Win32;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir);$(ProjectDir)external\SDL\libx86;$(ProjectDir)external\devil\lib\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(ProjectDir)external\ImGui;$(ProjectDir)external\MathGeoLib-1.5\src\Time;$(ProjectDir)external\MathGeoLib-1.5\src\Math;$(ProjectDir)external\MathGeoLib-1.5\src\Algorithm\Random;$(ProjectDir)external\MathGeoLib-1.5\src\Geometry;$(ProjectDir)external\MathGeoLib-1.5\src;$(ProjectDir)external\devil\include;$(ProjectDir)external\SDL\include;$(ProjectDir)external\Glew\include;$(ProjectDir)external\json;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)external\Glew\lib\Win32;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir);$(ProjectDir)external\SDL\libx86;$(ProjectDir)external\devil\lib\x86\Release</LibraryPath>
+    <LibraryPath>$(ProjectDir)external\Glew\lib\Win32;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir);$(ProjectDir)external\SDL\libx86;$(ProjectDir)external\devil\lib\</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
