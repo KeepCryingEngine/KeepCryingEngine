@@ -36,7 +36,6 @@ private:
 
 	void SetUpGrid() const;
 	void DrawGrid() const;
-
 private:
 	uint bigArrayCube = 0;
 	uint bigArrayCubeUV = 0;

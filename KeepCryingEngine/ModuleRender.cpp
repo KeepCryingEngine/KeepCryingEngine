@@ -606,6 +606,8 @@ void ModuleRender::DrawCross(const float3 & pos,float scale)const
 
 	glEnd();
 
+	glLineWidth(1);
+
 	glPopMatrix();
 }
 
