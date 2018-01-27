@@ -1,6 +1,7 @@
 #include "ModuleInput.h"
 
 #include <SDL.h>
+#include <imgui.h>
 
 #include "Application.h"
 #include "ModuleCamera.h"
@@ -76,6 +77,12 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 			mouse_buttons[i] = KeyState::KEY_IDLE;
 	}
 
+	// If mouse is hovering any window
+	// ignore Button down and Button up events
+	// Motion event is not ignored
+
+	bool mouseHoveringAnyWindow = ImGui::IsMouseHoveringAnyWindow();
+
 	while(SDL_PollEvent(&event) != 0)
 	{
 		switch(event.type)
@@ -110,11 +117,17 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 				break;
 
 			case SDL_MOUSEBUTTONDOWN:
-				mouse_buttons[event.button.button - 1] = KeyState::KEY_DOWN;
+				if(!mouseHoveringAnyWindow)
+				{
+					mouse_buttons[event.button.button - 1] = KeyState::KEY_DOWN;
+				}
 				break;
 
 			case SDL_MOUSEBUTTONUP:
-				mouse_buttons[event.button.button - 1] = KeyState::KEY_UP;
+				if(!mouseHoveringAnyWindow)
+				{
+					mouse_buttons[event.button.button - 1] = KeyState::KEY_UP;
+				}
 				break;
 
 			case SDL_MOUSEMOTION:
