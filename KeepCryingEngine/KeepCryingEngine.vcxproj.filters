@@ -52,6 +52,7 @@
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="json_serializer.h" />
     <ClInclude Include="ModuleCamera.h" />
+    <ClInclude Include="external\devil\include\DevIL.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">
