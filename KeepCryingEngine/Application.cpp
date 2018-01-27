@@ -50,7 +50,9 @@ void Application::LoadConfiguration()
 
 	// Read: maxRealDeltaTimeS, limitFps, desiredFps
 
-	configuration.title = json["title"].is_string();
+
+	string temp= json["title"];
+	configuration.title = temp;
 	configuration.vsync = json["vsync"];
 	configuration.screenWidth = json["screenWidth"];
 	configuration.screenHeight = json["screenHeight"];

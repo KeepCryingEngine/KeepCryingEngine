@@ -9,6 +9,7 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
+#include "ModuleRender.h"
 #include "Globals.h"
 
 ModuleUI::ModuleUI()
@@ -93,6 +94,41 @@ void ModuleUI::DrawMainMenu()
 					styleWindow ^= 1;
 				}
 				ImGui::EndMenu();
+			}
+
+			static int textureMode = 0;
+			if(ImGui::BeginMenu("Texture"))
+			{
+				ImGui::Combo("Texture", &textureMode, "None\0Debug\0Lenna\0Exodia\0Rock");
+				ImGui::EndMenu();
+			}
+			switch(textureMode)
+			{
+				case 0:
+				{
+					App->renderer->actualTexture = nullptr;
+				}
+					break;
+				case 1:
+				{
+					App->renderer->actualTexture = &App->renderer->debugTexture;
+				}
+				break;
+				case 2:
+				{
+					App->renderer->actualTexture = &App->renderer->lenaTexture;
+				}
+				break;
+				case 3:
+				{
+					App->renderer->actualTexture = &App->renderer->exodiaTexture;
+				}
+				break;
+				case 4:
+				{
+					App->renderer->actualTexture = &App->renderer->rockTexture;
+				}
+				break;
 			}
 
 			if(ImGui::BeginMenu("About"))

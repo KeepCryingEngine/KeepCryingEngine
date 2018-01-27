@@ -83,11 +83,7 @@ bool ModuleRender::Init()
 		SetUpBigArray();
 		SetUpIndicesArray();
 		SetUpSphere(0.25f, 100, 100);
-		SetUpTexture();
-
-		lenaTexture = LoadTexture("Assets/Lenna.png");
-		rockTexture = LoadTexture("Assets/rock.jpg");
-		exodiaTexture = LoadTexture("Assets/exodia.dds");
+		SetUpTextures();
 	}
 
 	return ret;
@@ -188,42 +184,47 @@ void ModuleRender::SetUpBigArray()
 
 	float uv[36 * 2] =
 	{
-		1.0f, 0.0f,
-		0.0f, 1.0f,
-		0.0f, 0.0f,
-		1.0f, 1.0f,
-		0.0f, 1.0f,
-		1.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f,
-		0.0f, 0.0f,
-		0.0f, 1.0f,
-		1.0f, 1.0f,
-		1.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f,
-		0.0f, 0.0f,
-		0.0f, 1.0f,
-		1.0f, 1.0f,
-		1.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f,
-		0.0f, 0.0f,
-		0.0f, 1.0f,
-		1.0f, 1.0f,
-		1.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f,
-		0.0f, 0.0f,
-		1.0f, 1.0f,
-		0.0f, 1.0f,
-		1.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f,
-		0.0f, 0.0f,
-		1.0f, 1.0f,
-		0.0f, 1.0f,
-		1.0f, 0.0f
+	0.0f, 0.0f,
+	1.0f, 1.0f,
+	1.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+	0.0f, 0.0f,
+	
+	0.0f, 1.0f,
+	1.0f, 0.0f,
+	0.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+	1.0f, 0.0f,
+
+	0.0f, 1.0f,
+	1.0f, 0.0f,
+	0.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+	1.0f, 0.0f,
+
+	0.0f, 1.0f,
+	1.0f, 0.0f,
+	0.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+	1.0f, 0.0f,
+
+	1.0f, 0.0f,
+	0.0f, 1.0f,
+	0.0f, 0.0f,
+	1.0f, 1.0f,
+	0.0f, 1.0f,
+	1.0f, 0.0f,
+
+	1.0f, 0.0f,
+	0.0f, 1.0f,
+	0.0f, 0.0f,
+	1.0f, 1.0f,
+	0.0f, 1.0f,
+	1.0f, 0.0f
 	};
 
 	glGenBuffers(1, (GLuint*) &(bigArrayCubeUV));
@@ -311,20 +312,20 @@ void ModuleRender::SetUpIndicesArray()
 		1.0f,1.0f,
 		0.0f,1.0f,
 
-		0.0f,0.0f,
-		1.0f,0.0f,
 		1.0f,1.0f,
 		0.0f,1.0f,
+		0.0f,0.0f,
+		1.0f,0.0f,
 
 		0.0f,0.0f,
 		1.0f,0.0f,
 		1.0f,1.0f,
 		0.0f,1.0f,
 
-		0.0f,0.0f,
-		1.0f,0.0f,
-		1.0f,1.0f,
 		0.0f,1.0f,
+		1.0f,1.0f,
+		1.0f,0.0f,
+		0.0f,0.0f,
 
 		0.0f,0.0f,
 		1.0f,0.0f,
@@ -397,30 +398,33 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	glPushMatrix();
 	glTranslatef(x, y, z);
 
-	glBindTexture(GL_TEXTURE_2D, indiceTexture);
+	if(actualTexture != nullptr)
+	{
+		glBindTexture(GL_TEXTURE_2D, *actualTexture);
+	}
 
 	glBegin(GL_TRIANGLES);
 
-	//FRONT FACE
+	//Back FACE
 	glColor3f(30.0f, 100.0f, 200.0f);
-	glTexCoord2f(1.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(half, -half, half);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-half, half, half);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-half, -half, half);
 	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(half, half, half);
+	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(-half, half, half);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-half, -half, half);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(half, half, half);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-half, half, half);
-	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, -half, half);
 
-	//BACK FACE
+	//Front FACE
 	glColor3f(0.0f, 255.0f, 255.0f);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-half, half, -half);
 	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-half, half, -half);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, -half, -half);
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(-half, -half, -half);
@@ -431,11 +435,11 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, -half, -half);
 	
-	//LEFT FACE
+	//Right FACE
 	glColor3f(0.0f, 0.0f, 255.0f);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(half, half, -half);
 	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(half, half, -half);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, -half, half);
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(half, -half, -half);
@@ -448,9 +452,9 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	
 	//TOP FACE
 	glColor3f(0.0f, 255.0f, 0.0f);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-half, half, half);
 	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-half, half, half);
+	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, half, -half);
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(-half, half, -half);
@@ -500,12 +504,15 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 
 void ModuleRender::DrawCubeBigArray(float x, float y, float z) const
 {
-	glColor3f(255.0f, 0.0f, 1.0f);
+	glColor3f(255.0f, 255.0f, 255.0f);
 
 	glPushMatrix();
 	glTranslatef(x, y, z);
 
-	glBindTexture(GL_TEXTURE_2D, lenaTexture);
+	if(actualTexture != nullptr)
+	{
+		glBindTexture(GL_TEXTURE_2D, *actualTexture);
+	}
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, bigArrayCube);
@@ -534,8 +541,11 @@ void ModuleRender::DrawCubeIndices(float x, float y, float z) const
 	glPushMatrix();
 	glTranslatef(x, y, z);
 
-	glBindTexture(GL_TEXTURE_2D,rockTexture);
-
+	
+	if(actualTexture != nullptr)
+	{
+		glBindTexture(GL_TEXTURE_2D, *actualTexture);
+	}
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
 	glVertexPointer(3, GL_FLOAT, 0, nullptr);
@@ -723,8 +733,8 @@ void ModuleRender::SetUpTexture()
 	}
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glGenTextures(1, &indiceTexture);
-	glBindTexture(GL_TEXTURE_2D, indiceTexture);
+	glGenTextures(1, &debugTexture);
+	glBindTexture(GL_TEXTURE_2D, debugTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -732,4 +742,12 @@ void ModuleRender::SetUpTexture()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT,
 		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void ModuleRender::SetUpTextures()
+{
+	SetUpTexture();
+	lenaTexture = LoadTexture("Assets/Lenna.png");
+	rockTexture = LoadTexture("Assets/rock.jpg");
+	exodiaTexture = LoadTexture("Assets/exodia.dds");
 }

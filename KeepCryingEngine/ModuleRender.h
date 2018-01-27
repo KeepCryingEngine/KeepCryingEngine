@@ -25,6 +25,7 @@ public:
 	void DrawCross(const float3& pos, float scale) const;
 
 private:
+	void SetUpTextures();
 	void SetUpTexture();
 	void SetUpBigArray();
 	void SetUpIndicesArray();
@@ -39,6 +40,13 @@ private:
 
 	uint LoadTexture(const char * theFileName);
 
+public:
+	uint * actualTexture = nullptr;
+	uint debugTexture = 0;
+	uint lenaTexture = 0;
+	uint exodiaTexture = 0;
+	uint rockTexture = 0;
+
 private:
 	uint bigArrayCube = 0;
 	uint bigArrayCubeUV = 0;
@@ -47,11 +55,6 @@ private:
 	uint uvArrayBuffer = 0;
 	uint sphereIndex = 0;
 	uint sphereVertex = 0;
-
-	uint indiceTexture = 0;
-	uint lenaTexture = 0;
-	uint exodiaTexture = 0;
-	uint rockTexture = 0;
 
 	int sphereIndicesSize = 0;
 	static const uint CHECKERS_HEIGHT;
