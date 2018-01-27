@@ -1,8 +1,6 @@
 #include <windows.h>
 #include <stdio.h>
 
-#include "Globals.h"
-
 void log(const char file[], int line, const char* format, ...)
 {
 	static char tmp_string[4096];

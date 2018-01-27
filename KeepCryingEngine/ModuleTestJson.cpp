@@ -1,10 +1,7 @@
 #include "ModuleTestJson.h"
 
-#include <iostream>
 #include <fstream>
-#include <MathGeoLib.h>
 
-#include <json.hpp>
 #include "json_serializer.h"
 
 using namespace std;

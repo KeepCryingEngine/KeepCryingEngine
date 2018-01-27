@@ -1,29 +1,29 @@
 #ifndef _MODULEINPUT_H_
 #define _MODULEINPUT_H_
 
+#define NUM_MOUSE_BUTTONS 5
+
 #include <float2.h>
 
 #include "Module.h"
 
-#define NUM_MOUSE_BUTTONS 5
-
-enum EventWindow
+enum class EventWindow
 {
-	WE_QUIT = 0,
-	WE_HIDE = 1,
-	WE_SHOW = 2,
+	WE_QUIT,
+	WE_HIDE,
+	WE_SHOW,
 	WE_COUNT
 };
 
-enum KeyState
+enum class KeyState
 {
-	KEY_IDLE = 0,
+	KEY_IDLE,
 	KEY_DOWN,
 	KEY_REPEAT,
 	KEY_UP
 };
 
-enum Axis
+enum class Axis
 {
 	Horizontal,
 	Vertical
@@ -31,7 +31,6 @@ enum Axis
 
 class ModuleInput : public Module
 {
-
 public:
 
 	ModuleInput();
@@ -51,11 +50,25 @@ public:
 		return keyboard[id];
 	}
 
+	bool GetKeyPressed(int id) const
+	{
+		KeyState keyState = GetKey(id);
+
+		return keyState == KeyState::KEY_REPEAT || keyState == KeyState::KEY_DOWN;
+	}
+
 	float GetAxis(Axis) const;
 
-	KeyState GetMouseButtonDown(int id) const
+	KeyState GetMouseButton(int id) const
 	{
 		return mouse_buttons[id - 1];
+	}
+
+	bool GetMouseButtonDown(int id) const
+	{
+		KeyState keyState = GetMouseButton(id);
+
+		return keyState == KeyState::KEY_REPEAT || keyState == KeyState::KEY_DOWN;
 	}
 
 	bool GetWindowEvent(EventWindow code) const;
@@ -64,7 +77,7 @@ public:
 	const float2& GetMousePosition() const;
 
 private:
-	bool windowEvents[WE_COUNT];
+	bool windowEvents[(uint)EventWindow::WE_COUNT];
 	KeyState* keyboard;
 	KeyState mouse_buttons[NUM_MOUSE_BUTTONS];
 	float2 mouse_motion;

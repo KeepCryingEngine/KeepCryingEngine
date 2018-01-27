@@ -1,4 +1,8 @@
 #include "Application.h"
+
+#include <json.hpp>
+#include <fstream>
+
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleInput.h"
@@ -8,6 +12,7 @@
 #include "ModuleCamera.h"
 
 using namespace std;
+using nlohmann::json;
 
 Application::Application()
 {
@@ -31,12 +36,6 @@ Application::~Application()
 // json stuff
 // Do this in a different way
 // ModuleJson / Utils
-
-#include <json.hpp>
-#include <fstream>
-
-using namespace std;
-using nlohmann::json;
 
 void Application::LoadConfiguration()
 {

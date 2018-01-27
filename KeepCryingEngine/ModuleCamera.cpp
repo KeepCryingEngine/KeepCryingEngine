@@ -1,9 +1,6 @@
 #include "ModuleCamera.h"
 
-#include <SDL.h>
-
 #include "Application.h"
-#include "Globals.h"
 #include "ModuleInput.h"
 #include "ModuleRender.h"
 
@@ -24,14 +21,14 @@ bool ModuleCamera::Init()
 
 update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
 {
-	if(App->input->GetKey(SDL_SCANCODE_I))
+	if(App->input->GetKey(SDL_SCANCODE_I) == KeyState::KEY_DOWN)
 	{
 		SetUpFrustum();
 	}
 
 	float shiftDeltaMultiplier = deltaTimeS;
 
-	if(App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT))
+	if(App->input->GetKeyPressed(SDL_SCANCODE_LSHIFT) || App->input->GetKeyPressed(SDL_SCANCODE_RSHIFT))
 	{
 		shiftDeltaMultiplier *= SHIFT_MULTIPLIER;
 	}
@@ -207,7 +204,7 @@ void ModuleCamera::Rotation(float deltaTimeS)
 	RotateKeyboard(deltaTimeS);
 	RotateMouse(deltaTimeS);
 
-	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) && !(App->input->GetKey(SDL_SCANCODE_LALT) || App->input->GetKey(SDL_SCANCODE_RALT)))
+	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) && !(App->input->GetKeyPressed(SDL_SCANCODE_LALT) || App->input->GetKeyPressed(SDL_SCANCODE_RALT)))
 	{
 		RotateMouseRotation(deltaTimeS);
 	}
@@ -227,8 +224,7 @@ void ModuleCamera::Movement(float shiftDeltaMultiplier)
 void ModuleCamera::RotateMouse(float deltaTimeS)
 {
 	bool leftPressed = App->input->GetMouseButtonDown(SDL_BUTTON_LEFT);
-	bool rightPressed = App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT);
-	bool altPressed = App->input->GetKey(SDL_SCANCODE_LALT) || App->input->GetKey(SDL_SCANCODE_RALT);
+	bool altPressed = App->input->GetKeyPressed(SDL_SCANCODE_LALT) || App->input->GetKeyPressed(SDL_SCANCODE_RALT);
 
 	if(altPressed)
 	{
@@ -243,7 +239,7 @@ void ModuleCamera::MovementMouse(float shiftDeltaMultiplier)
 {
 	bool leftPressed = App->input->GetMouseButtonDown(SDL_BUTTON_LEFT);
 	bool rightPressed = App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT);
-	bool altPressed = App->input->GetKey(SDL_SCANCODE_LALT) || App->input->GetKey(SDL_SCANCODE_RALT);
+	bool altPressed = App->input->GetKeyPressed(SDL_SCANCODE_LALT) || App->input->GetKeyPressed(SDL_SCANCODE_RALT);
 
 	if(altPressed)
 	{
@@ -345,32 +341,32 @@ void ModuleCamera::MovementKeyBoard(float shiftDeltaMultiplier)
 {
 	float3 translateVector = float3::zero;
 
-	if(App->input->GetKey(SDL_SCANCODE_Q))
+	if(App->input->GetKeyPressed(SDL_SCANCODE_Q))
 	{
 		translateVector += frustum.up;
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_E))
+	if(App->input->GetKeyPressed(SDL_SCANCODE_E))
 	{
 		translateVector -= frustum.up;
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_W))
+	if(App->input->GetKeyPressed(SDL_SCANCODE_W))
 	{
 		translateVector += frustum.front;
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_S))
+	if(App->input->GetKeyPressed(SDL_SCANCODE_S))
 	{
 		translateVector -= frustum.front;
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_D))
+	if(App->input->GetKeyPressed(SDL_SCANCODE_D))
 	{
 		translateVector += frustum.WorldRight();
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_A))
+	if(App->input->GetKeyPressed(SDL_SCANCODE_A))
 	{
 		translateVector -= frustum.WorldRight();
 	}
@@ -383,7 +379,7 @@ void ModuleCamera::RotateKeyboard(float deltaTimeS)
 	Quat rotation = Quat::identity;
 	float rotationDeltaSpeed = rotationSpeed * deltaTimeS;
 
-	if(App->input->GetKey(SDL_SCANCODE_UP))
+	if(App->input->GetKeyPressed(SDL_SCANCODE_UP))
 	{
 		if(frustum.front.y < 1.0f - rotationDeltaSpeed)
 		{
@@ -391,7 +387,7 @@ void ModuleCamera::RotateKeyboard(float deltaTimeS)
 		}
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_DOWN))
+	if(App->input->GetKeyPressed(SDL_SCANCODE_DOWN))
 	{
 		if(frustum.front.y > rotationDeltaSpeed - 1.0f)
 		{
@@ -399,12 +395,12 @@ void ModuleCamera::RotateKeyboard(float deltaTimeS)
 		}
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_LEFT))
+	if(App->input->GetKeyPressed(SDL_SCANCODE_LEFT))
 	{
 		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, rotationDeltaSpeed));
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_RIGHT))
+	if(App->input->GetKeyPressed(SDL_SCANCODE_RIGHT))
 	{
 		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, -rotationDeltaSpeed));
 	}

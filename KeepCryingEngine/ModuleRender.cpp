@@ -1,22 +1,20 @@
 #include "ModuleRender.h"
 
 #define _USE_MATH_DEFINES
+
 #include <math.h>
 #include <vector>
-#include "GL/glew.h"
-#include "SDL_opengl.h"
-#include <gl/GL.h>
-#include <gl/GLU.h>
+#include <GL/glew.h>
 #include <DevIL.h>
 
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 
+using namespace std;
+
 const uint ModuleRender::CHECKERS_HEIGHT = 128;
 const uint ModuleRender::CHECKERS_WIDTH = 128;
-
-using namespace std;
 
 ModuleRender::ModuleRender()
 {}

@@ -2,13 +2,11 @@
 #define _MODULERENDER_H_
 
 #define HAVE_M_PI
-#define _CRTDBG_MAP_ALLOC
 
 #include <SDL.h>
 #include <float3.h>
 
 #include "Module.h"
-
 
 class ModuleRender : public Module
 {

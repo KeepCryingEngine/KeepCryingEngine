@@ -1,7 +1,6 @@
 #ifndef _MODULEUI_H_
 #define _MODULEUI_H_
 
-#include <imgui.h>
 #include <float3.h>
 
 #include "Module.h"

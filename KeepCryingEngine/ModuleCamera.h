@@ -1,8 +1,9 @@
 #ifndef _MODULECAMERA_H_
 #define _MODULECAMERA_H_
 
-#include "Module.h"
 #include <MathGeoLib.h>
+
+#include "Module.h"
 
 class ModuleCamera : public Module
 {
@@ -42,8 +43,6 @@ public:
 	float3 GetFrontVector() const;
 	void LookAt(float3 point);
 
-
-
 private:
 	void SetUpFrustum();
 	float ComputeHorizontalFov(float radians, float width, float height) const;
@@ -76,4 +75,3 @@ private:
 };
 
 #endif // !_MODULECAMERA_H_
-

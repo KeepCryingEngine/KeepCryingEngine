@@ -1,16 +1,14 @@
 #include "ModuleUI.h"
 
+#include <imgui.h>
 #include <imgui_impl_sdl_gl3.h>
-#include "GL/glew.h"
-#include <SDL.h>
+#include <GL/glew.h>
 #include <Windows.h>
-#include <shellapi.h>
 
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
-#include "Globals.h"
 
 ModuleUI::ModuleUI()
 { }
