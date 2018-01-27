@@ -106,9 +106,7 @@ update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 	DrawCubeDirect(2.0f, 2.0f, 10.0f);
 	DrawCubeBigArray(0.0f, 2.0f, 10.0f);
 	DrawCubeIndices(-2.0f, 2.0f, 10.0f);
-	//DrawSphere(0.0f, -2.0f, 2.0f);
-
-	// SDL_GL_SwapWindow(App->window->window);
+	DrawSphere(0.0f, 4.0f, 10.0f);
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -347,10 +345,12 @@ void ModuleRender::SetUpSphere(float radius, unsigned int rings, unsigned int se
 
 	vector<GLfloat> vertices;
 	vector<GLushort> indices;
+	vector<GLfloat> texcoords;
 
 	vertices.resize(rings * sectors * 3);
+	texcoords.resize(rings * sectors * 2);
 	vector<GLfloat>::iterator v = vertices.begin();
-
+	vector<GLfloat>::iterator t = texcoords.begin();
 	for(unsigned int r = 0; r < rings; r++)
 	{
 		for(unsigned int s = 0; s < sectors; s++)
@@ -358,6 +358,9 @@ void ModuleRender::SetUpSphere(float radius, unsigned int rings, unsigned int se
 			float y = (float)sin(-M_PI_2 + M_PI * r * R);
 			float x = (float)cos(2 * M_PI * s * S) * (float)sin(M_PI * r * R);
 			float z = (float)sin(2 * M_PI * s * S) * (float)sin(M_PI * r * R);
+
+			*t++ = s * S;
+			*t++ = r * R;
 
 			*v++ = x * radius;
 			*v++ = y * radius;
@@ -368,6 +371,11 @@ void ModuleRender::SetUpSphere(float radius, unsigned int rings, unsigned int se
 	glGenBuffers(1, (GLuint*) &(sphereVertex));
 	glBindBuffer(GL_ARRAY_BUFFER, sphereVertex);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * rings * sectors * 3, ((void*)&vertices[0]), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, (GLuint*) &(sphereUV));
+	glBindBuffer(GL_ARRAY_BUFFER, sphereUV);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * rings * sectors * 2, ((void*)&texcoords[0]), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	indices.resize(rings * sectors * 4);
@@ -526,9 +534,9 @@ void ModuleRender::DrawCubeBigArray(float x, float y, float z) const
 
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glPopMatrix();
@@ -561,7 +569,6 @@ void ModuleRender::DrawCubeIndices(float x, float y, float z) const
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	glBindTexture(GL_TEXTURE_2D,0);
 
 	glPopMatrix();
@@ -571,17 +578,33 @@ void ModuleRender::DrawSphere(float x, float y, float z)const
 {
 	glMatrixMode(GL_MODELVIEW);
 
-	glColor3f(255.0f, 0.0f, 1.0f);
+	glColor3f(255.0f, 255.0f, 255.0f);
 
 	glPushMatrix();
 	glTranslatef(x, y, z);
+
+	if(actualTexture != nullptr)
+	{
+		glBindTexture(GL_TEXTURE_2D, *actualTexture);
+	}
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 
 	glBindBuffer(GL_ARRAY_BUFFER, sphereVertex);
 	glVertexPointer(3, GL_FLOAT, 0, nullptr);
+
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, sphereUV);
+
+	glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereIndex);
 	glDrawElements(GL_QUADS, sphereIndicesSize, GL_UNSIGNED_SHORT, nullptr);
+
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glPopMatrix();
 }

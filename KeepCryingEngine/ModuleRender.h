@@ -55,6 +55,7 @@ private:
 	uint uvArrayBuffer = 0;
 	uint sphereIndex = 0;
 	uint sphereVertex = 0;
+	uint sphereUV = 0;
 
 	int sphereIndicesSize = 0;
 	static const uint CHECKERS_HEIGHT;
