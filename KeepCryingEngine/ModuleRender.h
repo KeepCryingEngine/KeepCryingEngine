@@ -26,8 +26,8 @@ public:
 
 private:
 	void SetUpTexture();
-	void SetUpBigArray() const;
-	void SetUpIndicesArray() const;
+	void SetUpBigArray();
+	void SetUpIndicesArray();
 	void SetUpSphere(float radius, unsigned int rings, unsigned int sectors);
 	void DrawCubeDirect(float x, float y, float z) const;
 	void DrawCubeBigArray(float x, float y, float z) const;
@@ -36,6 +36,9 @@ private:
 
 	void SetUpGrid() const;
 	void DrawGrid() const;
+
+	uint LoadTexture(const char * theFileName);
+
 private:
 	uint bigArrayCube = 0;
 	uint bigArrayCubeUV = 0;
@@ -46,6 +49,9 @@ private:
 	uint sphereVertex = 0;
 
 	uint indiceTexture = 0;
+	uint lenaTexture = 0;
+	uint exodiaTexture = 0;
+	uint rockTexture = 0;
 
 	int sphereIndicesSize = 0;
 	static const uint CHECKERS_HEIGHT;

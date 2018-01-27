@@ -7,6 +7,7 @@
 #include "SDL_opengl.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
+#include <DevIL.h>
 
 #include "Application.h"
 #include "ModuleWindow.h"
@@ -65,10 +66,29 @@ bool ModuleRender::Init()
 		ret = false;
 	}
 
-	SetUpBigArray();
-	SetUpIndicesArray();
-	SetUpSphere(0.25f, 100, 100);
-	SetUpTexture();
+
+	//Initialize DevIL
+	ilInit();
+	iluInit();
+	ilutInit();
+
+	if (!ilutRenderer(ILUT_OPENGL))
+	{
+		LOG_DEBUG("DevIL could not initialize!");
+		ret = false;
+	}
+
+	if (ret) 
+	{
+		SetUpBigArray();
+		SetUpIndicesArray();
+		SetUpSphere(0.25f, 100, 100);
+		SetUpTexture();
+
+		lenaTexture = LoadTexture("Assets/Lenna.png");
+		rockTexture = LoadTexture("Assets/rock.jpg");
+		exodiaTexture = LoadTexture("Assets/exodia.dds");
+	}
 
 	return ret;
 }
@@ -112,7 +132,7 @@ bool ModuleRender::CleanUp()
 	return true;
 }
 
-void ModuleRender::SetUpBigArray() const
+void ModuleRender::SetUpBigArray()
 {
 	float half = 0.5f;
 
@@ -210,11 +230,9 @@ void ModuleRender::SetUpBigArray() const
 	glBindBuffer(GL_ARRAY_BUFFER, bigArrayCubeUV);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 36 * 2, uv, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	
 }
 
-void ModuleRender::SetUpIndicesArray() const
+void ModuleRender::SetUpIndicesArray()
 {
 	float half = 0.5f;
 	float uniqueVertex[8 * 3 * 3] =
@@ -487,7 +505,7 @@ void ModuleRender::DrawCubeBigArray(float x, float y, float z) const
 	glPushMatrix();
 	glTranslatef(x, y, z);
 
-	glBindTexture(GL_TEXTURE_2D, indiceTexture);
+	glBindTexture(GL_TEXTURE_2D, lenaTexture);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, bigArrayCube);
@@ -511,12 +529,12 @@ void ModuleRender::DrawCubeBigArray(float x, float y, float z) const
 
 void ModuleRender::DrawCubeIndices(float x, float y, float z) const
 {
-	glColor3f(255.0f, 0.0f, 1.0f);
+	glColor3f(255.0f, 255.0f, 255.0f);
 
 	glPushMatrix();
 	glTranslatef(x, y, z);
 
-	glBindTexture(GL_TEXTURE_2D,indiceTexture);
+	glBindTexture(GL_TEXTURE_2D,rockTexture);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
@@ -584,6 +602,84 @@ void ModuleRender::DrawGrid() const
 	glEnd();
 
 	glPopMatrix();
+}
+
+uint ModuleRender::LoadTexture(const char* theFileName)
+{
+	ILuint imageID;				// Create an image ID as a ULuint
+
+	GLuint textureID;			// Create a texture ID as a GLuint
+
+	ILboolean success;			// Create a flag to keep track of success/failure
+
+	ILenum error;				// Create a flag to keep track of the IL error state
+
+	ilGenImages(1, &imageID); 		// Generate the image ID
+
+	ilBindImage(imageID); 			// Bind the image
+
+	success = ilLoadImage(theFileName); 	// Load the image file
+
+											// If we managed to load the image, then we can start to do things with it...
+	if (success)
+	{
+		// If the image is flipped (i.e. upside-down and mirrored, flip it the right way up!)
+		ILinfo ImageInfo;
+		iluGetImageInfo(&ImageInfo);
+		if (ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+		{
+			iluFlipImage();
+		}
+
+		// Convert the image into a suitable format to work with
+		// NOTE: If your image contains alpha channel you can replace IL_RGB with IL_RGBA
+		success = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
+
+		// Quit out if we failed the conversion
+		if (!success)
+		{
+			error = ilGetError();
+			std::cout << "Image conversion failed - IL reports error: " << error << " - " << iluErrorString(error) << std::endl;
+			exit(-1);
+		}
+
+		// Generate a new texture
+		glGenTextures(1, &textureID);
+
+		// Bind the texture to a name
+		glBindTexture(GL_TEXTURE_2D, textureID);
+
+		// Set texture clamping method
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+		// Set texture interpolation method to use linear interpolation (no MIPMAPS)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		// Specify the texture specification
+		glTexImage2D(GL_TEXTURE_2D, 				// Type of texture
+			0,				// Pyramid level (for mip-mapping) - 0 is the top level
+			ilGetInteger(IL_IMAGE_FORMAT),	// Internal pixel format to use. Can be a generic type like GL_RGB or GL_RGBA, or a sized type
+			ilGetInteger(IL_IMAGE_WIDTH),	// Image width
+			ilGetInteger(IL_IMAGE_HEIGHT),	// Image height
+			0,				// Border width in pixels (can either be 1 or 0)
+			ilGetInteger(IL_IMAGE_FORMAT),	// Format of image pixel data
+			GL_UNSIGNED_BYTE,		// Image data type
+			ilGetData());			// The actual image data itself
+	}
+	else // If we failed to open the image file in the first place...
+	{
+		error = ilGetError();
+		std::cout << "Image load failed - IL reports error: " << error << " - " << iluErrorString(error) << std::endl;
+		exit(-1);
+	}
+
+	ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
+
+	std::cout << "Texture creation successful." << std::endl;
+
+	return (uint)textureID; // Return the GLuint to the texture so you can use it!
 }
 
 void ModuleRender::DrawCross(const float3 & pos,float scale)const
