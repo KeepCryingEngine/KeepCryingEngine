@@ -24,12 +24,14 @@ private:
 	void DrawCameraWindow();
 	void DrawSpeedWindow();
 	void DrawStyleWindow();
+	void DrawTextureInfoWindow();
 
 private:
 	//One bool control for each window
 	bool cameraWindow = true;
 	bool speedWindow = true;
 	bool styleWindow = true;
+	bool imageInfoWindow = true;
 
 	//Probably there's a better way of doing this thing...
 	float movementSpeed = 10.0f;
@@ -46,6 +48,11 @@ private:
 	float3 front = { 0.0f, 0.0f, 0.0f };
 	float3 side = { 0.0f, 0.0f, 0.0f };
 	float clearColor[3] = { 0.0f, 0.0f, 0.0f };
+
+	bool magFilter = false;
+	bool minFilter = false;
+	bool mipmap = false;
+	bool anisotropicFilter = false;
 };
 
 #endif // !_MODULEUI_H_

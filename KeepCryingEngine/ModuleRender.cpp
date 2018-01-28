@@ -78,9 +78,12 @@ bool ModuleRender::Init()
 
 	if (ret) 
 	{
+		wrapModeS = wrapModeT = GL_CLAMP;
+
 		SetUpBigArray();
 		SetUpIndicesArray();
 		SetUpSphere(0.25f, 100, 100);
+		SetUpPlane();
 		SetUpTextures();
 	}
 
@@ -105,6 +108,7 @@ update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 	DrawCubeBigArray(0.0f, 2.0f, 10.0f);
 	DrawCubeIndices(-2.0f, 2.0f, 10.0f);
 	DrawSphere(0.0f, 4.0f, 10.0f);
+	DrawPlane(0.0f, -1.0f, 12.0f);
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -119,6 +123,8 @@ update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 
 bool ModuleRender::CleanUp()
 {
+	CleanUpTextures();
+
 	SDL_GL_DeleteContext(glcontext);
 
 	return true;
@@ -397,6 +403,43 @@ void ModuleRender::SetUpSphere(float radius, unsigned int rings, unsigned int se
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void ModuleRender::SetUpPlane()
+{
+	float value = 2.0f;
+
+	float vertices[6 * 3] =
+	{
+		-value, value, -value,
+		value, -value, -value,
+		-value, -value, -value,
+		-value, value, -value,
+		value, value, -value,
+		value, -value, -value
+	};
+
+	glGenBuffers(1, (GLuint*) &(planeVertices));
+	glBindBuffer(GL_ARRAY_BUFFER, planeVertices);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 3, vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	float value2 = 3.0f;
+
+	float uv[6 * 2] =
+	{
+		0.0f, value2,
+		value2, 0.0f,
+		0.0f, 0.0f,
+		0.0f, value2,
+		value2, value2,
+		value2, 0.0f
+	};
+
+	glGenBuffers(1, (GLuint*) &(planeUVs));
+	glBindBuffer(GL_ARRAY_BUFFER, planeUVs);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 2, uv, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 {
 	float half = 0.5f;
@@ -607,6 +650,38 @@ void ModuleRender::DrawSphere(float x, float y, float z)const
 	glPopMatrix();
 }
 
+void ModuleRender::DrawPlane(float x, float y, float z) const
+{
+	glColor3f(255.0f, 255.0f, 255.0f);
+
+	glPushMatrix();
+	glTranslatef(x, y, z);
+
+	if(actualTexture != nullptr)
+	{
+		glBindTexture(GL_TEXTURE_2D, *actualTexture);
+	}
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, planeVertices);
+
+	glVertexPointer(3, GL_FLOAT, 0, nullptr);
+
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, planeUVs);
+
+	glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glPopMatrix();
+}
+
 void ModuleRender::SetUpGrid() const
 {
 }
@@ -635,7 +710,7 @@ void ModuleRender::DrawGrid() const
 	glPopMatrix();
 }
 
-uint ModuleRender::LoadTexture(const char* theFileName)
+uint ModuleRender::LoadTexture(const char* theFileName, ILinfo* imageInfo)
 {
 	ILuint imageID;				// Create an image ID as a ULuint
 
@@ -652,12 +727,13 @@ uint ModuleRender::LoadTexture(const char* theFileName)
 	success = ilLoadImage(theFileName); 	// Load the image file
 
 											// If we managed to load the image, then we can start to do things with it...
-	if (success)
+	if(success)
 	{
+		iluGetImageInfo(imageInfo);
+
 		// If the image is flipped (i.e. upside-down and mirrored, flip it the right way up!)
-		ILinfo ImageInfo;
-		iluGetImageInfo(&ImageInfo);
-		if (ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+
+		if(imageInfo != nullptr && imageInfo->Origin == IL_ORIGIN_UPPER_LEFT)
 		{
 			iluFlipImage();
 		}
@@ -681,12 +757,32 @@ uint ModuleRender::LoadTexture(const char* theFileName)
 		glBindTexture(GL_TEXTURE_2D, textureID);
 
 		// Set texture clamping method
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapModeS);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapModeT);
 
 		// Set texture interpolation method to use linear interpolation (no MIPMAPS)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		if(magFilter)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+
+		if(minFilter)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		}
+
+		if(mipmap)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mipmap);
+		}
+
+		if(anisotropicFilter)
+		{
+			GLfloat maxAniso = 0.0f;
+			glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+
+			glSamplerParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+		}
 
 		// Specify the texture specification
 		glTexImage2D(GL_TEXTURE_2D, 				// Type of texture
@@ -711,6 +807,33 @@ uint ModuleRender::LoadTexture(const char* theFileName)
 	std::cout << "Texture creation successful." << std::endl;
 
 	return (uint)textureID; // Return the GLuint to the texture so you can use it!
+}
+
+void ModuleRender::SetCurrentTexture(uint textureIndex)
+{
+	switch(textureIndex)
+	{
+		case 0: // None
+			actualTexture = nullptr;
+			currentImageInfo = nullptr;
+			break;
+		case 1: // Debug
+			actualTexture = &debugTexture;
+			currentImageInfo = nullptr;
+			break;
+		case 2: // Lenna
+			actualTexture = &lenaTexture;
+			currentImageInfo = lenaImageInfo;
+			break;
+		case 3: // Exodia
+			actualTexture = &exodiaTexture;
+			currentImageInfo = exodiaImageInfo;
+			break;
+		case 4: // Rock
+			actualTexture = &rockTexture;
+			currentImageInfo = rockImageInfo;
+			break;
+	}
 }
 
 void ModuleRender::DrawCross(const float3 & pos,float scale)const
@@ -738,6 +861,31 @@ void ModuleRender::DrawCross(const float3 & pos,float scale)const
 	glPopMatrix();
 }
 
+int ModuleRender::getImageWidth() const
+{
+	return currentImageInfo != nullptr ? currentImageInfo->Width : -1;
+}
+
+int ModuleRender::getImageHeight() const
+{
+	return currentImageInfo != nullptr ? currentImageInfo->Height : -1;
+}
+
+int ModuleRender::getImageFormat() const
+{
+	return currentImageInfo != nullptr ? currentImageInfo->Format : -1;
+}
+
+int ModuleRender::getImageSizeBytes() const
+{
+	return currentImageInfo != nullptr ? currentImageInfo->SizeOfData : -1;
+}
+
+int ModuleRender::getImagePixelDepth() const
+{
+	return currentImageInfo != nullptr ? currentImageInfo->Depth : -1;
+}
+
 void ModuleRender::SetUpTexture()
 {
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
@@ -756,19 +904,134 @@ void ModuleRender::SetUpTexture()
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glGenTextures(1, &debugTexture);
 	glBindTexture(GL_TEXTURE_2D, debugTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	// Set texture clamping method
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapModeS);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapModeT);
+
+	// Set texture interpolation method to use linear interpolation (no MIPMAPS)
+	if(magFilter)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+
+	if(minFilter)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
+
+	if(mipmap)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mipmap);
+	}
+
+	if(anisotropicFilter)
+	{
+		GLfloat maxAniso = 0.0f;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+
+		glSamplerParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+	}
+
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT,
 		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void ModuleRender::SetUpTextures()
 {
+	CleanUpTextures();
+
+	lenaImageInfo = new ILinfo;
+	rockImageInfo = new ILinfo;
+	exodiaImageInfo = new ILinfo;
+
 	SetUpTexture();
-	lenaTexture = LoadTexture("Assets/Lenna.png");
-	rockTexture = LoadTexture("Assets/rock.jpg");
-	exodiaTexture = LoadTexture("Assets/exodia.dds");
+
+	lenaTexture = LoadTexture("Assets/Lenna.png", lenaImageInfo);
+	rockTexture = LoadTexture("Assets/rock.jpg", rockImageInfo);
+	exodiaTexture = LoadTexture("Assets/exodia.dds", exodiaImageInfo);
+
+	// Data is not valid
+	// ilDeleteImages(1, &imageID);
+}
+
+void ModuleRender::CleanUpTextures()
+{
+	RELEASE(lenaImageInfo);
+	RELEASE(rockImageInfo);
+	RELEASE(exodiaImageInfo);
+}
+
+uint ModuleRender::getWrapModeS() const
+{
+	return wrapModeS;
+}
+
+void ModuleRender::setWrapModeS(uint wrapModeS)
+{
+	this->wrapModeS = wrapModeS;
+
+	SetUpTextures();
+}
+
+uint ModuleRender::getWrapModeT() const
+{
+	return wrapModeT;
+}
+
+void ModuleRender::setWrapModeT(uint wrapModeT)
+{
+	this->wrapModeT = wrapModeT;
+
+	SetUpTextures();
+}
+
+bool ModuleRender::getMagFilter() const
+{
+	return magFilter;
+}
+
+void ModuleRender::setMagFilter(bool magFilter)
+{
+	this->magFilter = magFilter;
+
+	SetUpTextures();
+}
+
+bool ModuleRender::getMinFilter() const
+{
+	return minFilter;
+}
+
+void ModuleRender::setMinFilter(bool minFilter)
+{
+	this->minFilter = minFilter;
+
+	SetUpTextures();
+}
+
+bool ModuleRender::getMipmap() const
+{
+	return mipmap;
+}
+
+void ModuleRender::setMipmap(bool mipMap)
+{
+	this->mipmap = mipmap;
+
+	SetUpTextures();
+}
+
+bool ModuleRender::getAnisotropicFilter() const
+{
+	return anisotropicFilter;
+}
+
+void ModuleRender::setAnisotropicFilter(bool anisotropicFilter)
+{
+	this->anisotropicFilter = anisotropicFilter;
+
+	SetUpTextures();
 }

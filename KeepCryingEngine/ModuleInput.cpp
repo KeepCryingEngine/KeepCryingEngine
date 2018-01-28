@@ -77,9 +77,8 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 			mouse_buttons[i] = KeyState::KEY_IDLE;
 	}
 
-	// If mouse is hovering any window
-	// ignore Button down and Button up events
-	// Motion event is not ignored
+	// If mouse is hovering any window ignore Button down events
+	// Button up and Motion events are not ignored
 
 	bool mouseHoveringAnyWindow = ImGui::IsMouseHoveringAnyWindow();
 
@@ -124,10 +123,7 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 				break;
 
 			case SDL_MOUSEBUTTONUP:
-				if(!mouseHoveringAnyWindow)
-				{
-					mouse_buttons[event.button.button - 1] = KeyState::KEY_UP;
-				}
+				mouse_buttons[event.button.button - 1] = KeyState::KEY_UP;
 				break;
 
 			case SDL_MOUSEMOTION:

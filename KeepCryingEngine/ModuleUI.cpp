@@ -40,6 +40,11 @@ bool ModuleUI::Start()
 	orbitSpeed = App->camera->GetOrbitSpeed();
 	zoomSpeed = App->camera->GetZoomSpeed();
 
+	magFilter = App->renderer->getMagFilter();
+	minFilter = App->renderer->getMinFilter();
+	mipmap = App->renderer->getMipmap();
+	anisotropicFilter = App->renderer->getAnisotropicFilter();
+
 	return true;
 }
 
@@ -98,36 +103,14 @@ void ModuleUI::DrawMainMenu()
 			if(ImGui::BeginMenu("Texture"))
 			{
 				ImGui::Combo("Texture", &textureMode, "None\0Debug\0Lenna\0Exodia\0Rock");
+				if(ImGui::Button("Texture Controls", buttonSize))
+				{
+					imageInfoWindow ^= 1;
+				}
 				ImGui::EndMenu();
 			}
-			switch(textureMode)
-			{
-				case 0:
-				{
-					App->renderer->actualTexture = nullptr;
-				}
-					break;
-				case 1:
-				{
-					App->renderer->actualTexture = &App->renderer->debugTexture;
-				}
-				break;
-				case 2:
-				{
-					App->renderer->actualTexture = &App->renderer->lenaTexture;
-				}
-				break;
-				case 3:
-				{
-					App->renderer->actualTexture = &App->renderer->exodiaTexture;
-				}
-				break;
-				case 4:
-				{
-					App->renderer->actualTexture = &App->renderer->rockTexture;
-				}
-				break;
-			}
+
+			App->renderer->SetCurrentTexture(textureMode);
 
 			if(ImGui::BeginMenu("About"))
 			{
@@ -153,6 +136,10 @@ void ModuleUI::CallWindows()
 	if(styleWindow)
 	{
 		DrawStyleWindow();
+	}
+	if(imageInfoWindow)
+	{
+		DrawTextureInfoWindow();
 	}
 }
 
@@ -202,6 +189,97 @@ void ModuleUI::DrawStyleWindow()
 	ImGui::Begin("Style Controls");
 	ImGui::DragFloat3("Background", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
 	ImGui::End();
+}
+
+void ModuleUI::DrawTextureInfoWindow()
+{
+	static int wrapModeS = 0;
+	static int wrapModeT = 0;
+
+	const char* wrapModeContent = "GL_CLAMP\0GL_REPEAT\0GL_MIRRORED_REPEAT\0GL_CLAMP_TO_EDGE\0GL_CLAMP_TO_BORDER";
+
+	uint previousWrapModeS = wrapModeS;
+	uint previousWrapModeT = wrapModeT;
+
+	ImGui::Begin("Texture Controls");
+
+	int width = App->renderer->getImageWidth();
+	int height = App->renderer->getImageHeight();
+	int sizeBytes = App->renderer->getImageSizeBytes();
+	int pixelDepth = App->renderer->getImagePixelDepth();
+	int format = App->renderer->getImageFormat();
+
+	ImGui::InputInt("Width", &width);
+	ImGui::InputInt("Height", &height);
+	ImGui::InputInt("SizeBytes", &sizeBytes);
+	ImGui::InputInt("PixelDepth", &pixelDepth);
+	ImGui::InputInt("Format", &format);
+
+	ImGui::Combo("WrapS", &wrapModeS, wrapModeContent);
+	ImGui::Combo("WrapT", &wrapModeT, wrapModeContent);
+
+	if(ImGui::Checkbox("MagFilter", &magFilter))
+	{
+		App->renderer->setMagFilter(magFilter);
+	}
+	if(ImGui::Checkbox("MinFilter", &minFilter))
+	{
+		App->renderer->setMinFilter(minFilter);
+	}
+	if(ImGui::Checkbox("Mipmap", &mipmap))
+	{
+		App->renderer->setMipmap(mipmap);
+	}
+	if(ImGui::Checkbox("AnisotropicFilter", &anisotropicFilter))
+	{
+		App->renderer->setAnisotropicFilter(anisotropicFilter);
+	}
+
+	ImGui::End();
+
+	if(wrapModeS != previousWrapModeS)
+	{
+		switch(wrapModeS)
+		{
+			case 0: // GL_CLAMP
+				App->renderer->setWrapModeS(GL_CLAMP);
+				break;
+			case 1: // GL_REPEAT
+				App->renderer->setWrapModeS(GL_REPEAT);
+				break;
+			case 2: // GL_MIRRORED_REPEAT
+				App->renderer->setWrapModeS(GL_MIRRORED_REPEAT);
+				break;
+			case 3: // GL_CLAMP_TO_EDGE
+				App->renderer->setWrapModeS(GL_CLAMP_TO_EDGE);
+				break;
+			case 4: // GL_CLAMP_TO_BORDER
+				App->renderer->setWrapModeS(GL_CLAMP_TO_BORDER);
+				break;
+		}
+	}
+
+	if(wrapModeT != previousWrapModeT)
+	{
+		switch(wrapModeT)
+		{
+			case 0: // GL_CLAMP
+				App->renderer->setWrapModeT(GL_CLAMP);
+				break;
+			case 1: // GL_REPEAT
+				App->renderer->setWrapModeT(GL_REPEAT);
+				break;
+			case 2: // GL_MIRRORED_REPEAT
+				App->renderer->setWrapModeT(GL_MIRRORED_REPEAT);
+				break;
+			case 3: // GL_CLAMP_TO_EDGE
+				App->renderer->setWrapModeT(GL_CLAMP_TO_EDGE);
+				break;
+			case 4: // GL_CLAMP_TO_BORDER
+				App->renderer->setWrapModeT(GL_CLAMP_TO_BORDER);
+				break;
+		}
+	}
 }
 
 void ModuleUI::DrawAboutMenu()
