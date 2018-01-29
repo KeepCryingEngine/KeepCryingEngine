@@ -104,26 +104,6 @@ void ModuleUI::DrawMainMenu()
 			{
 				ImGui::Combo("Texture", &textureMode, "None\0Debug\0Lenna\0Exodia\0Rock");
 				if(ImGui::Button("Texture Controls", buttonSize))
-				ImGui::EndMenu();
-			}
-			switch(textureMode)
-			{
-				case 0:
-				{
-					App->renderer->actualTexture = nullptr;
-				}
-				break;
-				case 1:
-				{
-					App->renderer->actualTexture = &App->renderer->debugTexture;
-				}
-				break;
-				case 2:
-				{
-					App->renderer->actualTexture = &App->renderer->lenaTexture;
-				}
-				break;
-				case 3:
 				{
 					imageInfoWindow ^= 1;
 				}
