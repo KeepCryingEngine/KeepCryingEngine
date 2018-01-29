@@ -26,6 +26,12 @@ private:
 	void DrawStyleWindow();
 	void DrawTextureInfoWindow();
 
+	void UpdateWrapModeS(uint wrapModeS, uint previousWrapModeS) const;
+	void UpdateWrapModeT(uint wrapModeT, uint previousWrapModeT) const;
+
+	void UpdateMagFilterMode(uint magFilterMode, uint previousMagFilterMode) const;
+	void UpdateMinFilterMode(uint minFilterMode, uint previousMinFilterMode) const;
+
 private:
 	//One bool control for each window
 	bool cameraWindow = true;

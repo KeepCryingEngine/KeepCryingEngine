@@ -64,7 +64,6 @@ bool ModuleRender::Init()
 		ret = false;
 	}
 
-
 	//Initialize DevIL
 	ilInit();
 	iluInit();
@@ -79,6 +78,8 @@ bool ModuleRender::Init()
 	if (ret) 
 	{
 		wrapModeS = wrapModeT = GL_CLAMP;
+
+		magFilterMode = minFilterMode = GL_LINEAR;
 
 		SetUpBigArray();
 		SetUpIndicesArray();
@@ -763,12 +764,12 @@ uint ModuleRender::LoadTexture(const char* theFileName, ILinfo* imageInfo)
 		// Set texture interpolation method to use linear interpolation (no MIPMAPS)
 		if(magFilter)
 		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilterMode);
 		}
 
 		if(minFilter)
 		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilterMode);
 		}
 
 		if(mipmap)
@@ -1008,6 +1009,30 @@ bool ModuleRender::getMinFilter() const
 void ModuleRender::setMinFilter(bool minFilter)
 {
 	this->minFilter = minFilter;
+
+	SetUpTextures();
+}
+
+uint ModuleRender::getMagFilterMode() const
+{
+	return magFilterMode;
+}
+
+void ModuleRender::setMagFilterMode(uint magFilterMode)
+{
+	this->magFilterMode = magFilterMode;
+
+	SetUpTextures();
+}
+
+uint ModuleRender::getMinFilterMode() const
+{
+	return minFilterMode;
+}
+
+void ModuleRender::setMinFilterMode(uint minFilterMode)
+{
+	this->minFilterMode = minFilterMode;
 
 	SetUpTextures();
 }

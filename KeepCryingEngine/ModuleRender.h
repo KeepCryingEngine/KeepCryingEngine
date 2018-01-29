@@ -42,6 +42,12 @@ public:
 	bool getMinFilter() const;
 	void setMinFilter(bool minFilter);
 
+	uint getMagFilterMode() const;
+	void setMagFilterMode(uint magFilterMode);
+
+	uint getMinFilterMode() const;
+	void setMinFilterMode(uint minFilterMode);
+
 	bool getMipmap() const;
 	void setMipmap(bool mipMap);
 
@@ -103,6 +109,8 @@ private:
 	uint wrapModeT = 0;
 	bool magFilter = true;
 	bool minFilter = true;
+	uint magFilterMode = 0;
+	uint minFilterMode = 0;
 	bool mipmap = false;
 	bool anisotropicFilter = false;
 };
