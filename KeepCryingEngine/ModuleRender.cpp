@@ -55,6 +55,10 @@ bool ModuleRender::Init()
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
+	//Antialiasing
+	glEnable(GL_BLEND);
+	glEnable(GL_LINE_SMOOTH);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	GLenum err = glewInit();
 

@@ -104,6 +104,26 @@ void ModuleUI::DrawMainMenu()
 			{
 				ImGui::Combo("Texture", &textureMode, "None\0Debug\0Lenna\0Exodia\0Rock");
 				if(ImGui::Button("Texture Controls", buttonSize))
+				ImGui::EndMenu();
+			}
+			switch(textureMode)
+			{
+				case 0:
+				{
+					App->renderer->actualTexture = nullptr;
+				}
+				break;
+				case 1:
+				{
+					App->renderer->actualTexture = &App->renderer->debugTexture;
+				}
+				break;
+				case 2:
+				{
+					App->renderer->actualTexture = &App->renderer->lenaTexture;
+				}
+				break;
+				case 3:
 				{
 					imageInfoWindow ^= 1;
 				}
@@ -111,6 +131,32 @@ void ModuleUI::DrawMainMenu()
 			}
 
 			App->renderer->SetCurrentTexture(textureMode);
+			static GLfloat color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			if(ImGui::BeginMenu("Parameters"))
+			{
+				ImGui::Checkbox(" Textures", &textureEnabled);
+				ImGui::Checkbox(" Depth Test", &depthEnabled);
+				ImGui::Checkbox(" Cull Face", &cullEnabled);
+				ImGui::Checkbox(" Lightning", &lightningEnabled);
+				ImGui::Checkbox(" Color Material", &colormaterialEnabled);
+				ImGui::Checkbox(" Antialiasing", &antialiasingEnabled);
+				ImGui::Checkbox(" Wireframe Mode", &wireframeEnabled);
+				ImGui::Checkbox(" Fog", &fogEnabled);
+
+				if(ImGui::BeginMenu("Fog parameters"))
+				{
+					ImGui::SliderFloat(" Density", &fogDensity, 0.0f, 1.0f);
+					ImGui::ColorPicker3(" Color", color);
+					ImGui::EndMenu();
+				}
+
+				//FOG Parameters
+				glFogf(GL_FOG_DENSITY, fogDensity);
+				glFogfv(GL_FOG_COLOR, color);
+				ImGui::EndMenu();
+			}
+
+			SetAllParameters();
 
 			if(ImGui::BeginMenu("About"))
 			{
@@ -119,6 +165,135 @@ void ModuleUI::DrawMainMenu()
 			}
 
 			ImGui::EndMainMenuBar();
+		}
+	}
+}
+
+void ModuleUI::SetAllParameters()
+{
+	//glEnable Parameters
+	if(textureEnabled)
+	{
+		if(glIsEnabled(GL_TEXTURE_2D) == GL_FALSE)
+		{
+			glEnable(GL_TEXTURE_2D);
+		}
+	}
+	else
+	{
+		if(glIsEnabled(GL_TEXTURE_2D) == GL_TRUE)
+		{
+			glDisable(GL_TEXTURE_2D);
+		}
+	}
+
+	if(depthEnabled)
+	{
+		if(glIsEnabled(GL_DEPTH_TEST) == GL_FALSE)
+		{
+			glEnable(GL_DEPTH_TEST);
+		}
+	}
+	else
+	{
+		if(glIsEnabled(GL_DEPTH_TEST) == GL_TRUE)
+		{
+			glDisable(GL_DEPTH_TEST);
+		}
+	}
+
+	if(cullEnabled)
+	{
+		if(glIsEnabled(GL_CULL_FACE) == GL_FALSE)
+		{
+			glEnable(GL_CULL_FACE);
+		}
+	}
+	else
+	{
+		if(glIsEnabled(GL_CULL_FACE) == GL_TRUE)
+		{
+			glDisable(GL_CULL_FACE);
+		}
+	}
+
+	if(lightningEnabled)
+	{
+		if(glIsEnabled(GL_LIGHTING) == GL_FALSE)
+		{
+			glEnable(GL_LIGHTING);
+		}
+	}
+	else
+	{
+		if(glIsEnabled(GL_LIGHTING) == GL_TRUE)
+		{
+			glDisable(GL_LIGHTING);
+		}
+	}
+
+	if(colormaterialEnabled)
+	{
+		if(glIsEnabled(GL_COLOR_MATERIAL) == GL_FALSE)
+		{
+			glEnable(GL_COLOR_MATERIAL);
+		}
+	}
+	else
+	{
+		if(glIsEnabled(GL_COLOR_MATERIAL) == GL_TRUE)
+		{
+			glDisable(GL_COLOR_MATERIAL);
+		}
+	}
+
+	if(fogEnabled)
+	{
+		if(glIsEnabled(GL_FOG) == GL_FALSE)
+		{
+			glEnable(GL_FOG);
+		}
+	}
+	else
+	{
+		if(glIsEnabled(GL_FOG) == GL_TRUE)
+		{
+			glDisable(GL_FOG);
+		}
+	}
+
+	if(antialiasingEnabled)
+	{
+		if(glIsEnabled(GL_LINE_SMOOTH) == GL_FALSE && glIsEnabled(GL_BLEND) == GL_FALSE)
+		{
+			glEnable(GL_BLEND);
+			glEnable(GL_LINE_SMOOTH);
+		}
+	}
+	else
+	{
+		if(glIsEnabled(GL_LINE_SMOOTH) == GL_TRUE && glIsEnabled(GL_BLEND) == GL_TRUE)
+		{
+			glDisable(GL_BLEND);
+			glDisable(GL_LINE_SMOOTH);
+		}
+	}
+
+	static GLint polygonMode;
+	glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
+	if(wireframeEnabled)
+	{
+		if(polygonMode == GL_FILL)
+		{
+			cullEnabled = false;
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}		
+	}
+	else
+	{
+		if(polygonMode == GL_LINE)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 	}
 }

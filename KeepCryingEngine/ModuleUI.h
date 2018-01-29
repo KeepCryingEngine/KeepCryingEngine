@@ -19,6 +19,7 @@ public:
 
 private:
 	void CallWindows();
+	void SetAllParameters();
 	void DrawMainMenu();
 	void DrawAboutMenu();
 	void DrawCameraWindow();
@@ -33,6 +34,16 @@ private:
 	void UpdateMinFilterMode(uint minFilterMode, uint previousMinFilterMode) const;
 
 private:
+	//Parameter control bools
+	bool wireframeEnabled = false;
+	bool antialiasingEnabled = true;
+	bool textureEnabled = true;
+	bool cullEnabled = true;
+	bool lightningEnabled = true;
+	bool depthEnabled = true;
+	bool colormaterialEnabled = true;
+	bool fogEnabled = false;
+
 	//One bool control for each window
 	bool cameraWindow = true;
 	bool speedWindow = true;
@@ -59,6 +70,7 @@ private:
 	bool minFilter = false;
 	bool mipmap = false;
 	bool anisotropicFilter = false;
+	float fogDensity = 1.0f;
 };
 
 #endif // !_MODULEUI_H_
