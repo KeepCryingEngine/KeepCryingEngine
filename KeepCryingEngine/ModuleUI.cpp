@@ -114,13 +114,12 @@ void ModuleUI::DrawMainMenu()
 			static GLfloat color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 			if(ImGui::BeginMenu("Parameters"))
 			{
+				ImGui::Checkbox(" Wireframe Mode", &wireframeEnabled);
 				ImGui::Checkbox(" Textures", &textureEnabled);
 				ImGui::Checkbox(" Depth Test", &depthEnabled);
 				ImGui::Checkbox(" Cull Face", &cullEnabled);
-				ImGui::Checkbox(" Lightning", &lightningEnabled);
 				ImGui::Checkbox(" Color Material", &colormaterialEnabled);
-				ImGui::Checkbox(" Antialiasing", &antialiasingEnabled);
-				ImGui::Checkbox(" Wireframe Mode", &wireframeEnabled);
+				ImGui::Checkbox(" Antialiasing", &antialiasingEnabled);				
 				ImGui::Checkbox(" Fog", &fogEnabled);
 
 				if(ImGui::BeginMenu("Fog parameters"))
@@ -133,6 +132,19 @@ void ModuleUI::DrawMainMenu()
 				//FOG Parameters
 				glFogf(GL_FOG_DENSITY, fogDensity);
 				glFogfv(GL_FOG_COLOR, color);
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Light"))
+			{
+				ImGui::Checkbox(" Lightning", &lightningEnabled);
+				if (ImGui::ColorPicker3(" Ambient Light", App->renderer->globalAmbient))
+				{
+					if (!wireframeEnabled)
+					{
+						glLightModelfv(GL_LIGHT_MODEL_AMBIENT, App->renderer->globalAmbient);
+					}				
+				}
 				ImGui::EndMenu();
 			}
 
@@ -265,7 +277,10 @@ void ModuleUI::SetAllParameters()
 	{
 		if(polygonMode == GL_FILL)
 		{
+			GLfloat brightYellow[] = {255.0f, 255.0f, 0.1f, 1.0f};
+			glLightModelfv(GL_LIGHT_MODEL_AMBIENT, brightYellow);
 			cullEnabled = false;
+			textureEnabled = false;
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		}		
 	}
@@ -273,6 +288,9 @@ void ModuleUI::SetAllParameters()
 	{
 		if(polygonMode == GL_LINE)
 		{
+			glLightModelfv(GL_LIGHT_MODEL_AMBIENT, App->renderer->globalAmbient);
+			cullEnabled = true;
+			textureEnabled = true;
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 	}
