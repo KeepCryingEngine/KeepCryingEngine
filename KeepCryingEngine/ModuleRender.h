@@ -4,6 +4,7 @@
 #define HAVE_M_PI
 
 #include <SDL.h>
+#include <GL/glew.h>
 #include <float3.h>
 
 #include "Module.h"
@@ -73,6 +74,8 @@ private:
 	void SetUpGrid() const;
 	void DrawGrid() const;
 
+	void SetUpLight();
+
 	uint LoadTexture(const char* theFileName, ILinfo* imageInfo);
 
 public:
@@ -82,7 +85,9 @@ public:
 	uint exodiaTexture = 0;
 	uint rockTexture = 0;
 
-private:
+	GLfloat globalAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
+
+private:	
 	uint bigArrayCube = 0;
 	uint bigArrayCubeUV = 0;
 	uint vertexArrayBuffer = 0;
