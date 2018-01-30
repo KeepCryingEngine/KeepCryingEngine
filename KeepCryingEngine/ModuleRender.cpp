@@ -84,6 +84,8 @@ bool ModuleRender::Init()
 
 		magFilterMode = minFilterMode = GL_LINEAR;
 
+		// SetUpShaderStruct();
+
 		SetUpBigArray();
 		SetUpIndicesArray();
 		SetUpSphere(0.25f, 100, 100);
@@ -592,7 +594,6 @@ void ModuleRender::DrawCubeIndices(float x, float y, float z) const
 
 	glPushMatrix();
 	glTranslatef(x, y, z);
-
 	
 	if(actualTexture != nullptr)
 	{
@@ -949,6 +950,17 @@ void ModuleRender::SetUpTexture()
 		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void ModuleRender::SetUpShaderStruct() const
+{
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 }
 
 void ModuleRender::SetUpTextures()

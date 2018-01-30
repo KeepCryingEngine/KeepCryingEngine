@@ -58,6 +58,8 @@ public:
 	void SetCurrentTexture(uint textureIndex);
 
 private:
+	void SetUpShaderStruct() const;
+
 	void SetUpTextures();
 	void CleanUpTextures();
 	void SetUpTexture();

@@ -10,6 +10,7 @@
 #include "ModuleTestMathGeoLib.h"
 #include "ModuleUI.h"
 #include "ModuleCamera.h"
+#include "ModuleShader.h"
 
 using namespace std;
 using nlohmann::json;
@@ -21,7 +22,7 @@ Application::Application()
 	modules.push_back(ui = new ModuleUI());
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(camera = new ModuleCamera());
-	
+	modules.push_back(new ModuleShader()); //
 
 	modules.push_back(new ModuleTestJson());
 	modules.push_back(new ModuleTestMathGeoLib());
