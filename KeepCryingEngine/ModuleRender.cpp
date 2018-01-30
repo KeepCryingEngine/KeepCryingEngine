@@ -4,7 +4,6 @@
 
 #include <math.h>
 #include <vector>
-#include <GL/glew.h>
 #include <DevIL.h>
 
 #include "Application.h"
@@ -52,13 +51,12 @@ bool ModuleRender::Init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
 	//Antialiasing
-	glEnable(GL_BLEND);
 	glEnable(GL_LINE_SMOOTH);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_BLEND);
+
+	SetUpLight();
 
 	GLenum err = glewInit();
 
@@ -120,7 +118,6 @@ update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-
 	SDL_GL_SwapWindow(App->window->window);
 
 	return update_status::UPDATE_CONTINUE;
@@ -460,7 +457,7 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	glBegin(GL_TRIANGLES);
 
 	//Back FACE
-	glColor3f(30.0f, 100.0f, 200.0f);
+	//glColor3f(30.0f, 100.0f, 200.0f);
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(half, -half, half);
 	glTexCoord2f(1.0f, 1.0f);
@@ -475,7 +472,7 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	glVertex3f(half, -half, half);
 
 	//Front FACE
-	glColor3f(0.0f, 255.0f, 255.0f);
+	//glColor3f(0.0f, 255.0f, 255.0f);
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-half, half, -half);
 	glTexCoord2f(1.0f, 0.0f);
@@ -490,7 +487,7 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	glVertex3f(half, -half, -half);
 	
 	//Right FACE
-	glColor3f(0.0f, 0.0f, 255.0f);
+	//glColor3f(0.0f, 0.0f, 255.0f);
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(half, half, -half);
 	glTexCoord2f(1.0f, 0.0f);
@@ -505,7 +502,7 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	glVertex3f(half, -half, half);
 	
 	//TOP FACE
-	glColor3f(0.0f, 255.0f, 0.0f);
+	//glColor3f(0.0f, 255.0f, 0.0f);
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-half, half, half);
 	glTexCoord2f(1.0f, 0.0f);
@@ -520,7 +517,7 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	glVertex3f(half, half, -half);
 	
 	//RIGHT FACE
-	glColor3f(255.0f, 255.0f, 1.0f);
+	//glColor3f(255.0f, 255.0f, 1.0f);
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(-half, -half, half);
 	glTexCoord2f(0.0f, 1.0f);
@@ -535,7 +532,7 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	glVertex3f(-half, -half, half);
 	
 	//BOTTOM FACE
-	glColor3f(255.0f, 0.0f, 1.0f);
+	//glColor3f(255.0f, 0.0f, 1.0f);
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(half, -half, -half);
 	glTexCoord2f(0.0f, 1.0f);
@@ -558,7 +555,7 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 
 void ModuleRender::DrawCubeBigArray(float x, float y, float z) const
 {
-	glColor3f(255.0f, 255.0f, 255.0f);
+	//glColor3f(255.0f, 255.0f, 255.0f);
 
 	glPushMatrix();
 	glTranslatef(x, y, z);
@@ -590,7 +587,7 @@ void ModuleRender::DrawCubeBigArray(float x, float y, float z) const
 
 void ModuleRender::DrawCubeIndices(float x, float y, float z) const
 {
-	glColor3f(255.0f, 255.0f, 255.0f);
+	//glColor3f(255.0f, 255.0f, 255.0f);
 
 	glPushMatrix();
 	glTranslatef(x, y, z);
@@ -624,7 +621,7 @@ void ModuleRender::DrawSphere(float x, float y, float z)const
 {
 	glMatrixMode(GL_MODELVIEW);
 
-	glColor3f(255.0f, 255.0f, 255.0f);
+	//glColor3f(255.0f, 255.0f, 255.0f);
 
 	glPushMatrix();
 	glTranslatef(x, y, z);
@@ -657,7 +654,7 @@ void ModuleRender::DrawSphere(float x, float y, float z)const
 
 void ModuleRender::DrawPlane(float x, float y, float z) const
 {
-	glColor3f(255.0f, 255.0f, 255.0f);
+	//glColor3f(255.0f, 255.0f, 255.0f);
 
 	glPushMatrix();
 	glTranslatef(x, y, z);
@@ -695,7 +692,11 @@ void ModuleRender::DrawGrid() const
 {
 	glPushMatrix();
 
+	GLfloat previousColor[4];
+	glGetFloatv(GL_CURRENT_COLOR, previousColor);
+
 	glBegin(GL_LINES);
+
 	glColor3f(220, 220, 220);
 
 	float step = 1.0f;
@@ -712,6 +713,7 @@ void ModuleRender::DrawGrid() const
 
 	glEnd();
 
+	glColor3f(previousColor[0], previousColor[1], previousColor[2]);
 	glPopMatrix();
 }
 
@@ -849,6 +851,9 @@ void ModuleRender::DrawCross(const float3 & pos,float scale)const
 	glTranslatef(pos.x,pos.y,pos.z);
 	glLineWidth(3);
 
+	GLfloat previousColor[4];
+	glGetFloatv(GL_CURRENT_COLOR, previousColor);
+
 	glBegin(GL_LINES);
 
 	glColor3f(255, 0, 0);
@@ -861,6 +866,7 @@ void ModuleRender::DrawCross(const float3 & pos,float scale)const
 
 	glEnd();
 
+	glColor3f(previousColor[0], previousColor[1], previousColor[2]);
 	glLineWidth(1);
 
 	glPopMatrix();
@@ -1063,4 +1069,13 @@ void ModuleRender::setAnisotropicFilter(bool anisotropicFilter)
 	this->anisotropicFilter = anisotropicFilter;
 
 	SetUpTextures();
+}
+
+void ModuleRender::SetUpLight()
+{
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
+	glEnable(GL_LIGHTING);
+
+	glEnable(GL_COLOR_MATERIAL);
+	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 }
