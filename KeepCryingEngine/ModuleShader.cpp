@@ -1,39 +1,7 @@
 #include "ModuleShader.h"
 
 #include "Shader.h"
-
-const char* SHADER_0 = "#version 330 core\n\
-layout (location = 0) in vec3 position;\
-layout (location = 1) in vec4 color;\
-layout (location = 2) in vec2 texCoord;\
-\
-out vec4 ourColor;\
-out vec2 TexCoord;\
-\
-uniform mat4 model_view;\
-uniform mat4 projection;\
-\
-void main()\
-{\
-	gl_Position = projection * model_view * vec4(position, 1.0f);\
-	ourColor = color;\
-	TexCoord = texCoord;\
-}\
-";
-
-const char* SHADER_1 = "#version 330 core\n\
-in vec4 ourColor;\
-in vec2 TexCoord;\
-\
-out vec4 color;\
-\
-uniform sampler2D ourTexture;\
-\
-void main()\
-{\
-	color = texture2D(ourTexture,TexCoord);\
-}\
-";
+#include <fstream>
 
 using namespace std;
 
@@ -45,8 +13,24 @@ ModuleShader::~ModuleShader()
 
 bool ModuleShader::Init()
 {
-	const Shader* defaultVertexShader = AddShader(SHADER_0, GL_VERTEX_SHADER);
-	const Shader* defaultFragmentShader = AddShader(SHADER_1, GL_FRAGMENT_SHADER);
+	const Shader* defaultVertexShader = nullptr;
+	const Shader* defaultFragmentShader = nullptr;
+
+	std::ifstream t(".\\Assets\\Shaders\\vertexShader.vert");
+	if(t.good())
+	{
+		std::string vertex((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+		defaultVertexShader = AddShader(vertex.c_str(), GL_VERTEX_SHADER);
+	}
+	t.close();
+
+	t.open(".\\Assets\\Shaders\\fragmentShader.frag");
+	if(t.good())
+	{
+		std::string fragment((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+		defaultFragmentShader = AddShader(fragment.c_str(), GL_FRAGMENT_SHADER);
+	}
+	t.close();
 
 	defaultProgramId = AddProgram({ defaultVertexShader, defaultFragmentShader });
 
