@@ -136,8 +136,6 @@ bool ModuleRender::CleanUp()
 
 void ModuleRender::SetUpBigArray(float3 pos, float size)
 {
-	Vertex vertices[36];
-
 	float position[36 * 3] =
 	{
 		size, -size, size,
@@ -192,73 +190,62 @@ void ModuleRender::SetUpBigArray(float3 pos, float size)
 
 	float uv[36 * 2] =
 	{
-	0.0f, 0.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	0.0f, 0.0f,
+		0.0f, 0.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		0.0f, 0.0f,
 	
-	0.0f, 1.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
 
-	0.0f, 1.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
 
-	0.0f, 1.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
 
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	1.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
 
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	1.0f, 0.0f
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f
 	};
 
-	for(size_t i = 0; i < 36; i++)
-	{
+	// Color array (r, g, b, a)
+	float* colors = (float*)malloc(sizeof(float) * 36 * 4);
+	fill_n(colors, 36 * 4, 100.0f);
 
-		for(size_t j = 0; j < 3; j++)
-		{
-			vertices[i].position[j] = position[i*3+j];
-		}
-
-		for(size_t j = 0; j < 4; j++)
-		{
-			vertices[i].color[j] = 100.0f;
-		}
-
-		for(size_t j = 0; j < 2; j++)
-		{
-			vertices[i].uv[j] = uv[i * 2 + j];
-		}
-
-	}
+	Vertex vertices[36];
+	FillVerticesData(36, position, colors, uv, vertices);
 
 	glGenBuffers(1, (GLuint*) &(bigArrayCube));
 	glBindBuffer(GL_ARRAY_BUFFER, bigArrayCube);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 36, vertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	RELEASE(colors);
 }
 
 void ModuleRender::SetUpIndicesArray(float3 pos, float size)
@@ -303,9 +290,49 @@ void ModuleRender::SetUpIndicesArray(float3 pos, float size)
 		uniqueVertex[i + 2] += pos.z;
 	}
 
+	float uv[24 * 2] =
+	{
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		1.0f, 0.0f,
+		0.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f
+	};
+
+	// Color array (r, g, b, a)
+	float* colors = (float*)malloc(sizeof(float) * 24 * 4);
+	fill_n(colors, 24 * 4, 100.0f);
+
+	Vertex vertices[24];
+	FillVerticesData(24, uniqueVertex, colors, uv, vertices);
+
 	glGenBuffers(1, (GLuint*) &(vertexArrayBuffer));
 	glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8 * 3 * 3, uniqueVertex, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 24, vertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	uint indicesArray[36 * 3] =
@@ -334,44 +361,7 @@ void ModuleRender::SetUpIndicesArray(float3 pos, float size)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * 36 * 3, indicesArray, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	float uv[24 * 2] =
-	{
-		0.0f,0.0f,
-		1.0f,0.0f,
-		1.0f,1.0f,
-		0.0f,1.0f,
-
-		0.0f,0.0f,
-		1.0f,0.0f,
-		1.0f,1.0f,
-		0.0f,1.0f,
-
-		1.0f,1.0f,
-		0.0f,1.0f,
-		0.0f,0.0f,
-		1.0f,0.0f,
-
-		0.0f,0.0f,
-		1.0f,0.0f,
-		1.0f,1.0f,
-		0.0f,1.0f,
-
-		0.0f,1.0f,
-		1.0f,1.0f,
-		1.0f,0.0f,
-		0.0f,0.0f,
-
-		0.0f,0.0f,
-		1.0f,0.0f,
-		1.0f,1.0f,
-		0.0f,1.0f
-	};
-
-	glGenBuffers(1, (GLuint*) &(uvArrayBuffer));
-	glBindBuffer(GL_ARRAY_BUFFER, uvArrayBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 36 * 2, uv, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+	RELEASE(colors);
 }
 
 void ModuleRender::SetUpSphere(float3 pos,float radius, unsigned int rings, unsigned int sectors) 
@@ -383,10 +373,14 @@ void ModuleRender::SetUpSphere(float3 pos,float radius, unsigned int rings, unsi
 	vector<GLushort> indices;
 	vector<GLfloat> texcoords;
 
-	vertices.resize(rings * sectors * 3);
-	texcoords.resize(rings * sectors * 2);
+	uint nVertices = rings * sectors;
+
+	vertices.resize(nVertices * 3);
+	texcoords.resize(nVertices * 2);
+
 	vector<GLfloat>::iterator v = vertices.begin();
 	vector<GLfloat>::iterator t = texcoords.begin();
+
 	for(unsigned int r = 0; r < rings; r++)
 	{
 		for(unsigned int s = 0; s < sectors; s++)
@@ -404,21 +398,23 @@ void ModuleRender::SetUpSphere(float3 pos,float radius, unsigned int rings, unsi
 		}
 	}
 
+	// Color array (r, g, b, a)
+	float* colors = (float*)malloc(sizeof(float) * nVertices * 4);
+	fill_n(colors, nVertices * 4, 100.0f);
+
+	// Cannot Vertex vVertices[nVertices];
+	Vertex* vVertices = (Vertex*)malloc(sizeof(Vertex) * nVertices * 3);
+	FillVerticesData(nVertices, vertices.data(), colors, texcoords.data(), vVertices);
 
 	glGenBuffers(1, (GLuint*) &(sphereVertex));
 	glBindBuffer(GL_ARRAY_BUFFER, sphereVertex);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * rings * sectors * 3, ((void*)&vertices[0]), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glGenBuffers(1, (GLuint*) &(sphereUV));
-	glBindBuffer(GL_ARRAY_BUFFER, sphereUV);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * rings * sectors * 2, ((void*)&texcoords[0]), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * nVertices, vVertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	indices.resize(rings * sectors * 4);
 	sphereIndicesSize = indices.size();
 
-	std::vector<GLushort>::iterator i = indices.begin();
+	vector<GLushort>::iterator i = indices.begin();
 
 	for(unsigned int r = 0; r < rings - 1; r++)
 	{
@@ -430,10 +426,14 @@ void ModuleRender::SetUpSphere(float3 pos,float radius, unsigned int rings, unsi
 			*i++ = (r + 1) * sectors + s;
 		}
 	}
+
 	glGenBuffers(1, (GLuint*) &(sphereIndex));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereIndex);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLshort) * sphereIndicesSize, ((void*)&indices[0]), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	RELEASE(colors);
+	RELEASE(vVertices);
 }
 
 void ModuleRender::SetUpPlane(float3 pos, float size)
@@ -640,26 +640,57 @@ void ModuleRender::DrawCubeIndices() const
 
 	glPushMatrix();
 	
+	glUseProgram(App->shader->defaultProgramId);
+
 	if(actualTexture != nullptr)
 	{
+		GLint texture = glGetUniformLocation(App->shader->defaultProgramId, "ourTexture");
+		glUniform1i(texture, 0);
+
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, *actualTexture);
 	}
-	glEnableClientState(GL_VERTEX_ARRAY);
+
 	glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
-	glVertexPointer(3, GL_FLOAT, 0, nullptr);
 
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, uvArrayBuffer);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(7 * sizeof(GLfloat)));
 
-	glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	GLint modelView = glGetUniformLocation(App->shader->defaultProgramId, "model_view");
+	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->GetViewMatrix().ptr());
+
+	GLint proyection = glGetUniformLocation(App->shader->defaultProgramId, "projection");
+	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->GetProyectionMatrix().ptr());
+
+	// glEnableClientState(GL_VERTEX_ARRAY);
+	// glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
+	// glVertexPointer(3, GL_FLOAT, 0, nullptr);
+
+	// glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	// glBindBuffer(GL_ARRAY_BUFFER, uvArrayBuffer);
+
+	// glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesArrayBuffer);
-	glDrawElements(GL_TRIANGLES, 36 * 3, GL_UNSIGNED_INT, nullptr); // The nullptr means 'take the last binded buffer'
+	glDrawElements(GL_TRIANGLES, 36 * 3, GL_UNSIGNED_INT, nullptr);
 
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D,0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+	glUseProgram(0);
+
+	// glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	// glDisableClientState(GL_VERTEX_ARRAY);
+	// glBindBuffer(GL_ARRAY_BUFFER, 0);
+	// glBindTexture(GL_TEXTURE_2D,0);
 
 	glPopMatrix();
 }
@@ -672,13 +703,34 @@ void ModuleRender::DrawSphere()const
 
 	glPushMatrix();
 
+	glUseProgram(App->shader->defaultProgramId);
 
 	if(actualTexture != nullptr)
 	{
+		GLint texture = glGetUniformLocation(App->shader->defaultProgramId, "ourTexture");
+		glUniform1i(texture, 0);
+
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, *actualTexture);
 	}
 
-	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, sphereVertex);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(7 * sizeof(GLfloat)));
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	GLint modelView = glGetUniformLocation(App->shader->defaultProgramId, "model_view");
+	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->GetViewMatrix().ptr());
+
+	GLint proyection = glGetUniformLocation(App->shader->defaultProgramId, "projection");
+	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->GetProyectionMatrix().ptr());
+
+	/* glEnableClientState(GL_VERTEX_ARRAY);
 
 	glBindBuffer(GL_ARRAY_BUFFER, sphereVertex);
 	glVertexPointer(3, GL_FLOAT, 0, nullptr);
@@ -686,15 +738,23 @@ void ModuleRender::DrawSphere()const
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, sphereUV);
 
-	glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
+	glTexCoordPointer(2, GL_FLOAT, 0, nullptr); */
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereIndex);
 	glDrawElements(GL_QUADS, sphereIndicesSize, GL_UNSIGNED_SHORT, nullptr);
 
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+	glUseProgram(0);
+
+	/* glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0); */
 
 	glPopMatrix();
 }
@@ -799,7 +859,7 @@ uint ModuleRender::LoadTexture(const char* theFileName, ILinfo* imageInfo)
 		if (!success)
 		{
 			error = ilGetError();
-			std::cout << "Image conversion failed - IL reports error: " << error << " - " << iluErrorString(error) << std::endl;
+			cout << "Image conversion failed - IL reports error: " << error << " - " << iluErrorString(error) << endl;
 			exit(-1);
 		}
 
@@ -851,13 +911,13 @@ uint ModuleRender::LoadTexture(const char* theFileName, ILinfo* imageInfo)
 	else // If we failed to open the image file in the first place...
 	{
 		error = ilGetError();
-		std::cout << "Image load failed - IL reports error: " << error << " - " << iluErrorString(error) << std::endl;
+		cout << "Image load failed - IL reports error: " << error << " - " << iluErrorString(error) << endl;
 		exit(-1);
 	}
 
 	ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
 
-	std::cout << "Texture creation successful." << std::endl;
+	cout << "Texture creation successful." << endl;
 
 	return (uint)textureID; // Return the GLuint to the texture so you can use it!
 }
@@ -996,7 +1056,7 @@ void ModuleRender::SetUpTexture()
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void ModuleRender::SetUpShaderStruct() const
+/* void ModuleRender::SetUpShaderStruct() const
 {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
@@ -1005,6 +1065,27 @@ void ModuleRender::SetUpShaderStruct() const
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
+} */
+
+void ModuleRender::FillVerticesData(uint n, const float* positions, const float* colors, const float* texCoords, Vertex* vertices) const
+{
+	for(uint i = 0; i < n; ++i)
+	{
+		for(uint j = 0; j < 3; ++j)
+		{
+			vertices[i].position[j] = positions[i * 3 + j];
+		}
+
+		for(uint j = 0; j < 4; ++j)
+		{
+			vertices[i].color[j] = colors[i * 4 + j];
+		}
+
+		for(uint j = 0; j < 2; ++j)
+		{
+			vertices[i].uv[j] = texCoords[i * 2 + j];
+		}
+	}
 }
 
 void ModuleRender::SetUpTextures()

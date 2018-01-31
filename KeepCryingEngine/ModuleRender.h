@@ -65,7 +65,8 @@ public:
 	void SetCurrentTexture(uint textureIndex);
 
 private:
-	void SetUpShaderStruct() const;
+	// void SetUpShaderStruct() const;
+	void FillVerticesData(uint n, const float* positions, const float* colors, const float* texCoords, Vertex* vertices) const;
 
 	void SetUpTextures();
 	void CleanUpTextures();
@@ -86,7 +87,6 @@ private:
 	void SetUpLight();
 
 	uint LoadTexture(const char* theFileName, ILinfo* imageInfo);
-	
 
 public:
 	uint* actualTexture = nullptr;
@@ -101,10 +101,10 @@ private:
 	uint bigArrayCube = 0;
 	uint vertexArrayBuffer = 0;
 	uint indicesArrayBuffer = 0;
-	uint uvArrayBuffer = 0;
+	// uint uvArrayBuffer = 0;
 	uint sphereIndex = 0;
 	uint sphereVertex = 0;
-	uint sphereUV = 0;
+	// uint sphereUV = 0;
 	uint planeVertices = 0;
 	uint planeUVs = 0;
 

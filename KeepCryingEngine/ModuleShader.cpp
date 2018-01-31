@@ -35,9 +35,10 @@ void main()\
 }\
 ";
 
+using namespace std;
+
 ModuleShader::ModuleShader()
 {}
-
 
 ModuleShader::~ModuleShader()
 {}
@@ -84,7 +85,7 @@ const Shader* ModuleShader::AddShader(const char* source, GLenum shaderType)
 	// glDeleteShader(shaderId);
 }
 
-uint ModuleShader::AddProgram(std::initializer_list<const Shader*> shaders)
+uint ModuleShader::AddProgram(initializer_list<const Shader*> shaders)
 {
 	GLuint shaderProgramId = glCreateProgram();
 	
