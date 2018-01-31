@@ -24,6 +24,7 @@
     <ClCompile Include="ModuleCamera.cpp" />
     <ClCompile Include="ModuleShader.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="external\ImGuiTextEditor\TextEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -57,6 +58,7 @@
     <ClInclude Include="external\devil\include\DevIL.h" />
     <ClInclude Include="ModuleShader.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="external\ImGuiTextEditor\TextEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">
