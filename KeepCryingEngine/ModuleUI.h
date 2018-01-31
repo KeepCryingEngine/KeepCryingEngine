@@ -2,6 +2,7 @@
 #define _MODULEUI_H_
 
 #include <float3.h>
+#include <TextEditor.h>
 
 #include "Module.h"
 
@@ -18,6 +19,8 @@ public:
 	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
 private:
+	void SetUpTextEditor();
+	void SetTextOnEditor(int shaderMode);
 	void CallWindows();
 	void SetAllParameters();
 	void DrawMainMenu();
@@ -26,6 +29,7 @@ private:
 	void DrawSpeedWindow();
 	void DrawStyleWindow();
 	void DrawTextureInfoWindow();
+	void DrawShaderWindow();
 
 	void UpdateWrapModeS(uint wrapModeS, uint previousWrapModeS) const;
 	void UpdateWrapModeT(uint wrapModeT, uint previousWrapModeT) const;
@@ -34,6 +38,9 @@ private:
 	void UpdateMinFilterMode(uint minFilterMode, uint previousMinFilterMode) const;
 
 private:
+	TextEditor editor;
+	const char* shaderSavePath = nullptr;
+
 	//Parameter control bools
 	bool wireframeEnabled = false;
 	bool antialiasingEnabled = true;
@@ -49,6 +56,7 @@ private:
 	bool speedWindow = true;
 	bool styleWindow = true;
 	bool imageInfoWindow = true;
+	bool shaderEditorWindow = false;
 
 	//Probably there's a better way of doing this thing...
 	float movementSpeed = 10.0f;
