@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include <imgui.h>
+#include <imgui_impl_sdl_gl3.h>
 
 #include "Application.h"
 #include "ModuleCamera.h"
@@ -84,6 +85,8 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 	while(SDL_PollEvent(&event) != 0)
 	{
+		ImGui_ImplSdlGL3_ProcessEvent(&event);
+
 		switch(event.type)
 		{
 			case SDL_QUIT:
