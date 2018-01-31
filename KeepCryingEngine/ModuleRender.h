@@ -11,6 +11,13 @@
 
 struct ILinfo;
 
+struct Vertex
+{
+	GLfloat position[3];
+	GLfloat color[4];
+	GLfloat uv[2];
+};
+
 class ModuleRender : public Module
 {
 public:
@@ -63,15 +70,15 @@ private:
 	void SetUpTextures();
 	void CleanUpTextures();
 	void SetUpTexture();
-	void SetUpBigArray();
-	void SetUpIndicesArray();
-	void SetUpSphere(float radius, unsigned int rings, unsigned int sectors);
-	void SetUpPlane();
-	void DrawCubeDirect(float x, float y, float z) const;
-	void DrawCubeBigArray(float x, float y, float z) const;
-	void DrawCubeIndices(float x, float y, float z) const;
-	void DrawSphere(float x, float y, float z) const;
-	void DrawPlane(float x, float y, float z) const;
+	void SetUpBigArray(float3 pos,float size);
+	void SetUpIndicesArray(float3 pos, float size);
+	void SetUpSphere(float3 pos,float radius, unsigned int rings, unsigned int sectors);
+	void SetUpPlane(float3 pos, float size);
+	void DrawCubeDirect(float3 pos, float size) const;
+	void DrawCubeBigArray() const;
+	void DrawCubeIndices() const;
+	void DrawSphere() const;
+	void DrawPlane() const;
 
 	void SetUpGrid() const;
 	void DrawGrid() const;
@@ -79,6 +86,7 @@ private:
 	void SetUpLight();
 
 	uint LoadTexture(const char* theFileName, ILinfo* imageInfo);
+	
 
 public:
 	uint* actualTexture = nullptr;
@@ -91,7 +99,6 @@ public:
 
 private:	
 	uint bigArrayCube = 0;
-	uint bigArrayCubeUV = 0;
 	uint vertexArrayBuffer = 0;
 	uint indicesArrayBuffer = 0;
 	uint uvArrayBuffer = 0;

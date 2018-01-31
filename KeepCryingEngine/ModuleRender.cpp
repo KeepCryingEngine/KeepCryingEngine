@@ -9,6 +9,7 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
+#include "ModuleShader.h"
 
 using namespace std;
 
@@ -84,12 +85,10 @@ bool ModuleRender::Init()
 
 		magFilterMode = minFilterMode = GL_LINEAR;
 
-		// SetUpShaderStruct();
-
-		SetUpBigArray();
-		SetUpIndicesArray();
-		SetUpSphere(0.25f, 100, 100);
-		SetUpPlane();
+		SetUpBigArray({ 0.0f, 2.0f, 10.0f }, 0.5f);
+		SetUpIndicesArray({ -2.0f, 2.0f, 10.0f }, 0.5f);
+		SetUpSphere({ 0.0f, 4.0f, 10.0f },0.25f, 100, 100);
+		SetUpPlane({ 0.0f, -2.0f, 10.0f }, 2.0f);
 		SetUpTextures();
 	}
 
@@ -110,11 +109,11 @@ update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 {
 	DrawGrid();
-	DrawCubeDirect(2.0f, 2.0f, 10.0f);
-	DrawCubeBigArray(0.0f, 2.0f, 10.0f);
-	DrawCubeIndices(-2.0f, 2.0f, 10.0f);
-	DrawSphere(0.0f, 4.0f, 10.0f);
-	DrawPlane(0.0f, -1.0f, 12.0f);
+	DrawCubeDirect({ 2.0f, 2.0f, 10.0f },0.5f);
+	DrawCubeBigArray();
+	DrawCubeIndices();
+	DrawSphere();
+	DrawPlane();
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -135,59 +134,61 @@ bool ModuleRender::CleanUp()
 	return true;
 }
 
-void ModuleRender::SetUpBigArray()
+void ModuleRender::SetUpBigArray(float3 pos, float size)
 {
-	float half = 0.5f;
+	Vertex vertices[36];
 
-	float vertices[36 * 3] =
+	float position[36 * 3] =
 	{
-		half, -half, half,
-		-half, half, half,
-		-half, -half, half,
-		half, half, half,
-		-half, half, half,
-		half, -half, half,
+		size, -size, size,
+		-size, size, size,
+		-size, -size, size,
+		size, size, size,
+		-size, size, size,
+		size, -size, size,
 
-		-half, half, -half,
-		half, -half, -half,
-		-half, -half, -half,
-		-half, half, -half,
-		half, half, -half,
-		half, -half, -half,
+		-size, size, -size,
+		size, -size, -size,
+		-size, -size, -size,
+		-size, size, -size,
+		size, size, -size,
+		size, -size, -size,
 
-		half, half, -half,
-		half, -half, half,
-		half, -half, -half,
-		half, half, -half,
-		half, half, half,
-		half, -half, half,
+		size, size, -size,
+		size, -size, size,
+		size, -size, -size,
+		size, size, -size,
+		size, size, size,
+		size, -size, size,
 
-		-half, half, half,
-		half, half, -half,
-		-half, half, -half,
-		-half, half, half,
-		half, half, half,
-		half, half, -half,
+		-size, size, size,
+		size, size, -size,
+		-size, size, -size,
+		-size, size, size,
+		size, size, size,
+		size, size, -size,
 
-		-half, -half, half,
-		-half, half, -half,
-		-half, -half, -half,
-		-half, half, half,
-		-half, half, -half,
-		-half, -half, half,
+		-size, -size, size,
+		-size, size, -size,
+		-size, -size, -size,
+		-size, size, size,
+		-size, size, -size,
+		-size, -size, size,
 
-		half, -half, -half,
-		-half, -half, half,
-		-half, -half, -half,
-		half, -half, half,
-		-half, -half, half,
-		half, -half, -half,
+		size, -size, -size,
+		-size, -size, size,
+		-size, -size, -size,
+		size, -size, size,
+		-size, -size, size,
+		size, -size, -size,
 	};
 
-	glGenBuffers(1, (GLuint*) &(bigArrayCube));
-	glBindBuffer(GL_ARRAY_BUFFER, bigArrayCube);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 36 * 3, vertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	for(size_t i = 0; i < 36*3; i +=3)
+	{
+		position[i] += pos.x;
+		position[i + 1] += pos.y;
+		position[i + 2] += pos.z;
+	}
 
 	float uv[36 * 2] =
 	{
@@ -234,47 +235,73 @@ void ModuleRender::SetUpBigArray()
 	1.0f, 0.0f
 	};
 
-	glGenBuffers(1, (GLuint*) &(bigArrayCubeUV));
-	glBindBuffer(GL_ARRAY_BUFFER, bigArrayCubeUV);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 36 * 2, uv, GL_STATIC_DRAW);
+	for(size_t i = 0; i < 36; i++)
+	{
+
+		for(size_t j = 0; j < 3; j++)
+		{
+			vertices[i].position[j] = position[i*3+j];
+		}
+
+		for(size_t j = 0; j < 4; j++)
+		{
+			vertices[i].color[j] = 100.0f;
+		}
+
+		for(size_t j = 0; j < 2; j++)
+		{
+			vertices[i].uv[j] = uv[i * 2 + j];
+		}
+
+	}
+
+	glGenBuffers(1, (GLuint*) &(bigArrayCube));
+	glBindBuffer(GL_ARRAY_BUFFER, bigArrayCube);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 36, vertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void ModuleRender::SetUpIndicesArray()
+void ModuleRender::SetUpIndicesArray(float3 pos, float size)
 {
-	float half = 0.5f;
 	float uniqueVertex[8 * 3 * 3] =
 	{
-		-half, -half, -half, // 0 Front bottom left
-		half, -half, -half,  // 1 Front bottom right
-		half, half, -half,  // 2 Front top right
-		-half, half, -half, // 3 Front top left
+		-size, -size, -size, // 0 Front bottom left
+		size, -size, -size,  // 1 Front bottom right
+		size, size, -size,  // 2 Front top right
+		-size, size, -size, // 3 Front top left
 
-		-half, -half, half, // 4 Left bottom left
-		-half, -half, -half, // 5 Left bottom right
-		-half, half, -half, // 6 Left top right
-		-half, half, half,  // 7 Left top left
+		-size, -size, size, // 4 Left bottom left
+		-size, -size, -size, // 5 Left bottom right
+		-size, size, -size, // 6 Left top right
+		-size, size, size,  // 7 Left top left
 
-		-half, half, half,  // 8 Back top left
-		half, half, half,  // 9 Back top right
-		half, -half, half,  // 10 Back bottom right
-		-half, -half, half, // 11 Back bottom left
+		-size, size, size,  // 8 Back top left
+		size, size, size,  // 9 Back top right
+		size, -size, size,  // 10 Back bottom right
+		-size, -size, size, // 11 Back bottom left
 
-		half, -half, -half,  // 12 Right bottom left
-		half, -half, half,  // 13 Right bottom right
-		half, half, half,  // 14 Right top right
-		half, half, -half,  // 15 Right top left
+		size, -size, -size,  // 12 Right bottom left
+		size, -size, size,  // 13 Right bottom right
+		size, size, size,  // 14 Right top right
+		size, size, -size,  // 15 Right top left
 
-		-half, -half, half, // 16 Bottom top left
-		half, -half, half,  // 17 Bottom top right
-		half, -half, -half,  // 18 Bottom bottom right
-		-half, -half, -half, // 19 Bottom bottom left
+		-size, -size, size, // 16 Bottom top left
+		size, -size, size,  // 17 Bottom top right
+		size, -size, -size,  // 18 Bottom bottom right
+		-size, -size, -size, // 19 Bottom bottom left
 
-		-half, half, -half, // 20 Top bottom left
-		half, half, -half,  // 21 Top bottom right
-		half, half, half,  // 22 Top top right
-		-half, half, half  // 23 Top top left
+		-size, size, -size, // 20 Top bottom left
+		size, size, -size,  // 21 Top bottom right
+		size, size, size,  // 22 Top top right
+		-size, size, size  // 23 Top top left
 	};
+
+	for(size_t i = 0; i < 24 * 3; i += 3)
+	{
+		uniqueVertex[i] += pos.x;
+		uniqueVertex[i + 1] += pos.y;
+		uniqueVertex[i + 2] += pos.z;
+	}
 
 	glGenBuffers(1, (GLuint*) &(vertexArrayBuffer));
 	glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
@@ -347,7 +374,7 @@ void ModuleRender::SetUpIndicesArray()
 
 }
 
-void ModuleRender::SetUpSphere(float radius, unsigned int rings, unsigned int sectors) 
+void ModuleRender::SetUpSphere(float3 pos,float radius, unsigned int rings, unsigned int sectors) 
 {
 	float R = 1.0f / (float)(rings - 1);
 	float S = 1.0f / (float)(sectors - 1);
@@ -371,11 +398,12 @@ void ModuleRender::SetUpSphere(float radius, unsigned int rings, unsigned int se
 			*t++ = s * S;
 			*t++ = r * R;
 
-			*v++ = x * radius;
-			*v++ = y * radius;
-			*v++ = z * radius;
+			*v++ = x * radius + pos.x;
+			*v++ = y * radius + pos.y;
+			*v++ = z * radius + pos.z;
 		}
 	}
+
 
 	glGenBuffers(1, (GLuint*) &(sphereVertex));
 	glBindBuffer(GL_ARRAY_BUFFER, sphereVertex);
@@ -408,19 +436,26 @@ void ModuleRender::SetUpSphere(float radius, unsigned int rings, unsigned int se
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void ModuleRender::SetUpPlane()
+void ModuleRender::SetUpPlane(float3 pos, float size)
 {
 	float value = 2.0f;
 
 	float vertices[6 * 3] =
 	{
-		-value, value, -value,
-		value, -value, -value,
-		-value, -value, -value,
-		-value, value, -value,
-		value, value, -value,
-		value, -value, -value
+		-size, size, -size,
+		size, -size, -size,
+		-size, -size, -size,
+		-size, size, -size,
+		size, size, -size,
+		size, -size, -size
 	};
+
+	for(size_t i = 0; i < 6*3; i+=3)
+	{
+		vertices[i] += pos.x;
+		vertices[i + 1] += pos.y;
+		vertices[i + 2] += pos.z;
+	}
 
 	glGenBuffers(1, (GLuint*) &(planeVertices));
 	glBindBuffer(GL_ARRAY_BUFFER, planeVertices);
@@ -445,12 +480,9 @@ void ModuleRender::SetUpPlane()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void ModuleRender::DrawCubeDirect(float x, float y, float z) const
+void ModuleRender::DrawCubeDirect(float3 pos, float size) const
 {
-	float half = 0.5f;
-	
 	glPushMatrix();
-	glTranslatef(x, y, z);
 
 	if(actualTexture != nullptr)
 	{
@@ -462,92 +494,92 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	//Back FACE
 	//glColor3f(30.0f, 100.0f, 200.0f);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(half, -half, half);
+	glVertex3f(pos.x + size,pos.y + -size,pos.z + size);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-half, half, half);
+	glVertex3f(pos.x + -size, pos.y + size, pos.z + size);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-half, -half, half);
+	glVertex3f(pos.x + -size, pos.y + -size, pos.z + size);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(half, half, half);
+	glVertex3f(pos.x + size, pos.y + size, pos.z + size);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-half, half, half);
+	glVertex3f(pos.x + -size, pos.y + size, pos.z + size);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(half, -half, half);
+	glVertex3f(pos.x + size, pos.y + -size, pos.z + size);
 
 	//Front FACE
 	//glColor3f(0.0f, 255.0f, 255.0f);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-half, half, -half);
+	glVertex3f(pos.x + -size, pos.y + size, pos.z + -size);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(half, -half, -half);
+	glVertex3f(pos.x + size, pos.y + -size, pos.z + -size);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-half, -half, -half);
+	glVertex3f(pos.x + -size, pos.y + -size, pos.z + -size);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-half, half, -half);
+	glVertex3f(pos.x + -size, pos.y + size, pos.z + -size);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(half, half, -half);
+	glVertex3f(pos.x + size, pos.y + size, pos.z + -size);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(half, -half, -half);
+	glVertex3f(pos.x + size, pos.y + -size, pos.z + -size);
 	
 	//Right FACE
 	//glColor3f(0.0f, 0.0f, 255.0f);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(half, half, -half);
+	glVertex3f(pos.x + size, pos.y + size, pos.z + -size);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(half, -half, half);
+	glVertex3f(pos.x + size, pos.y + -size, pos.z + size);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(half, -half, -half);
+	glVertex3f(pos.x + size, pos.y + -size, pos.z + -size);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(half, half, -half);
+	glVertex3f(pos.x + size, pos.y + size, pos.z + -size);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(half, half, half);
+	glVertex3f(pos.x + size, pos.y + size, pos.z + size);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(half, -half, half);
+	glVertex3f(pos.x + size, pos.y + -size, pos.z + size);
 	
 	//TOP FACE
 	//glColor3f(0.0f, 255.0f, 0.0f);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-half, half, half);
+	glVertex3f(pos.x + -size, pos.y + size, pos.z + size);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(half, half, -half);
+	glVertex3f(pos.x + size, pos.y + size, pos.z + -size);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-half, half, -half);
+	glVertex3f(pos.x + -size, pos.y + size, pos.z + -size);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-half, half, half);
+	glVertex3f(pos.x + -size, pos.y + size, pos.z + size);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(half, half, half);
+	glVertex3f(pos.x + size, pos.y + size, pos.z + size);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(half, half, -half);
+	glVertex3f(pos.x + size, pos.y + size, pos.z + -size);
 	
 	//RIGHT FACE
 	//glColor3f(255.0f, 255.0f, 1.0f);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-half, -half, half);
+	glVertex3f(pos.x + -size, pos.y + -size, pos.z + size);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-half, half, -half);
+	glVertex3f(pos.x + -size, pos.y + size, pos.z + -size);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-half, -half, -half);
+	glVertex3f(pos.x + -size, pos.y + -size, pos.z + -size);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-half, half, half);
+	glVertex3f(pos.x + -size, pos.y + size, pos.z + size);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-half, half, -half);
+	glVertex3f(pos.x + -size, pos.y + size, pos.z + -size);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-half, -half, half);
+	glVertex3f(pos.x + -size, pos.y + -size, pos.z + size);
 	
 	//BOTTOM FACE
 	//glColor3f(255.0f, 0.0f, 1.0f);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(half, -half, -half);
+	glVertex3f(pos.x + size, pos.y + -size, pos.z + -size);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-half, -half, half);
+	glVertex3f(pos.x + -size, pos.y + -size, pos.z + size);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-half, -half, -half);
+	glVertex3f(pos.x + -size, pos.y + -size, pos.z + -size);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(half, -half, half);
+	glVertex3f(pos.x + size, pos.y + -size, pos.z + size);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-half, -half, half);
+	glVertex3f(pos.x + -size, pos.y + -size, pos.z + size);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(half, -half, -half);
+	glVertex3f(pos.x + size, pos.y + -size, pos.z + -size);
 	
 	glEnd();
 
@@ -556,44 +588,57 @@ void ModuleRender::DrawCubeDirect(float x, float y, float z) const
 	glPopMatrix();
 }
 
-void ModuleRender::DrawCubeBigArray(float x, float y, float z) const
+void ModuleRender::DrawCubeBigArray() const
 {
 	//glColor3f(255.0f, 255.0f, 255.0f);
 
 	glPushMatrix();
-	glTranslatef(x, y, z);
+
+	glUseProgram(App->shader->defaultProgramId);
 
 	if(actualTexture != nullptr)
 	{
+		GLint texture = glGetUniformLocation(App->shader->defaultProgramId, "ourTexture");
+		glUniform1i(texture, 0);
+
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, *actualTexture);
 	}
 
-	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, bigArrayCube);
 
-	glVertexPointer(3, GL_FLOAT, 0, nullptr);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(7 * sizeof(GLfloat)));
 
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, bigArrayCubeUV);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 
-	glTexCoordPointer(2,GL_FLOAT,0,nullptr);
+	GLint modelView = glGetUniformLocation(App->shader->defaultProgramId, "model_view");
+	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->GetViewMatrix().ptr());
+
+	GLint proyection = glGetUniformLocation(App->shader->defaultProgramId, "projection");
+	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->GetProyectionMatrix().ptr());
 
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+	glUseProgram(0);
 
 	glPopMatrix();
 }
 
-void ModuleRender::DrawCubeIndices(float x, float y, float z) const
+void ModuleRender::DrawCubeIndices() const
 {
 	//glColor3f(255.0f, 255.0f, 255.0f);
 
 	glPushMatrix();
-	glTranslatef(x, y, z);
 	
 	if(actualTexture != nullptr)
 	{
@@ -619,14 +664,14 @@ void ModuleRender::DrawCubeIndices(float x, float y, float z) const
 	glPopMatrix();
 }
 
-void ModuleRender::DrawSphere(float x, float y, float z)const
+void ModuleRender::DrawSphere()const
 {
 	glMatrixMode(GL_MODELVIEW);
 
 	//glColor3f(255.0f, 255.0f, 255.0f);
 
 	glPushMatrix();
-	glTranslatef(x, y, z);
+
 
 	if(actualTexture != nullptr)
 	{
@@ -654,12 +699,11 @@ void ModuleRender::DrawSphere(float x, float y, float z)const
 	glPopMatrix();
 }
 
-void ModuleRender::DrawPlane(float x, float y, float z) const
+void ModuleRender::DrawPlane() const
 {
 	//glColor3f(255.0f, 255.0f, 255.0f);
 
 	glPushMatrix();
-	glTranslatef(x, y, z);
 
 	if(actualTexture != nullptr)
 	{

@@ -4,26 +4,25 @@
 
 const char* SHADER_0 = "#version 330 core\n\
 layout (location = 0) in vec3 position;\
-layout (location = 1) in vec3 color;\
+layout (location = 1) in vec4 color;\
 layout (location = 2) in vec2 texCoord;\
 \
-out vec3 ourColor;\
+out vec4 ourColor;\
 out vec2 TexCoord;\
 \
-uniform mat4 model_matrix;\
-uniform mat4 view;\
+uniform mat4 model_view;\
 uniform mat4 projection;\
 \
 void main()\
 {\
-	gl_Position = projection * view * model_matrix * vec4(position, 1.0f);\
+	gl_Position = projection * model_view * vec4(position, 1.0f);\
 	ourColor = color;\
 	TexCoord = texCoord;\
 }\
 ";
 
 const char* SHADER_1 = "#version 330 core\n\
-in vec3 ourColor;\
+in vec4 ourColor;\
 in vec2 TexCoord;\
 \
 out vec4 color;\
@@ -32,7 +31,7 @@ uniform sampler2D ourTexture;\
 \
 void main()\
 {\
-	color = vec4(1.0f, 0.0f, 0.0f, 1.0f);\
+	color = texture2D(ourTexture,TexCoord);\
 }\
 ";
 
@@ -45,7 +44,7 @@ ModuleShader::~ModuleShader()
 
 bool ModuleShader::Init()
 {
-	const Shader* defaultVertexShader = nullptr; // AddShader(SHADER_0, GL_VERTEX_SHADER);
+	const Shader* defaultVertexShader = AddShader(SHADER_0, GL_VERTEX_SHADER);
 	const Shader* defaultFragmentShader = AddShader(SHADER_1, GL_FRAGMENT_SHADER);
 
 	defaultProgramId = AddProgram({ defaultVertexShader, defaultFragmentShader });
@@ -55,7 +54,7 @@ bool ModuleShader::Init()
 
 bool ModuleShader::Start()
 {
-	glUseProgram(defaultProgramId);
+	//glUseProgram(defaultProgramId);
 
 	return true;
 }
