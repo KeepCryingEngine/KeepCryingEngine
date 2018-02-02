@@ -6,8 +6,6 @@
 
 #include "Component.h"
 
-class Component;
-
 class GameObject
 {
 public:
@@ -42,8 +40,8 @@ public:
 		return childs;
 	}
 
-	void SetParent(GameObject& newParent);
-	void AddChild(GameObject& newChild);
+	void SetParent(GameObject&);
+	void AddChild(GameObject&);
 	
 	Component& AddComponent(ComponentType);
 	Component* GetComponent(ComponentType);
