@@ -27,6 +27,10 @@ public:
 	void Start();
 	void Update(float deltaTimeS, float realDeltaTimeS);
 
+	std::string& GetName() {
+		return name;
+	}
+
 	GameObject& GetParent() {
 		assert(parent);
 		return *parent;
@@ -53,6 +57,7 @@ private:
 	GameObject * parent;
 	std::vector<GameObject*> childs;
 	std::vector<Component*> components;
+	std::string name;
 };
 
 #endif
