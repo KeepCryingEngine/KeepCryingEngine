@@ -31,6 +31,7 @@ private:
 	void DrawStyleWindow();
 	void DrawTextureInfoWindow();
 	void DrawShaderWindow();
+	void DrawHierarchyWindow();
 	void DrawInspectorWindow();
 
 	void PrintChildrenOnHierarchy(std::vector<GameObject*> children);
@@ -61,7 +62,8 @@ private:
 	bool styleWindow = false;
 	bool imageInfoWindow = false;
 	bool shaderEditorWindow = false;
-	bool inspectorWindow = true;
+	bool hierarchyWindow = true;
+	bool inspectorWindow = false;
 
 	//Probably there's a better way of doing this thing...
 	float movementSpeed = 10.0f;
@@ -84,6 +86,8 @@ private:
 	bool mipmap = false;
 	bool anisotropicFilter = false;
 	float fogDensity = 1.0f;
+
+	std::string selectedNodeName = "";
 };
 
 #endif // !_MODULEUI_H_

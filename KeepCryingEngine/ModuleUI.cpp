@@ -90,7 +90,7 @@ void ModuleUI::DrawMainMenu()
 			{
 				if (ImGui::Button("Inspector", buttonSize))
 				{
-					inspectorWindow ^= 1;
+					hierarchyWindow ^= 1;
 				}
 				if(ImGui::Button("Camera Controls", buttonSize))
 				{
@@ -372,7 +372,11 @@ void ModuleUI::CallWindows()
 	{
 		DrawShaderWindow();
 	}
-	if (inspectorWindow)
+	if (hierarchyWindow)
+	{
+		DrawHierarchyWindow();
+	}
+	if(inspectorWindow)
 	{
 		DrawInspectorWindow();
 	}
@@ -526,47 +530,124 @@ void ModuleUI::DrawShaderWindow()
 	ImGui::End();
 }
 
+void ModuleUI::DrawHierarchyWindow()
+{
+	ImGui::Begin("Game Object Inspector", &hierarchyWindow, ImGuiWindowFlags_MenuBar);
+
+	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+	if(App->scene->GetRoot().GetChilds().size() > 0)
+	{
+		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+	}
+
+	bool opened = ImGui::TreeNodeEx(App->scene->GetRoot().GetName().c_str(), nodeFlags);
+
+	if(opened)
+	{
+		PrintChildrenOnHierarchy(App->scene->GetRoot().GetChilds());
+		ImGui::TreePop();
+	}
+		
+	ImGui::End();
+}
+
 void ModuleUI::DrawInspectorWindow()
 {
-	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_Selected;
-
-	ImGui::Begin("Game Object Inspector", &inspectorWindow, ImGuiWindowFlags_MenuBar);
-
-	//if (App->scene->GetRoot().GetChilds().size() > 0)
-	//{
-		if (ImGui::TreeNodeEx(App->scene->GetRoot().GetName().c_str(), nodeFlags))
-		{
-			PrintChildrenOnHierarchy(App->scene->GetRoot().GetChilds());
-			ImGui::TreePop();
-		}
-	//}
-	//else
-	//{
-	//	ImGui::BulletText(App->scene->GetRoot().GetName().c_str());
-	//}
-
+	ImGui::Begin("INSPECTOR POTATO WINDOW", &inspectorWindow, ImGuiWindowFlags_MenuBar);
 	ImGui::End();
 }
 
 void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 {
-	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow;
+	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-	for (GameObject* child : children)
+	for(GameObject* child : children)
 	{
+		if(selectedNodeName == child->GetName())
+		{
+			nodeFlags |= ImGuiTreeNodeFlags_Selected;
+		}
+
 		if (child->GetChilds().size() > 0)
 		{
-			if (ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags))
+			bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
+			
+			if(ImGui::IsItemClicked())
+			{
+				//CALL THE INFO OF THIS NODE GAMEOBJECT TO THE INSPECTOR
+				if(!inspectorWindow)
+				{
+					inspectorWindow = true;
+				}
+
+				selectedNodeName = child->GetName();
+				int a = 0;
+				a++;
+			}
+
+			if(opened)
 			{
 				PrintChildrenOnHierarchy(child->GetChilds());
 				ImGui::TreePop();
 			}
+			
 		}
 		else
 		{
-			ImGui::BulletText(child->GetName().c_str());
+			nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+			ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
+
+			if(ImGui::IsItemClicked())
+			{
+				//CALL THE INFO OF THIS NODE GAMEOBJECT TO THE INSPECTOR
+				if(!inspectorWindow)
+				{
+					inspectorWindow = true;
+				}
+
+				selectedNodeName = child->GetName();
+				int a = 0;
+				a++;
+			}
 		}
 	}
+	
+	//for(int i = 0; i < 6; i++)
+	//{
+	//	// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
+	//	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selectedNode & (1 << i)) ? ImGuiTreeNodeFlags_Selected : 0);
+	//	if(i < 3)
+	//	{
+	//		//bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "Node", i);
+	//		bool node_open = ImGui::TreeNodeEx("Node", node_flags);
+
+	//		if(ImGui::IsItemClicked())
+	//		{
+	//			selectedNode = (1 << i);
+	//			int a = 0;
+	//			a++;
+	//		}
+
+	//		if(node_open)
+	//		{
+	//			ImGui::Text("Blah blah");
+	//			ImGui::TreePop();
+	//		}
+	//	}
+	//	else
+	//	{
+	//		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+	//		ImGui::TreeNodeEx("Leaf", node_flags);
+
+	//		if(ImGui::IsItemClicked())
+	//		{
+	//			selectedNode = (1 << i); 
+	//			int a = 0;
+	//			a++;
+	//		}
+	//	}
+	//}
 }
 
 void ModuleUI::UpdateWrapModeS(uint wrapModeS, uint previousWrapModeS) const
