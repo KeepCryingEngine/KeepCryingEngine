@@ -72,6 +72,13 @@ void Mesh::Update(float deltaTimeS, float realDeltaTimeS)
 
 void Mesh::DrawUI()
 {
+	ImGui::Begin("Material");
+	ImGui::Checkbox("Active", &enabled);
+	if(ImGui::Button("Delete Component"))
+	{
+		gameObject.RemoveComponent(this);
+	}
+	ImGui::End();
 }
 
 void Mesh::SetUpIndicesArray()
@@ -109,6 +116,14 @@ void Mesh::SetUpIndicesArray()
 		size, size, size,  // 22 Top top right
 		-size, size, size  // 23 Top top left
 	};
+
+	float3 pos = gameObject->GetComponent<Transform>().position;
+	for(size_t i = 0; i < 24 * 3; i += 3)
+	{
+		uniqueVertex[i] += pos.x;
+		uniqueVertex[i + 1] += pos.y;
+		uniqueVertex[i + 2] += pos.z;
+	}
 
 	float uv[24 * 2] =
 	{
@@ -205,7 +220,7 @@ void Mesh::SetUpSphere()
 
 	vector<GLfloat>::iterator v = vertices.begin();
 	vector<GLfloat>::iterator t = texcoords.begin();
-
+	float3 pos = gameObject->GetComponent<Transform>().position;
 	for(unsigned int r = 0; r < rings; r++)
 	{
 		for(unsigned int s = 0; s < sectors; s++)
@@ -217,9 +232,9 @@ void Mesh::SetUpSphere()
 			*t++ = s * S;
 			*t++ = r * R;
 
-			*v++ = x * radius;
-			*v++ = y * radius;
-			*v++ = z * radius;
+			*v++ = x * radius + pos.x;
+			*v++ = y * radius + pos.y;
+			*v++ = z * radius + pos.z;
 		}
 	}
 
