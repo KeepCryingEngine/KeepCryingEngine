@@ -9,6 +9,15 @@ class Component;
 class GameObject
 {
 public:
+	enum class State{
+		ToEnable,
+		ToAwake,
+		ToStart,
+		ToUpdate,
+		ToDisable,
+		ToDestroy
+	};
+
 	GameObject();
 	~GameObject();
 
@@ -23,11 +32,15 @@ public:
 	}
 
 	void SetParent(GameObject& newParent);
+	void AddChild(GameObject& newChild);
+	
+	Component& GetComponent();
+	vector<Component&> GetComponents();
+
 
 private:
 	GameObject * parent;
 	std::vector<GameObject*> childs;
-
 	std::vector<Component*> components;
 };
 
