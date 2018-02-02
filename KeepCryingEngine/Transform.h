@@ -12,6 +12,8 @@ public:
 	Transform();
 	~Transform();
 
+	void DrawUI()override;
+
 private:
 	float3 position;
 	Quat rotation;

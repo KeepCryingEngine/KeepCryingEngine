@@ -63,6 +63,7 @@ public:
 	void setAnisotropicFilter(bool anisotropicFilter);
 
 	void SetCurrentTexture(uint textureIndex);
+	uint LoadTexture(const char* theFileName, ILinfo* imageInfo);
 
 private:
 	// void SetUpShaderStruct() const;
@@ -85,8 +86,6 @@ private:
 	void DrawGrid() const;
 
 	void SetUpLight();
-
-	uint LoadTexture(const char* theFileName, ILinfo* imageInfo);
 
 public:
 	uint* actualTexture = nullptr;

@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <initializer_list>
+#include <list>
 
 #include "Module.h"
 
@@ -20,6 +21,7 @@ public:
 
 	const Shader* AddShader(const char* source, GLenum shaderType);
 	uint AddProgram(std::initializer_list<const Shader*> shaders);
+	uint AddProgram(std::list<uint> shaders);
 
 public:
 	uint defaultProgramId = 0;

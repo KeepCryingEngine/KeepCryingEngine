@@ -98,3 +98,30 @@ uint ModuleShader::AddProgram(initializer_list<const Shader*> shaders)
 
 	return shaderProgramId;
 }
+
+uint ModuleShader::AddProgram(std::list<uint> shaders)
+{
+	GLuint shaderProgramId = glCreateProgram();
+
+	for(uint shader : shaders)
+	{
+		glAttachShader(shaderProgramId, shader);
+	}
+
+	glLinkProgram(shaderProgramId);
+
+	GLint success;
+	GLchar infoLog[512];
+
+	glGetProgramiv(shaderProgramId, GL_LINK_STATUS, &success);
+
+	if(!success)
+	{
+		glGetProgramInfoLog(shaderProgramId, 512, nullptr, infoLog);
+		LOG_DEBUG("Shader link error: %s", infoLog);
+
+		return 0;
+	}
+
+	return shaderProgramId;
+}
