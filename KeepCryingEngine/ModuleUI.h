@@ -5,6 +5,7 @@
 #include <TextEditor.h>
 
 #include "Module.h"
+#include "GameObject.h"
 
 class ModuleUI : public Module
 {
@@ -30,6 +31,9 @@ private:
 	void DrawStyleWindow();
 	void DrawTextureInfoWindow();
 	void DrawShaderWindow();
+	void DrawInspectorWindow();
+
+	void PrintChildrenOnHierarchy(std::vector<GameObject*> children);
 
 	void UpdateWrapModeS(uint wrapModeS, uint previousWrapModeS) const;
 	void UpdateWrapModeT(uint wrapModeT, uint previousWrapModeT) const;
@@ -52,11 +56,12 @@ private:
 	bool fogEnabled = false;
 
 	//One bool control for each window
-	bool cameraWindow = true;
-	bool speedWindow = true;
-	bool styleWindow = true;
-	bool imageInfoWindow = true;
+	bool cameraWindow = false;
+	bool speedWindow = false;
+	bool styleWindow = false;
+	bool imageInfoWindow = false;
 	bool shaderEditorWindow = false;
+	bool inspectorWindow = true;
 
 	//Probably there's a better way of doing this thing...
 	float movementSpeed = 10.0f;
