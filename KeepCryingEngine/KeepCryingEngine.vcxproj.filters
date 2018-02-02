@@ -25,9 +25,9 @@
     <ClCompile Include="ModuleShader.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="external\ImGuiTextEditor\TextEditor.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="ModuleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -65,6 +65,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="ModuleScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">

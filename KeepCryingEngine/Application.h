@@ -12,6 +12,7 @@ class ModuleInput;
 class ModuleUI;
 class ModuleCamera;
 class ModuleShader;
+class ModuleScene;
 
 class Application
 {
@@ -38,6 +39,7 @@ public:
 	ModuleUI* ui;
 	ModuleCamera* camera;
 	ModuleShader* shader;
+	ModuleScene* scene;
 
 	// Cargar información desde json
 	// Tamaño pantalla, nombre, fps, etc

@@ -13,6 +13,21 @@ GameObject::~GameObject()
 {
 }
 
+void GameObject::Awake()
+{
+
+}
+
+void GameObject::Start()
+{
+
+}
+
+void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
+{
+
+}
+
 void GameObject::SetParent(GameObject & newParent)
 {
 	vector<GameObject*>::iterator childParentIterator = find(parent->childs.begin(), parent->childs.end(), this);
@@ -28,12 +43,18 @@ void GameObject::AddChild(GameObject & newChild)
 	newChild.SetParent(*this);
 }
 
-Component & GameObject::GetComponent()
+Component & GameObject::GetComponent(ComponentType type)
 {
-	// TODO: insertar una instrucción return aquí
+	for each (Component* c in components)
+	{
+		if(c->type == type)
+		{
+			return *c;
+		}
+	}
 }
 
-vector<Component&> GameObject::GetComponents()
+vector<Component*> GameObject::GetComponents()
 {
-	return vector<Component&>();
+	return components;
 }
