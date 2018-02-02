@@ -8,24 +8,8 @@ GameObject::GameObject()
 {
 }
 
-
 GameObject::~GameObject()
 {
-}
-
-void GameObject::Awake()
-{
-
-}
-
-void GameObject::Start()
-{
-
-}
-
-void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
-{
-
 }
 
 void GameObject::SetParent(GameObject & newParent)
@@ -43,18 +27,36 @@ void GameObject::AddChild(GameObject & newChild)
 	newChild.SetParent(*this);
 }
 
-Component & GameObject::GetComponent(ComponentType type)
+Component & GameObject::AddComponent(ComponentType type)
 {
-	for each (Component* c in components)
+	Component* component = nullptr;
+	//component = ComponentFabric::CreateComponent(type);
+	assert(component);
+	components.push_back(component);
+	return *component;
+}
+
+Component* GameObject::GetComponent(ComponentType type)
+{
+	for(Component* c : components)
 	{
 		if(c->type == type)
 		{
-			return *c;
+			return c;
 		}
 	}
+	return nullptr;
 }
 
-vector<Component*> GameObject::GetComponents()
+vector<Component*> GameObject::GetComponents(ComponentType type)
 {
-	return components;
+	vector<Component*> ret;
+	for (Component* c : components) 
+	{
+		if (c->type == type) 
+		{
+			ret.push_back(c);
+		}
+	}
+	return ret;
 }

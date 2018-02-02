@@ -12,8 +12,8 @@ class GameObject
 {
 public:
 	enum class State{
-		ToEnable,
 		ToAwake,
+		ToEnable,
 		ToStart,
 		ToUpdate,
 		ToDisable,
@@ -21,35 +21,46 @@ public:
 	};
 
 	GameObject();
-	~GameObject();
-
-	void Awake();
-	void Start();
-	void Update(float deltaTimeS, float realDeltaTimeS);
+	virtual ~GameObject();
 
 	GameObject& GetParent() {
 		assert(parent);
 		return *parent;
 	}
 
-	GameObject& GetChild(unsigned int child) {
+	size_t ChildCount() const {
+		return childs.size();
+	}
+
+	GameObject& GetChild(size_t child) {
 		assert(childs.size() < child);
 		return *childs[child];
 	}
 
-	std::vector<GameObject*> GetChilds()
+	const std::vector<GameObject*>& GetChilds()
 	{
-		return childs;//Verify, maybe a copy, or a const reference
+		return childs;
 	}
 
 	void SetParent(GameObject& newParent);
 	void AddChild(GameObject& newChild);
 	
-	Component& GetComponent(ComponentType type);
-	std::vector<Component*> GetComponents();
+	Component& AddComponent(ComponentType);
+	Component* GetComponent(ComponentType);
+	std::vector<Component*> GetComponents(ComponentType);
 
-
+	virtual void Awake() {}
+	virtual void OnEnable() {}
+	virtual void Start() {}
+	virtual void PreUpdate() {}
+	virtual void Update(float deltaTimeS, float realDeltaTimeS) {}
+	virtual void LateUpdate() {}
+	virtual void OnDisable() {}
+	virtual void OnDestroy() {}
+	
 private:
+	State state;
+
 	GameObject * parent;
 	std::vector<GameObject*> childs;
 	std::vector<Component*> components;
