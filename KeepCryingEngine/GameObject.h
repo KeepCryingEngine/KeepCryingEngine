@@ -1,27 +1,35 @@
 #ifndef _GAMEOBJECT_H_
 #define _GAMEOBJECT_H_
 
+#include <list>
 #include <vector>
-#include <assert.h>
+// #include <assert.h>
 
 #include "Component.h"
 
 class GameObject
 {
 public:
-	enum class State{
+	/* enum class State{
 		ToAwake,
 		ToEnable,
 		ToStart,
 		ToUpdate,
 		ToDisable,
 		ToDestroy
-	};
+	}; */
 
 	GameObject();
 	virtual ~GameObject();
 
-	GameObject& GetParent() {
+	GameObject* GetParent() const;
+
+	size_t GetChildCount() const;
+
+	GameObject* GetChild(size_t index) const;
+	const std::vector<GameObject*>& GetChildren() const;
+
+	/* GameObject& GetParent() {
 		assert(parent);
 		return *parent;
 	}
@@ -38,29 +46,47 @@ public:
 	const std::vector<GameObject*>& GetChilds()
 	{
 		return childs;
-	}
+	} */
 
-	void SetParent(GameObject&);
-	void AddChild(GameObject&);
-	
-	Component& AddComponent(ComponentType);
-	Component* GetComponent(ComponentType);
-	std::vector<Component*> GetComponents(ComponentType);
+	void AddChild(GameObject& child);
+	void SetParent(GameObject& newParent);
 
-	virtual void Awake() {}
-	virtual void OnEnable() {}
-	virtual void Start() {}
-	virtual void PreUpdate() {}
-	virtual void Update(float deltaTimeS, float realDeltaTimeS) {}
-	virtual void LateUpdate() {}
-	virtual void OnDisable() {}
-	virtual void OnDestroy() {}
+	template <class T>
+	T* AddComponent();
+
+	template <class T>
+	T* GetComponent();
+
+	template <class T>
+	std::vector<T*> GetComponents();
+
+	template <class T>
+	void GetComponents(std::vector<T*>& components);
+
+	// void Awake() {}
+	// void OnEnable() {}
+	// void Start() {}
+	// void PreUpdate() {}
+	void Update(float deltaTimeS, float realDeltaTimeS);
+	// void LateUpdate() {}
+	// void OnDisable() {}
+	void OnDestroy();
 	
 private:
-	State state;
+	void CheckToStart();
+	void CheckToDestroy();
 
-	GameObject * parent;
-	std::vector<GameObject*> childs;
+	// void DestroyAndRelease(Component* component) const;
+
+private:
+	// State state;
+
+	GameObject* parent = nullptr;
+
+	std::list<Component*> toStart;
+	std::list<Component*> toDestroy;
+
+	std::vector<GameObject*> children;
 	std::vector<Component*> components;
 };
 
