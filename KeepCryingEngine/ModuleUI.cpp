@@ -367,7 +367,7 @@ void ModuleUI::CallEntityCreation()
 {
 	if(addEmptyGameObject)
 	{
-		App->scene->AddEmpty(*App->scene->GetRoot());
+		App->scene->AddEmpty(*App->scene->Get(selectedNodeID));
 		addEmptyGameObject = false;
 	}
 	if(addCubeGameObject)
