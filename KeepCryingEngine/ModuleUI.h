@@ -42,9 +42,16 @@ private:
 	void UpdateMagFilterMode(uint magFilterMode, uint previousMagFilterMode) const;
 	void UpdateMinFilterMode(uint minFilterMode, uint previousMinFilterMode) const;
 
+	void CallEntityCreation();
+
 private:
 	TextEditor editor;
 	const char* shaderSavePath = nullptr;
+
+	//Create entities
+	bool addCubeGameObject = false;
+	bool addSphereGameObject = false;
+	bool addEmptyGameObject = false;
 
 	//Parameter control bools
 	bool wireframeEnabled = false;
