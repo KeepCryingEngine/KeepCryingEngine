@@ -47,14 +47,23 @@ GameObject* ModuleScene::GetRoot() const
 	return root;
 }
 
-void ModuleScene::Add(GameObject* gameObject)
+GameObject* ModuleScene::AddEmpty()
 {
+	GameObject* gameObject = new GameObject();
+
 	toStart.push_back(gameObject);
+
+	return gameObject;
 }
 
-void ModuleScene::Destroy(GameObject* gameObject)
+void ModuleScene::Add(GameObject& gameObject)
 {
-	toDestroy.push_back(gameObject);
+	toStart.push_back(&gameObject);
+}
+
+void ModuleScene::Destroy(GameObject& gameObject)
+{
+	toDestroy.push_back(&gameObject);
 }
 
 void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const
