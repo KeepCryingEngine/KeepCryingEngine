@@ -406,10 +406,10 @@ void ModuleUI::CallWindows()
 	{
 		DrawHierarchyWindow();
 	}
-	//if(inspectorWindow)
-	//{
-	//	DrawInspectorWindow();
-	//}
+	if(inspectorWindow)
+	{
+		DrawInspectorWindow();
+	}
 }
 
 void ModuleUI::DrawCameraWindow()
@@ -579,7 +579,11 @@ void ModuleUI::DrawHierarchyWindow()
 
 void ModuleUI::DrawInspectorWindow()
 {
-	ImGui::Begin("INSPECTOR POTATO WINDOW", &inspectorWindow, ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("Inspector", &inspectorWindow, ImGuiWindowFlags_MenuBar);
+
+	GameObject* temp = App->scene->Get(selectedNodeID);
+	temp->DrawUI();
+
 	ImGui::End();
 }
 
@@ -589,9 +593,13 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 
 	for(GameObject* child : children)
 	{
-		if(selectedNodeName == child->GetName())
+		if(selectedNodeID == child->GetId())
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
+		}
+		else
+		{
+			nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 		}
 
 		if (child->GetChildCount() > 0)
@@ -600,13 +608,11 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 
 			if(ImGui::IsItemClicked())
 			{
-				//CALL THE INFO OF THIS NODE GAMEOBJECT TO THE INSPECTOR
 				if(!inspectorWindow)
 				{
 					inspectorWindow = true;
 				}
-
-				selectedNodeName = child->GetName();
+				selectedNodeID = child->GetId();
 				int a = 0;
 				a++;
 			}
@@ -620,18 +626,16 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 		}
 		else
 		{
-			//nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 			bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
 
 			if(ImGui::IsItemClicked())
 			{
-				//CALL THE INFO OF THIS NODE GAMEOBJECT TO THE INSPECTOR
 				if(!inspectorWindow)
 				{
 					inspectorWindow = true;
 				}
 
-				selectedNodeName = child->GetName();
+				selectedNodeID = child->GetId();
 				int a = 0;
 				a++;
 			}
@@ -642,42 +646,6 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 			}
 		}
 	}
-	
-	//for(int i = 0; i < 6; i++)
-	//{
-	//	// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
-	//	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selectedNode & (1 << i)) ? ImGuiTreeNodeFlags_Selected : 0);
-	//	if(i < 3)
-	//	{
-	//		//bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "Node", i);
-	//		bool node_open = ImGui::TreeNodeEx("Node", node_flags);
-
-	//		if(ImGui::IsItemClicked())
-	//		{
-	//			selectedNode = (1 << i);
-	//			int a = 0;
-	//			a++;
-	//		}
-
-	//		if(node_open)
-	//		{
-	//			ImGui::Text("Blah blah");
-	//			ImGui::TreePop();
-	//		}
-	//	}
-	//	else
-	//	{
-	//		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-	//		ImGui::TreeNodeEx("Leaf", node_flags);
-
-	//		if(ImGui::IsItemClicked())
-	//		{
-	//			selectedNode = (1 << i); 
-	//			int a = 0;
-	//			a++;
-	//		}
-	//	}
-	//}
 }
 
 void ModuleUI::UpdateWrapModeS(uint wrapModeS, uint previousWrapModeS) const

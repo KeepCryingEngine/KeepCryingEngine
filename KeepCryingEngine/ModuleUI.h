@@ -94,7 +94,7 @@ private:
 	bool anisotropicFilter = false;
 	float fogDensity = 1.0f;
 
-	std::string selectedNodeName = "";
+	unsigned long long selectedNodeID = 0;
 };
 
 #endif // !_MODULEUI_H_
