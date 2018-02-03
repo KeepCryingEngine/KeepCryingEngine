@@ -30,6 +30,11 @@ public:
 	const std::vector<GameObject*>& GetChildren() const;
 
 	/* GameObject& GetParent() {
+	std::string& GetName() {
+		return name;
+	}
+
+	GameObject& GetParent() {
 		assert(parent);
 		return *parent;
 	}
@@ -88,6 +93,7 @@ private:
 
 	std::vector<GameObject*> children;
 	std::vector<Component*> components;
+	std::string name;
 };
 
 #endif
