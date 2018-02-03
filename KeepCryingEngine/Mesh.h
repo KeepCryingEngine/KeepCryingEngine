@@ -22,7 +22,7 @@ public:
 	void DrawUI()override;
 
 private:
-	void SetUpIndicesArray();
+	void SetUpCube();
 	void SetUpSphere();
 	void FillVerticesData(uint n, const float* positions, const float* colors, const float* texCoords, Vertex* vertices) const;
 

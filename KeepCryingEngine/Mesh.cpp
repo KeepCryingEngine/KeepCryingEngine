@@ -10,7 +10,6 @@
 #include "ModuleCamera.h"
 #include "GameObject.h"
 #include "Material.h"
-#include <typeinfo>
 
 using namespace std;
 
@@ -81,7 +80,7 @@ void Mesh::DrawUI()
 	ImGui::End();
 }
 
-void Mesh::SetUpIndicesArray()
+void Mesh::SetUpCube()
 {
 	float size = 1.0f;
 	float uniqueVertex[8 * 3 * 3] =
