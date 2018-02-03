@@ -66,6 +66,7 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="ComponentFabric.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="Transform.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentFabric.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">

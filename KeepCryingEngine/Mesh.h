@@ -12,7 +12,7 @@ struct Vertex
 	float uv[2];
 };
 
-class Mesh : Component
+class Mesh : public Component
 {
 public:
 	Mesh();

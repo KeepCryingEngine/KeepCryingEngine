@@ -36,43 +36,15 @@ public:
 
 	unsigned long long int GetId() const;
 
-	/* 
-	GameObject& GetParent() {
-		assert(parent);
-		return *parent;
-	}
-
-	size_t ChildCount() const {
-		return childs.size();
-	}
-
-	GameObject& GetChild(size_t child) {
-		assert(childs.size() < child);
-		return *childs[child];
-	}
-
-	const std::vector<GameObject*>& GetChilds()
-	{
-		return childs;
-	} */
-
-	// void AddChild(GameObject& child);
 	void SetParent(GameObject& newParent);
 
-	template <class T>
-	T* AddComponent();
+	Component* AddComponent(ComponentType type);
 
-	template <class T>
-	T* GetComponent()
-	{
-		return nullptr;
-	}
+	Component* GetComponent(ComponentType type);
 
-	template <class T>
-	std::vector<T*> GetComponents();
+	std::vector<Component*> GetComponents(ComponentType type);
 
-	template <class T>
-	void GetComponents(std::vector<T*>& components);
+	void GetComponents(ComponentType type, std::vector<Component*>& components);
 
 	// void Awake() {}
 	// void OnEnable() {}

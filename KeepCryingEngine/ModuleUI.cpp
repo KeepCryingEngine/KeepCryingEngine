@@ -402,10 +402,10 @@ void ModuleUI::CallWindows()
 	{
 		DrawShaderWindow();
 	}
-	//if (hierarchyWindow)
-	//{
-	//	DrawHierarchyWindow();
-	//}
+	if (hierarchyWindow)
+	{
+		DrawHierarchyWindow();
+	}
 	//if(inspectorWindow)
 	//{
 	//	DrawInspectorWindow();
@@ -566,19 +566,14 @@ void ModuleUI::DrawHierarchyWindow()
 
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-	if(App->scene->GetRoot()->GetChildCount() > 0)
-	{
-		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-	}
-
 	bool opened = ImGui::TreeNodeEx(App->scene->GetRoot()->GetName().c_str(), nodeFlags);
 
 	if(opened)
 	{	
-		//PrintChildrenOnHierarchy(App->scene->GetRoot()->GetChildren());
+		PrintChildrenOnHierarchy(App->scene->GetRoot()->GetChildren());
 		ImGui::TreePop();
 	}
-		
+	
 	ImGui::End();
 }
 
@@ -602,7 +597,7 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 		if (child->GetChildCount() > 0)
 		{
 			bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
-			
+
 			if(ImGui::IsItemClicked())
 			{
 				//CALL THE INFO OF THIS NODE GAMEOBJECT TO THE INSPECTOR
@@ -619,13 +614,14 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 			if(opened)
 			{
 				PrintChildrenOnHierarchy(child->GetChildren());
-				//ImGui::TreePop();
-			}			
+				ImGui::TreePop();
+			}
+
 		}
 		else
 		{
-			nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-			ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
+			//nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+			bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
 
 			if(ImGui::IsItemClicked())
 			{
@@ -640,7 +636,10 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 				a++;
 			}
 
-			ImGui::TreePop();
+			if(opened)
+			{
+				ImGui::TreePop();
+			}
 		}
 	}
 	
