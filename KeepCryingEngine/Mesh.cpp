@@ -76,6 +76,9 @@ void Mesh::Update(float deltaTimeS, float realDeltaTimeS)
 	GLint proyection = glGetUniformLocation(progId, "projection");
 	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->GetProyectionMatrix().ptr());
 
+	GLint transform = glGetUniformLocation(progId, "transform");
+	glUniformMatrix4fv(transform, 1, GL_FALSE, ((Transform*)gameObject->GetComponent(ComponentType::Transform))->GetAcumulatedTransform().Transposed().ptr());
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
 	glDrawElements(drawMode, verticesNumber, GL_UNSIGNED_SHORT, nullptr);
 
@@ -150,15 +153,6 @@ void Mesh::SetUpCube()
 		size, size, size,  // 22 Top top right
 		-size, size, size  // 23 Top top left
 	};
-
-	float3 pos = ((Transform*)gameObject->GetComponent(ComponentType::Transform))->position;
-	
-	for(size_t i = 0; i < 24 * 3; i += 3)
-	{
-		uniqueVertex[i] += pos.x;
-		uniqueVertex[i + 1] += pos.y;
-		uniqueVertex[i + 2] += pos.z;
-	}
 
 	float uv[24 * 2] =
 	{
@@ -257,7 +251,6 @@ void Mesh::SetUpSphere()
 
 	vector<GLfloat>::iterator v = vertices.begin();
 	vector<GLfloat>::iterator t = texcoords.begin();
-	float3 pos = ((Transform*)gameObject->GetComponent(ComponentType::Transform))->position;
 	for(unsigned int r = 0; r < rings; r++)
 	{
 		for(unsigned int s = 0; s < sectors; s++)
@@ -269,9 +262,9 @@ void Mesh::SetUpSphere()
 			*t++ = s * S;
 			*t++ = r * R;
 
-			*v++ = x * radius + pos.x;
-			*v++ = y * radius + pos.y;
-			*v++ = z * radius + pos.z;
+			*v++ = x * radius;
+			*v++ = y * radius;
+			*v++ = z * radius;
 		}
 	}
 
@@ -297,10 +290,10 @@ void Mesh::SetUpSphere()
 	{
 		for(unsigned int s = 0; s < sectors - 1; s++)
 		{
-			*i++ = r * sectors + s;
-			*i++ = r * sectors + s + 1;
-			*i++ = (r + 1) * sectors + s + 1;
 			*i++ = (r + 1) * sectors + s;
+			*i++ = (r + 1) * sectors + s + 1;
+			*i++ = r * sectors + s + 1;
+			*i++ = r * sectors + s;
 		}
 	}
 

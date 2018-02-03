@@ -31,7 +31,6 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 	CheckToStart();
 
 	Update(root, deltaTimeS, realDeltaTimeS);
-	LOG_DEBUG("Children of Root = %d", root->GetChildCount());
 
 	return update_status::UPDATE_CONTINUE;
 }

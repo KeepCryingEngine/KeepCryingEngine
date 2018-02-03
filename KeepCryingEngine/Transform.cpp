@@ -1,5 +1,7 @@
 #include "Transform.h"
 
+#include <MathGeoLib.h>
+
 #include "GameObject.h"
 
 Transform::Transform() :Component(ComponentType::Transform), position(float3::zero), rotation(Quat::identity), scale(float3::one)
@@ -17,7 +19,10 @@ void Transform::DrawUI()
 	if(ImGui::CollapsingHeader("Transform"))
 	{
 		ImGui::DragFloat3(" Position", position.ptr());
-		ImGui::DragFloat3(" Rotation", rotation.ToEulerXYZ().ptr());
+		float3 angles = RadToDeg(rotation.ToEulerXYZ());
+		ImGui::DragFloat3(" Rotation", angles.ptr());
+		angles = DegToRad(angles);
+		rotation = Quat::FromEulerXYZ(angles.x, angles.y, angles.z);
 		ImGui::DragFloat3(" Scale", scale.ptr());
 	}
 }
