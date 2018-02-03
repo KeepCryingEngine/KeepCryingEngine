@@ -27,8 +27,9 @@ void Mesh::Update(float deltaTimeS, float realDeltaTimeS)
 	glMatrixMode(GL_MODELVIEW);
 
 	glPushMatrix();
-	uint progId = gameObject->GetComponent<Material>()->GetProgramId();
-	uint textId = gameObject->GetComponent<Material>()->GetTextureId();
+	Material* material = (Material*)(gameObject->GetComponent(ComponentType::Material));
+	uint progId = material->GetProgramId();
+	uint textId = material->GetTextureId();
 
 	glUseProgram(progId);
 	if(textId != 0)
@@ -117,7 +118,7 @@ void Mesh::SetUpCube()
 		-size, size, size  // 23 Top top left
 	};
 
-	float3 pos = gameObject->GetComponent<Transform>()->position;
+	float3 pos = ((Transform*)gameObject->GetComponent(ComponentType::Transform))->position;
 	for(size_t i = 0; i < 24 * 3; i += 3)
 	{
 		uniqueVertex[i] += pos.x;
@@ -220,7 +221,7 @@ void Mesh::SetUpSphere()
 
 	vector<GLfloat>::iterator v = vertices.begin();
 	vector<GLfloat>::iterator t = texcoords.begin();
-	float3 pos = gameObject->GetComponent<Transform>()->position;
+	float3 pos = ((Transform*)gameObject->GetComponent(ComponentType::Transform))->position;
 	for(unsigned int r = 0; r < rings; r++)
 	{
 		for(unsigned int s = 0; s < sectors; s++)

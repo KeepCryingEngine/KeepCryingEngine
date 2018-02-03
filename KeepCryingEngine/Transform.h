@@ -6,7 +6,7 @@
 #include <float3.h>
 #include <Quat.h>
 
-class Transform : Component
+class Transform : public Component
 {
 public:
 	Transform();

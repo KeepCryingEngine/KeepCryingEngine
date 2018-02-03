@@ -2,8 +2,7 @@
 
 #include "Globals.h"
 
-#include "Application.h"
-#include "ModuleScene.h"
+#include "ComponentFabric.h"
 
 using namespace std;
 
@@ -84,9 +83,9 @@ void GameObject::OnDestroy()
 	components.clear();
 }
 
-template<class T>
-T* GameObject::AddComponent()
+Component* GameObject::AddComponent(ComponentType type)
 {
+	Component* component = ComponentFabric::CreateComponent(type);
 	/*
 
 	component->SetGameObject(this);
@@ -95,72 +94,48 @@ T* GameObject::AddComponent()
 	toStart.push_back(component);
 
 	*/
-
-	return nullptr;
-}
-
-//template<class T>
-//T* GameObject::GetComponent()
-//{
-//	
-//	//for(Component* component : components)
-//	//{
-//	//	if(component->type == type)
-//	//	{
-//	//		return component;
-//	//	}
-//	//}
-//
-//	//return nullptr;
-//
-//	return nullptr;
-//}
-
-template<class T>
-std::vector<T*> GameObject::GetComponents()
-{
-	return std::vector<T*>();
-}
-
-template<class T>
-void GameObject::GetComponents(std::vector<T*>& components)
-{
-
-}
-
-/* Component& GameObject::AddComponent(ComponentType type)
-{
-	Component* component = nullptr;
-	//component = ComponentFabric::CreateComponent(type);
 	assert(component);
-	components.push_back(component);
-	return *component;
-} */
+	return component;
+}
 
-/* Component* GameObject::GetComponent(ComponentType type)
+Component* GameObject::GetComponent(ComponentType type)
 {
-	for(Component* c : components)
+	for(Component* component : components)
 	{
-		if(c->type == type)
+		if(component->type == type)
 		{
-			return c;
+			return component;
 		}
 	}
+
 	return nullptr;
-} */
+}
 
-/* vector<Component*> GameObject::GetComponents(ComponentType type)
+std::vector<Component*> GameObject::GetComponents(ComponentType type)
 {
-	vector<Component*> ret;
-	for (Component* c : components) 
+	std::vector<Component*> ret;
+
+	for (Component* component : components)
 	{
-		if (c->type == type) 
+		if (component->type == type)
 		{
-			ret.push_back(c);
+			ret.push_back(component);
 		}
 	}
+
 	return ret;
-} */
+}
+
+void GameObject::GetComponents(ComponentType type, std::vector<Component*>& ret)
+{
+	for (Component* component : components)
+	{
+		if (component->type == type)
+		{
+			ret.push_back(component);
+		}
+	}
+}
 
 void GameObject::CheckToStart()
 {
