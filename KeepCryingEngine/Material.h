@@ -8,7 +8,7 @@
 
 #include "Globals.h"
 
-class Material : Component
+class Material : public Component
 {
 public:
 	Material();

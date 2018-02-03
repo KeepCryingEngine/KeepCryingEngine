@@ -2,7 +2,7 @@
 
 
 
-Transform::Transform() :Component(ComponentType::Transform), position(), rotation(), scale(1,1,1)
+Transform::Transform() :Component(TYPE), position(), rotation(), scale(1,1,1)
 {
 }
 

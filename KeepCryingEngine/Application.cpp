@@ -13,6 +13,8 @@
 #include "ModuleShader.h"
 #include "ModuleScene.h"
 
+#include "Transform.h"
+
 using namespace std;
 using nlohmann::json;
 
@@ -28,6 +30,8 @@ Application::Application()
 
 	modules.push_back(new ModuleTestJson());
 	modules.push_back(new ModuleTestMathGeoLib());
+
+	scene->GetRoot()->AddComponent(ComponentType::Transform);
 }
 
 Application::~Application()
