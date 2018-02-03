@@ -22,7 +22,7 @@ void Material::DrawUI()
 	ImGui::Checkbox("Active",&enabled);
 	if(ImGui::Button("Delete Component"))
 	{
-		gameObject.RemoveComponent(this);
+		//gameObject.RemoveComponent(this);
 	}
 	char* buff;
 	ImGui::InputText("Texture", buff, 252);

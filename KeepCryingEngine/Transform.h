@@ -14,7 +14,7 @@ public:
 
 	void DrawUI()override;
 
-private:
+public:
 	float3 position;
 	Quat rotation;
 	float3 scale;

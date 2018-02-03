@@ -11,6 +11,7 @@
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
 #include "ModuleScene.h"
+#include "GameObject.h"
 
 ModuleUI::ModuleUI()
 { }
@@ -536,16 +537,16 @@ void ModuleUI::DrawHierarchyWindow()
 
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-	if(App->scene->GetRoot().GetChilds().size() > 0)
+	if(App->scene->GetRoot()->GetChildCount() > 0)
 	{
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
 
-	bool opened = ImGui::TreeNodeEx(App->scene->GetRoot().GetName().c_str(), nodeFlags);
+	bool opened = ImGui::TreeNodeEx(App->scene->GetRoot()->GetName().c_str(), nodeFlags);
 
 	if(opened)
 	{
-		PrintChildrenOnHierarchy(App->scene->GetRoot().GetChilds());
+		PrintChildrenOnHierarchy(App->scene->GetRoot()->GetChildren());
 		ImGui::TreePop();
 	}
 		
@@ -569,7 +570,7 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 		}
 
-		if (child->GetChilds().size() > 0)
+		if (child->GetChildCount() > 0)
 		{
 			bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
 			
@@ -588,7 +589,7 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 
 			if(opened)
 			{
-				PrintChildrenOnHierarchy(child->GetChilds());
+				PrintChildrenOnHierarchy(child->GetChildren());
 				ImGui::TreePop();
 			}
 			
