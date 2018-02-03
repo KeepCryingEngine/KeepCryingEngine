@@ -579,8 +579,9 @@ void ModuleUI::DrawHierarchyWindow()
 
 void ModuleUI::DrawInspectorWindow()
 {
+	static int potato = 0;
 	ImGui::Begin("Inspector", &inspectorWindow, ImGuiWindowFlags_MenuBar);
-
+	
 	GameObject* temp = App->scene->Get(selectedNodeID);
 	temp->DrawUI();
 

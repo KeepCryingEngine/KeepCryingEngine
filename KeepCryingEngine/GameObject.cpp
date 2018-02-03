@@ -21,8 +21,6 @@ GameObject::~GameObject()
 
 GameObject* GameObject::GetParent() const
 {
-	assert(parent);
-
 	return parent;
 }
 
@@ -220,11 +218,12 @@ void GameObject::GetComponents(ComponentType type, std::vector<Component*>& ret)
 
 void GameObject::DrawUI()
 {
+	//Esto es mala cosa -> Preguntar al Xavi porque es mala cosa (y luego darle un abrasito)
 	static int selectedComponent = 0;
 
-	ImGui::Checkbox("", &enable); ImGui::SameLine();
-	static char buffy[252] = "GO_Name";
-	ImGui::InputText("", buffy, IM_ARRAYSIZE(buffy));
+	ImGui::Checkbox("", &enable);
+
+	ImGui::LabelText(name.c_str(), name.c_str());
 
 	ImGui::NewLine();
 
@@ -234,7 +233,10 @@ void GameObject::DrawUI()
 	}
 
 	ImGui::NewLine();
-	ImGui::Combo("", &selectedComponent, "Mesh"); ImGui::SameLine();
+	ImGui::Combo("", &selectedComponent, "Mesh\0Meshita");
+
+	ImGui::SameLine();
+
 	if(ImGui::Button("Add"))
 	{
 		switch(selectedComponent)
