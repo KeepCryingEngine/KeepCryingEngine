@@ -1,7 +1,9 @@
 #include "GameObject.h"
 
-#include "Globals.h"
+#include <imgui.h>
+#include <imgui_impl_sdl_gl3.h>
 
+#include "Globals.h"
 #include "Application.h"
 #include "ModuleScene.h"
 #include "ComponentFabric.h"
@@ -11,6 +13,7 @@ using namespace std;
 GameObject::GameObject(const string& name) : name(name)
 {
 	id = App->scene->GetNewGameObjectId();
+	AddComponent(ComponentType::Transform);
 }
 
 GameObject::~GameObject()
@@ -112,10 +115,10 @@ void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
 
 	for(Component* component : components)
 	{
-		/* if(component->IsEnabled())
+		if(component->enabled)
 		{
 			component->Update(deltaTimeS, realDeltaTimeS);
-		} */
+		} 
 	}
 }
 
@@ -123,7 +126,7 @@ void GameObject::OnDestroy()
 {
 	for(Component* component : components)
 	{
-		// component->Destroy();
+		component->Destroy();
 	}
 
 	for(Component* component : components)
@@ -137,14 +140,12 @@ void GameObject::OnDestroy()
 Component* GameObject::AddComponent(ComponentType type)
 {
 	Component* component = ComponentFabric::CreateComponent(type);
-	/*
-
-	component->SetGameObject(this);
+	
+	component->gameObject = this;
 	component->Awake();
 
 	toStart.push_back(component);
-
-	*/
+	
 	assert(component);
 	return component;
 }
@@ -160,6 +161,11 @@ Component* GameObject::GetComponent(ComponentType type)
 	}
 
 	return nullptr;
+}
+
+const std::vector<Component*>& GameObject::GetComponents() const
+{
+	return components;
 }
 
 std::vector<Component*> GameObject::GetComponents(ComponentType type)
@@ -188,11 +194,28 @@ void GameObject::GetComponents(ComponentType type, std::vector<Component*>& ret)
 	}
 }
 
+void GameObject::DrawUI()
+{
+	char* nameBuff = "";
+	ImGui::Checkbox("", &enable); ImGui::SameLine();
+	ImGui::LabelText(name.c_str(), nameBuff, sizeof(name));
+
+	for(Component* c : components)
+	{
+		c->DrawUI();
+	}
+
+	if(ImGui::Button("Add Component"))
+	{
+		//Add Component Behaviour
+	}
+}
+
 void GameObject::CheckToStart()
 {
 	for(Component* component : toStart)
 	{
-		// component->Start();
+		component->Start();
 
 		components.push_back(component);
 	}
@@ -206,7 +229,7 @@ void GameObject::CheckToDestroy()
 	{
 		components.erase(find(components.begin(), components.end(), component));
 
-		// component->Destroy();
+		component->Destroy();
 	}
 
 	for(Component* component : toDestroy)

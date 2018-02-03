@@ -42,9 +42,13 @@ public:
 
 	Component* GetComponent(ComponentType type);
 
+	const std::vector<Component*>& GetComponents() const;
+
 	std::vector<Component*> GetComponents(ComponentType type);
 
 	void GetComponents(ComponentType type, std::vector<Component*>& components);
+
+	void DrawUI();
 
 	// void Awake() {}
 	// void OnEnable() {}
@@ -73,6 +77,7 @@ private:
 	std::vector<Component*> components;
 	std::string name;
 
+	bool enable = true;
 	unsigned long long int id;
 };
 
