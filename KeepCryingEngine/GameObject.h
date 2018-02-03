@@ -29,11 +29,12 @@ public:
 	GameObject* GetChild(size_t index) const;
 	const std::vector<GameObject*>& GetChildren() const;
 
-	/* GameObject& GetParent() {
-	std::string& GetName() {
+	std::string& GetName()
+	{
 		return name;
 	}
 
+	/* 
 	GameObject& GetParent() {
 		assert(parent);
 		return *parent;
@@ -60,7 +61,10 @@ public:
 	T* AddComponent();
 
 	template <class T>
-	T* GetComponent();
+	T* GetComponent()
+	{
+		return nullptr;
+	}
 
 	template <class T>
 	std::vector<T*> GetComponents();

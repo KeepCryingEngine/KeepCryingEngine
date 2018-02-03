@@ -95,25 +95,22 @@ T* GameObject::AddComponent()
 	return nullptr;
 }
 
-template<class T>
-T* GameObject::GetComponent()
-{
-	/*
-
-	for(Component* component : components)
-	{
-		if(component->type == type)
-		{
-			return component;
-		}
-	}
-
-	return nullptr;
-
-	*/
-
-	return nullptr;
-}
+//template<class T>
+//T* GameObject::GetComponent()
+//{
+//	
+//	//for(Component* component : components)
+//	//{
+//	//	if(component->type == type)
+//	//	{
+//	//		return component;
+//	//	}
+//	//}
+//
+//	//return nullptr;
+//
+//	return nullptr;
+//}
 
 template<class T>
 std::vector<T*> GameObject::GetComponents()
