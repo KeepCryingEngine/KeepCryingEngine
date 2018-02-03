@@ -7,8 +7,10 @@
 
 using namespace std;
 
-GameObject::GameObject(const string & name) : name(name)
-{ }
+GameObject::GameObject(const string& name) : name(name)
+{
+	id = App->scene->GetNewGameObjectId();
+}
 
 GameObject::~GameObject()
 { }
@@ -37,12 +39,59 @@ const std::vector<GameObject*>& GameObject::GetChildren() const
 	return children;
 }
 
-void GameObject::AddChild(GameObject& newChild)
+GameObject* GameObject::GetChild(unsigned long long int gameObjectId) const
 {
-	newChild.SetParent(*this);
+	// Check 1st level children first
+
+	for(GameObject* child : children)
+	{
+		if(child->GetId() == gameObjectId)
+		{
+			return child;
+		}
+	}
+
+	// Recursion
+
+	for(GameObject* child : children)
+	{
+		GameObject* childRecursive = child->GetChild(gameObjectId);
+		
+		if(childRecursive != nullptr)
+		{
+			return childRecursive;
+		}
+	}
+
+	return nullptr;
 }
 
-void GameObject::SetParent(GameObject & newParent)
+GameObject* GameObject::GetSelfOrChild(unsigned long long int gameObjectId) const
+{
+	if(id == gameObjectId)
+	{
+		return (GameObject*)this;
+	}
+
+	return GetChild(gameObjectId);
+}
+
+const string& GameObject::GetName() const
+{
+	return name;
+}
+
+unsigned long long int GameObject::GetId() const
+{
+	return id;
+}
+
+/* void GameObject::AddChild(GameObject& newChild)
+{
+	newChild.SetParent(*this);
+} */
+
+void GameObject::SetParent(GameObject& newParent)
 {
 	if(parent != nullptr)
 	{

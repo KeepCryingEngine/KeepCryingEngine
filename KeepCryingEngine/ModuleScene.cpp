@@ -43,12 +43,27 @@ bool ModuleScene::CleanUp()
 	return true;
 }
 
+unsigned long long int ModuleScene::GetNewGameObjectId()
+{
+	return currentGameObjectId++;
+}
+
 GameObject* ModuleScene::GetRoot() const
 {
 	return root;
 }
 
-GameObject * ModuleScene::AddEmpty(GameObject& parent)
+GameObject* ModuleScene::Get(unsigned long long int gameObjectId) const
+{
+	return root->GetSelfOrChild(gameObjectId);
+}
+
+GameObject* ModuleScene::AddEmpty()
+{
+	return AddEmpty(*root);
+}
+
+GameObject* ModuleScene::AddEmpty(GameObject& parent)
 {
 	GameObject* gameObject = new GameObject("Empty");
 	gameObject->SetParent(parent);

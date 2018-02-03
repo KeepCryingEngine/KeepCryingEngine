@@ -20,8 +20,13 @@ public:
 
 	bool CleanUp() override;
 
+	unsigned long long int GetNewGameObjectId();
+
 	GameObject* GetRoot() const;
 
+	GameObject* Get(unsigned long long int gameObjectId) const;
+
+	GameObject* AddEmpty();
 	GameObject* AddEmpty(GameObject& parent);
 
 	void Add(GameObject& gameObject);
@@ -40,6 +45,8 @@ private:
 
 	std::list<GameObject*> toStart;
 	std::list<GameObject*> toDestroy;
+
+	unsigned long long int currentGameObjectId = 0;
 };
 
 #endif // !_MODULESCENE_H_

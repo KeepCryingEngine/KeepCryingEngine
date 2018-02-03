@@ -19,7 +19,7 @@ public:
 		ToDestroy
 	}; */
 
-	GameObject(const std::string & name);
+	GameObject(const std::string& name);
 	virtual ~GameObject();
 
 	GameObject* GetParent() const;
@@ -29,10 +29,12 @@ public:
 	GameObject* GetChild(size_t index) const;
 	const std::vector<GameObject*>& GetChildren() const;
 
-	std::string& GetName()
-	{
-		return name;
-	}
+	GameObject* GetChild(unsigned long long int gameObjectId) const;
+	GameObject* GetSelfOrChild(unsigned long long int gameObjectId) const;
+
+	const std::string& GetName() const;
+
+	unsigned long long int GetId() const;
 
 	/* 
 	GameObject& GetParent() {
@@ -54,7 +56,7 @@ public:
 		return childs;
 	} */
 
-	void AddChild(GameObject& child);
+	// void AddChild(GameObject& child);
 	void SetParent(GameObject& newParent);
 
 	template <class T>
@@ -98,6 +100,8 @@ private:
 	std::vector<GameObject*> children;
 	std::vector<Component*> components;
 	std::string name;
+
+	unsigned long long int id;
 };
 
 #endif
