@@ -1,5 +1,7 @@
 #include "Material.h"
 
+#include <fstream>
+
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleShader.h"
@@ -21,35 +23,38 @@ Material::~Material()
 
 void Material::DrawUI()
 {
-	ImGui::Checkbox("Active",&enabled);
-	if(ImGui::Button("Delete Component"))
+	if(ImGui::CollapsingHeader("Material"))
 	{
-		gameObject->RemoveComponent(this);
-	}
-	char* buff;
-	ImGui::InputText("Texture", buff, 252);
-	if(ImGui::Button("Set Texture"))
-	{
-		SetTexture(buff);
-	}
-	char* buff2;
-	static int shaderMode = 0;
-	ImGui::InputText("Shader", buff2, 252);
-	ImGui::Combo("Type", &shaderMode, "Vertex\0Fragment");
-	if(ImGui::Button("Add Shader"))
-	{
-		switch(shaderMode)
+		ImGui::Checkbox("Active", &enabled);
+		if(ImGui::Button("Delete Component"))
 		{
-			case 0:
+			gameObject->RemoveComponent(this);
+		}
+		char buff[252];
+		ImGui::InputText("Texture", buff, 252);
+		if(ImGui::Button("Set Texture"))
+		{
+			SetTexture(buff);
+		}
+		char buff2[252];
+		static int shaderMode = 0;
+		ImGui::InputText("Shader", buff2, 252);
+		ImGui::Combo("Type", &shaderMode, "Vertex\0Fragment");
+		if(ImGui::Button("Add Shader"))
+		{
+			switch(shaderMode)
 			{
-				AddShader(buff2, GL_VERTEX_SHADER);
-			}
+				case 0:
+				{
+					AddShader(buff2, GL_VERTEX_SHADER);
+				}
 				break;
-			case 1:
-			{
-				AddShader(buff2, GL_FRAGMENT_SHADER);
+				case 1:
+				{
+					AddShader(buff2, GL_FRAGMENT_SHADER);
+				}
+				break;
 			}
-			break;
 		}
 	}
 	//TODO make a delete shader button with the id that give addbuffer ^
@@ -72,7 +77,16 @@ void Material::SetTexture(const char * path)
 
 uint Material::AddShader(const char * path, GLenum shaderType)
 {
-	uint id=App->shader->AddShader(path,shaderType)->GetId();
+	uint id = 0;
+	ifstream t(path);
+	if(t.good())
+	{
+		string str((std::istreambuf_iterator<char>(t)), istreambuf_iterator<char>());
+		id = App->shader->AddShader(str.c_str(), shaderType)->GetId();
+	}
+
+	t.close();
+
 	shaders.push_back(id);
 	BuildProgram();
 	return id;

@@ -92,15 +92,17 @@ void Mesh::Update(float deltaTimeS, float realDeltaTimeS)
 
 void Mesh::DrawUI()
 {
-
-	ImGui::Checkbox("Active", &enabled);
-	if(ImGui::Button("Delete Component"))
+	if(ImGui::CollapsingHeader("Mesh"))
 	{
-		gameObject->RemoveComponent(this);
-	}
-	if(ImGui::Combo("Type", &meshMode, "Cube\0Sphere"))
-	{
-		changedMode = true;
+		ImGui::Checkbox("Active", &enabled);
+		if(ImGui::Button("Delete Component"))
+		{
+			gameObject->RemoveComponent(this);
+		}
+		if(ImGui::Combo("Type", &meshMode, "Cube\0Sphere"))
+		{
+			changedMode = true;
+		}
 	}
 }
 

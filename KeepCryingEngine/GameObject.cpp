@@ -210,6 +210,8 @@ void GameObject::GetComponents(ComponentType type, std::vector<Component*>& ret)
 void GameObject::DrawUI()
 {
 	char* nameBuff = "";
+	static int selectedComponent = 0;
+
 	ImGui::Checkbox("", &enable); ImGui::SameLine();
 	ImGui::LabelText(name.c_str(), nameBuff, sizeof(name));
 
@@ -218,8 +220,15 @@ void GameObject::DrawUI()
 		c->DrawUI();
 	}
 
+	ImGui::Combo("", &selectedComponent, "Mesh");
 	if(ImGui::Button("Add Component"))
 	{
+		switch(selectedComponent)
+		{
+			case 0:
+				AddComponent(ComponentType::Mesh);
+				break;
+		}
 		//Add Component Behaviour
 	}
 }
