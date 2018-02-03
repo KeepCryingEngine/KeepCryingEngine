@@ -84,9 +84,21 @@ void ModuleUI::DrawMainMenu()
 	ImGui_ImplSdlGL3_NewFrame(App->window->window);
 	{
 		CallWindows();
+		CallEntityCreation();
 
 		if(ImGui::BeginMainMenuBar())
 		{
+			if(ImGui::BeginMenu("Game Object"))
+			{
+				if(ImGui::MenuItem("Add Empty", nullptr, &addEmptyGameObject))
+				{
+					addEmptyGameObject = true;
+				}
+				ImGui::MenuItem("Add Cube", nullptr, &addCubeGameObject);
+				ImGui::MenuItem("Add Sphere", nullptr, &addSphereGameObject);				
+				ImGui::EndMenu();
+			}
+
 			if(ImGui::BeginMenu("Windows"))
 			{
 				if (ImGui::Button("Inspector", buttonSize))
@@ -351,6 +363,23 @@ void ModuleUI::SetTextOnEditor(int shaderMode)
 	t.close();
 }
 
+void ModuleUI::CallEntityCreation()
+{
+	if(addEmptyGameObject)
+	{
+		App->scene->AddEmpty(*App->scene->GetRoot());
+		addEmptyGameObject = false;
+	}
+	if(addCubeGameObject)
+	{
+		addCubeGameObject = false;
+	}
+	if(addSphereGameObject)
+	{
+		addSphereGameObject = false;
+	}
+}
+
 void ModuleUI::CallWindows()
 {
 	if(cameraWindow)
@@ -373,14 +402,14 @@ void ModuleUI::CallWindows()
 	{
 		DrawShaderWindow();
 	}
-	if (hierarchyWindow)
-	{
-		DrawHierarchyWindow();
-	}
-	if(inspectorWindow)
-	{
-		DrawInspectorWindow();
-	}
+	//if (hierarchyWindow)
+	//{
+	//	DrawHierarchyWindow();
+	//}
+	//if(inspectorWindow)
+	//{
+	//	DrawInspectorWindow();
+	//}
 }
 
 void ModuleUI::DrawCameraWindow()
@@ -545,8 +574,8 @@ void ModuleUI::DrawHierarchyWindow()
 	bool opened = ImGui::TreeNodeEx(App->scene->GetRoot()->GetName().c_str(), nodeFlags);
 
 	if(opened)
-	{
-		PrintChildrenOnHierarchy(App->scene->GetRoot()->GetChildren());
+	{	
+		//PrintChildrenOnHierarchy(App->scene->GetRoot()->GetChildren());
 		ImGui::TreePop();
 	}
 		
@@ -590,9 +619,8 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 			if(opened)
 			{
 				PrintChildrenOnHierarchy(child->GetChildren());
-				ImGui::TreePop();
-			}
-			
+				//ImGui::TreePop();
+			}			
 		}
 		else
 		{
@@ -611,6 +639,8 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 				int a = 0;
 				a++;
 			}
+
+			ImGui::TreePop();
 		}
 	}
 	

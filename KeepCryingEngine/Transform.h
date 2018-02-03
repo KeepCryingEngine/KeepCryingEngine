@@ -15,8 +15,6 @@ public:
 	void DrawUI()override;
 
 public:
-	const static ComponentType TYPE = ComponentType::Transform;
-
 	float3 position;
 	Quat rotation;
 	float3 scale;

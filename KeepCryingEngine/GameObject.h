@@ -10,7 +10,8 @@
 class GameObject
 {
 public:
-	GameObject();
+	GameObject(const std::string & name);
+
 	virtual ~GameObject();
 
 	GameObject* GetParent() const;

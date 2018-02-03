@@ -22,8 +22,10 @@ public:
 
 	GameObject* GetRoot() const;
 
-	void Add(GameObject* gameObject);
-	void Destroy(GameObject* gameObject);
+	GameObject* AddEmpty(GameObject& parent);
+
+	void Add(GameObject& gameObject);
+	void Destroy(GameObject& gameObject);
 
 private:
 	void CheckToStart();
