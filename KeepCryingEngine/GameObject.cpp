@@ -2,11 +2,12 @@
 
 #include "Globals.h"
 
-// #include <algorithm>
+#include "Application.h"
+#include "ModuleScene.h"
 
 using namespace std;
 
-GameObject::GameObject()
+GameObject::GameObject(const string & name) : name(name)
 { }
 
 GameObject::~GameObject()
@@ -43,9 +44,12 @@ void GameObject::AddChild(GameObject& newChild)
 
 void GameObject::SetParent(GameObject & newParent)
 {
-	vector<GameObject*>::iterator childParentIterator = find(parent->children.begin(), parent->children.end(), this);
-	assert(childParentIterator != parent->children.end());
-	parent->children.erase(childParentIterator);
+	if(parent != nullptr)
+	{
+		vector<GameObject*>::iterator childParentIterator = find(parent->children.begin(), parent->children.end(), this);
+		assert(childParentIterator != parent->children.end());
+		parent->children.erase(childParentIterator);
+	}
 	
 	parent = &newParent;
 	newParent.children.push_back(this);

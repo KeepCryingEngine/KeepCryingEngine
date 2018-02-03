@@ -19,7 +19,7 @@ public:
 		ToDestroy
 	}; */
 
-	GameObject();
+	GameObject(const std::string & name);
 	virtual ~GameObject();
 
 	GameObject* GetParent() const;
