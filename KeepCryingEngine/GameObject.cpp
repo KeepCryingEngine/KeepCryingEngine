@@ -21,8 +21,6 @@ GameObject::~GameObject()
 
 GameObject* GameObject::GetParent() const
 {
-	assert(parent);
-
 	return parent;
 }
 
