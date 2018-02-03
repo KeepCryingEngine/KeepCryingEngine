@@ -25,11 +25,6 @@ void Material::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Material"))
 	{
-		ImGui::Checkbox("Active", &enabled);
-		if(ImGui::Button("Delete Component"))
-		{
-			gameObject->RemoveComponent(this);
-		}
 		static char buff[252] = "";
 		ImGui::InputText("Texture", buff, 252);
 		if(ImGui::Button("Set Texture"))
@@ -39,7 +34,7 @@ void Material::DrawUI()
 
 			SetTexture(s.c_str());
 		}
-		char buff2[252] = "";
+		static char buff2[252] = "";
 		static int shaderMode = 0;
 		ImGui::InputText("Shader", buff2, 252);
 		ImGui::Combo("Type", &shaderMode, "Vertex\0Fragment");

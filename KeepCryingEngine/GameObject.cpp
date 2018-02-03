@@ -156,6 +156,17 @@ Component* GameObject::AddComponent(ComponentType type)
 
 void GameObject::RemoveComponent(Component * component)
 {
+	if(component->type == ComponentType::Mesh)
+	{
+		Component* mat = GetComponent(ComponentType::Material);
+		assert(mat);
+		vector<Component*>::iterator it = find(components.begin(), components.end(), mat);
+		if(it != components.end())
+		{
+			toDestroy.push_back(mat);
+		}
+	}
+
 	vector<Component*>::iterator it = find(components.begin(), components.end(), component);
 	if (it != components.end()) 
 	{
