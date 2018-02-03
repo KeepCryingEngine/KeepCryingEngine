@@ -22,7 +22,8 @@ public:
 
 	GameObject* GetRoot() const;
 
-	GameObject* AddEmpty();
+	GameObject* AddEmpty(GameObject& parent);
+
 	void Add(GameObject& gameObject);
 	void Destroy(GameObject& gameObject);
 

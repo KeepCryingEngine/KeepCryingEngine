@@ -14,7 +14,7 @@ ModuleScene::~ModuleScene()
 
 bool ModuleScene::Init()
 {
-	root = new GameObject();
+	root = new GameObject("Root");
 
 	return true;
 }
@@ -31,6 +31,7 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 	CheckToStart();
 
 	Update(root, deltaTimeS, realDeltaTimeS);
+	LOG_DEBUG("Children of Root = %d", root->GetChildCount());
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -47,9 +48,10 @@ GameObject* ModuleScene::GetRoot() const
 	return root;
 }
 
-GameObject* ModuleScene::AddEmpty()
+GameObject * ModuleScene::AddEmpty(GameObject& parent)
 {
-	GameObject* gameObject = new GameObject();
+	GameObject* gameObject = new GameObject("Empty");
+	gameObject->SetParent(parent);
 
 	toStart.push_back(gameObject);
 
