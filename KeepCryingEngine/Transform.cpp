@@ -14,7 +14,10 @@ Transform::~Transform()
 
 void Transform::DrawUI()
 {
-	ImGui::DragFloat3(" Position", position.ptr());
-	ImGui::DragFloat3(" Rotation", rotation.ToEulerXYZ().ptr());
-	ImGui::DragFloat3(" Scale", scale.ptr());
+	if(ImGui::CollapsingHeader("Transform"))
+	{
+		ImGui::DragFloat3(" Position", position.ptr());
+		ImGui::DragFloat3(" Rotation", rotation.ToEulerXYZ().ptr());
+		ImGui::DragFloat3(" Scale", scale.ptr());
+	}
 }
