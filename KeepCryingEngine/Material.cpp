@@ -4,6 +4,7 @@
 #include "ModuleRender.h"
 #include "ModuleShader.h"
 #include "Shader.h"
+#include "GameObject.h"
 
 using namespace std;
 
@@ -23,7 +24,7 @@ void Material::DrawUI()
 	ImGui::Checkbox("Active",&enabled);
 	if(ImGui::Button("Delete Component"))
 	{
-		gameObject.RemoveComponent(this);
+		gameObject->RemoveComponent(this);
 	}
 	char* buff;
 	ImGui::InputText("Texture", buff, 252);
