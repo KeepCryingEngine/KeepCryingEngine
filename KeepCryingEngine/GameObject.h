@@ -63,6 +63,8 @@ private:
 	void CheckToStart();
 	void CheckToDestroy();
 
+	void AddInternalComponent(Component* component);
+
 	// void DestroyAndRelease(Component* component) const;
 
 private:

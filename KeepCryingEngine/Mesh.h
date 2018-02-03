@@ -21,6 +21,8 @@ public:
 	void Update(float deltaTimeS, float realDeltaTimeS)override;
 	void DrawUI()override;
 
+	void SetMeshMode(int mode);
+
 private:
 	void SetUpCube();
 	void SetUpSphere();
@@ -30,6 +32,9 @@ private:
 	uint vertexBufferId;
 	uint indicesBufferId;
 	uint verticesNumber;
+
+	bool changedMode = true;
+	int meshMode = 0;
 };
 
 #endif // !_MESH_H_

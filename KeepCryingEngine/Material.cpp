@@ -9,6 +9,8 @@ using namespace std;
 
 Material::Material():Component(ComponentType::Material)
 {
+	AddShader("Assets/Shaders/vertexShader.vert",GL_VERTEX_SHADER);
+	AddShader("Assets/Shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
 }
 
 Material::~Material()
@@ -18,11 +20,10 @@ Material::~Material()
 
 void Material::DrawUI()
 {
-	ImGui::Begin("Material");
 	ImGui::Checkbox("Active",&enabled);
 	if(ImGui::Button("Delete Component"))
 	{
-		//gameObject.RemoveComponent(this);
+		gameObject.RemoveComponent(this);
 	}
 	char* buff;
 	ImGui::InputText("Texture", buff, 252);
@@ -51,7 +52,6 @@ void Material::DrawUI()
 		}
 	}
 	//TODO make a delete shader button with the id that give addbuffer ^
-	ImGui::End();
 }
 
 uint Material::GetTextureId()

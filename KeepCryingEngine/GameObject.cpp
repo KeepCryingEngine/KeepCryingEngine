@@ -140,13 +140,17 @@ void GameObject::OnDestroy()
 Component* GameObject::AddComponent(ComponentType type)
 {
 	Component* component = ComponentFabric::CreateComponent(type);
-	
-	component->gameObject = this;
-	component->Awake();
-
-	toStart.push_back(component);
-	
 	assert(component);
+
+	AddInternalComponent(component);
+
+	if(type == ComponentType::Mesh)
+	{
+		Component* mat = ComponentFabric::CreateComponent(ComponentType::Material);
+		assert(mat);
+		AddInternalComponent(mat);
+	}
+
 	return component;
 }
 
@@ -245,6 +249,14 @@ void GameObject::CheckToDestroy()
 	} */
 
 	toDestroy.clear();
+}
+
+void GameObject::AddInternalComponent(Component * component)
+{
+	component->gameObject = this;
+	component->Awake();
+
+	toStart.push_back(component);
 }
 
 /* void GameObject::DestroyAndRelease(Component* component) const
