@@ -154,6 +154,15 @@ Component* GameObject::AddComponent(ComponentType type)
 	return component;
 }
 
+void GameObject::RemoveComponent(Component * component)
+{
+	vector<Component*>::iterator it = find(components.begin(), components.end(), component);
+	if (it != components.end()) 
+	{
+		toDestroy.push_back(component);
+	}
+}
+
 Component* GameObject::GetComponent(ComponentType type)
 {
 	for(Component* component : components)
@@ -231,7 +240,9 @@ void GameObject::CheckToDestroy()
 {
 	for(Component* component : toDestroy)
 	{
-		components.erase(find(components.begin(), components.end(), component));
+		vector<Component*>::iterator it = find(components.begin(), components.end(), component);
+		assert(it != components.end());
+		components.erase(it);
 
 		component->Destroy();
 	}
