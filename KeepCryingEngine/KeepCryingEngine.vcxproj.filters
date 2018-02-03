@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ModuleWindow.cpp">
       <Filter>Modules</Filter>
@@ -13,26 +12,64 @@
     <ClCompile Include="ModuleInput.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleTestJson.cpp" />
-    <ClCompile Include="ModuleTestMathGeoLib.cpp" />
-    <ClCompile Include="external\ImGui\imgui.cpp" />
-    <ClCompile Include="external\ImGui\imgui_demo.cpp" />
-    <ClCompile Include="external\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="ModuleUI.cpp" />
-    <ClCompile Include="external\ImGui\imgui_impl_sdl_gl3.cpp" />
-    <ClCompile Include="json_serializer.cpp" />
-    <ClCompile Include="ModuleCamera.cpp" />
-    <ClCompile Include="ModuleShader.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="external\ImGuiTextEditor\TextEditor.cpp" />
-    <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="ModuleScene.cpp" />
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="external\ImGui\imgui.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="external\ImGui\imgui_demo.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="external\ImGui\imgui_draw.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="external\ImGui\imgui_impl_sdl_gl3.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="json_serializer.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleCamera.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleScene.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleShader.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleTestJson.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleTestMathGeoLib.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleUI.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="external\ImGuiTextEditor\TextEditor.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Globals.h" />
-    <ClInclude Include="MemLeaks.h" />
     <ClInclude Include="ModuleWindow.h">
       <Filter>Modules</Filter>
     </ClInclude>
@@ -45,27 +82,72 @@
     <ClInclude Include="Module.h">
       <Filter>Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleTestJson.h" />
-    <ClInclude Include="ModuleTestMathGeoLib.h" />
-    <ClInclude Include="external\ImGui\imconfig.h" />
-    <ClInclude Include="external\ImGui\imgui.h" />
-    <ClInclude Include="external\ImGui\imgui_internal.h" />
-    <ClInclude Include="external\ImGui\stb_rect_pack.h" />
-    <ClInclude Include="external\ImGui\stb_textedit.h" />
-    <ClInclude Include="external\ImGui\stb_truetype.h" />
-    <ClInclude Include="external\ImGui\ModuloUI.h" />
-    <ClInclude Include="external\ImGui\ModuleUI.h" />
-    <ClInclude Include="ModuleUI.h" />
-    <ClInclude Include="json_serializer.h" />
-    <ClInclude Include="ModuleCamera.h" />
-    <ClInclude Include="external\devil\include\DevIL.h" />
-    <ClInclude Include="ModuleShader.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="external\ImGuiTextEditor\TextEditor.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Transform.h" />
-    <ClInclude Include="Component.h" />
-    <ClInclude Include="ModuleScene.h" />
+    <ClInclude Include="Component.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="external\devil\include\DevIL.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="external\ImGui\imconfig.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="external\ImGui\imgui.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="external\ImGui\imgui_internal.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="json_serializer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MemLeaks.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleCamera.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleScene.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleShader.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleTestJson.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleTestMathGeoLib.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleUI.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="external\ImGui\stb_rect_pack.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="external\ImGui\stb_textedit.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="external\ImGui\stb_truetype.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="external\ImGuiTextEditor\TextEditor.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">

@@ -88,15 +88,15 @@
     <ClInclude Include="external\ImGui\imconfig.h" />
     <ClInclude Include="external\ImGui\imgui.h" />
     <ClInclude Include="external\ImGui\imgui_internal.h" />
-    <ClInclude Include="external\ImGui\ModuleUI.h" />
-    <ClInclude Include="external\ImGui\ModuloUI.h" />
     <ClInclude Include="external\ImGui\stb_rect_pack.h" />
     <ClInclude Include="external\ImGui\stb_textedit.h" />
     <ClInclude Include="external\ImGui\stb_truetype.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="json_serializer.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="MemLeaks.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleCamera.h" />
     <ClInclude Include="ModuleInput.h" />
@@ -121,6 +121,8 @@
     <ClCompile Include="json_serializer.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModuleCamera.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
