@@ -10,6 +10,7 @@
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
+#include "ModuleScene.h"
 
 ModuleUI::ModuleUI()
 { }
@@ -87,6 +88,10 @@ void ModuleUI::DrawMainMenu()
 		{
 			if(ImGui::BeginMenu("Windows"))
 			{
+				if (ImGui::Button("Inspector", buttonSize))
+				{
+					hierarchyWindow ^= 1;
+				}
 				if(ImGui::Button("Camera Controls", buttonSize))
 				{
 					cameraWindow ^= 1;
@@ -367,11 +372,20 @@ void ModuleUI::CallWindows()
 	{
 		DrawShaderWindow();
 	}
+	if (hierarchyWindow)
+	{
+		DrawHierarchyWindow();
+	}
+	if(inspectorWindow)
+	{
+		DrawInspectorWindow();
+	}
 }
 
 void ModuleUI::DrawCameraWindow()
 {
-	ImGui::Begin("Camera Controls");
+	ImGui::Begin("Camera Controls", &cameraWindow, ImGuiWindowFlags_MenuBar);
+	ImGui::CloseCurrentPopup();
 	ImGui::InputFloat3("Front", front.ptr(), 2);
 	front = App->camera->GetFrontVector();
 	ImGui::InputFloat3("Up", up.ptr(), 2);
@@ -396,7 +410,7 @@ void ModuleUI::DrawCameraWindow()
 
 void ModuleUI::DrawSpeedWindow()
 {
-	ImGui::Begin("Speed Controls");
+	ImGui::Begin("Speed Controls", &speedWindow, ImGuiWindowFlags_MenuBar);
 	ImGui::DragFloat("Movement", &movementSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
 	App->camera->SetMoveSpeed(movementSpeed);
 	ImGui::DragFloat("Rotation", &rotationSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
@@ -412,7 +426,7 @@ void ModuleUI::DrawSpeedWindow()
 
 void ModuleUI::DrawStyleWindow()
 {
-	ImGui::Begin("Style Controls");
+	ImGui::Begin("Style Controls", &styleWindow, ImGuiWindowFlags_MenuBar);
 	ImGui::DragFloat3("Background", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
 	ImGui::End();
 }
@@ -432,7 +446,7 @@ void ModuleUI::DrawTextureInfoWindow()
 	int previousMagFilterMode = magFilterMode;
 	int previousMinFilterMode = minFilterMode;
 
-	ImGui::Begin("Texture Controls");
+	ImGui::Begin("Texture Controls", &textureEnabled, ImGuiWindowFlags_MenuBar);
 
 	int width = App->renderer->getImageWidth();
 	int height = App->renderer->getImageHeight();
@@ -481,7 +495,7 @@ void ModuleUI::DrawTextureInfoWindow()
 
 void ModuleUI::DrawShaderWindow()
 {
-	ImGui::Begin("Text Editor Demo", nullptr, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("Text Editor Demo", &shaderEditorWindow, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
 	ImGui::SetWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
 	if(ImGui::BeginMenuBar())
 	{
@@ -499,37 +513,6 @@ void ModuleUI::DrawShaderWindow()
 			}
 			ImGui::EndMenu();
 		}
-		if(ImGui::BeginMenu("Edit"))
-		{
-			bool ro = editor.IsReadOnly();
-			if(ImGui::MenuItem("Read-only mode", nullptr, &ro))
-				editor.SetReadOnly(ro);
-			ImGui::Separator();
-
-			if(ImGui::MenuItem("Undo", "ALT-Backspace", nullptr, !ro && editor.CanUndo()))
-				editor.Undo();
-			if(ImGui::MenuItem("Redo", "Ctrl-Y", nullptr, !ro && editor.CanRedo()))
-				editor.Redo();
-
-			ImGui::Separator();
-
-			if(ImGui::MenuItem("Copy", "Ctrl-C", nullptr, editor.HasSelection()))
-				editor.Copy();
-			if(ImGui::MenuItem("Cut", "Ctrl-X", nullptr, !ro && editor.HasSelection()))
-				editor.Cut();
-			if(ImGui::MenuItem("Delete", "Del", nullptr, !ro && editor.HasSelection()))
-				editor.Delete();
-			if(ImGui::MenuItem("Paste", "Ctrl-V", nullptr, !ro && ImGui::GetClipboardText() != nullptr))
-				editor.Paste();
-
-			ImGui::Separator();
-
-			if(ImGui::MenuItem("Select all", nullptr, nullptr))
-				editor.SetSelection(TextEditor::Coordinates(), TextEditor::Coordinates(editor.GetTotalLines(), 0));
-
-			ImGui::EndMenu();
-		}
-
 		if(ImGui::BeginMenu("View"))
 		{
 			if(ImGui::MenuItem("Dark palette"))
@@ -538,12 +521,6 @@ void ModuleUI::DrawShaderWindow()
 				editor.SetPalette(TextEditor::GetLightPalette());
 			ImGui::EndMenu();
 		}
-		if(ImGui::BeginMenu("Quit"))
-		{
-			shaderEditorWindow ^= 1;
-			ImGui::EndMenu();
-		}
-
 		ImGui::EndMenuBar();
 	}
 
@@ -551,6 +528,126 @@ void ModuleUI::DrawShaderWindow()
 
 	editor.Render("TextEditor");
 	ImGui::End();
+}
+
+void ModuleUI::DrawHierarchyWindow()
+{
+	ImGui::Begin("Game Object Inspector", &hierarchyWindow, ImGuiWindowFlags_MenuBar);
+
+	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+	if(App->scene->GetRoot().GetChilds().size() > 0)
+	{
+		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+	}
+
+	bool opened = ImGui::TreeNodeEx(App->scene->GetRoot().GetName().c_str(), nodeFlags);
+
+	if(opened)
+	{
+		PrintChildrenOnHierarchy(App->scene->GetRoot().GetChilds());
+		ImGui::TreePop();
+	}
+		
+	ImGui::End();
+}
+
+void ModuleUI::DrawInspectorWindow()
+{
+	ImGui::Begin("INSPECTOR POTATO WINDOW", &inspectorWindow, ImGuiWindowFlags_MenuBar);
+	ImGui::End();
+}
+
+void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
+{
+	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+	for(GameObject* child : children)
+	{
+		if(selectedNodeName == child->GetName())
+		{
+			nodeFlags |= ImGuiTreeNodeFlags_Selected;
+		}
+
+		if (child->GetChilds().size() > 0)
+		{
+			bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
+			
+			if(ImGui::IsItemClicked())
+			{
+				//CALL THE INFO OF THIS NODE GAMEOBJECT TO THE INSPECTOR
+				if(!inspectorWindow)
+				{
+					inspectorWindow = true;
+				}
+
+				selectedNodeName = child->GetName();
+				int a = 0;
+				a++;
+			}
+
+			if(opened)
+			{
+				PrintChildrenOnHierarchy(child->GetChilds());
+				ImGui::TreePop();
+			}
+			
+		}
+		else
+		{
+			nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+			ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
+
+			if(ImGui::IsItemClicked())
+			{
+				//CALL THE INFO OF THIS NODE GAMEOBJECT TO THE INSPECTOR
+				if(!inspectorWindow)
+				{
+					inspectorWindow = true;
+				}
+
+				selectedNodeName = child->GetName();
+				int a = 0;
+				a++;
+			}
+		}
+	}
+	
+	//for(int i = 0; i < 6; i++)
+	//{
+	//	// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
+	//	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ((selectedNode & (1 << i)) ? ImGuiTreeNodeFlags_Selected : 0);
+	//	if(i < 3)
+	//	{
+	//		//bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "Node", i);
+	//		bool node_open = ImGui::TreeNodeEx("Node", node_flags);
+
+	//		if(ImGui::IsItemClicked())
+	//		{
+	//			selectedNode = (1 << i);
+	//			int a = 0;
+	//			a++;
+	//		}
+
+	//		if(node_open)
+	//		{
+	//			ImGui::Text("Blah blah");
+	//			ImGui::TreePop();
+	//		}
+	//	}
+	//	else
+	//	{
+	//		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+	//		ImGui::TreeNodeEx("Leaf", node_flags);
+
+	//		if(ImGui::IsItemClicked())
+	//		{
+	//			selectedNode = (1 << i); 
+	//			int a = 0;
+	//			a++;
+	//		}
+	//	}
+	//}
 }
 
 void ModuleUI::UpdateWrapModeS(uint wrapModeS, uint previousWrapModeS) const
