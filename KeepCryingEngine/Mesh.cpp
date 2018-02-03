@@ -24,6 +24,25 @@ Mesh::~Mesh()
 
 void Mesh::Update(float deltaTimeS, float realDeltaTimeS)
 {
+	if(changedMode)
+	{
+		switch(meshMode)
+		{
+			case 0:
+			{
+				SetUpCube();
+			}
+			break;
+
+			case 1:
+			{
+				SetUpSphere();
+			}
+			break;
+		}
+		changedMode = false;
+	}
+
 	glMatrixMode(GL_MODELVIEW);
 
 	glPushMatrix();
@@ -73,13 +92,22 @@ void Mesh::Update(float deltaTimeS, float realDeltaTimeS)
 
 void Mesh::DrawUI()
 {
-	ImGui::Begin("Material");
+
 	ImGui::Checkbox("Active", &enabled);
 	if(ImGui::Button("Delete Component"))
 	{
-		//gameObject->RemoveComponent(this);
+		gameObject->RemoveComponent(this);
 	}
-	ImGui::End();
+	if(ImGui::Combo("Type", &meshMode, "Cube\0Sphere"))
+	{
+		changedMode = true;
+	}
+}
+
+void Mesh::SetMeshMode(int mode)
+{
+	meshMode = mode;
+	changedMode = true;
 }
 
 void Mesh::SetUpCube()

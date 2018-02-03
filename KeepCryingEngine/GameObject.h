@@ -39,13 +39,10 @@ public:
 	void SetParent(GameObject& newParent);
 
 	Component* AddComponent(ComponentType type);
-
+	void RemoveComponent(Component* component);
 	Component* GetComponent(ComponentType type);
-
 	const std::vector<Component*>& GetComponents() const;
-
 	std::vector<Component*> GetComponents(ComponentType type);
-
 	void GetComponents(ComponentType type, std::vector<Component*>& components);
 
 	void DrawUI();
@@ -62,6 +59,8 @@ public:
 private:
 	void CheckToStart();
 	void CheckToDestroy();
+
+	void AddInternalComponent(Component* component);
 
 	// void DestroyAndRelease(Component* component) const;
 
