@@ -1,7 +1,7 @@
 # KeepCryingEngine
 
 <img alt="Appveyor Build Status"
-       src="https://ci.appveyor.com/api/projects/status/github/keepcryingengine?branch=master&svg=true"/>
+       src="https://ci.appveyor.com/api/projects/status/0a07gln4vgj0rpj4?svg=true"/>
 
 ### Description:
 
