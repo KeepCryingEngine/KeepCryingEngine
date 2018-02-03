@@ -5,6 +5,8 @@
 
 #include "Globals.h"
 
+#include <GL/glew.h>
+
 struct Vertex
 {
 	float position[3];
@@ -29,6 +31,7 @@ private:
 	void FillVerticesData(uint n, const float* positions, const float* colors, const float* texCoords, Vertex* vertices) const;
 
 private:
+	GLenum drawMode;
 	uint vertexBufferId;
 	uint indicesBufferId;
 	uint verticesNumber;

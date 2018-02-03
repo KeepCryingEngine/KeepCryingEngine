@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 
 #include <math.h>
-#include <GL/glew.h>
+// #include <GL/glew.h>
 #include <vector>
 
 #include "Application.h"
@@ -43,9 +43,9 @@ void Mesh::Update(float deltaTimeS, float realDeltaTimeS)
 		changedMode = false;
 	}
 
-	glMatrixMode(GL_MODELVIEW);
+	// glMatrixMode(GL_MODELVIEW);
 
-	glPushMatrix();
+	// glPushMatrix();
 	Material* material = (Material*)(gameObject->GetComponent(ComponentType::Material));
 	uint progId = material->GetProgramId();
 	uint textId = material->GetTextureId();
@@ -77,7 +77,7 @@ void Mesh::Update(float deltaTimeS, float realDeltaTimeS)
 	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->GetProyectionMatrix().ptr());
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
-	glDrawElements(GL_QUADS, verticesNumber, GL_UNSIGNED_SHORT, nullptr);
+	glDrawElements(drawMode, verticesNumber, GL_UNSIGNED_SHORT, nullptr);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -85,9 +85,10 @@ void Mesh::Update(float deltaTimeS, float realDeltaTimeS)
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
+
 	glUseProgram(0);
 
-	glPopMatrix();
+	// glPopMatrix();
 }
 
 void Mesh::DrawUI()
@@ -114,6 +115,8 @@ void Mesh::SetMeshMode(int mode)
 
 void Mesh::SetUpCube()
 {
+	drawMode = GL_TRIANGLES;
+
 	float size = 1.0f;
 	float uniqueVertex[8 * 3 * 3] =
 	{
@@ -149,6 +152,7 @@ void Mesh::SetUpCube()
 	};
 
 	float3 pos = ((Transform*)gameObject->GetComponent(ComponentType::Transform))->position;
+	
 	for(size_t i = 0; i < 24 * 3; i += 3)
 	{
 		uniqueVertex[i] += pos.x;
@@ -200,7 +204,7 @@ void Mesh::SetUpCube()
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 24, vertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	uint indicesArray[36 * 3] =
+	GLushort indicesArray[36 * 3] =
 	{
 		3, 1, 0,
 		3, 2, 1,
@@ -225,7 +229,7 @@ void Mesh::SetUpCube()
 
 	glGenBuffers(1, (GLuint*) &(indicesBufferId));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * verticesNumber, indicesArray, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * verticesNumber, indicesArray, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	RELEASE(colors);
@@ -233,6 +237,8 @@ void Mesh::SetUpCube()
 
 void Mesh::SetUpSphere()
 {
+	drawMode = GL_QUADS;
+
 	uint rings = 100;
 	uint sectors = 100;
 	uint radius = 1;

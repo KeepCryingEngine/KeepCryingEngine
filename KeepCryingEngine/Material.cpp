@@ -12,7 +12,7 @@ using namespace std;
 
 Material::Material():Component(ComponentType::Material)
 {
-	AddShader("Assets/Shaders/vertexShader.vert",GL_VERTEX_SHADER);
+	AddShader("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
 	AddShader("Assets/Shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
 }
 
@@ -30,13 +30,16 @@ void Material::DrawUI()
 		{
 			gameObject->RemoveComponent(this);
 		}
-		char buff[252];
+		static char buff[252] = "";
 		ImGui::InputText("Texture", buff, 252);
 		if(ImGui::Button("Set Texture"))
 		{
-			SetTexture(buff);
+			string s = "Assets/";
+			s += buff;
+
+			SetTexture(s.c_str());
 		}
-		char buff2[252];
+		char buff2[252] = "";
 		static int shaderMode = 0;
 		ImGui::InputText("Shader", buff2, 252);
 		ImGui::Combo("Type", &shaderMode, "Vertex\0Fragment");
@@ -72,7 +75,7 @@ uint Material::GetProgramId()
 
 void Material::SetTexture(const char * path)
 {
-	textureId = App->renderer->LoadTexture(path,nullptr);
+	textureId = App->renderer->LoadTexture(path, nullptr);
 }
 
 uint Material::AddShader(const char * path, GLenum shaderType)
