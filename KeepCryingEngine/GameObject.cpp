@@ -111,12 +111,12 @@ void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
 	CheckToStart();
 	CheckToDestroy();
 
-	for(Component* component : components)
+	if(enable)
 	{
-		if(component->enabled)
+		for(Component* component : components)
 		{
 			component->Update(deltaTimeS, realDeltaTimeS);
-		} 
+		}
 	}
 }
 

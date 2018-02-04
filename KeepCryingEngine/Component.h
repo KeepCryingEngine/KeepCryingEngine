@@ -22,7 +22,14 @@ public:
 	virtual void Start(){};
 	virtual void Destroy(){};
 
-	virtual void Update(float deltaTimeS, float realDeltaTimeS){};
+	virtual void Update(float deltaTimeS, float realDeltaTimeS)
+	{
+		if(enabled)
+		{
+			RealUpdate(deltaTimeS,realDeltaTimeS);
+		}
+	};
+	virtual void RealUpdate(float deltaTimeS, float realDeltaTimeS){};
 	virtual void DrawUI(){};
 
 public:

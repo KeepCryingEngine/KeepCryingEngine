@@ -22,7 +22,7 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::Update(float deltaTimeS, float realDeltaTimeS)
+void Mesh::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	if(changedMode)
 	{
