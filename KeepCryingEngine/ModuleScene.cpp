@@ -110,11 +110,14 @@ void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDel
 		GameObject* currentGameObject = toUpdate.front();
 		toUpdate.pop();
 
-		currentGameObject->Update(deltaTimeS, realDeltaTimeS);
-
-		for(GameObject* gameObjectChild : currentGameObject->GetChildren())
+		if(currentGameObject->IsEnabled())
 		{
-			toUpdate.push(gameObjectChild);
+			currentGameObject->Update(deltaTimeS, realDeltaTimeS);
+
+			for(GameObject* gameObjectChild : currentGameObject->GetChildren())
+			{
+				toUpdate.push(gameObjectChild);
+			}
 		}
 	}
 
@@ -122,11 +125,14 @@ void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDel
 
 	// Recursive
 
-	gameObject->Update(deltaTimeS, realDeltaTimeS);
-
-	for(GameObject* gameObjectChild : gameObject->GetChildren())
+	if(gameObject->IsEnabled())
 	{
-		Update(gameObjectChild, deltaTimeS, realDeltaTimeS);
+		gameObject->Update(deltaTimeS, realDeltaTimeS);
+
+		for(GameObject* gameObjectChild : gameObject->GetChildren())
+		{
+			Update(gameObjectChild, deltaTimeS, realDeltaTimeS);
+		}
 	}
 
 	*/
