@@ -23,12 +23,12 @@ void Material::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Material"))
 	{
-		static char buff[252] = {};
-		ImGui::InputText("##label", buff, 252); ImGui::SameLine();
+		static char materialBuffer[252] = {};
+		ImGui::InputText("Name", materialBuffer, 252);
 		if(ImGui::Button("Set Texture"))
 		{
 			string s = "Assets/";
-			s += buff;
+			s += materialBuffer;
 
 			SetTexture(s.c_str());
 		}
@@ -54,11 +54,6 @@ void Material::DrawUI()
 				}
 				break;
 			}
-		}
-		static int deleteShader = 0;
-		if(ImGui::Button("Delete Shader"))
-		{
-			//RemoveShader(0);
 		}
 	}
 }

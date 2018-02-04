@@ -493,7 +493,7 @@ void ModuleUI::DrawHierarchyWindow()
 		ImGui::EndMenuBar();
 	}
 
-	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_DefaultOpen;
 	
 	if(selectedNodeID == App->scene->GetRoot()->GetId())
 	{
@@ -501,20 +501,15 @@ void ModuleUI::DrawHierarchyWindow()
 	}
 	else
 	{
-		nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+		nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_DefaultOpen;
 	}
 
 	bool opened = ImGui::TreeNodeEx(App->scene->GetRoot()->GetName().c_str(), nodeFlags);
 
 	if(ImGui::IsItemClicked())
 	{
-		if(!inspectorWindow)
-		{
-			inspectorWindow = false;
-		}
+		inspectorWindow = false;
 		selectedNodeID = App->scene->GetRoot()->GetId();
-		int a = 0;
-		a++;
 	}
 
 	if(opened)
@@ -557,7 +552,7 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 
 		if(!child->IsEnabled())
 		{
-			ImGui::PushStyleColor(0, ImVec4(0.5f, 0.1f, 0.4f, 1.0f));
+			ImGui::PushStyleColor(0, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
 		}
 
 		if (child->GetChildCount() > 0)
@@ -571,8 +566,6 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 					inspectorWindow = true;
 				}
 				selectedNodeID = child->GetId();
-				int a = 0;
-				a++;
 			}
 
 			if(opened)
@@ -594,8 +587,6 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 				}
 
 				selectedNodeID = child->GetId();
-				int a = 0;
-				a++;
 			}
 
 			if(opened)
