@@ -36,6 +36,8 @@ public:
 
 	unsigned long long int GetId() const;
 
+	const bool IsEnabled() const;
+
 	void SetParent(GameObject& newParent);
 
 	Component* AddComponent(ComponentType type);

@@ -88,6 +88,11 @@ unsigned long long int GameObject::GetId() const
 	return id;
 }
 
+const bool GameObject::IsEnabled() const
+{
+	return enable;
+}
+
 /* void GameObject::AddChild(GameObject& newChild)
 {
 	newChild.SetParent(*this);
