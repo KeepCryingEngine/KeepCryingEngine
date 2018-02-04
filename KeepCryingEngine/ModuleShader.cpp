@@ -1,6 +1,5 @@
 #include "ModuleShader.h"
 
-#include "Shader.h"
 #include <fstream>
 
 using namespace std;
@@ -13,13 +12,13 @@ ModuleShader::~ModuleShader()
 
 bool ModuleShader::Init()
 {
-	const Shader* defaultVertexShader = nullptr;
-	const Shader* defaultFragmentShader = nullptr;
+	uint defaultVertexShader = 0;
+	uint defaultFragmentShader = 0;
 
-	std::ifstream t(".\\Assets\\Shaders\\vertexShader.vert");
+	ifstream t(".\\Assets\\Shaders\\vertexShader.vert");
 	if(t.good())
 	{
-		std::string vertex((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+		string vertex((istreambuf_iterator<char>(t)), istreambuf_iterator<char>());
 		defaultVertexShader = AddShader(vertex.c_str(), GL_VERTEX_SHADER);
 	}
 	t.close();
@@ -27,7 +26,7 @@ bool ModuleShader::Init()
 	t.open(".\\Assets\\Shaders\\fragmentShader.frag");
 	if(t.good())
 	{
-		std::string fragment((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+		string fragment((istreambuf_iterator<char>(t)), istreambuf_iterator<char>());
 		defaultFragmentShader = AddShader(fragment.c_str(), GL_FRAGMENT_SHADER);
 	}
 	t.close();
@@ -37,14 +36,7 @@ bool ModuleShader::Init()
 	return true;
 }
 
-bool ModuleShader::Start()
-{
-	//glUseProgram(defaultProgramId);
-
-	return true;
-}
-
-const Shader* ModuleShader::AddShader(const char* source, GLenum shaderType)
+uint ModuleShader::AddShader(const char* source, GLenum shaderType)
 {
 	GLuint shaderId = glCreateShader(shaderType);
 
@@ -61,24 +53,19 @@ const Shader* ModuleShader::AddShader(const char* source, GLenum shaderType)
 		glGetShaderInfoLog(shaderId, 512, nullptr, infoLog);
 		LOG_DEBUG("Shader compilation error: %s", infoLog);
 
-		return nullptr;
+		return 0;
 	}
 
-	return new Shader(shaderId);
-
-	// glDeleteShader(shaderId);
+	return shaderId;
 }
 
-uint ModuleShader::AddProgram(initializer_list<const Shader*> shaders)
+uint ModuleShader::AddProgram(initializer_list<uint> shaders)
 {
 	GLuint shaderProgramId = glCreateProgram();
 	
-	for(const Shader* shader : shaders)
+	for(uint shader : shaders)
 	{
-		if(shader)
-		{
-			glAttachShader(shaderProgramId, shader->GetId());
-		}
+		glAttachShader(shaderProgramId, shader);
 	}
 
 	glLinkProgram(shaderProgramId);
@@ -99,7 +86,7 @@ uint ModuleShader::AddProgram(initializer_list<const Shader*> shaders)
 	return shaderProgramId;
 }
 
-uint ModuleShader::AddProgram(std::list<uint> shaders)
+uint ModuleShader::AddProgram(const list<uint>& shaders)
 {
 	GLuint shaderProgramId = glCreateProgram();
 

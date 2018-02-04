@@ -6,12 +6,11 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleInput.h"
-#include "ModuleTestJson.h"
-#include "ModuleTestMathGeoLib.h"
 #include "ModuleUI.h"
 #include "ModuleCamera.h"
 #include "ModuleShader.h"
 #include "ModuleScene.h"
+#include "ModuleTexture.h"
 
 using namespace std;
 using nlohmann::json;
@@ -25,9 +24,7 @@ Application::Application()
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(camera = new ModuleCamera());
 	modules.push_back(shader = new ModuleShader());
-
-	modules.push_back(new ModuleTestJson());
-	modules.push_back(new ModuleTestMathGeoLib());
+	modules.push_back(texture = new ModuleTexture());
 }
 
 Application::~Application()

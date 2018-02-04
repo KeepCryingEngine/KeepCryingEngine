@@ -29,6 +29,12 @@ public:
 	GameObject* AddEmpty();
 	GameObject* AddEmpty(GameObject& parent);
 
+	GameObject* AddCube();
+	GameObject* AddCube(GameObject& parent);
+
+	GameObject* AddSphere();
+	GameObject* AddSphere(GameObject& parent);
+
 	void Add(GameObject& gameObject);
 	void Destroy(GameObject& gameObject);
 

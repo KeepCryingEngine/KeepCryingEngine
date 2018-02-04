@@ -43,11 +43,6 @@ bool ModuleUI::Start()
 	orbitSpeed = App->camera->GetOrbitSpeed();
 	zoomSpeed = App->camera->GetZoomSpeed();
 
-	magFilter = App->renderer->getMagFilter();
-	minFilter = App->renderer->getMinFilter();
-	mipmap = App->renderer->getMipmap();
-	anisotropicFilter = App->renderer->getAnisotropicFilter();
-
 	SetUpTextEditor();
 
 	return true;
@@ -109,18 +104,6 @@ void ModuleUI::DrawMainMenu()
 				ImGui::EndMenu();
 			}
 
-			static int textureMode = 0;
-			if(ImGui::BeginMenu("Texture"))
-			{
-				ImGui::Combo("Texture", &textureMode, "None\0Debug\0Lenna\0Exodia\0Rock");
-				if(ImGui::Button("Texture Controls", buttonSize))
-				{
-					imageInfoWindow ^= 1;
-				}
-				ImGui::EndMenu();
-			}
-
-			App->renderer->SetCurrentTexture(textureMode);
 			static GLfloat color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 			if(ImGui::BeginMenu("Parameters"))
 			{
@@ -385,10 +368,6 @@ void ModuleUI::CallWindows()
 	{
 		DrawStyleWindow();
 	}
-	if(imageInfoWindow)
-	{
-		DrawTextureInfoWindow();
-	}
 	if(shaderEditorWindow)
 	{
 		DrawShaderWindow();
@@ -450,68 +429,6 @@ void ModuleUI::DrawStyleWindow()
 	ImGui::Begin("Style Controls", &styleWindow, ImGuiWindowFlags_MenuBar);
 	ImGui::DragFloat3("Background", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
 	ImGui::End();
-}
-
-void ModuleUI::DrawTextureInfoWindow()
-{
-	static int wrapModeS = 0;
-	static int wrapModeT = 0;
-	static int magFilterMode = 0;
-	static int minFilterMode = 0;
-
-	const char* wrapModeContent = "GL_CLAMP\0GL_REPEAT\0GL_MIRRORED_REPEAT\0GL_CLAMP_TO_EDGE\0GL_CLAMP_TO_BORDER";
-	const char* magMinFilterModeContent = "GL_LINEAR\0GL_NEAREST\0GL_NEAREST_MIPMAP_NEAREST\0GL_LINEAR_MIPMAP_NEAREST\0GL_NEAREST_MIPMAP_LINEAR\0GL_LINEAR_MIPMAP_LINEAR";
-
-	int previousWrapModeS = wrapModeS;
-	int previousWrapModeT = wrapModeT;
-	int previousMagFilterMode = magFilterMode;
-	int previousMinFilterMode = minFilterMode;
-
-	ImGui::Begin("Texture Controls", &textureEnabled, ImGuiWindowFlags_MenuBar);
-
-	int width = App->renderer->getImageWidth();
-	int height = App->renderer->getImageHeight();
-	int sizeBytes = App->renderer->getImageSizeBytes();
-	int pixelDepth = App->renderer->getImagePixelDepth();
-	int format = App->renderer->getImageFormat();
-
-	ImGui::InputInt("Width", &width);
-	ImGui::InputInt("Height", &height);
-	ImGui::InputInt("SizeBytes", &sizeBytes);
-	ImGui::InputInt("PixelDepth", &pixelDepth);
-	ImGui::InputInt("Format", &format);
-
-	ImGui::Combo("WrapModeS", &wrapModeS, wrapModeContent);
-	ImGui::Combo("WrapModeT", &wrapModeT, wrapModeContent);
-
-	if(ImGui::Checkbox("MagFilter", &magFilter))
-	{
-		App->renderer->setMagFilter(magFilter);
-	}
-	if(ImGui::Checkbox("MinFilter", &minFilter))
-	{
-		App->renderer->setMinFilter(minFilter);
-	}
-
-	ImGui::Combo("MagFilterMode", &magFilterMode, magMinFilterModeContent);
-	ImGui::Combo("MinFilterMode", &minFilterMode, magMinFilterModeContent);
-
-	if(ImGui::Checkbox("Mipmap", &mipmap))
-	{
-		App->renderer->setMipmap(mipmap);
-	}
-	if(ImGui::Checkbox("AnisotropicFilter", &anisotropicFilter))
-	{
-		App->renderer->setAnisotropicFilter(anisotropicFilter);
-	}
-
-	ImGui::End();
-	
-	UpdateWrapModeS(wrapModeS, previousWrapModeS);
-	UpdateWrapModeT(wrapModeT, previousWrapModeT);
-
-	UpdateMagFilterMode(magFilterMode, previousMagFilterMode);
-	UpdateMinFilterMode(minFilterMode, previousMinFilterMode);
 }
 
 void ModuleUI::DrawShaderWindow()
@@ -680,112 +597,6 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 			{
 				ImGui::TreePop();
 			}
-		}
-	}
-}
-
-void ModuleUI::UpdateWrapModeS(uint wrapModeS, uint previousWrapModeS) const
-{
-	if(wrapModeS != previousWrapModeS)
-	{
-		switch(wrapModeS)
-		{
-			case 0: // GL_CLAMP
-				App->renderer->setWrapModeS(GL_CLAMP);
-				break;
-			case 1: // GL_REPEAT
-				App->renderer->setWrapModeS(GL_REPEAT);
-				break;
-			case 2: // GL_MIRRORED_REPEAT
-				App->renderer->setWrapModeS(GL_MIRRORED_REPEAT);
-				break;
-			case 3: // GL_CLAMP_TO_EDGE
-				App->renderer->setWrapModeS(GL_CLAMP_TO_EDGE);
-				break;
-			case 4: // GL_CLAMP_TO_BORDER
-				App->renderer->setWrapModeS(GL_CLAMP_TO_BORDER);
-				break;
-		}
-	}
-}
-
-void ModuleUI::UpdateWrapModeT(uint wrapModeT, uint previousWrapModeT) const
-{
-	if(wrapModeT != previousWrapModeT)
-	{
-		switch(wrapModeT)
-		{
-			case 0: // GL_CLAMP
-				App->renderer->setWrapModeT(GL_CLAMP);
-				break;
-			case 1: // GL_REPEAT
-				App->renderer->setWrapModeT(GL_REPEAT);
-				break;
-			case 2: // GL_MIRRORED_REPEAT
-				App->renderer->setWrapModeT(GL_MIRRORED_REPEAT);
-				break;
-			case 3: // GL_CLAMP_TO_EDGE
-				App->renderer->setWrapModeT(GL_CLAMP_TO_EDGE);
-				break;
-			case 4: // GL_CLAMP_TO_BORDER
-				App->renderer->setWrapModeT(GL_CLAMP_TO_BORDER);
-				break;
-		}
-	}
-}
-
-void ModuleUI::UpdateMagFilterMode(uint magFilterMode, uint previousMagFilterMode) const
-{
-	if(magFilterMode != previousMagFilterMode)
-	{
-		switch(magFilterMode)
-		{
-			case 0: // GL_LINEAR
-				App->renderer->setMagFilterMode(GL_LINEAR);
-				break;
-			case 1: // GL_NEAREST
-				App->renderer->setMagFilterMode(GL_NEAREST);
-				break;
-			case 2: // GL_NEAREST_MIPMAP_NEAREST
-				App->renderer->setMagFilterMode(GL_NEAREST_MIPMAP_NEAREST);
-				break;
-			case 3: // GL_LINEAR_MIPMAP_NEAREST
-				App->renderer->setMagFilterMode(GL_LINEAR_MIPMAP_NEAREST);
-				break;
-			case 4: // GL_NEAREST_MIPMAP_LINEAR
-				App->renderer->setMagFilterMode(GL_NEAREST_MIPMAP_LINEAR);
-				break;
-			case 5: // GL_LINEAR_MIPMAP_LINEAR
-				App->renderer->setMagFilterMode(GL_LINEAR_MIPMAP_LINEAR);
-				break;
-		}
-	}
-}
-
-void ModuleUI::UpdateMinFilterMode(uint minFilterMode, uint previousMinFilterMode) const
-{
-	if(minFilterMode != previousMinFilterMode)
-	{
-		switch(minFilterMode)
-		{
-			case 0: // GL_LINEAR
-				App->renderer->setMinFilterMode(GL_LINEAR);
-				break;
-			case 1: // GL_NEAREST
-				App->renderer->setMinFilterMode(GL_NEAREST);
-				break;
-			case 2: // GL_NEAREST_MIPMAP_NEAREST
-				App->renderer->setMinFilterMode(GL_NEAREST_MIPMAP_NEAREST);
-				break;
-			case 3: // GL_LINEAR_MIPMAP_NEAREST
-				App->renderer->setMinFilterMode(GL_LINEAR_MIPMAP_NEAREST);
-				break;
-			case 4: // GL_NEAREST_MIPMAP_LINEAR
-				App->renderer->setMinFilterMode(GL_NEAREST_MIPMAP_LINEAR);
-				break;
-			case 5: // GL_LINEAR_MIPMAP_LINEAR
-				App->renderer->setMinFilterMode(GL_LINEAR_MIPMAP_LINEAR);
-				break;
 		}
 	}
 }

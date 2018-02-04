@@ -2,12 +2,10 @@
 #define _MODULESHADER_H_
 
 #include <GL/glew.h>
-#include <initializer_list>
 #include <list>
+#include <initializer_list>
 
 #include "Module.h"
-
-class Shader;
 
 class ModuleShader : public Module
 {
@@ -17,11 +15,10 @@ public:
 
 	bool Init() override;
 
-	bool Start() override;
-
-	const Shader* AddShader(const char* source, GLenum shaderType);
-	uint AddProgram(std::initializer_list<const Shader*> shaders);
-	uint AddProgram(std::list<uint> shaders);
+	uint AddShader(const char* source, GLenum shaderType);
+	
+	uint AddProgram(const std::list<uint>& shaders);
+	uint AddProgram(std::initializer_list<uint> shaders);
 
 public:
 	uint defaultProgramId = 0;
