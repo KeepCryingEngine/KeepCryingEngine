@@ -344,12 +344,12 @@ void ModuleUI::CallEntityCreation()
 	}
 	if(addCubeGameObject)
 	{
-		//App->scene->AddCube(*App->scene->Get(selectedNodeID));
+		App->scene->AddCube(*App->scene->Get(selectedNodeID));
 		addCubeGameObject = false;
 	}
 	if(addSphereGameObject)
 	{
-		//App->scene->AddSphere(*App->scene->Get(selectedNodeID));
+		App->scene->AddSphere(*App->scene->Get(selectedNodeID));
 		addSphereGameObject = false;
 	}
 }
@@ -494,7 +494,7 @@ void ModuleUI::DrawHierarchyWindow()
 	}
 
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
-
+	
 	if(selectedNodeID == App->scene->GetRoot()->GetId())
 	{
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
@@ -555,6 +555,11 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 			nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 		}
 
+		if(!child->IsEnabled())
+		{
+			ImGui::PushStyleColor(0, ImVec4(0.5f, 0.1f, 0.4f, 1.0f));
+		}
+
 		if (child->GetChildCount() > 0)
 		{
 			bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
@@ -597,6 +602,11 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 			{
 				ImGui::TreePop();
 			}
+		}
+
+		if(!child->IsEnabled())
+		{
+			ImGui::PopStyleColor();
 		}
 	}
 }
