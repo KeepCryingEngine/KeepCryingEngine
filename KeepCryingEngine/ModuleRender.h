@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "Module.h"
+#include "SkyBox.h"
 
 class Mesh;
 class Camera;
@@ -60,6 +61,7 @@ public:
 	GLfloat globalAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };	
 
 private:	
+	SkyBox skybox;
 	SDL_GLContext glcontext = nullptr;
 	//std::list<Mesh*> drawBuffer;
 

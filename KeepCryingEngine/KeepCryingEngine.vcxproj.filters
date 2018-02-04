@@ -96,6 +96,7 @@
     <ClCompile Include="Tree.cpp">
       <Filter>Trees</Filter>
     </ClCompile>
+    <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="TreeNode.cpp">
       <Filter>Trees</Filter>
     </ClCompile>
@@ -224,6 +225,7 @@
     <ClInclude Include="Tree.h">
       <Filter>Trees</Filter>
     </ClInclude>
+    <ClInclude Include="SkyBox.h" />
     <ClInclude Include="TreeNode.h">
       <Filter>Trees</Filter>
     </ClInclude>

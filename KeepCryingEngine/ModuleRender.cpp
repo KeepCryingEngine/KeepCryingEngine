@@ -85,6 +85,7 @@ bool ModuleRender::Init()
 		LOG_DEBUG("DevIL could not initialize!");
 		ret = false;
 	}
+	skybox.SetUp();
 
 	if(App->configuration.vsync)
 	{
@@ -107,6 +108,7 @@ update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 {
+	skybox.Draw();
 	DrawGrid();
 
 	DrawGeometry();
