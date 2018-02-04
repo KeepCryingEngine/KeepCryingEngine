@@ -1,31 +1,57 @@
 #ifndef _MODULETEXTURE_H_
 #define _MODULETEXTURE_H_
 
+#include <GL/glew.h>
+
 #include "Module.h"
 
-class ModuleTexture : Module
+class ModuleTexture : public Module
 {
 public:
 	ModuleTexture();
-	~ModuleTexture();
+	virtual ~ModuleTexture();
 
-	uint LoadTexture(const char* theFileName, ILinfo* imageInfo);
+	uint LoadCheckerTexture();
+	uint LoadTexture(const char* texturePath) const;
+
+	uint getWrapModeS() const;
+	void setWrapModeS(uint wrapModeS);
+
+	uint getWrapModeT() const;
+	void setWrapModeT(uint wrapModeT);
+
+	bool getMagFilter() const;
+	void setMagFilter(bool magFilter);
+
+	bool getMinFilter() const;
+	void setMinFilter(bool minFilter);
+
+	uint getMagFilterMode() const;
+	void setMagFilterMode(uint magFilterMode);
+
+	uint getMinFilterMode() const;
+	void setMinFilterMode(uint minFilterMode);
+
+	bool getMipmap() const;
+	void setMipmap(bool mipMap);
+
+	bool getAnisotropicFilter() const;
+	void setAnisotropicFilter(bool anisotropicFilter);
+
 private:
-	ILinfo * currentImageInfo = nullptr;
+	uint checkerTexture = 0;
 
-	ILinfo* lenaImageInfo = nullptr;
-	ILinfo* rockImageInfo = nullptr;
-	ILinfo* exodiaImageInfo = nullptr;
-
-	uint wrapModeS = 0;
-	uint wrapModeT = 0;
+	uint wrapModeS = GL_CLAMP;
+	uint wrapModeT = GL_CLAMP;
 	bool magFilter = true;
 	bool minFilter = true;
-	uint magFilterMode = 0;
-	uint minFilterMode = 0;
+	uint magFilterMode = GL_LINEAR;
+	uint minFilterMode = GL_LINEAR;
 	bool mipmap = false;
 	bool anisotropicFilter = false;
+
+	static const uint CHECKERS_HEIGHT;
+	static const uint CHECKERS_WIDTH;
 };
 
 #endif // !_MODULETEXTURE_H_
-
