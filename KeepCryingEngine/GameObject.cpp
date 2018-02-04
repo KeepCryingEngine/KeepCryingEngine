@@ -218,25 +218,17 @@ void GameObject::GetComponents(ComponentType type, std::vector<Component*>& ret)
 
 void GameObject::DrawUI()
 {
-	//Esto es mala cosa -> Preguntar al Xavi porque es mala cosa (y luego darle un abrasito)
-	static int selectedComponent = 0;
+	ImGui::Checkbox("", &enable); ImGui::SameLine();
 
-	ImGui::Checkbox("", &enable);
-
-	ImGui::LabelText(name.c_str(), name.c_str());
-
-	ImGui::NewLine();
-
-	for(Component* c : components)
+	static char buffer[180] = {};
+	strcpy(buffer, name.c_str());
+	if(ImGui::InputText("##label", buffer, sizeof(buffer)))
 	{
-		c->DrawUI();
+		name = buffer;
 	}
-
-	ImGui::NewLine();
-	ImGui::Combo("", &selectedComponent, "Mesh\0Meshita");
-
+	static int selectedComponent = 0;
+	ImGui::Combo("Comp.", &selectedComponent, "Mesh");
 	ImGui::SameLine();
-
 	if(ImGui::Button("Add"))
 	{
 		switch(selectedComponent)
@@ -246,6 +238,15 @@ void GameObject::DrawUI()
 				break;
 		}
 	}
+
+	ImGui::NewLine();
+
+	for(Component* c : components)
+	{
+		c->DrawUI();
+	}
+
+	ImGui::NewLine();
 }
 
 void GameObject::CheckToStart()
