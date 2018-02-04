@@ -106,9 +106,9 @@
     <ClInclude Include="ModuleShader.h" />
     <ClInclude Include="ModuleTestJson.h" />
     <ClInclude Include="ModuleTestMathGeoLib.h" />
+    <ClInclude Include="ModuleTexture.h" />
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="ModuleWindow.h" />
-    <ClInclude Include="Shader.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
@@ -132,9 +132,9 @@
     <ClCompile Include="ModuleShader.cpp" />
     <ClCompile Include="ModuleTestJson.cpp" />
     <ClCompile Include="ModuleTestMathGeoLib.cpp" />
+    <ClCompile Include="ModuleTexture.cpp" />
     <ClCompile Include="ModuleUI.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
-    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
