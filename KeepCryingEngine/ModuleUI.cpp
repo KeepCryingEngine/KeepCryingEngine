@@ -88,20 +88,9 @@ void ModuleUI::DrawMainMenu()
 
 		if(ImGui::BeginMainMenuBar())
 		{
-			if(ImGui::BeginMenu("Game Object"))
-			{
-				if(ImGui::MenuItem("Add Empty", nullptr, &addEmptyGameObject))
-				{
-					addEmptyGameObject = true;
-				}
-				ImGui::MenuItem("Add Cube", nullptr, &addCubeGameObject);
-				ImGui::MenuItem("Add Sphere", nullptr, &addSphereGameObject);				
-				ImGui::EndMenu();
-			}
-
 			if(ImGui::BeginMenu("Windows"))
 			{
-				if (ImGui::Button("Inspector", buttonSize))
+				if (ImGui::Button("Hierarchy", buttonSize))
 				{
 					hierarchyWindow ^= 1;
 				}
@@ -372,10 +361,12 @@ void ModuleUI::CallEntityCreation()
 	}
 	if(addCubeGameObject)
 	{
+		//App->scene->AddCube(*App->scene->Get(selectedNodeID));
 		addCubeGameObject = false;
 	}
 	if(addSphereGameObject)
 	{
+		//App->scene->AddSphere(*App->scene->Get(selectedNodeID));
 		addSphereGameObject = false;
 	}
 }
@@ -564,9 +555,50 @@ void ModuleUI::DrawHierarchyWindow()
 {
 	ImGui::Begin("Game Object Inspector", &hierarchyWindow, ImGuiWindowFlags_MenuBar);
 
+	if(ImGui::BeginMenuBar())
+	{
+		if(ImGui::BeginMenu("Add"))
+		{
+			if(ImGui::MenuItem("Empty", nullptr, &addEmptyGameObject))
+			{
+				addEmptyGameObject = true;
+			}
+			if(ImGui::MenuItem("Cube", nullptr, &addCubeGameObject))
+			{
+				addCubeGameObject = true;
+			}
+			if(ImGui::MenuItem("Sphere", nullptr, &addSphereGameObject))
+			{
+				addSphereGameObject = true;
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
+
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
+	if(selectedNodeID == App->scene->GetRoot()->GetId())
+	{
+		nodeFlags |= ImGuiTreeNodeFlags_Selected;
+	}
+	else
+	{
+		nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+	}
+
 	bool opened = ImGui::TreeNodeEx(App->scene->GetRoot()->GetName().c_str(), nodeFlags);
+
+	if(ImGui::IsItemClicked())
+	{
+		if(!inspectorWindow)
+		{
+			inspectorWindow = false;
+		}
+		selectedNodeID = App->scene->GetRoot()->GetId();
+		int a = 0;
+		a++;
+	}
 
 	if(opened)
 	{	
@@ -582,9 +614,12 @@ void ModuleUI::DrawInspectorWindow()
 	static int potato = 0;
 	ImGui::Begin("Inspector", &inspectorWindow, ImGuiWindowFlags_MenuBar);
 	
-	GameObject* temp = App->scene->Get(selectedNodeID);
-	temp->DrawUI();
-
+	if(selectedNodeID != 0)
+	{
+		GameObject* temp = App->scene->Get(selectedNodeID);
+		temp->DrawUI();
+	}
+	
 	ImGui::End();
 }
 

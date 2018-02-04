@@ -98,7 +98,7 @@ void Mesh::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Mesh"))
 	{
-		ImGui::Checkbox("Active", &enabled);
+		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
 		if(ImGui::Button("Delete Component"))
 		{
 			gameObject->RemoveComponent(this);
