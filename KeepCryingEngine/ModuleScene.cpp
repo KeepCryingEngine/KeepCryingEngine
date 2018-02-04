@@ -58,14 +58,9 @@ GameObject* ModuleScene::Get(unsigned long long int gameObjectId) const
 	return root->GetSelfOrChild(gameObjectId);
 }
 
-GameObject* ModuleScene::AddEmpty()
+GameObject* ModuleScene::AddEmpty(GameObject& parent, const char* name)
 {
-	return AddEmpty(*root);
-}
-
-GameObject* ModuleScene::AddEmpty(GameObject& parent)
-{
-	GameObject* gameObject = new GameObject("Empty");
+	GameObject* gameObject = new GameObject(name);
 	gameObject->SetParent(parent);
 
 	toStart.push_back(gameObject);
@@ -73,14 +68,9 @@ GameObject* ModuleScene::AddEmpty(GameObject& parent)
 	return gameObject;
 }
 
-GameObject* ModuleScene::AddCube()
-{
-	return AddCube(*root);
-}
-
 GameObject* ModuleScene::AddCube(GameObject& parent)
 {
-	GameObject* gameObject = AddEmpty(parent);
+	GameObject* gameObject = AddEmpty(parent, "Cube");
 
 	Mesh* mesh = (Mesh*)gameObject->AddComponent(ComponentType::Mesh);
 	mesh->SetMeshMode(MeshMode::CUBE);
@@ -88,14 +78,9 @@ GameObject* ModuleScene::AddCube(GameObject& parent)
 	return gameObject;
 }
 
-GameObject* ModuleScene::AddSphere()
-{
-	return AddSphere(*root);
-}
-
 GameObject* ModuleScene::AddSphere(GameObject& parent)
 {
-	GameObject* gameObject = AddEmpty(parent);
+	GameObject* gameObject = AddEmpty(parent, "Sphere");
 
 	Mesh* mesh = (Mesh*)gameObject->AddComponent(ComponentType::Mesh);
 	mesh->SetMeshMode(MeshMode::SPHERE);

@@ -26,13 +26,9 @@ public:
 
 	GameObject* Get(unsigned long long int gameObjectId) const;
 
-	GameObject* AddEmpty();
-	GameObject* AddEmpty(GameObject& parent);
+	GameObject* AddEmpty(GameObject& parent, const char* name = "Empty");
 
-	GameObject* AddCube();
 	GameObject* AddCube(GameObject& parent);
-
-	GameObject* AddSphere();
 	GameObject* AddSphere(GameObject& parent);
 
 	void Add(GameObject& gameObject);
