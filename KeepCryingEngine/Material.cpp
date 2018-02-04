@@ -3,10 +3,8 @@
 #include <fstream>
 
 #include "Application.h"
-#include "ModuleRender.h"
+#include "ModuleTexture.h"
 #include "ModuleShader.h"
-#include "Shader.h"
-#include "GameObject.h"
 
 using namespace std;
 
@@ -14,12 +12,12 @@ Material::Material():Component(ComponentType::Material)
 {
 	AddShader("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
 	AddShader("Assets/Shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
+
+	textureId = App->texture->LoadCheckerTexture();
 }
 
 Material::~Material()
-{
-
-}
+{ }
 
 void Material::DrawUI()
 {
@@ -68,19 +66,19 @@ uint Material::GetProgramId()
 	return programId;
 }
 
-void Material::SetTexture(const char * path)
+void Material::SetTexture(const char* path)
 {
-	textureId = App->renderer->LoadTexture(path, nullptr);
+	textureId = App->texture->LoadTexture(path);
 }
 
-uint Material::AddShader(const char * path, GLenum shaderType)
+uint Material::AddShader(const char* path, GLenum shaderType)
 {
 	uint id = 0;
 	ifstream t(path);
 	if(t.good())
 	{
-		string str((std::istreambuf_iterator<char>(t)), istreambuf_iterator<char>());
-		id = App->shader->AddShader(str.c_str(), shaderType)->GetId();
+		string str((istreambuf_iterator<char>(t)), istreambuf_iterator<char>());
+		id = App->shader->AddShader(str.c_str(), shaderType);
 	}
 
 	t.close();
