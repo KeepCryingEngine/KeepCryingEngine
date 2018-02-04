@@ -28,13 +28,13 @@ void Mesh::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	{
 		switch(meshMode)
 		{
-			case 0:
+			case MeshMode::CUBE:
 			{
 				SetUpCube();
 			}
 			break;
 
-			case 1:
+			case MeshMode::SPHERE:
 			{
 				SetUpSphere();
 			}
@@ -103,14 +103,18 @@ void Mesh::DrawUI()
 		{
 			gameObject->RemoveComponent(this);
 		}
-		if(ImGui::Combo("Type", &meshMode, "Cube\0Sphere"))
+
+		int tmpMeshMode = (int)meshMode;
+
+		if(ImGui::Combo("Type", &tmpMeshMode, "Cube\0Sphere"))
 		{
 			changedMode = true;
+			meshMode = (MeshMode)tmpMeshMode;
 		}
 	}
 }
 
-void Mesh::SetMeshMode(int mode)
+void Mesh::SetMeshMode(MeshMode mode)
 {
 	meshMode = mode;
 	changedMode = true;

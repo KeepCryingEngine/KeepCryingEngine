@@ -1,9 +1,8 @@
 #ifndef _MESH_H_
 #define _MESH_H_
 
-#include "Component.h"
-
 #include "Globals.h"
+#include "Component.h"
 
 #include <GL/glew.h>
 
@@ -14,16 +13,22 @@ struct Vertex
 	float uv[2];
 };
 
+enum class MeshMode
+{
+	CUBE,
+	SPHERE
+};
+
 class Mesh : public Component
 {
 public:
 	Mesh();
-	~Mesh();
+	virtual ~Mesh();
 
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS)override;
 	void DrawUI()override;
 
-	void SetMeshMode(int mode);
+	void SetMeshMode(MeshMode mode);
 
 private:
 	void SetUpCube();
@@ -37,7 +42,7 @@ private:
 	uint verticesNumber;
 
 	bool changedMode = true;
-	int meshMode = 0;
+	MeshMode meshMode = MeshMode::CUBE;
 };
 
 #endif // !_MESH_H_
