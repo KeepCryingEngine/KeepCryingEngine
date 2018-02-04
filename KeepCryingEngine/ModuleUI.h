@@ -11,7 +11,7 @@ class ModuleUI : public Module
 {
 public:
 	ModuleUI();
-	~ModuleUI();
+	virtual ~ModuleUI();
 
 	bool Init() override;
 	bool Start() override;
@@ -29,18 +29,11 @@ private:
 	void DrawCameraWindow();
 	void DrawSpeedWindow();
 	void DrawStyleWindow();
-	void DrawTextureInfoWindow();
 	void DrawShaderWindow();
 	void DrawHierarchyWindow();
 	void DrawInspectorWindow();
 
 	void PrintChildrenOnHierarchy(std::vector<GameObject*> children);
-
-	void UpdateWrapModeS(uint wrapModeS, uint previousWrapModeS) const;
-	void UpdateWrapModeT(uint wrapModeT, uint previousWrapModeT) const;
-
-	void UpdateMagFilterMode(uint magFilterMode, uint previousMagFilterMode) const;
-	void UpdateMinFilterMode(uint minFilterMode, uint previousMinFilterMode) const;
 
 	void CallEntityCreation();
 
@@ -67,7 +60,6 @@ private:
 	bool cameraWindow = false;
 	bool speedWindow = false;
 	bool styleWindow = false;
-	bool imageInfoWindow = false;
 	bool shaderEditorWindow = false;
 	bool hierarchyWindow = true;
 	bool inspectorWindow = false;
@@ -88,10 +80,6 @@ private:
 	float3 side = { 0.0f, 0.0f, 0.0f };
 	float clearColor[3] = { 0.0f, 0.0f, 0.0f };
 
-	bool magFilter = false;
-	bool minFilter = false;
-	bool mipmap = false;
-	bool anisotropicFilter = false;
 	float fogDensity = 1.0f;
 
 	unsigned long long selectedNodeID = 0;
