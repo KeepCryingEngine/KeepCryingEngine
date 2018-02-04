@@ -13,13 +13,14 @@ class ModuleUI;
 class ModuleCamera;
 class ModuleShader;
 class ModuleScene;
+class ModuleTexture;
 
 class Application
 {
 public:
 
 	Application();
-	~Application();
+	virtual ~Application();
 
 	bool Init();
 	update_status Update();
@@ -29,17 +30,17 @@ public:
 	void SetDeltaTimeScale(float deltaTimeScale);
 
 private:
-
 	void LoadConfiguration();
 
 public:
-	ModuleRender* renderer;
-	ModuleWindow* window;
-	ModuleInput* input;
-	ModuleUI* ui;
-	ModuleCamera* camera;
-	ModuleShader* shader;
-	ModuleScene* scene;
+	ModuleRender* renderer = nullptr;
+	ModuleWindow* window = nullptr;
+	ModuleInput* input = nullptr;
+	ModuleUI* ui = nullptr;
+	ModuleCamera* camera = nullptr;
+	ModuleShader* shader = nullptr;
+	ModuleScene* scene = nullptr;
+	ModuleTexture* texture = nullptr;
 
 	// Cargar información desde json
 	// Tamaño pantalla, nombre, fps, etc
@@ -57,7 +58,6 @@ public:
 	} configuration;
 
 private:
-
 	std::list<Module*> modules;
 
 	uint lastTimeMs = 0;
