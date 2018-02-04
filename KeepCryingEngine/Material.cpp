@@ -23,8 +23,8 @@ void Material::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Material"))
 	{
-		static char buff[252] = "";
-		ImGui::InputText("Texture", buff, 252);
+		static char buff[252] = {};
+		ImGui::InputText("##label", buff, 252); ImGui::SameLine();
 		if(ImGui::Button("Set Texture"))
 		{
 			string s = "Assets/";
@@ -32,9 +32,12 @@ void Material::DrawUI()
 
 			SetTexture(s.c_str());
 		}
-		static char buff2[252] = "";
+
+		ImGui::NewLine();
+
+		static char buff2[252] = {};
 		static int shaderMode = 0;
-		ImGui::InputText("Shader", buff2, 252);
+		ImGui::InputText("Name", buff2, 252);
 		ImGui::Combo("Type", &shaderMode, "Vertex\0Fragment");
 		if(ImGui::Button("Add Shader"))
 		{
@@ -42,18 +45,22 @@ void Material::DrawUI()
 			{
 				case 0:
 				{
-					AddShader(buff2, GL_VERTEX_SHADER);
+					shaders.push_back(AddShader(buff2, GL_VERTEX_SHADER));
 				}
 				break;
 				case 1:
 				{
-					AddShader(buff2, GL_FRAGMENT_SHADER);
+					shaders.push_back(AddShader(buff2, GL_FRAGMENT_SHADER));
 				}
 				break;
 			}
 		}
+		static int deleteShader = 0;
+		if(ImGui::Button("Delete Shader"))
+		{
+			//RemoveShader(0);
+		}
 	}
-	//TODO make a delete shader button with the id that give addbuffer ^
 }
 
 uint Material::GetTextureId()
