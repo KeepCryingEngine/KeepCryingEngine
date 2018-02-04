@@ -104,8 +104,6 @@
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleScene.h" />
     <ClInclude Include="ModuleShader.h" />
-    <ClInclude Include="ModuleTestJson.h" />
-    <ClInclude Include="ModuleTestMathGeoLib.h" />
     <ClInclude Include="ModuleTexture.h" />
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="ModuleWindow.h" />
@@ -130,8 +128,6 @@
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
     <ClCompile Include="ModuleShader.cpp" />
-    <ClCompile Include="ModuleTestJson.cpp" />
-    <ClCompile Include="ModuleTestMathGeoLib.cpp" />
     <ClCompile Include="ModuleTexture.cpp" />
     <ClCompile Include="ModuleUI.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />

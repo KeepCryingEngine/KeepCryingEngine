@@ -48,12 +48,6 @@
     <ClCompile Include="ModuleShader.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleTestJson.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleTestMathGeoLib.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleUI.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -120,12 +114,6 @@
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="ModuleShader.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleTestJson.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleTestMathGeoLib.h">
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="ModuleUI.h">

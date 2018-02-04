@@ -6,8 +6,6 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleInput.h"
-#include "ModuleTestJson.h"
-#include "ModuleTestMathGeoLib.h"
 #include "ModuleUI.h"
 #include "ModuleCamera.h"
 #include "ModuleShader.h"
@@ -27,9 +25,6 @@ Application::Application()
 	modules.push_back(camera = new ModuleCamera());
 	modules.push_back(shader = new ModuleShader());
 	modules.push_back(texture = new ModuleTexture());
-
-	modules.push_back(new ModuleTestJson());
-	modules.push_back(new ModuleTestMathGeoLib());
 }
 
 Application::~Application()
