@@ -78,6 +78,20 @@ GameObject* GameObject::GetSelfOrChild(unsigned long long int gameObjectId) cons
 	return GetChild(gameObjectId);
 }
 
+void GameObject::DeleteChild(GameObject & childToRemove)
+{
+	if(this->children.size() > 0)
+	{
+		for(uint i = 0; i < this->children.size(); i++)
+		{
+			if(this->children[i] == &childToRemove)
+			{
+				this->children.erase(this->children.begin() + (i));
+			}
+		}
+	}
+}
+
 const string& GameObject::GetName() const
 {
 	return name;
