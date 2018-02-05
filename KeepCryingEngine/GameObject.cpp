@@ -13,7 +13,7 @@ using namespace std;
 GameObject::GameObject(const string& name) : name(name)
 {
 	id = App->scene->GetNewGameObjectId();
-	AddComponent(ComponentType::Transform);
+	AddComponent(ComponentType::Transform, true);
 }
 
 GameObject::~GameObject()
@@ -154,18 +154,25 @@ void GameObject::OnDestroy()
 	components.clear();
 }
 
-Component* GameObject::AddComponent(ComponentType type)
+Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
 {
 	Component* component = ComponentFabric::CreateComponent(type);
 	assert(component);
 
-	AddInternalComponent(component);
-
-	if(type == ComponentType::Mesh)
+	if(forceAddition || CanAttach(*component))
 	{
-		Component* mat = ComponentFabric::CreateComponent(ComponentType::Material);
-		assert(mat);
-		AddInternalComponent(mat);
+		AddInternalComponent(component);
+
+		if(type == ComponentType::Mesh)
+		{
+			Component* mat = ComponentFabric::CreateComponent(ComponentType::Material);
+			assert(mat);
+			AddInternalComponent(mat);
+		}
+	}
+	else
+	{
+		RELEASE(component);
 	}
 
 	return component;
@@ -191,7 +198,7 @@ void GameObject::RemoveComponent(Component * component)
 	}
 }
 
-Component* GameObject::GetComponent(ComponentType type)
+Component* GameObject::GetComponent(ComponentType type) const
 {
 	for(Component* component : components)
 	{
@@ -312,6 +319,27 @@ void GameObject::AddInternalComponent(Component * component)
 	component->Awake();
 
 	toStart.push_back(component);
+}
+
+bool GameObject::CanAttach(const Component& component) const
+{
+	for(ComponentType componentType : component.GetNeededComponents())
+	{
+		if(GetComponent(componentType) == nullptr)
+		{
+			return false;
+		}
+	}
+
+	for(ComponentType componentType : component.GetProhibitedComponents())
+	{
+		if(GetComponent(componentType) != nullptr)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 /* void GameObject::DestroyAndRelease(Component* component) const

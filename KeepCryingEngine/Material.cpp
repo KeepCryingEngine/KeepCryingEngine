@@ -68,6 +68,16 @@ uint Material::GetProgramId()
 	return programId;
 }
 
+vector<ComponentType> Material::GetNeededComponents() const
+{
+	return { ComponentType::Transform, ComponentType::Mesh };
+}
+
+vector<ComponentType> Material::GetProhibitedComponents() const
+{
+	return { ComponentType::Material };
+}
+
 void Material::SetTexture(const char* path)
 {
 	textureId = App->texture->LoadTexture(path);

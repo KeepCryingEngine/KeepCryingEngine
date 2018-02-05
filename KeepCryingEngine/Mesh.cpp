@@ -120,6 +120,16 @@ void Mesh::SetMeshMode(MeshMode mode)
 	changedMode = true;
 }
 
+vector<ComponentType> Mesh::GetNeededComponents() const
+{
+	return { ComponentType::Transform };
+}
+
+vector<ComponentType> Mesh::GetProhibitedComponents() const
+{
+	return { ComponentType::Mesh };
+}
+
 void Mesh::SetUpCube()
 {
 	drawMode = GL_TRIANGLES;

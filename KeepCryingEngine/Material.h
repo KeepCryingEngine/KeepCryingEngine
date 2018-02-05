@@ -12,12 +12,15 @@ class Material : public Component
 {
 public:
 	Material();
-	~Material();
+	virtual ~Material();
 
 	void DrawUI() override;
 
 	uint GetTextureId();
 	uint GetProgramId();
+
+	virtual std::vector<ComponentType> GetNeededComponents() const override;
+	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
 
 private:
 	void SetTexture(const char* path);
