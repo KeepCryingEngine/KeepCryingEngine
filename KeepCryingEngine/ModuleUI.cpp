@@ -427,8 +427,8 @@ void ModuleUI::DrawSpeedWindow()
 void ModuleUI::DrawStyleWindow()
 {
 	ImGui::Begin("Style Controls", &styleWindow, ImGuiWindowFlags_MenuBar);
-	ImGui::DragFloat3("Background", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
-	ImGui::End();
+ImGui::DragFloat3("Background", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
+ImGui::End();
 }
 
 void ModuleUI::DrawShaderWindow()
@@ -494,7 +494,7 @@ void ModuleUI::DrawHierarchyWindow()
 	}
 
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_DefaultOpen;
-	
+
 	if(selectedNodeID == App->scene->GetRoot()->GetId())
 	{
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
@@ -513,11 +513,11 @@ void ModuleUI::DrawHierarchyWindow()
 	}
 
 	if(opened)
-	{	
+	{
 		PrintChildrenOnHierarchy(App->scene->GetRoot()->GetChildren());
 		ImGui::TreePop();
 	}
-	
+
 	ImGui::End();
 }
 
@@ -525,7 +525,13 @@ void ModuleUI::DrawInspectorWindow()
 {
 	static int potato = 0;
 	ImGui::Begin("Inspector", &inspectorWindow, ImGuiWindowFlags_MenuBar);
-	
+
+	if(ImGui::Button("Delete GameObject"))
+	{
+		inspectorWindow = false;
+		App->scene->Destroy(*App->scene->Get(selectedNodeID));
+	}
+
 	if(selectedNodeID != 0)
 	{
 		GameObject* temp = App->scene->Get(selectedNodeID);
