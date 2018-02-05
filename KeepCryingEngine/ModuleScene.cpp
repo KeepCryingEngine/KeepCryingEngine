@@ -55,6 +55,12 @@ GameObject* ModuleScene::GetRoot() const
 
 GameObject* ModuleScene::Get(unsigned long long int gameObjectId) const
 {
+	GameObject* toReturn = root->GetSelfOrChild(gameObjectId);
+	if(toReturn == nullptr)
+	{
+		return root;
+	}
+
 	return root->GetSelfOrChild(gameObjectId);
 }
 
@@ -179,6 +185,11 @@ void ModuleScene::DestroyAndRelease(GameObject* gameObject) const
 	for(GameObject* gameObjectChild : gameObject->GetChildren())
 	{
 		DestroyAndRelease(gameObjectChild);
+	}
+
+	if(gameObject->GetParent() != nullptr)
+	{
+		gameObject->GetParent()->DeleteChild(*gameObject);
 	}
 
 	gameObject->OnDestroy();
