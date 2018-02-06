@@ -58,7 +58,7 @@ uint ModuleTexture::LoadTexture(const char* texturePath) const
 {
 	ILuint imageID; // Create an image ID as a ULuint
 
-	GLuint textureID; // Create a texture ID as a GLuint
+	GLuint textureID = 0; // Create a texture ID as a GLuint
 
 	ILboolean success; // Create a flag to keep track of success/failure
 
