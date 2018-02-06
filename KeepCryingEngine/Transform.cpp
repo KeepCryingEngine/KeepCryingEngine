@@ -16,14 +16,14 @@ void Transform::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Transform"))
 	{
-		ImGui::DragFloat3(" Position", position.ptr());
+		ImGui::DragFloat3(" Position", position.ptr(),0.1f);
 		float3 angles = RadToDeg(rotation.ToEulerXYZ());
-		if(ImGui::DragFloat3(" Rotation", angles.ptr()))
+		if(ImGui::DragFloat3(" Rotation", angles.ptr()), 0.1f)
 		{
 			angles = DegToRad(angles);
 			rotation = Quat::FromEulerXYZ(angles.x, angles.y, angles.z);
 		}
-		ImGui::DragFloat3(" Scale", scale.ptr());
+		ImGui::DragFloat3(" Scale", scale.ptr(), 0.1f);
 	}
 }
 

@@ -3,7 +3,6 @@
 #define _USE_MATH_DEFINES
 
 #include <math.h>
-// #include <GL/glew.h>
 #include <vector>
 
 #include "Application.h"
@@ -11,6 +10,8 @@
 #include "GameObject.h"
 #include "Material.h"
 #include "Transform.h"
+
+const float3 Mesh::LIGHT_DIR = {-1.0,1.0,0.0};
 
 using namespace std;
 
@@ -62,13 +63,15 @@ void Mesh::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(7 * sizeof(GLfloat)));
-
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(7 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(3);
+	glBindBuffer(GL_ARRAY_BUFFER, normalbufferId);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	GLint modelView = glGetUniformLocation(progId, "model_view");
 	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->GetViewMatrix().ptr());
@@ -78,6 +81,12 @@ void Mesh::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 
 	GLint transform = glGetUniformLocation(progId, "transform");
 	glUniformMatrix4fv(transform, 1, GL_FALSE, ((Transform*)gameObject->GetComponent(ComponentType::Transform))->GetAcumulatedTransform().Transposed().ptr());
+
+	GLint light = glGetUniformLocation(progId, "lightDir");
+	if(light != -1)
+	{
+		glUniform3f(light, LIGHT_DIR.x, LIGHT_DIR.y, LIGHT_DIR.z);
+	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
 	glDrawElements(drawMode, verticesNumber, GL_UNSIGNED_SHORT, nullptr);
@@ -212,7 +221,7 @@ void Mesh::SetUpCube()
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 24, vertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	GLushort indicesArray[36 * 3] =
+	GLushort indicesArray[24 * 3] =
 	{
 		3, 1, 0,
 		3, 2, 1,
@@ -232,12 +241,52 @@ void Mesh::SetUpCube()
 		23, 21, 20,
 		23, 22, 21
 	};
-
+	
 	verticesNumber = sizeof(indicesArray)/sizeof(uint);
 
 	glGenBuffers(1, (GLuint*) &(indicesBufferId));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * verticesNumber, indicesArray, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	float normal[24 * 3];
+	float offset = 3;
+	for(size_t i = 0; i < 36; i+=3)
+	{
+		int x1 = indicesArray[i] * offset;
+		int x2 = indicesArray[i + 1] * offset;
+		int x3 = indicesArray[i + 2] * offset;
+
+		int y1 = (indicesArray[i] * offset) + 1;
+		int y2 = (indicesArray[i + 1] * offset) + 1;
+		int y3 = (indicesArray[i + 2] * offset) + 1;
+
+		int z1 = (indicesArray[i] * offset) + 2;
+		int z2 = (indicesArray[i + 1] * offset) + 2;
+		int z3 = (indicesArray[i + 2] * offset) + 2;
+
+		float edge1X = uniqueVertex[x2] - uniqueVertex[x1];
+		float edge1Y = uniqueVertex[y2] - uniqueVertex[y1];
+		float edge1Z = uniqueVertex[z2] - uniqueVertex[z1];
+
+		float edge2X = uniqueVertex[x3] - uniqueVertex[x1];
+		float edge2Y = uniqueVertex[y3] - uniqueVertex[y1];
+		float edge2Z = uniqueVertex[z3] - uniqueVertex[z1];
+
+		float3 vNormal = Cross(float3(edge1X, edge1Y, edge1Z), float3(edge2X, edge2Y, edge2Z)).Normalized();
+		normal[i] = vNormal.x;
+		normal[i + 1] = vNormal.y;
+		normal[i + 2] = vNormal.z;
+	}
+
+	for(size_t i = 0; i < 36; i++)
+	{
+		LOG_DEBUG("%f",normal[i]);
+	}
+
+	glGenBuffers(1, (GLuint*) &(normalbufferId));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalbufferId);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 24 * 3, normal, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	RELEASE(colors);
@@ -257,14 +306,17 @@ void Mesh::SetUpSphere()
 	vector<GLfloat> vertices;
 	vector<GLushort> indices;
 	vector<GLfloat> texcoords;
+	vector<GLfloat> normals;
 
 	uint nVertices = rings * sectors;
 
 	vertices.resize(nVertices * 3);
 	texcoords.resize(nVertices * 2);
+	normals.resize(nVertices * 3);
 
 	vector<GLfloat>::iterator v = vertices.begin();
 	vector<GLfloat>::iterator t = texcoords.begin();
+	vector<GLfloat>::iterator n = normals.begin();
 	for(unsigned int r = 0; r < rings; r++)
 	{
 		for(unsigned int s = 0; s < sectors; s++)
@@ -279,6 +331,10 @@ void Mesh::SetUpSphere()
 			*v++ = x * radius;
 			*v++ = y * radius;
 			*v++ = z * radius;
+
+			*n++ = x;
+			*n++ = y;
+			*n++ = z;
 		}
 	}
 
@@ -293,6 +349,11 @@ void Mesh::SetUpSphere()
 	glGenBuffers(1, (GLuint*) &(vertexBufferId));
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * nVertices, vVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, (GLuint*) &(normalbufferId));
+	glBindBuffer(GL_ARRAY_BUFFER, normalbufferId);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * nVertices*3, ((void*)&normals[0]), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	indices.resize(rings * sectors * 4);

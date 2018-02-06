@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "Component.h"
 
+#include <float3.h>
 #include <GL/glew.h>
 
 struct Vertex
@@ -42,10 +43,13 @@ private:
 	GLenum drawMode;
 	uint vertexBufferId;
 	uint indicesBufferId;
+	uint normalbufferId;
 	uint verticesNumber;
 
 	bool changedMode = true;
 	MeshMode meshMode = MeshMode::CUBE;
+
+	static const float3 LIGHT_DIR;
 };
 
 #endif // !_MESH_H_

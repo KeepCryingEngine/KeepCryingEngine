@@ -108,6 +108,6 @@ void Material::SetUpDefaultShader()
 void Material::SetUpCartoonShader()
 {
 	uint vertexId = AddShader("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShader("Assets/Shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
+	uint fragmentId = AddShader("Assets/Shaders/cartoon.frag", GL_FRAGMENT_SHADER);
 	programId = App->shader->AddProgram({ vertexId, fragmentId });
 }

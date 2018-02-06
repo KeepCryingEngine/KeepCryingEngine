@@ -185,7 +185,7 @@ float4x4 ModuleCamera::GetProyectionMatrix()const
 void ModuleCamera::SetUpFrustum()
 {
 	frustum.type = PerspectiveFrustum;
-	frustum.pos = float3::unitY;
+	frustum.pos = float3(0,1,-10);
 	frustum.front = float3::unitZ;
 	frustum.up = float3::unitY;
 	frustum.nearPlaneDistance = 0.1f;
@@ -275,7 +275,7 @@ void ModuleCamera::RotateMouseOrbit(float deltaTimeS)
 	{
 		float3 orbitCenter = frustum.pos + (frustum.front * zoomAmount);
 		App->renderer->DrawCross(orbitCenter,zoomAmount);
-		MovementMouseDrag(deltaTimeS);
+		MovementMouseDrag(deltaTimeS*zoomAmount/10);
 		LookAt(orbitCenter);
 	}
 	else
@@ -294,7 +294,6 @@ void ModuleCamera::MovementMouseZoom(float shiftDeltaMultiplier)
 
 	float movementTemp = movementZoomSpeed * movementZ * shiftDeltaMultiplier;
 	zoomAmount -= movementTemp;
-	LOG_DEBUG("%f",zoomAmount);
 	if(zoomAmount >= 0.0f)
 	{
 		frustum.Translate(frustum.front * movementTemp);
