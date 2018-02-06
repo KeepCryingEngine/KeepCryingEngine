@@ -10,6 +10,7 @@
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleShader.h"
+#include "Camera.h"
 
 using namespace std;
 
@@ -83,9 +84,9 @@ update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(App->camera->GetProyectionMatrix().ptr());
+	glLoadMatrixf(App->camera->camera->GetProyectionMatrix().ptr());
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetViewMatrix().ptr());
+	glLoadMatrixf(App->camera->camera->GetViewMatrix().ptr());
 	
 	return update_status::UPDATE_CONTINUE;
 }

@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "Material.h"
 #include "Transform.h"
+#include "Camera.h"
 
 const float3 Mesh::LIGHT_DIR = {-1.0,1.0,0.0};
 
@@ -74,10 +75,10 @@ void Mesh::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	GLint modelView = glGetUniformLocation(progId, "model_view");
-	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->GetViewMatrix().ptr());
+	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->camera->GetViewMatrix().ptr());
 
 	GLint proyection = glGetUniformLocation(progId, "projection");
-	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->GetProyectionMatrix().ptr());
+	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
 
 	GLint transform = glGetUniformLocation(progId, "transform");
 	glUniformMatrix4fv(transform, 1, GL_FALSE, ((Transform*)gameObject->GetComponent(ComponentType::Transform))->GetAcumulatedTransform().Transposed().ptr());

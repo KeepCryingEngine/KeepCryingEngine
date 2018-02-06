@@ -10,7 +10,8 @@ enum class ComponentType
 {
 	Transform,
 	Mesh,
-	Material
+	Material,
+	Camera
 };
 
 class Component

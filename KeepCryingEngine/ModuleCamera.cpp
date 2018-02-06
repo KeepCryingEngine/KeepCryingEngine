@@ -1,5 +1,6 @@
 #include "ModuleCamera.h"
 
+#include "Camera.h"
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleRender.h"
@@ -16,8 +17,8 @@ ModuleCamera::~ModuleCamera()
 
 bool ModuleCamera::Init()
 {
-	SetUpFrustum();
-	
+	camera = new Camera();
+
 	return true;
 }
 
@@ -25,7 +26,7 @@ update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
 {
 	if(App->input->GetKey(SDL_SCANCODE_I) == KeyState::KEY_DOWN)
 	{
-		SetUpFrustum();
+		camera->SetUpFrustum();
 	}
 
 	float shiftDeltaMultiplier = deltaTimeS;
@@ -42,56 +43,11 @@ update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
 	return update_status::UPDATE_CONTINUE;
 }
 
-void ModuleCamera::SetMoveSpeed(float speed)
+bool ModuleCamera::CleanUp()
 {
-	movementSpeed = speed;
-}
+	RELEASE(camera);
 
-void ModuleCamera::SetRotationSpeed(float speed)
-{
-	rotationSpeed = speed;
-}
-
-void ModuleCamera::SetDragSpeed(float speed)
-{
-	movementDragSpeed = speed;
-}
-
-void ModuleCamera::SetOrbitSpeed(float speed)
-{
-	movementOrbitSpeed = speed;
-}
-
-void ModuleCamera::SetZoomSpeed(float speed)
-{
-	movementZoomSpeed = speed;
-}
-
-void ModuleCamera::SetFOV(float radians)
-{
-	frustum.horizontalFov = ComputeHorizontalFov(radians, (float)App->configuration.screenWidth, (float)App->configuration.screenHeight);
-	frustum.verticalFov = radians;
-}
-
-void ModuleCamera::SetAspectRatio()
-{
-	//Aspect ratio IS NOT set directly. To modify it, we must modify HorizontalFOV -> As a result, the Aspect Ratio (tan(hFOV/2)*tan(vFOV/2)) will be modified.
-	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->configuration.screenWidth, (float)App->configuration.screenHeight);
-}
-
-void ModuleCamera::SetNearPlane(float distance)
-{
-	frustum.nearPlaneDistance = distance;
-}
-
-void ModuleCamera::SetFarPlane(float distance)
-{
-	frustum.farPlaneDistance = distance;
-}
-
-void ModuleCamera::SetPosition(float3 position)
-{
-	frustum.pos = position;
+	return true;
 }
 
 float ModuleCamera::GetMoveSpeed() const
@@ -119,86 +75,29 @@ float ModuleCamera::GetZoomSpeed() const
 	return movementZoomSpeed;
 }
 
-float ModuleCamera::GetFOV() const
+void ModuleCamera::SetMoveSpeed(float speed)
 {
-	return frustum.verticalFov;
+	movementSpeed = speed;
 }
 
-float ModuleCamera::GetAspectRatio() const
+void ModuleCamera::SetRotationSpeed(float speed)
 {
-	return frustum.AspectRatio();
+	rotationSpeed = speed;
 }
 
-float ModuleCamera::GetNearPlane() const
+void ModuleCamera::SetDragSpeed(float speed)
 {
-	return frustum.nearPlaneDistance;
+	movementDragSpeed = speed;
 }
 
-float ModuleCamera::GetFarPlane() const
+void ModuleCamera::SetOrbitSpeed(float speed)
 {
-	return frustum.farPlaneDistance;
+	movementOrbitSpeed = speed;
 }
 
-float3 ModuleCamera::GetPosition() const
+void ModuleCamera::SetZoomSpeed(float speed)
 {
-	return frustum.pos;
-}
-
-float3 ModuleCamera::GetFrontVector() const
-{
-	return frustum.front;
-}
-
-float3 ModuleCamera::GetUpVector() const
-{
-	return frustum.up;
-}
-
-float3 ModuleCamera::GetSideVector() const
-{
-	return Cross(frustum.front, frustum.up);
-}
-
-void ModuleCamera::LookAt(float3 point)
-{
-	float3 lookAtDirectionNormalized = (point - frustum.pos).Normalized();
-
-	Quat lookAtRotation = Quat::LookAt(
-		frustum.front,
-		lookAtDirectionNormalized,
-		frustum.up,
-		float3::unitY
-	);
-
-	frustum.front = lookAtRotation.Mul(frustum.front).Normalized();
-	frustum.up = lookAtRotation.Mul(frustum.up).Normalized();
-}
-
-float4x4 ModuleCamera::GetViewMatrix()const
-{
-	return float4x4(frustum.ViewMatrix()).Transposed();
-}
-
-float4x4 ModuleCamera::GetProyectionMatrix()const
-{
-	return frustum.ProjectionMatrix().Transposed();
-}
-
-void ModuleCamera::SetUpFrustum()
-{
-	frustum.type = PerspectiveFrustum;
-	frustum.pos = float3(0,1,-10);
-	frustum.front = float3::unitZ;
-	frustum.up = float3::unitY;
-	frustum.nearPlaneDistance = 0.1f;
-	frustum.farPlaneDistance = 50.0f;
-	frustum.verticalFov = DegToRad(60.0f);
-	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->configuration.screenWidth, (float)App->configuration.screenHeight);
-}
-
-float ModuleCamera::ComputeHorizontalFov(float radians, float width, float height) const
-{
-	return 2.0f * atan(tan(radians / 2.0f) * (width / height));
+	movementZoomSpeed = speed;
 }
 
 void ModuleCamera::Rotation(float deltaTimeS)
@@ -274,21 +173,23 @@ void ModuleCamera::MovementMouseDrag(float shiftDeltaMultiplier)
 
 	translateVector.x *= -1.0f;
 
-	float3 upMovement = translateVector.y * frustum.up;
-	float3 rightMovement = translateVector.x * frustum.WorldRight();
+	float3 upMovement = translateVector.y * camera->GetUpVector(); // frustum.up;
+	float3 rightMovement = translateVector.x * camera->GetSideVector(); // frustum.WorldRight();
 
-	frustum.Translate(upMovement + rightMovement);
+	camera->Translate(upMovement + rightMovement);
+
+	// frustum.Translate(upMovement + rightMovement);
 }
 
 void ModuleCamera::RotateMouseOrbit(float deltaTimeS)
 {
 	//It rotate around a point "x" at distance "y" in front direction, "y" value increases with zoom out, and decreases with zoom in
-	if(zoomAmount > 1)
+	if(zoomAmount > 1.0f)
 	{
-		float3 orbitCenter = frustum.pos + (frustum.front * zoomAmount);
-		App->renderer->DrawCross(orbitCenter,zoomAmount);
-		MovementMouseDrag(deltaTimeS*zoomAmount/ORBIT_FORCE_REDUCTION);
-		LookAt(orbitCenter);
+		float3 orbitCenter = camera->GetPosition() + (camera->GetFrontVector() * zoomAmount);
+		App->renderer->DrawCross(orbitCenter, zoomAmount);
+		MovementMouseDrag(deltaTimeS * zoomAmount / ORBIT_FORCE_REDUCTION);
+		camera->LookAt(orbitCenter);
 	}
 	else
 	{
@@ -308,7 +209,8 @@ void ModuleCamera::MovementMouseZoom(float shiftDeltaMultiplier)
 	zoomAmount -= movementTemp;
 	if(zoomAmount >= 0.0f)
 	{
-		frustum.Translate(frustum.front * movementTemp);
+		camera->Translate(camera->GetFrontVector() * movementTemp);
+		// frustum.Translate(frustum.front * movementTemp);
 	}
 	else
 	{
@@ -320,9 +222,11 @@ void ModuleCamera::MovementWheelZoom(float shiftDeltaMultiplier)
 {
 	float movementTemp = movementZoomSpeed * shiftDeltaMultiplier;
 	zoomAmount -= movementTemp;
+
 	if(zoomAmount >= 0.0f)
 	{
-		frustum.Translate(frustum.front * movementTemp);
+		camera->Translate(camera->GetFrontVector() * movementTemp);
+		// frustum.Translate(frustum.front * movementTemp);
 	}
 	else
 	{
@@ -343,23 +247,26 @@ void ModuleCamera::RotateMouseRotation(float deltaTimeS)
 
 	if(translateVector.y > 0.0f)
 	{
-		if(frustum.front.y < 1.0f - movementDeltaOrbitSpeed)
+		if(camera->GetFrontVector().y < 1.0f - movementDeltaOrbitSpeed)
 		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.y * frustum.WorldRight(), movementDeltaOrbitSpeed));
+			rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.y * camera->GetSideVector(), movementDeltaOrbitSpeed));
 		}
 	}
 	else if(translateVector.y < 0.0f)
 	{
-		if(frustum.front.y > movementDeltaOrbitSpeed - 1.0f)
+		if(camera->GetFrontVector().y > movementDeltaOrbitSpeed - 1.0f)
 		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.y * frustum.WorldRight(), movementDeltaOrbitSpeed));
+			rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.y * camera->GetSideVector(), movementDeltaOrbitSpeed));
 		}
 	}
 
 	rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.x * float3::unitY, movementDeltaOrbitSpeed));
 
-	frustum.up = rotation.Mul(frustum.up).Normalized();
-	frustum.front = rotation.Mul(frustum.front).Normalized();
+	camera->SetUpVector(rotation.Mul(camera->GetUpVector().Normalized()));
+	camera->SetFrontVector(rotation.Mul(camera->GetFrontVector().Normalized()));
+
+	// frustum.up = rotation.Mul(frustum.up);
+	// frustum.front = rotation.Mul(frustum.front);
 }
 
 void ModuleCamera::MovementKeyBoard(float shiftDeltaMultiplier)
@@ -368,35 +275,36 @@ void ModuleCamera::MovementKeyBoard(float shiftDeltaMultiplier)
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_Q))
 	{
-		translateVector += frustum.up;
+		translateVector += camera->GetUpVector();
 	}
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_E))
 	{
-		translateVector -= frustum.up;
+		translateVector -= camera->GetUpVector();
 	}
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_W))
 	{
-		translateVector += frustum.front;
+		translateVector += camera->GetFrontVector();
 	}
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_S))
 	{
-		translateVector -= frustum.front;
+		translateVector -= camera->GetFrontVector();
 	}
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_D))
 	{
-		translateVector += frustum.WorldRight();
+		translateVector += camera->GetSideVector();
 	}
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_A))
 	{
-		translateVector -= frustum.WorldRight();
+		translateVector -= camera->GetSideVector();
 	}
 
-	frustum.Translate(translateVector * movementSpeed * shiftDeltaMultiplier);
+	camera->Translate(translateVector * movementSpeed * shiftDeltaMultiplier);
+	// frustum.Translate(translateVector * movementSpeed * shiftDeltaMultiplier);
 }
 
 void ModuleCamera::RotateKeyboard(float deltaTimeS)
@@ -406,17 +314,17 @@ void ModuleCamera::RotateKeyboard(float deltaTimeS)
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_UP))
 	{
-		if(frustum.front.y < 1.0f - rotationDeltaSpeed)
+		if(camera->GetFrontVector().y < 1.0f - rotationDeltaSpeed)
 		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(frustum.WorldRight(), rotationDeltaSpeed));
+			rotation = rotation.Mul(Quat::RotateAxisAngle(camera->GetSideVector(), rotationDeltaSpeed));
 		}
 	}
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_DOWN))
 	{
-		if(frustum.front.y > rotationDeltaSpeed - 1.0f)
+		if(camera->GetFrontVector().y > rotationDeltaSpeed - 1.0f)
 		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(frustum.WorldRight(), -rotationDeltaSpeed));
+			rotation = rotation.Mul(Quat::RotateAxisAngle(camera->GetSideVector(), -rotationDeltaSpeed));
 		}
 	}
 
@@ -430,6 +338,9 @@ void ModuleCamera::RotateKeyboard(float deltaTimeS)
 		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, -rotationDeltaSpeed));
 	}
 
-	frustum.up = rotation.Mul(frustum.up);
-	frustum.front = rotation.Mul(frustum.front);
+	camera->SetUpVector(rotation.Mul(camera->GetUpVector().Normalized()));
+	camera->SetFrontVector(rotation.Mul(camera->GetFrontVector().Normalized()));
+
+	// frustum.up = rotation.Mul(frustum.up);
+	// frustum.front = rotation.Mul(frustum.front);
 }

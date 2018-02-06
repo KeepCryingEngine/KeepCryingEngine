@@ -5,48 +5,31 @@
 
 #include "Module.h"
 
+class Camera;
+
 class ModuleCamera : public Module
 {
 public:
 	ModuleCamera();
-	~ModuleCamera();
+	virtual ~ModuleCamera();
 
 	bool Init() override;
 	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
-
-	void SetFOV(float radians);
-	void SetAspectRatio();
-	void SetNearPlane(float distance);
-	void SetFarPlane(float distance);
-	void SetPosition(float3 position);
-	void SetMoveSpeed(float speed);
-	void SetRotationSpeed(float speed);
-	void SetDragSpeed(float speed);
-	void SetOrbitSpeed(float speed);
-	void SetZoomSpeed(float speed);
+	bool CleanUp() override;
 
 	float GetMoveSpeed() const;
 	float GetRotationSpeed() const;
 	float GetDragSpeed() const;
 	float GetOrbitSpeed() const;
 	float GetZoomSpeed() const;
-	float GetFOV() const;
-	float GetAspectRatio() const;
-	float GetNearPlane() const;
-	float GetFarPlane() const;
-	float3 GetPosition() const;
-	float4x4 GetViewMatrix() const;
-	float4x4 GetProyectionMatrix() const;
 
-	float3 GetUpVector() const;
-	float3 GetSideVector() const;
-	float3 GetFrontVector() const;
-	void LookAt(float3 point);
+	void SetMoveSpeed(float speed);
+	void SetRotationSpeed(float speed);
+	void SetDragSpeed(float speed);
+	void SetOrbitSpeed(float speed);
+	void SetZoomSpeed(float speed);
 
 private:
-	void SetUpFrustum();
-	float ComputeHorizontalFov(float radians, float width, float height) const;
-
 	void Rotation(float deltaTimeS);
 	void Movement(float shiftDeltaMultiplier);
 
@@ -61,9 +44,10 @@ private:
 	void MovementKeyBoard(float shiftDeltaMultiplier);
 	void RotateKeyboard(float deltaTimeS);
 
-private:
-	Frustum frustum;
+public:
+	Camera* camera = nullptr;
 
+private:
 	float movementSpeed = 10.0f;
 	float rotationSpeed = 2.0f;
 	float movementDragSpeed = 3.0f;
