@@ -512,10 +512,14 @@ void ModuleUI::DrawHierarchyWindow()
 		selectedNodeID = App->scene->GetRoot()->GetId();
 	}
 
-	if (ImGui::BeginDragDropSource())
+	if(ImGui::BeginDragDropTarget())
 	{
-		//Enter here when you start dragging Root
-		ImGui::EndDragDropSource();
+		const ImGuiPayload* test = ImGui::AcceptDragDropPayload("GameObject");
+		if(test)
+		{
+			(*(GameObject**)test->Data)->SetParent(*App->scene->GetRoot());
+		}
+		ImGui::EndDragDropTarget();
 	}
 
 	if(opened)
@@ -570,56 +574,40 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 			ImGui::PushStyleColor(0, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
 		}
 
-		if (child->GetChildCount() > 0)
+		bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
+
+		if(ImGui::IsItemClicked())
 		{
-			bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
-
-			if(ImGui::IsItemClicked())
+			if(!inspectorWindow)
 			{
-				if(!inspectorWindow)
-				{
-					inspectorWindow = true;
-				}
-				selectedNodeID = child->GetId();
+				inspectorWindow = true;
 			}
+			selectedNodeID = child->GetId();
+		}
 
-			if (ImGui::BeginDragDropSource())
+		if (ImGui::BeginDragDropSource())
+		{		
+			ImGui::SetDragDropPayload("GameObject", &child, sizeof(GameObject*));
+			ImGui::EndDragDropSource();
+		}
+
+		if(ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* test = ImGui::AcceptDragDropPayload("GameObject");
+			if(test)
 			{
-				//Enter here when you start dragging this Item
-				ImGui::EndDragDropSource();
+				(*(GameObject**)test->Data)->SetParent(*child);
 			}
+			ImGui::EndDragDropTarget();
+		}
 
-			if(opened)
+		if(opened)
+		{
+			if(child->GetChildCount() > 0)
 			{
 				PrintChildrenOnHierarchy(child->GetChildren());
-				ImGui::TreePop();
 			}
-
-		}
-		else
-		{
-			bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
-
-			if (ImGui::IsItemClicked())
-			{
-				if (!inspectorWindow)
-				{
-					inspectorWindow = true;
-				}
-
-				selectedNodeID = child->GetId();
-			}
-
-			if (ImGui::BeginDragDropSource())
-			{
-				//Enter here when you start dragging this Item
-				ImGui::EndDragDropSource();
-			}
-
-			if (opened)
-			{
-				ImGui::TreePop();
-			}
+			ImGui::TreePop();
 		}
 
 		if(!child->IsEnabled())
