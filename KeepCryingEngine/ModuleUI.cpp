@@ -526,11 +526,14 @@ void ModuleUI::DrawInspectorWindow()
 	static int potato = 0;
 	ImGui::Begin("Inspector", &inspectorWindow, ImGuiWindowFlags_MenuBar);
 
+
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
 	if(ImGui::Button("Delete GameObject"))
 	{
 		inspectorWindow = false;
 		App->scene->Destroy(*App->scene->Get(selectedNodeID));
 	}
+	ImGui::PopStyleColor();
 
 	if(selectedNodeID != 0)
 	{
