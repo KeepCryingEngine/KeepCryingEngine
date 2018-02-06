@@ -5,6 +5,8 @@
 #include "ModuleRender.h"
 
 const float ModuleCamera::SHIFT_MULTIPLIER = 10.0f;
+const float ModuleCamera::WHEEL_FORCE = 10.0f;
+const float ModuleCamera::ORBIT_FORCE_REDUCTION = 10.0f;
 
 ModuleCamera::ModuleCamera()
 { }
@@ -240,10 +242,20 @@ void ModuleCamera::MovementMouse(float shiftDeltaMultiplier)
 	bool leftPressed = App->input->GetMouseButtonDown(SDL_BUTTON_LEFT);
 	bool rightPressed = App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT);
 	bool altPressed = App->input->GetKeyPressed(SDL_SCANCODE_LALT) || App->input->GetKeyPressed(SDL_SCANCODE_RALT);
+	float wheelMotion = App->input->GetWheelMotion();
+
+	if(wheelMotion == 1)
+	{
+		MovementWheelZoom(shiftDeltaMultiplier*WHEEL_FORCE);
+	}
+	if(wheelMotion == -1)
+	{
+		MovementWheelZoom(-shiftDeltaMultiplier*WHEEL_FORCE);
+	}
 
 	if(altPressed)
 	{
-		if(rightPressed)
+		if(rightPressed && wheelMotion == 0)
 		{
 			MovementMouseZoom(shiftDeltaMultiplier);
 		}
@@ -275,7 +287,7 @@ void ModuleCamera::RotateMouseOrbit(float deltaTimeS)
 	{
 		float3 orbitCenter = frustum.pos + (frustum.front * zoomAmount);
 		App->renderer->DrawCross(orbitCenter,zoomAmount);
-		MovementMouseDrag(deltaTimeS*zoomAmount/10);
+		MovementMouseDrag(deltaTimeS*zoomAmount/ORBIT_FORCE_REDUCTION);
 		LookAt(orbitCenter);
 	}
 	else
@@ -293,6 +305,20 @@ void ModuleCamera::MovementMouseZoom(float shiftDeltaMultiplier)
 	float movementZ = translateVector.y - translateVector.x;
 
 	float movementTemp = movementZoomSpeed * movementZ * shiftDeltaMultiplier;
+	zoomAmount -= movementTemp;
+	if(zoomAmount >= 0.0f)
+	{
+		frustum.Translate(frustum.front * movementTemp);
+	}
+	else
+	{
+		zoomAmount = 0.0f;
+	}
+}
+
+void ModuleCamera::MovementWheelZoom(float shiftDeltaMultiplier)
+{
+	float movementTemp = movementZoomSpeed * shiftDeltaMultiplier;
 	zoomAmount -= movementTemp;
 	if(zoomAmount >= 0.0f)
 	{

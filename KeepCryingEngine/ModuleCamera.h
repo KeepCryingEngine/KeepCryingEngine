@@ -53,6 +53,7 @@ private:
 	void MovementMouse(float shiftDeltaMultiplier);
 	void MovementMouseDrag(float shiftDeltaMultiplier);
 	void MovementMouseZoom(float shiftDeltaMultiplier);
+	void MovementWheelZoom(float shiftDeltaMultiplier);
 	void RotateMouse(float deltaTimeS);
 	void RotateMouseOrbit(float deltaTimeS);
 	void RotateMouseRotation(float deltaTimeS);
@@ -72,6 +73,8 @@ private:
 	float zoomAmount = 10.0f;
 
 	static const float SHIFT_MULTIPLIER;
+	static const float WHEEL_FORCE;
+	static const float ORBIT_FORCE_REDUCTION;
 };
 
 #endif // !_MODULECAMERA_H_

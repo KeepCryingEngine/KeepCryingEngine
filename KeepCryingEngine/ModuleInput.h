@@ -75,6 +75,7 @@ public:
 
 	const float2& GetMouseMotion() const;
 	const float2& GetMousePosition() const;
+	const float& GetWheelMotion() const;
 
 private:
 	bool windowEvents[(uint)EventWindow::WE_COUNT];
@@ -82,6 +83,7 @@ private:
 	KeyState mouse_buttons[NUM_MOUSE_BUTTONS];
 	float2 mouse_motion;
 	float2 mouse;
+	float wheel_motion;
 };
 
 #endif // !_MODULEINPUT_H_

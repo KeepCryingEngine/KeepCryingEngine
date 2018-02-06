@@ -10,7 +10,7 @@
 
 #define MAX_KEYS 300
 
-ModuleInput::ModuleInput() : Module(), mouse({ 0, 0 }), mouse_motion({ 0,0 })
+ModuleInput::ModuleInput() : Module(), mouse({ 0, 0 }), mouse_motion({ 0,0 }),wheel_motion(0)
 {
 	keyboard = new KeyState[MAX_KEYS];
 	memset(keyboard, (uint)KeyState::KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
@@ -47,6 +47,7 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 	static SDL_Event event;
 
 	mouse_motion = { 0, 0 };
+	wheel_motion = 0;
 	memset(windowEvents, false, (uint)EventWindow::WE_COUNT * sizeof(bool));
 
 	const Uint8* keys = SDL_GetKeyboardState(nullptr);
@@ -135,6 +136,9 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 				mouse.x = (float)event.motion.x;
 				mouse.y = (float)event.motion.y;
 				break;
+			case SDL_MOUSEWHEEL:
+				wheel_motion = event.wheel.y;
+				break;
 		}
 	}
 
@@ -176,6 +180,11 @@ bool ModuleInput::GetWindowEvent(EventWindow ev) const
 const float2& ModuleInput::GetMousePosition() const
 {
 	return mouse;
+}
+
+const float & ModuleInput::GetWheelMotion() const
+{
+	return wheel_motion;
 }
 
 const float2& ModuleInput::GetMouseMotion() const
