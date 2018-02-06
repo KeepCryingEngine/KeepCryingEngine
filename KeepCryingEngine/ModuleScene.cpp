@@ -156,7 +156,7 @@ void ModuleScene::CheckToStart()
 
 void ModuleScene::CheckToDestroy()
 {
-	for(GameObject* gameObject : toDestroy)
+	for(GameObject* &gameObject : toDestroy)
 	{
 		// If in toDestroy there are both P and C, where C is the child of P, then P will also release C
 		// Then, it is necessary to check if the current game object has been released or not
@@ -174,7 +174,7 @@ void ModuleScene::CheckToDestroy()
 	toDestroy.clear();
 }
 
-void ModuleScene::DestroyAndRelease(GameObject* gameObject) const
+void ModuleScene::DestroyAndRelease(GameObject* &gameObject) const
 {
 	// Iterative
 
@@ -182,14 +182,16 @@ void ModuleScene::DestroyAndRelease(GameObject* gameObject) const
 
 	// Recursive
 
-	for(GameObject* gameObjectChild : gameObject->GetChildren())
-	{
-		DestroyAndRelease(gameObjectChild);
-	}
+	vector<GameObject*> childrenToDelete = gameObject->GetChildren();
 
 	if(gameObject->GetParent() != nullptr)
 	{
-		gameObject->GetParent()->DeleteChild(*gameObject);
+		gameObject->GetParent()->DeleteChildFromList(*gameObject);
+	}
+
+	for(GameObject* gameObjectChild : childrenToDelete)
+	{
+		DestroyAndRelease(gameObjectChild);
 	}
 
 	gameObject->OnDestroy();

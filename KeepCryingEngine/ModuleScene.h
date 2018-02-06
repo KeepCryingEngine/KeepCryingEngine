@@ -40,7 +40,7 @@ private:
 
 	void Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const;
 
-	void DestroyAndRelease(GameObject* gameObject) const;
+	void DestroyAndRelease(GameObject* &gameObject) const;
 
 private:
 	GameObject* root = nullptr;
