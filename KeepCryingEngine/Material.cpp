@@ -10,9 +10,7 @@ using namespace std;
 
 Material::Material():Component(ComponentType::Material)
 {
-	AddShader("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
-	AddShader("Assets/Shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
-
+	SetUpDefaultShader();
 	textureId = App->texture->LoadCheckerTexture();
 }
 
@@ -35,27 +33,25 @@ void Material::DrawUI()
 
 		ImGui::NewLine();
 
-		static char buff2[252] = {};
-		static int shaderMode = 0;
-		ImGui::InputText("##addShader", buff2, 252); ImGui::SameLine();
-		ImGui::Combo("Type", &shaderMode, "Vertex\0Fragment");
-		if(ImGui::Button("Add Shader"))
+		int tmpShaderMode = (int)shaderMode;
+
+		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Cartoon"))
 		{
+			shaderMode = (ShaderMode)tmpShaderMode;
 			switch(shaderMode)
 			{
-				case 0:
+				case ShaderMode::DEFAULT:
 				{
-					shaders.push_back(AddShader(buff2, GL_VERTEX_SHADER));
+					SetUpDefaultShader();
 				}
-				break;
-				case 1:
+					break;
+				case ShaderMode::CARTOON:
 				{
-					shaders.push_back(AddShader(buff2, GL_FRAGMENT_SHADER));
+					SetUpCartoonShader();
 				}
-				break;
+					break;
 			}
 		}
-		
 	}
 }
 
@@ -99,19 +95,19 @@ uint Material::AddShader(const char* path, GLenum shaderType)
 	}
 
 	t.close();
-
-	shaders.push_back(id);
-	BuildProgram();
 	return id;
 }
 
-void Material::RemoveShader(uint id)
+void Material::SetUpDefaultShader()
 {
-	shaders.remove(id);
-	BuildProgram();
+	uint vertexId =AddShader("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShader("Assets/Shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
+	programId = App->shader->AddProgram({ vertexId, fragmentId });
 }
 
-void Material::BuildProgram()
+void Material::SetUpCartoonShader()
 {
-	programId = App->shader->AddProgram(shaders);
+	uint vertexId = AddShader("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShader("Assets/Shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
+	programId = App->shader->AddProgram({ vertexId, fragmentId });
 }

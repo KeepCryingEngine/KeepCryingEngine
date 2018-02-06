@@ -8,6 +8,12 @@
 
 #include "Globals.h"
 
+enum class ShaderMode
+{
+	DEFAULT,
+	CARTOON
+};
+
 class Material : public Component
 {
 public:
@@ -25,17 +31,16 @@ public:
 private:
 	void SetTexture(const char* path);
 	uint AddShader(const char* path, GLenum shaderType);
-	void RemoveShader(uint id);
 
 private:
-	void BuildProgram();
+	void SetUpDefaultShader();
+	void SetUpCartoonShader();
 	
 
 private:
 	uint textureId;
 	uint programId;
-	std::list<uint> shaders;
-
+	ShaderMode shaderMode = ShaderMode::DEFAULT;
 };
 
 #endif // !_MATERIAL_H_
