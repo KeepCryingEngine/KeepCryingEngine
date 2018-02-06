@@ -24,7 +24,7 @@ void Material::DrawUI()
 	if(ImGui::CollapsingHeader("Material"))
 	{
 		static char materialBuffer[252] = {};
-		ImGui::InputText("Name", materialBuffer, 252);
+		ImGui::InputText("##setTexture", materialBuffer, 252); ImGui::SameLine();
 		if(ImGui::Button("Set Texture"))
 		{
 			string s = "Assets/";
@@ -37,7 +37,7 @@ void Material::DrawUI()
 
 		static char buff2[252] = {};
 		static int shaderMode = 0;
-		ImGui::InputText("Name", buff2, 252);
+		ImGui::InputText("##addShader", buff2, 252); ImGui::SameLine();
 		ImGui::Combo("Type", &shaderMode, "Vertex\0Fragment");
 		if(ImGui::Button("Add Shader"))
 		{
@@ -55,6 +55,7 @@ void Material::DrawUI()
 				break;
 			}
 		}
+		
 	}
 }
 
