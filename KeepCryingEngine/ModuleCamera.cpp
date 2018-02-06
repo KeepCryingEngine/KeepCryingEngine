@@ -170,8 +170,8 @@ void ModuleCamera::LookAt(float3 point)
 		float3::unitY
 	);
 
-	frustum.front = lookAtRotation.Mul(frustum.front);
-	frustum.up = lookAtRotation.Mul(frustum.up);
+	frustum.front = lookAtRotation.Mul(frustum.front).Normalized();
+	frustum.up = lookAtRotation.Mul(frustum.up).Normalized();
 }
 
 float4x4 ModuleCamera::GetViewMatrix()const
@@ -358,8 +358,8 @@ void ModuleCamera::RotateMouseRotation(float deltaTimeS)
 
 	rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.x * float3::unitY, movementDeltaOrbitSpeed));
 
-	frustum.up = rotation.Mul(frustum.up);
-	frustum.front = rotation.Mul(frustum.front);
+	frustum.up = rotation.Mul(frustum.up).Normalized();
+	frustum.front = rotation.Mul(frustum.front).Normalized();
 }
 
 void ModuleCamera::MovementKeyBoard(float shiftDeltaMultiplier)
