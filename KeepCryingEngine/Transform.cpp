@@ -4,6 +4,8 @@
 
 #include "GameObject.h"
 
+using namespace std;
+
 Transform::Transform() :Component(ComponentType::Transform), position(float3::zero), rotation(Quat::identity), scale(float3::one)
 { }
 
@@ -37,4 +39,9 @@ float4x4 Transform::GetAcumulatedTransform()
 	{
 		return float4x4::identity;
 	}
+}
+
+vector<ComponentType> Transform::GetProhibitedComponents() const
+{
+	return { ComponentType::Transform };
 }

@@ -11,10 +11,13 @@ class Transform : public Component
 {
 public:
 	Transform();
-	~Transform();
+	virtual ~Transform();
 
 	void DrawUI()override;
 	float4x4 GetAcumulatedTransform();
+
+	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
+
 public:
 	float3 position;
 	Quat rotation;

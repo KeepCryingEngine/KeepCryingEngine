@@ -1,6 +1,7 @@
 #ifndef _COMPONENT_H_
 #define _COMPONENT_H_
 
+#include <vector>
 #include <imgui.h>
 
 class GameObject;
@@ -15,7 +16,7 @@ enum class ComponentType
 class Component
 {
 public:
-	Component(ComponentType type) : enabled(true),type(type) {}
+	Component(ComponentType type) : enabled(true), type(type) {}
 	virtual ~Component() {}
 
 	virtual void Awake(){};
@@ -29,8 +30,13 @@ public:
 			RealUpdate(deltaTimeS,realDeltaTimeS);
 		}
 	};
+
 	virtual void RealUpdate(float deltaTimeS, float realDeltaTimeS){};
+	
 	virtual void DrawUI(){};
+
+	virtual std::vector<ComponentType> GetNeededComponents() const { return { }; }
+	virtual std::vector<ComponentType> GetProhibitedComponents() const { return { }; }
 
 public:
 	bool enabled;

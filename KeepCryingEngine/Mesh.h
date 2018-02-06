@@ -30,6 +30,9 @@ public:
 
 	void SetMeshMode(MeshMode mode);
 
+	virtual std::vector<ComponentType> GetNeededComponents() const override;
+	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
+
 private:
 	void SetUpCube();
 	void SetUpSphere();
