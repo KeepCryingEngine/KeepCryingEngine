@@ -29,7 +29,7 @@ update_status ModuleScene::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 {
-	CheckToStart();
+	//CheckToStart();
 
 	Update(root, deltaTimeS, realDeltaTimeS);
 
@@ -61,7 +61,7 @@ GameObject* ModuleScene::Get(unsigned long long int gameObjectId) const
 		return root;
 	}
 
-	return root->GetSelfOrChild(gameObjectId);
+	return toReturn;
 }
 
 GameObject* ModuleScene::AddEmpty(GameObject& parent, const char* name)
@@ -69,7 +69,7 @@ GameObject* ModuleScene::AddEmpty(GameObject& parent, const char* name)
 	GameObject* gameObject = new GameObject(name);
 	gameObject->SetParent(parent);
 
-	toStart.push_back(gameObject);
+	//toStart.push_back(gameObject);
 
 	return gameObject;
 }
@@ -94,10 +94,10 @@ GameObject* ModuleScene::AddSphere(GameObject& parent)
 	return gameObject;
 }
 
-void ModuleScene::Add(GameObject& gameObject)
-{
-	toStart.push_back(&gameObject);
-}
+//void ModuleScene::Add(GameObject& gameObject)
+//{
+//	toStart.push_back(&gameObject);
+//}
 
 void ModuleScene::Destroy(GameObject& gameObject)
 {
@@ -144,15 +144,15 @@ void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDel
 	*/
 }
 
-void ModuleScene::CheckToStart()
-{
-	for(GameObject* gameObject : toStart)
-	{
-		// gameObject->Start();
-	}
-
-	toStart.clear();
-}
+//void ModuleScene::CheckToStart()
+//{
+//	for(GameObject* gameObject : toStart)
+//	{
+//		// gameObject->Start();
+//	}
+//
+//	toStart.clear();
+//}
 
 void ModuleScene::CheckToDestroy()
 {

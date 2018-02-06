@@ -31,11 +31,11 @@ public:
 	GameObject* AddCube(GameObject& parent);
 	GameObject* AddSphere(GameObject& parent);
 
-	void Add(GameObject& gameObject);
+	//void Add(GameObject& gameObject);
 	void Destroy(GameObject& gameObject);
 
 private:
-	void CheckToStart();
+	//void CheckToStart();
 	void CheckToDestroy();
 
 	void Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const;
@@ -45,7 +45,7 @@ private:
 private:
 	GameObject* root = nullptr;
 
-	std::list<GameObject*> toStart;
+	//std::list<GameObject*> toStart;
 	std::list<GameObject*> toDestroy;
 
 	unsigned long long int currentGameObjectId = 0;
