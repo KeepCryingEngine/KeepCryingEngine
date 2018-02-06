@@ -78,16 +78,14 @@ GameObject* GameObject::GetSelfOrChild(unsigned long long int gameObjectId) cons
 	return GetChild(gameObjectId);
 }
 
-void GameObject::DeleteChild(GameObject & childToRemove)
+void GameObject::DeleteChildFromList(GameObject & childToRemove)
 {
 	if(this->children.size() > 0)
 	{
-		for(uint i = 0; i < this->children.size(); i++)
+		vector<GameObject*>::iterator childParentIterator = find(this->children.begin(), this->children.end(), &childToRemove);
+		if(childParentIterator != this->children.end())
 		{
-			if(this->children[i] == &childToRemove)
-			{
-				this->children.erase(this->children.begin() + (i));
-			}
+			this->children.erase(childParentIterator);
 		}
 	}
 }

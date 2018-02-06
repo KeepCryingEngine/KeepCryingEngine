@@ -31,7 +31,7 @@ public:
 
 	GameObject* GetChild(unsigned long long int gameObjectId) const;
 	GameObject* GetSelfOrChild(unsigned long long int gameObjectId) const;
-	void DeleteChild(GameObject& childToRemove);
+	void DeleteChildFromList(GameObject& childToRemove);
 
 	const std::string& GetName() const;
 
