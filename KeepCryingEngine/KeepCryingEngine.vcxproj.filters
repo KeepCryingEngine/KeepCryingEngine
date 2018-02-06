@@ -61,6 +61,9 @@
     <ClCompile Include="ModuleTexture.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -137,6 +140,9 @@
     <ClInclude Include="ComponentFabric.h" />
     <ClInclude Include="ModuleTexture.h">
       <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

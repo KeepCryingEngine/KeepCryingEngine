@@ -27,7 +27,7 @@ public:
 	virtual ~Mesh();
 
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS)override;
-	void DrawUI()override;
+	void DrawUI() override;
 
 	void SetMeshMode(MeshMode mode);
 

@@ -5,6 +5,7 @@
 #include "Transform.h"
 #include "Material.h"
 #include "Mesh.h"
+#include "Camera.h"
 
 Component * ComponentFabric::CreateComponent(ComponentType type)
 {
@@ -19,6 +20,9 @@ Component * ComponentFabric::CreateComponent(ComponentType type)
 			break;
 		case ComponentType::Mesh:
 			component = new Mesh();
+			break;
+		case ComponentType::Camera:
+			component = new Camera();
 			break;
 	}
 	assert(component);

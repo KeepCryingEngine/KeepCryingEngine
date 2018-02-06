@@ -12,6 +12,7 @@
 #include "ModuleRender.h"
 #include "ModuleScene.h"
 #include "GameObject.h"
+#include "Camera.h"
 
 ModuleUI::ModuleUI()
 { }
@@ -29,14 +30,14 @@ bool ModuleUI::Init()
 
 bool ModuleUI::Start()
 {
-	nearPlane = App->camera->GetNearPlane();
-	farPlane = App->camera->GetFarPlane();
-	aspectRatio = App->camera->GetAspectRatio();
-	verticalFOV = App->camera->GetFOV();
-	position = App->camera->GetPosition();
-	up = App->camera->GetUpVector();
-	front = App->camera->GetFrontVector();
-	side = App->camera->GetSideVector();
+	nearPlane = App->camera->camera->GetNearPlane();
+	farPlane = App->camera->camera->GetFarPlane();
+	aspectRatio = App->camera->camera->GetAspectRatio();
+	verticalFOV = App->camera->camera->GetFOV();
+	position = App->camera->camera->GetPosition();
+	up = App->camera->camera->GetUpVector();
+	front = App->camera->camera->GetFrontVector();
+	side = App->camera->camera->GetSideVector();
 	movementSpeed = App->camera->GetMoveSpeed();
 	rotationSpeed = App->camera->GetRotationSpeed();
 	dragSpeed = App->camera->GetDragSpeed();
@@ -387,23 +388,23 @@ void ModuleUI::DrawCameraWindow()
 	ImGui::Begin("Camera Controls", &cameraWindow, ImGuiWindowFlags_MenuBar);
 	ImGui::CloseCurrentPopup();
 	ImGui::InputFloat3("Front", front.ptr(), 2);
-	front = App->camera->GetFrontVector();
+	front = App->camera->camera->GetFrontVector();
 	ImGui::InputFloat3("Up", up.ptr(), 2);
-	up = App->camera->GetUpVector();
+	up = App->camera->camera->GetUpVector();
 	ImGui::InputFloat3("Side", side.ptr(), 2);
-	side = App->camera->GetSideVector();
+	side = App->camera->camera->GetSideVector();
 	ImGui::InputFloat3("Position", position.ptr(), 2);
 
 	ImGui::NewLine();
 
-	position = App->camera->GetPosition();
+	position = App->camera->camera->GetPosition();
 	ImGui::DragFloat("Near plane", &nearPlane, 0.01f, 0.01f, 2.0f, "%.2f");
-	App->camera->SetNearPlane(nearPlane);
+	App->camera->camera->SetNearPlane(nearPlane);
 	ImGui::DragFloat("Far plane", &farPlane, 2.0f, 50.0f, 300.0f, "%.2f");
-	App->camera->SetFarPlane(farPlane);
+	App->camera->camera->SetFarPlane(farPlane);
 	ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi);
-	App->camera->SetFOV(verticalFOV);
-	aspectRatio = App->camera->GetAspectRatio();
+	App->camera->camera->SetFOV(verticalFOV);
+	aspectRatio = App->camera->camera->GetAspectRatio();
 	ImGui::InputFloat("Aspect ratio", &aspectRatio);
 	ImGui::End();
 }
