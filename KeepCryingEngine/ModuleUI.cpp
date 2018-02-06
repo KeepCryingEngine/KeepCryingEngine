@@ -512,6 +512,12 @@ void ModuleUI::DrawHierarchyWindow()
 		selectedNodeID = App->scene->GetRoot()->GetId();
 	}
 
+	if (ImGui::BeginDragDropSource())
+	{
+		//Enter here when you start dragging Root
+		ImGui::EndDragDropSource();
+	}
+
 	if(opened)
 	{
 		PrintChildrenOnHierarchy(App->scene->GetRoot()->GetChildren());
@@ -577,6 +583,12 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 				selectedNodeID = child->GetId();
 			}
 
+			if (ImGui::BeginDragDropSource())
+			{
+				//Enter here when you start dragging this Item
+				ImGui::EndDragDropSource();
+			}
+
 			if(opened)
 			{
 				PrintChildrenOnHierarchy(child->GetChildren());
@@ -588,9 +600,9 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 		{
 			bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
 
-			if(ImGui::IsItemClicked())
+			if (ImGui::IsItemClicked())
 			{
-				if(!inspectorWindow)
+				if (!inspectorWindow)
 				{
 					inspectorWindow = true;
 				}
@@ -598,7 +610,13 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 				selectedNodeID = child->GetId();
 			}
 
-			if(opened)
+			if (ImGui::BeginDragDropSource())
+			{
+				//Enter here when you start dragging this Item
+				ImGui::EndDragDropSource();
+			}
+
+			if (opened)
 			{
 				ImGui::TreePop();
 			}
