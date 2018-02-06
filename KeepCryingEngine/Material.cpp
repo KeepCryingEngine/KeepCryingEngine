@@ -81,7 +81,11 @@ vector<ComponentType> Material::GetProhibitedComponents() const
 
 void Material::SetTexture(const char* path)
 {
-	textureId = App->texture->LoadTexture(path);
+	uint newTextureID = App->texture->LoadTexture(path);
+	if(newTextureID != 0)
+	{
+		textureId = newTextureID;
+	}
 }
 
 uint Material::AddShader(const char* path, GLenum shaderType)
