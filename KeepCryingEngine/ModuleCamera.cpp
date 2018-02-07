@@ -236,34 +236,34 @@ void ModuleCamera::MovementWheelZoom(float shiftDeltaMultiplier)
 
 void ModuleCamera::RotateMouseRotation(float deltaTimeS)
 {
-	float2 translateVector = App->input->GetMouseMotion();
+	float2 motionVector = App->input->GetMouseMotion();
 
-	translateVector *= movementDragSpeed * deltaTimeS;
+	motionVector *= movementDragSpeed * deltaTimeS;
 
-	translateVector.x *= -1.0f;
+	motionVector.x *= -1.0f;
 
 	Quat rotation = Quat::identity;
 	float movementDeltaOrbitSpeed = movementOrbitSpeed * deltaTimeS;
 
-	if(translateVector.y > 0.0f)
+	if(motionVector.y > 0.0f)
 	{
 		if(camera->GetFrontVector().y < 1.0f - movementDeltaOrbitSpeed)
 		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.y * camera->GetSideVector(), movementDeltaOrbitSpeed));
+			rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.y * camera->GetSideVector(), movementDeltaOrbitSpeed));
 		}
 	}
-	else if(translateVector.y < 0.0f)
+	else if(motionVector.y < 0.0f)
 	{
 		if(camera->GetFrontVector().y > movementDeltaOrbitSpeed - 1.0f)
 		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.y * camera->GetSideVector(), movementDeltaOrbitSpeed));
+			rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.y * camera->GetSideVector(), movementDeltaOrbitSpeed));
 		}
 	}
 
-	rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.x * float3::unitY, movementDeltaOrbitSpeed));
+	rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.x * float3::unitY, movementDeltaOrbitSpeed));
 
-	camera->SetUpVector(rotation.Mul(camera->GetUpVector().Normalized()));
-	camera->SetFrontVector(rotation.Mul(camera->GetFrontVector().Normalized()));
+	camera->SetUpVector(rotation.Mul(camera->GetUpVector()).Normalized());
+	camera->SetFrontVector(rotation.Mul(camera->GetFrontVector()).Normalized());
 
 	// frustum.up = rotation.Mul(frustum.up);
 	// frustum.front = rotation.Mul(frustum.front);
@@ -338,8 +338,8 @@ void ModuleCamera::RotateKeyboard(float deltaTimeS)
 		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, -rotationDeltaSpeed));
 	}
 
-	camera->SetUpVector(rotation.Mul(camera->GetUpVector().Normalized()));
-	camera->SetFrontVector(rotation.Mul(camera->GetFrontVector().Normalized()));
+	camera->SetUpVector(rotation.Mul(camera->GetUpVector()).Normalized());
+	camera->SetFrontVector(rotation.Mul(camera->GetFrontVector()).Normalized());
 
 	// frustum.up = rotation.Mul(frustum.up);
 	// frustum.front = rotation.Mul(frustum.front);
