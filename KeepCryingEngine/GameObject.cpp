@@ -154,7 +154,7 @@ void GameObject::OnDestroy()
 	components.clear();
 }
 
-void GameObject::UpdateAABB(const AABB & newAABB)
+void GameObject::SetAABB(const AABB & newAABB)
 {
 	aabb = newAABB;
 }

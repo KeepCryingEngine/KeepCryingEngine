@@ -42,8 +42,6 @@ void Mesh::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		changedMode = false;
 	}
 
-	gameObject->UpdateAABB(CalculateAABBForMesh());
-
 	App->renderer->AddToDrawBuffer(*this);
 }
 
@@ -118,6 +116,8 @@ void Mesh::SetVertices(float * newVertices, size_t nVertices)
 		float3 vertex(newVertices[currentIndex, currentIndex + 1, currentIndex + 2]);
 		vertices.push_back(vertex);
 	}
+
+	gameObject->SetAABB(CalculateAABBForMesh());
 }
 
 void Mesh::SetUpCube()

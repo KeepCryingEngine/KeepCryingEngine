@@ -51,7 +51,7 @@ public:
 	// void OnDisable() {}
 	void OnDestroy();
 
-	void UpdateAABB(const AABB& newAABB);
+	void SetAABB(const AABB& newAABB);
 
 private:
 	void CheckToStart();
