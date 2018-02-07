@@ -262,8 +262,8 @@ void ModuleCamera::RotateMouseRotation(float deltaTimeS)
 
 	rotation = rotation.Mul(Quat::RotateAxisAngle(translateVector.x * float3::unitY, movementDeltaOrbitSpeed));
 
-	camera->SetUpVector(rotation.Mul(camera->GetUpVector().Normalized()));
-	camera->SetFrontVector(rotation.Mul(camera->GetFrontVector().Normalized()));
+	camera->SetUpVector(rotation.Mul(camera->GetUpVector()).Normalized());
+	camera->SetFrontVector(rotation.Mul(camera->GetFrontVector()).Normalized());
 
 	// frustum.up = rotation.Mul(frustum.up);
 	// frustum.front = rotation.Mul(frustum.front);
@@ -338,8 +338,8 @@ void ModuleCamera::RotateKeyboard(float deltaTimeS)
 		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, -rotationDeltaSpeed));
 	}
 
-	camera->SetUpVector(rotation.Mul(camera->GetUpVector().Normalized()));
-	camera->SetFrontVector(rotation.Mul(camera->GetFrontVector().Normalized()));
+	camera->SetUpVector(rotation.Mul(camera->GetUpVector()).Normalized());
+	camera->SetFrontVector(rotation.Mul(camera->GetFrontVector()).Normalized());
 
 	// frustum.up = rotation.Mul(frustum.up);
 	// frustum.front = rotation.Mul(frustum.front);
