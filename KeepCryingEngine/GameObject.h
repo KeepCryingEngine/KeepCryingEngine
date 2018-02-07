@@ -52,6 +52,7 @@ public:
 	void OnDestroy();
 
 	void SetAABB(const AABB& newAABB);
+	AABB &GetAABB();
 
 private:
 	void CheckToStart();

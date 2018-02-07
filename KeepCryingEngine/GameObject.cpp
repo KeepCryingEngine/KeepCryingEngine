@@ -159,6 +159,11 @@ void GameObject::SetAABB(const AABB & newAABB)
 	aabb = newAABB;
 }
 
+AABB & GameObject::GetAABB()
+{
+	return aabb;
+}
+
 Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
 {
 	Component* component = ComponentFabric::CreateComponent(type);
