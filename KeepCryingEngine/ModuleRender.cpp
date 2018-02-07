@@ -209,8 +209,11 @@ void ModuleRender::DrawFrustrum(Camera & camera)
 	GLint proyection = glGetUniformLocation(progId, "projection");
 	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
 
-	GLint transform = glGetUniformLocation(progId, "transform");
-	glUniformMatrix4fv(transform, 1, GL_FALSE, ((Transform*)camera.gameObject->GetComponent(ComponentType::Transform))->GetAcumulatedTransformWithoutScale().Transposed().ptr());
+	GLint transformUniformId = glGetUniformLocation(progId, "transform");
+	Transform* transform = (Transform*)camera.gameObject->GetComponent(ComponentType::Transform);
+	float4x4 transformMatrix = transform->GetModelMatrix();
+	transformMatrix.RemoveScale();
+	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, transformMatrix.Transposed().ptr());
 
 	GLint width = glGetUniformLocation(progId, "ourColor");
 	glUniform4f(width, 1.0f, 0.0f, 0.0f, 1.0f);
@@ -270,7 +273,7 @@ void ModuleRender::DrawFromBuffer(Mesh& mesh)
 	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
 
 	GLint transform = glGetUniformLocation(progId, "transform");
-	glUniformMatrix4fv(transform, 1, GL_FALSE, ((Transform*)mesh.gameObject->GetComponent(ComponentType::Transform))->GetAcumulatedTransform().Transposed().ptr());
+	glUniformMatrix4fv(transform, 1, GL_FALSE, ((Transform*)mesh.gameObject->GetComponent(ComponentType::Transform))->GetModelMatrix().Transposed().ptr());
 
 	GLint light = glGetUniformLocation(progId, "lightDir");
 	if(light != -1)
