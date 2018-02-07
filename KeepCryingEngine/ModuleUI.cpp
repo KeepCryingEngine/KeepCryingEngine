@@ -353,6 +353,11 @@ void ModuleUI::CallEntityCreation()
 		App->scene->AddSphere(*App->scene->Get(selectedNodeID));
 		addSphereGameObject = false;
 	}
+	if(addCameraGameObject)
+	{
+		App->scene->AddCamera(*App->scene->Get(selectedNodeID));
+		addCameraGameObject = false;
+	}
 }
 
 void ModuleUI::CallWindows()
@@ -400,7 +405,7 @@ void ModuleUI::DrawCameraWindow()
 	position = App->camera->camera->GetPosition();
 	ImGui::DragFloat("Near plane", &nearPlane, 0.01f, 0.01f, 2.0f, "%.2f");
 	App->camera->camera->SetNearPlane(nearPlane);
-	ImGui::DragFloat("Far plane", &farPlane, 2.0f, 50.0f, 300.0f, "%.2f");
+	ImGui::DragFloat("Far plane", &farPlane, 2.0f, 10.0f, 1000.0f, "%.2f");
 	App->camera->camera->SetFarPlane(farPlane);
 	ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi);
 	App->camera->camera->SetFOV(verticalFOV);
@@ -488,6 +493,10 @@ void ModuleUI::DrawHierarchyWindow()
 			if(ImGui::MenuItem("Sphere", nullptr, &addSphereGameObject))
 			{
 				addSphereGameObject = true;
+			}
+			if(ImGui::MenuItem("Camera", nullptr, &addCameraGameObject))
+			{
+				addCameraGameObject = true;
 			}
 			ImGui::EndMenu();
 		}

@@ -18,6 +18,7 @@ ModuleCamera::~ModuleCamera()
 bool ModuleCamera::Init()
 {
 	camera = new Camera();
+	camera->SetUpFrustum(float3(0, 1, -10), Quat::identity, 0.1f, 300.0f);
 
 	return true;
 }
@@ -26,7 +27,7 @@ update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
 {
 	if(App->input->GetKey(SDL_SCANCODE_I) == KeyState::KEY_DOWN)
 	{
-		camera->SetUpFrustum();
+		camera->SetUpFrustum(float3(0, 1, -10), Quat::identity);
 	}
 
 	float shiftDeltaMultiplier = deltaTimeS;
@@ -343,4 +344,19 @@ void ModuleCamera::RotateKeyboard(float deltaTimeS)
 
 	// frustum.up = rotation.Mul(frustum.up);
 	// frustum.front = rotation.Mul(frustum.front);
+}
+
+void ModuleCamera::EnableCamera(Camera* camera)
+{
+	if(enabledCamera != nullptr)
+	{
+		enabledCamera->enabled = false;
+	}
+
+	if(camera != nullptr)
+	{
+		camera->enabled = true;
+	}
+
+	enabledCamera = camera;
 }

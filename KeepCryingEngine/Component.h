@@ -42,7 +42,7 @@ public:
 public:
 	bool enabled;
 	ComponentType type;
-	GameObject* gameObject;
+	GameObject* gameObject = nullptr;
 };
 
 #endif // !_COMPONENT_H_

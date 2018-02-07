@@ -29,6 +29,10 @@ public:
 	void SetOrbitSpeed(float speed);
 	void SetZoomSpeed(float speed);
 
+	void EnableCamera(Camera* camera);
+
+	// Camera* GetEnabledCamera() const;
+
 private:
 	void Rotation(float deltaTimeS);
 	void Movement(float shiftDeltaMultiplier);
@@ -55,6 +59,8 @@ private:
 	float movementZoomSpeed = 3.0f;
 
 	float zoomAmount = 10.0f;
+
+	Camera* enabledCamera = nullptr;
 
 	static const float SHIFT_MULTIPLIER;
 	static const float WHEEL_FORCE;

@@ -30,6 +30,7 @@ public:
 
 	GameObject* AddCube(GameObject& parent);
 	GameObject* AddSphere(GameObject& parent);
+	GameObject* AddCamera(GameObject& parent);
 
 	//void Add(GameObject& gameObject);
 	void Destroy(GameObject& gameObject);

@@ -94,6 +94,15 @@ GameObject* ModuleScene::AddSphere(GameObject& parent)
 	return gameObject;
 }
 
+GameObject* ModuleScene::AddCamera(GameObject& parent)
+{
+	GameObject* gameObject = AddEmpty(parent, "Camera");
+
+	gameObject->AddComponent(ComponentType::Camera, true);
+
+	return gameObject;
+}
+
 //void ModuleScene::Add(GameObject& gameObject)
 //{
 //	toStart.push_back(&gameObject);

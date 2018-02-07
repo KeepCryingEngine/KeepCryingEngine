@@ -3,17 +3,46 @@
 #include "GameObject.h"
 #include "Application.h"
 #include "ModuleRender.h"
+#include "Transform.h"
+#include "ModuleCamera.h"
+
+using namespace std;
 
 Camera::Camera() : Component(ComponentType::Camera)
 {
-	SetUpFrustum();
+	// SetUpFrustum();
+	SetUpFrustum(float3::zero, Quat::identity);
 }
 
 Camera::~Camera()
 { }
 
+void Camera::Awake()
+{
+	App->camera->EnableCamera(this);
+}
+
+/* void Camera::Start()
+{
+	Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
+	SetUpFrustum(transform->position, transform->rotation);
+} */
+
 void Camera::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
+	Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
+
+	float4x4 position = transform->GetAcumulatedTransformWithoutScale();
+	float3x3 rotation = transform->GetAcumulatedRotation();
+	
+	// LOG_DEBUG("%s", position.ToString().c_str());
+
+	frustum.pos = float3(position.At(0, 3), position.At(1, 3), position.At(2, 3));
+	frustum.front = rotation.Mul(float3::unitZ);
+	frustum.up = rotation.Mul(float3::unitY);
+
+	// LOG_DEBUG("%s", frustum.pos.ToString().c_str());
+
 	App->renderer->DrawFrustrum(*this);
 }
 
@@ -135,15 +164,20 @@ float Camera::GetWidth() const
 	return frustum.orthographicWidth;
 }
 
-void Camera::SetUpFrustum()
+int Camera::GetNumberOfPoints() const
+{
+	return numberOfPoints;
+}
+
+void Camera::SetUpFrustum(const float3& position, const Quat& rotation, float nearPlaneDistance, float farPlaneDistance, float fov)
 {
 	frustum.type = PerspectiveFrustum;
-	frustum.pos = float3(0, 1, -10);
-	frustum.front = float3::unitZ;
-	frustum.up = float3::unitY;
-	frustum.nearPlaneDistance = 0.1f;
-	frustum.farPlaneDistance = 50.0f;
-	frustum.verticalFov = DegToRad(60.0f);
+	frustum.pos = position; // float3(0, 1, -10);
+	frustum.front = rotation.Mul(float3::unitZ); // float3::unitZ;
+	frustum.up = rotation.Mul(float3::unitY); // float3::unitY;
+	frustum.nearPlaneDistance = nearPlaneDistance;
+	frustum.farPlaneDistance = farPlaneDistance;
+	frustum.verticalFov = DegToRad(fov);
 	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->configuration.screenWidth, (float)App->configuration.screenHeight);
 	SetUpFrustumBuffer();
 }
@@ -152,7 +186,13 @@ void Camera::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Camera"))
 	{
-		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		if(ImGui::Checkbox("Active", &enabled))
+		{
+			App->camera->EnableCamera(enabled ? this : nullptr);
+		}
+		
+		ImGui::SameLine();
+		
 		if(ImGui::Button("Delete Component"))
 		{
 			gameObject->RemoveComponent(this);
@@ -181,8 +221,25 @@ void Camera::SetUpFrustumBuffer()
 	frustum.GetCornerPoints(points);
 	assert(points);
 
+	float3 orderedPoints[] = {
+		points[0],points[2],
+		points[2],points[6],
+		points[6],points[4],
+		points[4],points[0],
+		points[1],points[3],
+		points[3],points[7],
+		points[7],points[5],
+		points[5],points[1],
+		points[0],points[1],
+		points[2],points[3],
+		points[6],points[7],
+		points[4],points[5],
+	};
+
+	numberOfPoints=sizeof(orderedPoints)/sizeof(float3);
+
 	glGenBuffers(1, (GLuint*) &(frustumBufferId));
 	glBindBuffer(GL_ARRAY_BUFFER, frustumBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * 8, points, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * numberOfPoints, orderedPoints, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

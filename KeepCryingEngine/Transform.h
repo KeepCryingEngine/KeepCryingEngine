@@ -13,8 +13,11 @@ public:
 	Transform();
 	virtual ~Transform();
 
-	void DrawUI()override;
+	void DrawUI() override;
 	float4x4 GetAcumulatedTransform();
+	
+	float3x3 GetAcumulatedRotation();
+	float4x4 GetAcumulatedTransformWithoutScale();
 
 	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
 
