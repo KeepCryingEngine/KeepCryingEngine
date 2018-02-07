@@ -4,6 +4,7 @@
 #include <list>
 #include <vector>
 
+#include <AABB.h>
 
 #include "Component.h"
 
@@ -49,7 +50,9 @@ public:
 	// void LateUpdate() {}
 	// void OnDisable() {}
 	void OnDestroy();
-	
+
+	void UpdateAABB(const AABB& newAABB);
+
 private:
 	void CheckToStart();
 	void CheckToDestroy();
@@ -70,6 +73,8 @@ private:
 
 	bool enable = true;
 	unsigned long long int id;
+
+	AABB aabb;
 };
 
 #endif

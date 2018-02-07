@@ -6,6 +6,8 @@
 
 #include <GL/glew.h>
 
+#include <AABB.h>
+
 struct Vertex
 {
 	float position[3];
@@ -40,12 +42,16 @@ public:
 	uint GetVerticesNumber() const;
 
 private:
+	void SetVertices(float* newVertices, size_t size);
 	void SetUpCube();
 	void SetUpSphere();
 	void FillVerticesData(uint n, const float* positions, const float* colors, const float* texCoords, Vertex* vertices) const;
 
+	AABB CalculateAABBForMesh();
+
 private:
 	GLenum drawMode;
+	std::vector<float3> vertices;
 	uint vertexBufferId;
 	uint indicesBufferId;
 	uint normalBufferId;

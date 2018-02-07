@@ -5,6 +5,8 @@
 #include <math.h>
 #include <vector>
 
+#include <MathGeoLib.h>
+
 #include "GameObject.h"
 #include "Application.h"
 #include "ModuleRender.h"
@@ -39,6 +41,8 @@ void Mesh::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		}
 		changedMode = false;
 	}
+
+	gameObject->UpdateAABB(CalculateAABBForMesh());
 
 	App->renderer->AddToDrawBuffer(*this);
 }
@@ -104,12 +108,26 @@ uint Mesh::GetVerticesNumber() const
 	return verticesNumber;
 }
 
+void Mesh::SetVertices(float * newVertices, size_t nVertices)
+{
+	vertices.clear();
+	vertices.resize(nVertices);
+	for (size_t i = 0; i < nVertices; i++)
+	{
+		const int currentIndex = i * 3;
+		float3 vertex(newVertices[currentIndex, currentIndex + 1, currentIndex + 2]);
+		vertices.push_back(vertex);
+	}
+}
+
 void Mesh::SetUpCube()
 {
 	drawMode = GL_TRIANGLES;
 
 	float size = 1.0f;
-	float uniqueVertex[8 * 3 * 3] =
+
+	const size_t nVertices = 8 * 3;
+	float uniqueVertex[nVertices*3] =
 	{
 		-size, -size, -size, // 0 Front bottom left
 		size, -size, -size,  // 1 Front bottom right
@@ -141,6 +159,8 @@ void Mesh::SetUpCube()
 		size, size, size,  // 22 Top top right
 		-size, size, size  // 23 Top top left
 	};
+
+	SetVertices(uniqueVertex, nVertices);
 
 	float uv[24 * 2] =
 	{
@@ -311,6 +331,8 @@ void Mesh::SetUpSphere()
 	Vertex* vVertices = (Vertex*)malloc(sizeof(Vertex) * nVertices * 3);
 	FillVerticesData(nVertices, vertices.data(), colors, texcoords.data(), vVertices);
 
+	SetVertices(vertices.data(), vertices.size()/3);
+
 	glGenBuffers(1, (GLuint*) &(vertexBufferId));
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * nVertices, vVertices, GL_STATIC_DRAW);
@@ -365,4 +387,13 @@ void Mesh::FillVerticesData(uint n, const float* positions, const float* colors,
 			vertices[i].uv[j] = texCoords[i * 2 + j];
 		}
 	}
+}
+
+AABB Mesh::CalculateAABBForMesh()
+{
+	AABB aabb;
+	aabb.SetNegativeInfinity();
+	if (vertices.size() == 0)
+	aabb.Enclose(vertices.data(), vertices.size());
+	return aabb;
 }

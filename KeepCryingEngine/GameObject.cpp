@@ -14,6 +14,8 @@ GameObject::GameObject(const string& name) : name(name)
 {
 	id = App->scene->GetNewGameObjectId();
 	AddComponent(ComponentType::Transform, true);
+
+	aabb.SetNegativeInfinity();
 }
 
 GameObject::~GameObject()
@@ -150,6 +152,11 @@ void GameObject::OnDestroy()
 	}
 
 	components.clear();
+}
+
+void GameObject::UpdateAABB(const AABB & newAABB)
+{
+	aabb = newAABB;
 }
 
 Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
