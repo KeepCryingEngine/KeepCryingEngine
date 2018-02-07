@@ -31,6 +31,7 @@ public:
 	float4x4 GetProyectionMatrix() const;
 	uint GetFrustumBufferId() const;
 	float GetWidth()const;
+	int GetNumberOfPoints()const;
 
 	const float3& GetUpVector() const;
 	float3 GetSideVector() const;
@@ -55,6 +56,7 @@ private:
 private:
 	Frustum frustum;
 	uint frustumBufferId = 0;
+	int numberOfPoints;
 };
 
 #endif

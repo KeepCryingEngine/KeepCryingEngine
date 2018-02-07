@@ -135,6 +135,11 @@ float Camera::GetWidth() const
 	return frustum.orthographicWidth;
 }
 
+int Camera::GetNumberOfPoints() const
+{
+	return numberOfPoints;
+}
+
 void Camera::SetUpFrustum()
 {
 	frustum.type = PerspectiveFrustum;
@@ -181,8 +186,25 @@ void Camera::SetUpFrustumBuffer()
 	frustum.GetCornerPoints(points);
 	assert(points);
 
+	float3 orderedPoints[] = {
+		points[0],points[2],
+		points[2],points[6],
+		points[6],points[4],
+		points[4],points[0],
+		points[1],points[3],
+		points[3],points[7],
+		points[7],points[5],
+		points[5],points[1],
+		points[0],points[1],
+		points[2],points[3],
+		points[6],points[7],
+		points[4],points[5],
+	};
+
+	numberOfPoints=sizeof(orderedPoints)/sizeof(float3);
+
 	glGenBuffers(1, (GLuint*) &(frustumBufferId));
 	glBindBuffer(GL_ARRAY_BUFFER, frustumBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * 8, points, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * numberOfPoints, orderedPoints, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

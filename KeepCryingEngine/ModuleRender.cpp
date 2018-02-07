@@ -110,6 +110,7 @@ update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 	{
 		DrawFromBuffer(*mesh);
 	}
+	drawBuffer.clear();
 
 	SDL_GL_SwapWindow(App->window->window);
 
@@ -189,7 +190,7 @@ void ModuleRender::AddToDrawBuffer(Mesh & mesh)
 void ModuleRender::DrawFrustrum(Camera & camera)
 {
 	uint progId = App->shader->cameraProgramId;
-	glUseProgram(progId);
+	//glUseProgram(progId);
 
 	glBindBuffer(GL_ARRAY_BUFFER, camera.GetFrustumBufferId());
 
@@ -208,13 +209,13 @@ void ModuleRender::DrawFrustrum(Camera & camera)
 	GLint width = glGetUniformLocation(progId, "width");
 	glUniform1f(width, camera.GetWidth());
 
-	glDrawArrays(GL_LINE_STRIP, 0, 8);
+	glDrawArrays(GL_LINES, 0, camera.GetNumberOfPoints());
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glDisableVertexAttribArray(0);
 
-	glUseProgram(0);
+	//glUseProgram(0);
 }
 
 void ModuleRender::SetUpLight() const
