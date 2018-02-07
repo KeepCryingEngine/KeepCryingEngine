@@ -432,11 +432,4 @@ void Mesh::CalculateAABBForMesh(float * newVertices, size_t nVertices)
 	{
 		originalaabb.Enclose(vertices.data(), vertices.size());
 	}
-	AABB aabb;
-	aabb.SetNegativeInfinity();
-	if (vertices.size() != 0)
-	{
-		aabb.Enclose(vertices.data(), vertices.size());
-	}
-	return aabb;
 }
