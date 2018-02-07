@@ -15,13 +15,16 @@ public:
 
 	bool Init() override;
 
+	uint AddShaderPath(const char* path, GLenum shaderType);
 	uint AddShader(const char* source, GLenum shaderType);
 	
 	uint AddProgram(const std::list<uint>& shaders);
 	uint AddProgram(std::initializer_list<uint> shaders);
+private:
+	void SetUpCameraProgram();
 
 public:
-	uint defaultProgramId = 0;
+	uint cameraProgramId = 0;
 };
 
 #endif

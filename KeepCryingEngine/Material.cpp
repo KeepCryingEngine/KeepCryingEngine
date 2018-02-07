@@ -86,16 +86,7 @@ void Material::SetTexture(const char* path)
 
 uint Material::AddShader(const char* path, GLenum shaderType)
 {
-	uint id = 0;
-	ifstream t(path);
-	if(t.good())
-	{
-		string str((istreambuf_iterator<char>(t)), istreambuf_iterator<char>());
-		id = App->shader->AddShader(str.c_str(), shaderType);
-	}
-
-	t.close();
-	return id;
+	return App->shader->AddShaderPath(path,shaderType);
 }
 
 void Material::SetUpDefaultShader()

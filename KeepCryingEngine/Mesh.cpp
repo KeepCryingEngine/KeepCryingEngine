@@ -5,14 +5,9 @@
 #include <math.h>
 #include <vector>
 
-#include "Application.h"
-#include "ModuleCamera.h"
 #include "GameObject.h"
-#include "Material.h"
-#include "Transform.h"
-#include "Camera.h"
-
-const float3 Mesh::LIGHT_DIR = {-1.0,1.0,0.0};
+#include "Application.h"
+#include "ModuleRender.h"
 
 using namespace std;
 
@@ -45,63 +40,7 @@ void Mesh::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		changedMode = false;
 	}
 
-	// glMatrixMode(GL_MODELVIEW);
-
-	// glPushMatrix();
-	Material* material = (Material*)(gameObject->GetComponent(ComponentType::Material));
-	uint progId = material->GetProgramId();
-	uint textId = material->GetTextureId();
-
-	glUseProgram(progId);
-	if(textId != 0)
-	{
-		GLint texture = glGetUniformLocation(progId, "ourTexture");
-		glUniform1i(texture, 0);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textId);
-	}
-
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(7 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(3);
-	glBindBuffer(GL_ARRAY_BUFFER, normalbufferId);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-	GLint modelView = glGetUniformLocation(progId, "model_view");
-	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->camera->GetViewMatrix().ptr());
-
-	GLint proyection = glGetUniformLocation(progId, "projection");
-	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
-
-	GLint transform = glGetUniformLocation(progId, "transform");
-	glUniformMatrix4fv(transform, 1, GL_FALSE, ((Transform*)gameObject->GetComponent(ComponentType::Transform))->GetAcumulatedTransform().Transposed().ptr());
-
-	GLint light = glGetUniformLocation(progId, "lightDir");
-	if(light != -1)
-	{
-		glUniform3f(light, LIGHT_DIR.x, LIGHT_DIR.y, LIGHT_DIR.z);
-	}
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
-	glDrawElements(drawMode, verticesNumber, GL_UNSIGNED_SHORT, nullptr);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(2);
-
-	glUseProgram(0);
-
-	// glPopMatrix();
+	App->renderer->AddToDrawBuffer(*this);
 }
 
 void Mesh::DrawUI()
@@ -138,6 +77,31 @@ vector<ComponentType> Mesh::GetNeededComponents() const
 vector<ComponentType> Mesh::GetProhibitedComponents() const
 {
 	return { ComponentType::Mesh };
+}
+
+GLenum Mesh::GetDrawMode()
+{
+	return drawMode;
+}
+
+uint Mesh::GetVertexBufferId() const
+{
+	return vertexBufferId;
+}
+
+uint Mesh::GetIndicesBufferId() const
+{
+	return indicesBufferId;
+}
+
+uint Mesh::GetNormalBufferId() const
+{
+	return normalBufferId;
+}
+
+uint Mesh::GetVerticesNumber() const
+{
+	return verticesNumber;
 }
 
 void Mesh::SetUpCube()
@@ -285,8 +249,8 @@ void Mesh::SetUpCube()
 		LOG_DEBUG("%f",normal[i]);
 	}
 
-	glGenBuffers(1, (GLuint*) &(normalbufferId));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalbufferId);
+	glGenBuffers(1, (GLuint*) &(normalBufferId));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalBufferId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 24 * 3, normal, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -352,8 +316,8 @@ void Mesh::SetUpSphere()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * nVertices, vVertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	glGenBuffers(1, (GLuint*) &(normalbufferId));
-	glBindBuffer(GL_ARRAY_BUFFER, normalbufferId);
+	glGenBuffers(1, (GLuint*) &(normalBufferId));
+	glBindBuffer(GL_ARRAY_BUFFER, normalBufferId);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * nVertices*3, ((void*)&normals[0]), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 

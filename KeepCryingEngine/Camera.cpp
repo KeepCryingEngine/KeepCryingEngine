@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Application.h"
+#include "ModuleRender.h"
 
 Camera::Camera() : Component(ComponentType::Camera)
 {
@@ -10,6 +11,11 @@ Camera::Camera() : Component(ComponentType::Camera)
 
 Camera::~Camera()
 { }
+
+void Camera::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+{
+	App->renderer->DrawFrustrum(*this);
+}
 
 void Camera::Translate(const float3& offset)
 {
@@ -119,6 +125,16 @@ float4x4 Camera::GetProyectionMatrix() const
 	return frustum.ProjectionMatrix().Transposed();
 }
 
+uint Camera::GetFrustumBufferId() const
+{
+	return frustumBufferId;
+}
+
+float Camera::GetWidth() const
+{
+	return frustum.orthographicWidth;
+}
+
 void Camera::SetUpFrustum()
 {
 	frustum.type = PerspectiveFrustum;
@@ -129,6 +145,7 @@ void Camera::SetUpFrustum()
 	frustum.farPlaneDistance = 50.0f;
 	frustum.verticalFov = DegToRad(60.0f);
 	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->configuration.screenWidth, (float)App->configuration.screenHeight);
+	SetUpFrustumBuffer();
 }
 
 void Camera::DrawUI()
@@ -156,4 +173,16 @@ std::vector<ComponentType> Camera::GetProhibitedComponents() const
 float Camera::ComputeHorizontalFov(float radians, float width, float height) const
 {
 	return 2.0f * atan(tan(radians / 2.0f) * (width / height));
+}
+
+void Camera::SetUpFrustumBuffer()
+{
+	float3 points[8];
+	frustum.GetCornerPoints(points);
+	assert(points);
+
+	glGenBuffers(1, (GLuint*) &(frustumBufferId));
+	glBindBuffer(GL_ARRAY_BUFFER, frustumBufferId);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * 8, points, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

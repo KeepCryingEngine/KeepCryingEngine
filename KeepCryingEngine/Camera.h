@@ -4,12 +4,15 @@
 #include <MathGeoLib.h>
 
 #include "Component.h"
+#include "Globals.h"
 
 class Camera : public Component
 {
 public:
 	Camera();
 	virtual ~Camera();
+
+	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
 	void Translate(const float3& offset);
 
@@ -26,6 +29,8 @@ public:
 	const float3& GetPosition() const;
 	float4x4 GetViewMatrix() const;
 	float4x4 GetProyectionMatrix() const;
+	uint GetFrustumBufferId() const;
+	float GetWidth()const;
 
 	const float3& GetUpVector() const;
 	float3 GetSideVector() const;
@@ -45,9 +50,11 @@ public:
 
 private:
 	float ComputeHorizontalFov(float radians, float width, float height) const;
+	void SetUpFrustumBuffer();
 
 private:
 	Frustum frustum;
+	uint frustumBufferId = 0;
 };
 
 #endif

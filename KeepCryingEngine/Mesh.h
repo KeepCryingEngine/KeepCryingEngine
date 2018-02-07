@@ -4,7 +4,6 @@
 #include "Globals.h"
 #include "Component.h"
 
-#include <float3.h>
 #include <GL/glew.h>
 
 struct Vertex
@@ -34,6 +33,12 @@ public:
 	virtual std::vector<ComponentType> GetNeededComponents() const override;
 	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
 
+	GLenum GetDrawMode();
+	uint GetVertexBufferId() const;
+	uint GetIndicesBufferId() const;
+	uint GetNormalBufferId() const;
+	uint GetVerticesNumber() const;
+
 private:
 	void SetUpCube();
 	void SetUpSphere();
@@ -43,13 +48,11 @@ private:
 	GLenum drawMode;
 	uint vertexBufferId;
 	uint indicesBufferId;
-	uint normalbufferId;
+	uint normalBufferId;
 	uint verticesNumber;
 
 	bool changedMode = true;
 	MeshMode meshMode = MeshMode::CUBE;
-
-	static const float3 LIGHT_DIR;
 };
 
 #endif // !_MESH_H_
