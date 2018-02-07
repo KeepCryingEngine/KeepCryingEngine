@@ -6,7 +6,12 @@
 
 using namespace std;
 
-Transform::Transform() :Component(ComponentType::Transform), localPosition(float3::zero), localRotation(Quat::identity), localScale(float3::one)
+Transform::Transform() : 
+	Component(ComponentType::Transform), 
+	localPosition(float3::zero), 
+	localRotation(Quat::identity), 
+	localScale(float3::one),
+	dirty(true)
 { }
 
 Transform::~Transform()
@@ -16,15 +21,27 @@ void Transform::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Transform"))
 	{
-		dirty |= ImGui::DragFloat3(" Position", localPosition.ptr(),0.1f);
+		float3 localPosition = this->localPosition;
+		if (ImGui::DragFloat3(" Position", localPosition.ptr(), 0.1f))
+		{
+			SetLocalPosition(localPosition);
+			SetDirty();
+		}
+
 		float3 angles = RadToDeg(localRotation.ToEulerXYZ());
 		if(ImGui::DragFloat3(" Rotation", angles.ptr()), 0.1f)
 		{
 			angles = DegToRad(angles);
 			SetLocalRotation(Quat::FromEulerXYZ(angles.x, angles.y, angles.z));
-			dirty = true;
+			SetDirty();
 		}
-		dirty |= ImGui::DragFloat3(" Scale", localScale.ptr(), 0.1f);
+
+		float3 localScale = this->localScale;
+		if (ImGui::DragFloat3(" Scale", localScale.ptr(), 0.1f))
+		{
+			SetLocalScale(localScale);
+			SetDirty();
+		}
 	}
 }
 
@@ -50,19 +67,19 @@ const float3 & Transform::GetLocalScale() const
 
 void Transform::SetLocalPosition(const float3 & position)
 {
-	dirty = true;
+	SetDirty();
 	localPosition = position;
 }
 
 void Transform::SetLocalRotation(const Quat & rotation)
 {
-	dirty = true;
+	SetDirty();
 	localRotation = rotation;
 }
 
 void Transform::SetLocalScale(const float3 & scale)
 {
-	dirty = true;
+	SetDirty();
 	localScale = scale;
 }
 
@@ -90,21 +107,21 @@ const float3 & Transform::GetWorldScale() const
 */
 void Transform::SetWorldPosition(const float3 & position)
 {
-	dirty = true;
+	SetDirty();
 	float3 worldPositionDelta = position - worldPosition;
 	localPosition = localPosition + worldPositionDelta;
 }
 
 void Transform::SetWorldRotation(const Quat & rotation)
 {
-	dirty = true;
+	SetDirty();
 	Quat worldRotationDelta = rotation.Mul(worldRotation.Inverted());
 	worldRotation = localRotation.Mul(worldRotationDelta);
 }
 
 void Transform::SetWorldScale(const float3 & scale)
 {
-	dirty = true;
+	SetDirty();
 	float3 worldScaleDelta = scale - worldScale;
 	localScale = localScale + worldScaleDelta;
 }
@@ -113,6 +130,16 @@ const float4x4 & Transform::GetModelMatrix() const
 {
 	RecalculateIfNecessary();
 	return modelMatrix;
+}
+
+void Transform::SetDirty() const
+{
+	dirty = true;
+	for (GameObject* child : gameObject->GetChildren())
+	{
+		Transform* transform = (Transform*)child->GetComponent(ComponentType::Transform);
+		transform->SetDirty();
+	}
 }
 
 float4x4 Transform::GetLocalMatrix() const
