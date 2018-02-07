@@ -12,6 +12,9 @@ public:
 	Camera();
 	virtual ~Camera();
 
+	virtual void Awake() override;
+	// virtual void Start() override;
+
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
 	void Translate(const float3& offset);
@@ -42,7 +45,7 @@ public:
 
 	void LookAt(const float3& point);
 	
-	void SetUpFrustum();
+	void SetUpFrustum(const float3& position = float3::zero, const Quat& rotation = Quat::identity, float nearPlaneDistance = 0.1f, float farPlaneDistance = 50.0f, float fov = 60.0f);
 
 	void DrawUI() override;
 

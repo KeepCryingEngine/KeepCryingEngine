@@ -244,10 +244,10 @@ void Mesh::SetUpCube()
 		normal[i + 2] = vNormal.z;
 	}
 
-	for(size_t i = 0; i < 36; i++)
+	/* for(size_t i = 0; i < 36; i++)
 	{
 		LOG_DEBUG("%f",normal[i]);
-	}
+	} */
 
 	glGenBuffers(1, (GLuint*) &(normalBufferId));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalBufferId);

@@ -189,25 +189,31 @@ void ModuleRender::AddToDrawBuffer(Mesh & mesh)
 
 void ModuleRender::DrawFrustrum(Camera & camera)
 {
+	float lineWidth;
+
+	glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+
+	glLineWidth(5.0f);
+
 	uint progId = App->shader->cameraProgramId;
-	//glUseProgram(progId);
+	glUseProgram(progId);
 
 	glBindBuffer(GL_ARRAY_BUFFER, camera.GetFrustumBufferId());
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 
 	GLint modelView = glGetUniformLocation(progId, "model_view");
-	glUniformMatrix4fv(modelView, 1, GL_FALSE, camera.GetViewMatrix().ptr());
+	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->camera->GetViewMatrix().ptr());
 
 	GLint proyection = glGetUniformLocation(progId, "projection");
-	glUniformMatrix4fv(proyection, 1, GL_FALSE, camera.GetProyectionMatrix().ptr());
+	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
 
 	GLint transform = glGetUniformLocation(progId, "transform");
-	glUniformMatrix4fv(transform, 1, GL_FALSE, ((Transform*)camera.gameObject->GetComponent(ComponentType::Transform))->GetAcumulatedTransform().Transposed().ptr());
+	glUniformMatrix4fv(transform, 1, GL_FALSE, ((Transform*)camera.gameObject->GetComponent(ComponentType::Transform))->GetAcumulatedTransformWithoutScale().Transposed().ptr());
 
-	GLint width = glGetUniformLocation(progId, "width");
-	glUniform1f(width, camera.GetWidth());
+	GLint width = glGetUniformLocation(progId, "ourColor");
+	glUniform4f(width, 1.0f, 0.0f, 0.0f, 1.0f);
 
 	glDrawArrays(GL_LINES, 0, camera.GetNumberOfPoints());
 
@@ -215,7 +221,9 @@ void ModuleRender::DrawFrustrum(Camera & camera)
 
 	glDisableVertexAttribArray(0);
 
-	//glUseProgram(0);
+	glUseProgram(0);
+
+	glLineWidth(lineWidth);
 }
 
 void ModuleRender::SetUpLight() const
