@@ -32,14 +32,14 @@ void Camera::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
 
-	float4x4 position = transform->GetAcumulatedTransformWithoutScale();
-	float3x3 rotation = transform->GetAcumulatedRotation();
+	const float3& worldPosition = transform->GetWorldPosition();
+	const Quat& worldRotation = transform->GetWorldRotation();
 	
 	// LOG_DEBUG("%s", position.ToString().c_str());
 
-	frustum.pos = float3(position.At(0, 3), position.At(1, 3), position.At(2, 3));
-	frustum.front = rotation.Mul(float3::unitZ);
-	frustum.up = rotation.Mul(float3::unitY);
+	frustum.pos = worldPosition;
+	frustum.front = worldRotation.Mul(float3::unitZ);
+	frustum.up = worldRotation.Mul(float3::unitY);
 
 	// LOG_DEBUG("%s", frustum.pos.ToString().c_str());
 
