@@ -16,14 +16,15 @@ void Transform::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Transform"))
 	{
-		ImGui::DragFloat3(" Position", localPosition.ptr(),0.1f);
+		dirty |= ImGui::DragFloat3(" Position", localPosition.ptr(),0.1f);
 		float3 angles = RadToDeg(localRotation.ToEulerXYZ());
 		if(ImGui::DragFloat3(" Rotation", angles.ptr()), 0.1f)
 		{
 			angles = DegToRad(angles);
-			localRotation = Quat::FromEulerXYZ(angles.x, angles.y, angles.z);
+			SetLocalRotation(Quat::FromEulerXYZ(angles.x, angles.y, angles.z));
+			dirty = true;
 		}
-		ImGui::DragFloat3(" Scale", localScale.ptr(), 0.1f);
+		dirty |= ImGui::DragFloat3(" Scale", localScale.ptr(), 0.1f);
 	}
 }
 
@@ -116,7 +117,7 @@ const float4x4 & Transform::GetModelMatrix() const
 
 float4x4 Transform::GetLocalMatrix() const
 {
-	return float4x4::FromTRS(localPosition, localRotation.ToFloat4x4(), localScale);
+	return float4x4::FromTRS(localPosition, localRotation, localScale);
 }
 
 float4x4 Transform::GetParentMatrix() const
