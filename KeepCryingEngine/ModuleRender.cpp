@@ -272,8 +272,9 @@ void ModuleRender::DrawFromBuffer(Mesh& mesh)
 	GLint proyection = glGetUniformLocation(progId, "projection");
 	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
 
-	GLint transform = glGetUniformLocation(progId, "transform");
-	glUniformMatrix4fv(transform, 1, GL_FALSE, ((Transform*)mesh.gameObject->GetComponent(ComponentType::Transform))->GetModelMatrix().Transposed().ptr());
+	GLint transformUniformId = glGetUniformLocation(progId, "transform");
+	Transform* transform = ((Transform*)mesh.gameObject->GetComponent(ComponentType::Transform));
+	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, transform->GetModelMatrix().Transposed().ptr());
 
 	GLint light = glGetUniformLocation(progId, "lightDir");
 	if(light != -1)
