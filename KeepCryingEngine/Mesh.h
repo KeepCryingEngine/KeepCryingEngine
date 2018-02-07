@@ -42,21 +42,21 @@ public:
 	uint GetVerticesNumber() const;
 
 private:
-	void SetVertices(float* newVertices, size_t size);
 	void SetUpCube();
 	void SetUpSphere();
 	void FillVerticesData(uint n, const float* positions, const float* colors, const float* texCoords, Vertex* vertices) const;
-
-	AABB CalculateAABBForMesh();
+	void RenderAABB();
+	void CalculateAABBForMesh(float * newVertices, size_t nVertices);
 
 private:
 	GLenum drawMode;
-	std::vector<float3> vertices;
+	AABB originalaabb;
 	uint vertexBufferId;
 	uint indicesBufferId;
 	uint normalBufferId;
 	uint verticesNumber;
 
+	bool debugAABB = false;
 	bool changedMode = true;
 	MeshMode meshMode = MeshMode::CUBE;
 };

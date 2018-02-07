@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "Application.h"
 #include "ModuleRender.h"
+#include "Transform.h"
 
 using namespace std;
 
@@ -42,7 +43,48 @@ void Mesh::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		changedMode = false;
 	}
 
+	Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
+	OBB obb = originalaabb.ToOBB();
+
+	obb.Transform(transform->rotation.ToFloat3x3());
+	obb.Translate(transform->position);
+	obb.Scale(transform->position, transform->scale);
+
+    gameObject->GetAABB().SetFrom(obb);
+
+	if(debugAABB)
+	{
+		RenderAABB();
+	}
+
 	App->renderer->AddToDrawBuffer(*this);
+}
+
+void Mesh::RenderAABB()
+{
+	float3 aabbcorners[8];
+	gameObject->GetAABB().GetCornerPoints(aabbcorners);
+
+	float currentColor[4];
+	glGetFloatv(GL_CURRENT_COLOR, currentColor);
+
+	glBegin(GL_LINES);
+	glColor4f(255.0f, 255.0f, 255.0f, 1.0f);
+
+	for(int i = 0; i < 8; i++)
+	{
+		for(int j = 0; j < 8; j++)
+		{
+			if(i != j)
+			{
+				glVertex3f(aabbcorners[i].x, aabbcorners[i].y, aabbcorners[i].z);
+				glVertex3f(aabbcorners[j].x, aabbcorners[j].y, aabbcorners[j].z);
+			}
+		}
+	}
+
+	glColor4f(currentColor[0], currentColor[1], currentColor[2], currentColor[3]);
+	glEnd();
 }
 
 void Mesh::DrawUI()
@@ -106,20 +148,6 @@ uint Mesh::GetVerticesNumber() const
 	return verticesNumber;
 }
 
-void Mesh::SetVertices(float * newVertices, size_t nVertices)
-{
-	vertices.clear();
-	vertices.resize(nVertices);
-	for (size_t i = 0; i < nVertices; i++)
-	{
-		const int currentIndex = i * 3;
-		float3 vertex(newVertices[currentIndex, currentIndex + 1, currentIndex + 2]);
-		vertices.push_back(vertex);
-	}
-
-	gameObject->SetAABB(CalculateAABBForMesh());
-}
-
 void Mesh::SetUpCube()
 {
 	drawMode = GL_TRIANGLES;
@@ -160,7 +188,7 @@ void Mesh::SetUpCube()
 		-size, size, size  // 23 Top top left
 	};
 
-	SetVertices(uniqueVertex, nVertices);
+	CalculateAABBForMesh(uniqueVertex, nVertices);
 
 	float uv[24 * 2] =
 	{
@@ -331,7 +359,7 @@ void Mesh::SetUpSphere()
 	Vertex* vVertices = (Vertex*)malloc(sizeof(Vertex) * nVertices * 3);
 	FillVerticesData(nVertices, vertices.data(), colors, texcoords.data(), vVertices);
 
-	SetVertices(vertices.data(), vertices.size()/3);
+	CalculateAABBForMesh(vertices.data(), vertices.size()/3);
 
 	glGenBuffers(1, (GLuint*) &(vertexBufferId));
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
@@ -389,11 +417,19 @@ void Mesh::FillVerticesData(uint n, const float* positions, const float* colors,
 	}
 }
 
-AABB Mesh::CalculateAABBForMesh()
+void Mesh::CalculateAABBForMesh(float * newVertices, size_t nVertices)
 {
-	AABB aabb;
-	aabb.SetNegativeInfinity();
-	if (vertices.size() == 0)
-	aabb.Enclose(vertices.data(), vertices.size());
-	return aabb;
+	vector<float3> vertices;
+	for(size_t i = 0; i < nVertices; i++)
+	{
+		const int currentIndex = i * 3;
+		float3 vertex(newVertices[currentIndex], newVertices[currentIndex + 1], newVertices[currentIndex + 2]);
+		vertices.push_back(vertex);
+	}
+
+	originalaabb.SetNegativeInfinity();
+	if(vertices.size() != 0)
+	{
+		originalaabb.Enclose(vertices.data(), vertices.size());
+	}
 }
