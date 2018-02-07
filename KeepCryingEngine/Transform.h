@@ -15,11 +15,6 @@ public:
 
 	void DrawUI() override;
 
-	//float4x4 GetAcumulatedTransform();
-	//
-	//float3x3 GetAcumulatedRotation();
-	//float4x4 GetAcumulatedTransformWithoutScale();
-
 	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
 
 	const float3& GetLocalPosition() const;

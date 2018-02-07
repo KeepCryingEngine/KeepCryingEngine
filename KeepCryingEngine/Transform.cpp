@@ -27,49 +27,6 @@ void Transform::DrawUI()
 	}
 }
 
-//
-//float4x4 Transform::GetAcumulatedTransform()
-//{
-//	if(gameObject->GetParent())
-//	{
-//		Transform* parent = (Transform*)gameObject->GetParent()->GetComponent(ComponentType::Transform);
-//		float4x4 parentTransformMatrix = parent->GetAcumulatedTransform();
-//		return parentTransformMatrix * float4x4::FromTRS(localPosition, localRotation.ToFloat4x4(), localScale);
-//	}
-//	else 
-//	{
-//		return float4x4::identity;
-//	}
-//}
-//
-//float3x3 Transform::GetAcumulatedRotation()
-//{
-//	if(gameObject->GetParent())
-//	{
-//		Transform* parent = (Transform*)gameObject->GetParent()->GetComponent(ComponentType::Transform);
-//		float3x3 parentTransformMatrix = parent->GetAcumulatedRotation();
-//		return parentTransformMatrix * localRotation; // float3x3::FromTRS(float3::zero, rotation.ToFloat4x4(), float3::one);
-//	}
-//	else
-//	{
-//		return float3x3::identity;
-//	}
-//}
-//
-//float4x4 Transform::GetAcumulatedTransformWithoutScale()
-//{
-//	if(gameObject->GetParent())
-//	{
-//		Transform* parent = (Transform*)gameObject->GetParent()->GetComponent(ComponentType::Transform);
-//		float4x4 parentTransformMatrix = parent->GetAcumulatedTransformWithoutScale();
-//		return parentTransformMatrix * float4x4::FromTRS(localPosition, localRotation.ToFloat4x4(), float3::one);
-//	}
-//	else
-//	{
-//		return float4x4::identity;
-//	}
-//}
-
 vector<ComponentType> Transform::GetProhibitedComponents() const
 {
 	return { ComponentType::Transform };
