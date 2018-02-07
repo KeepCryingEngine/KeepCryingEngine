@@ -48,9 +48,9 @@ void Mesh::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
 	OBB obb = originalaabb.ToOBB();
 
-	obb.Transform(transform->rotation.ToFloat3x3());
-	obb.Translate(transform->position);
-	obb.Scale(transform->position, transform->scale);
+	obb.Transform(transform->GetWorldRotation());
+	obb.Translate(transform->GetWorldPosition());
+	obb.Scale(transform->GetWorldPosition(), transform->GetWorldScale());
 
     gameObject->GetAABB().SetFrom(obb);
 
