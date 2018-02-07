@@ -3,22 +3,13 @@
 
 #include <list>
 #include <vector>
-// #include <assert.h>
+
 
 #include "Component.h"
 
 class GameObject
 {
 public:
-	/* enum class State{
-		ToAwake,
-		ToEnable,
-		ToStart,
-		ToUpdate,
-		ToDisable,
-		ToDestroy
-	}; */
-
 	GameObject(const std::string& name);
 	virtual ~GameObject();
 
@@ -67,11 +58,7 @@ private:
 
 	bool CanAttach(const Component& component) const;
 
-	// void DestroyAndRelease(Component* component) const;
-
 private:
-	// State state;
-
 	GameObject* parent = nullptr;
 
 	std::list<Component*> toStart;
