@@ -52,6 +52,8 @@ public:
 	virtual std::vector<ComponentType> GetNeededComponents() const override;
 	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
 
+	bool IsInsideFrustum(const AABB& aabb) const;
+
 private:
 	float ComputeHorizontalFov(float radians, float width, float height) const;
 	void SetUpFrustumBuffer();

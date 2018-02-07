@@ -360,3 +360,8 @@ void ModuleCamera::EnableCamera(Camera* camera)
 
 	enabledCamera = camera;
 }
+
+Camera* ModuleCamera::GetEnabledCamera() const
+{
+	return enabledCamera;
+}

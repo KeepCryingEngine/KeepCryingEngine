@@ -11,6 +11,8 @@
 #include "Application.h"
 #include "ModuleRender.h"
 #include "Transform.h"
+#include "ModuleCamera.h"
+#include "Camera.h"
 
 using namespace std;
 
@@ -57,7 +59,12 @@ void Mesh::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		RenderAABB();
 	}
 
-	App->renderer->AddToDrawBuffer(*this);
+	Camera* enabledCamera = App->camera->GetEnabledCamera();
+
+	if(enabledCamera != nullptr && enabledCamera->IsInsideFrustum(gameObject->GetAABB()))
+	{
+		App->renderer->AddToDrawBuffer(*this);
+	}
 }
 
 void Mesh::RenderAABB()

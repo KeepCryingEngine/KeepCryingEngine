@@ -31,7 +31,7 @@ public:
 
 	void EnableCamera(Camera* camera);
 
-	// Camera* GetEnabledCamera() const;
+	Camera* GetEnabledCamera() const;
 
 private:
 	void Rotation(float deltaTimeS);

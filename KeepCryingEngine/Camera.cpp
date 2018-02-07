@@ -210,6 +210,35 @@ std::vector<ComponentType> Camera::GetProhibitedComponents() const
 	return { ComponentType::Camera };
 }
 
+bool Camera::IsInsideFrustum(const AABB& aabb) const
+{
+	Plane planes[6];
+	frustum.GetPlanes(planes);
+
+	float3 corners[8];
+	aabb.GetCornerPoints(corners);
+
+	for(Plane plane : planes)
+	{
+		uint outsideCount = 0;
+
+		for(float3 corner : corners)
+		{
+			if(plane.IsOnPositiveSide(corner))
+			{
+				++outsideCount;
+			}
+		}
+
+		if(outsideCount == 8)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 float Camera::ComputeHorizontalFov(float radians, float width, float height) const
 {
 	return 2.0f * atan(tan(radians / 2.0f) * (width / height));

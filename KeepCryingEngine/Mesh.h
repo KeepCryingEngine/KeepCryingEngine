@@ -56,7 +56,7 @@ private:
 	uint normalBufferId;
 	uint verticesNumber;
 
-	bool debugAABB = false;
+	bool debugAABB = true;
 	bool changedMode = true;
 	MeshMode meshMode = MeshMode::CUBE;
 };
