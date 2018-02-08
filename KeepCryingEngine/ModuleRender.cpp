@@ -278,6 +278,18 @@ void ModuleRender::DrawFromBuffer(Mesh& mesh)
 		glUniform3f(light, LIGHT_DIR.x, LIGHT_DIR.y, LIGHT_DIR.z);
 	}
 
+	GLint camera = glGetUniformLocation(progId, "actualCameraModelView");
+	if(camera != -1)
+	{
+		glUniformMatrix4fv(camera, 1, GL_FALSE, App->camera->GetEnabledCamera()->GetViewMatrix().ptr());
+	}
+
+	GLint cameraFar = glGetUniformLocation(progId, "actualCameraFar");
+	if(cameraFar != -1)
+	{
+		glUniform1f(cameraFar,App->camera->GetEnabledCamera()->GetFarPlane());
+	}
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.GetIndicesBufferId());
 	glDrawElements(mesh.GetDrawMode(), mesh.GetVerticesNumber(), GL_UNSIGNED_SHORT, nullptr);
 
