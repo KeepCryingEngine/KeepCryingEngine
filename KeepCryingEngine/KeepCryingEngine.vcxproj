@@ -108,6 +108,8 @@
     <ClInclude Include="ModuleTexture.h" />
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="ModuleWindow.h" />
+    <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="QuadtreeNode.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +135,8 @@
     <ClCompile Include="ModuleTexture.cpp" />
     <ClCompile Include="ModuleUI.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
+    <ClCompile Include="Quadtree.cpp" />
+    <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

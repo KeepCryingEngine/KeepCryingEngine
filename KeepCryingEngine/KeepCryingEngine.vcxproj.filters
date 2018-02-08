@@ -64,6 +64,8 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="Quadtree.cpp" />
+    <ClCompile Include="QuadtreeNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -144,6 +146,8 @@
     <ClInclude Include="Camera.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="QuadtreeNode.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">
