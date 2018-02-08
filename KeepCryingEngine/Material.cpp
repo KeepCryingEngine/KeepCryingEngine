@@ -35,7 +35,7 @@ void Material::DrawUI()
 
 		int tmpShaderMode = (int)shaderMode;
 
-		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Cartoon"))
+		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Cartoon\0Depth"))
 		{
 			shaderMode = (ShaderMode)tmpShaderMode;
 			switch(shaderMode)
@@ -48,6 +48,11 @@ void Material::DrawUI()
 				case ShaderMode::CARTOON:
 				{
 					SetUpCartoonShader();
+				}
+					break;
+				case ShaderMode::DEPTH:
+				{
+					SetUpDepthShader();
 				}
 					break;
 			}
@@ -100,5 +105,12 @@ void Material::SetUpCartoonShader()
 {
 	uint vertexId = AddShader("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
 	uint fragmentId = AddShader("Assets/Shaders/cartoon.frag", GL_FRAGMENT_SHADER);
+	programId = App->shader->AddProgram({ vertexId, fragmentId });
+}
+
+void Material::SetUpDepthShader()
+{
+	uint vertexId = AddShader("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShader("Assets/Shaders/depthShader.frag", GL_FRAGMENT_SHADER);
 	programId = App->shader->AddProgram({ vertexId, fragmentId });
 }

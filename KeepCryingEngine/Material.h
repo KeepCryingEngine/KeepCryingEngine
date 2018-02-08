@@ -11,7 +11,8 @@
 enum class ShaderMode
 {
 	DEFAULT,
-	CARTOON
+	CARTOON,
+	DEPTH
 };
 
 class Material : public Component
@@ -35,6 +36,7 @@ private:
 private:
 	void SetUpDefaultShader();
 	void SetUpCartoonShader();
+	void SetUpDepthShader();
 	
 
 private:
