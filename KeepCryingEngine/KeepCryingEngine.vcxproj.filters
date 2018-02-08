@@ -73,6 +73,7 @@
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="MaterialEntity.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="MeshRenderer.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="MaterialEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">

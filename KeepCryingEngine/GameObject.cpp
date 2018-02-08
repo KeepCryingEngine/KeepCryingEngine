@@ -173,12 +173,12 @@ Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
 	{
 		AddInternalComponent(component);
 
-		if(type == ComponentType::Mesh)
+		/*if(type == ComponentType::Mesh)
 		{
 			Component* mat = ComponentFabric::CreateComponent(ComponentType::Material);
 			assert(mat);
 			AddInternalComponent(mat);
-		}
+		}*/
 	}
 	else
 	{
@@ -190,7 +190,7 @@ Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
 
 void GameObject::RemoveComponent(Component * component)
 {
-	if(component->type == ComponentType::Mesh)
+	/*if(component->type == ComponentType::Mesh)
 	{
 		Component* mat = GetComponent(ComponentType::Material);
 		assert(mat);
@@ -199,7 +199,7 @@ void GameObject::RemoveComponent(Component * component)
 		{
 			toDestroy.push_back(mat);
 		}
-	}
+	}*/
 
 	vector<Component*>::iterator it = find(components.begin(), components.end(), component);
 	if (it != components.end()) 
@@ -281,7 +281,7 @@ void GameObject::DrawUI()
 		switch(selectedComponent)
 		{
 			case 0:
-				AddComponent(ComponentType::Mesh);
+				//AddComponent(ComponentType::Mesh);
 				break;
 			case 1:
 				AddComponent(ComponentType::Camera);

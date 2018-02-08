@@ -14,6 +14,8 @@ public:
 	void DrawUI() override;
 	std::vector<ComponentType> GetProhibitedComponents() const override;
 
+	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
+
 	MeshEntity* GetMesh() const;
 
 private:

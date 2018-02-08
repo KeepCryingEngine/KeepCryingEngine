@@ -2,7 +2,7 @@
 
 #include <queue>
 
-#include "Mesh.h"
+//#include "Mesh.h"
 #include "GameObject.h"
 
 using namespace std;
@@ -78,8 +78,8 @@ GameObject* ModuleScene::AddCube(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Cube");
 
-	Mesh* mesh = (Mesh*)gameObject->AddComponent(ComponentType::Mesh, true);
-	mesh->SetMeshMode(MeshMode::CUBE);
+	/*Mesh* mesh = (Mesh*)gameObject->AddComponent(ComponentType::Mesh, true);
+	mesh->SetMeshMode(MeshMode::CUBE);*/
 
 	return gameObject;
 }
@@ -88,8 +88,8 @@ GameObject* ModuleScene::AddSphere(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Sphere");
 
-	Mesh* mesh = (Mesh*)gameObject->AddComponent(ComponentType::Mesh, true);
-	mesh->SetMeshMode(MeshMode::SPHERE);
+	/*Mesh* mesh = (Mesh*)gameObject->AddComponent(ComponentType::Mesh, true);
+	mesh->SetMeshMode(MeshMode::SPHERE);*/
 
 	return gameObject;
 }
