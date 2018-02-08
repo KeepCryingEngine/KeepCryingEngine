@@ -14,6 +14,7 @@ public:
 
 	virtual void Awake() override;
 	// virtual void Start() override;
+	virtual void Destroy() override;
 
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 

@@ -22,6 +22,14 @@ void Camera::Awake()
 	App->camera->EnableCamera(this);
 }
 
+void Camera::Destroy()
+{
+	if(App->camera->GetEnabledCamera() == this)
+	{
+		App->camera->EnableCamera(nullptr);
+	}
+}
+
 /* void Camera::Start()
 {
 	Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
