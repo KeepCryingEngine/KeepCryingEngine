@@ -31,7 +31,7 @@ GLuint MeshEntity::GetNormalBufferId() const
 	return normalBufferId;
 }
 
-GLuint MeshEntity::GetVerticesNumber() const
+GLsizei MeshEntity::GetVerticesNumber() const
 {
 	return verticesNumber;
 }

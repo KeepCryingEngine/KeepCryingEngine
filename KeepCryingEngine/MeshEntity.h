@@ -14,14 +14,14 @@ public:
 	GLuint GetVertexBufferId() const;
 	GLuint GetIndicesBufferId() const;
 	GLuint GetNormalBufferId() const;
-	GLuint GetVerticesNumber() const;
+	GLsizei GetVerticesNumber() const;
 
 private:
 	AABB aabb;
 	GLuint vertexBufferId = 0;
 	GLuint indicesBufferId = 0;
 	GLuint normalBufferId = 0;
-	GLuint verticesNumber = 0;
+	GLsizei verticesNumber = 0;
 
 };
 
