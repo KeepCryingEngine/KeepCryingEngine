@@ -60,6 +60,7 @@ void Camera::SetFOV(float radians)
 void Camera::SetAspectRatio(float aspect)
 {
 	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, aspect);
+	SetUpFrustumBuffer();
 }
 
 void Camera::SetNearPlane(float distance)
@@ -194,17 +195,25 @@ void Camera::DrawUI()
 			gameObject->RemoveComponent(this);
 		}
 		float nearPlane = GetNearPlane();
-		ImGui::DragFloat("Near plane", &nearPlane, 0.01f, 0.01f, 2.0f, "%.2f");
-		SetNearPlane(nearPlane);
+		if(ImGui::DragFloat("Near plane", &nearPlane, 0.01f, 0.01f, 2.0f, "%.2f"))
+		{
+			SetNearPlane(nearPlane);
+		}
 		float farPlane = GetFarPlane();
-		ImGui::DragFloat("Far plane", &farPlane, 2.0f, 10.0f, 1000.0f, "%.2f");
-		SetFarPlane(farPlane);
+		if(ImGui::DragFloat("Far plane", &farPlane, 2.0f, 10.0f, 1000.0f, "%.2f"))
+		{
+			SetFarPlane(farPlane);
+		}
 		float verticalFOV = GetFOV();
-		ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi);
-		SetFOV(verticalFOV);
+		if(ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi))
+		{
+			SetFOV(verticalFOV);
+		}
 		float aspectRatio = GetAspectRatio();
-		ImGui::DragFloat("Aspect ratio", &aspectRatio, 0.1f, 0.1, 5, "%.2f");
-		SetAspectRatio(aspectRatio);
+		if(ImGui::DragFloat("Aspect ratio", &aspectRatio, 0.1f, 0.1, 5, "%.2f"))
+		{
+			SetAspectRatio(aspectRatio);
+		}
 	}
 }
 
@@ -254,9 +263,13 @@ float Camera::ComputeHorizontalFov(float verticalFovRad, float aspect) const
 
 void Camera::SetUpFrustumBuffer()
 {
+	float3 tempPos = frustum.pos;
+	frustum.pos = float3(0, 0, 0);
 	float3 points[8];
 	frustum.GetCornerPoints(points);
 	assert(points);
+
+	frustum.pos = tempPos;
 
 	float3 orderedPoints[] = {
 		points[0],points[2],
