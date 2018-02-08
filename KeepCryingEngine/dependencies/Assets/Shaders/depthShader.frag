@@ -10,7 +10,7 @@ uniform float actualCameraFar;
 
 void main()
 {
-	float depth = 1-(-relativeCameraPos.z/actualCameraFar);
+	float depth = -relativeCameraPos.z/actualCameraFar;
 	color = vec4(depth, depth, depth, 1.0);
 	color = color * texture2D(ourTexture,TexCoord);
 }
