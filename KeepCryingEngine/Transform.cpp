@@ -30,7 +30,7 @@ void Transform::DrawUI()
 
 		//Rotation
 		float3 angles = RadToDeg(localRotation.ToEulerXYZ());
-		if (ImGui::DragFloat3(" Rotation", angles.ptr()), 0.1f)
+		if (ImGui::DragFloat3(" Rotation", angles.ptr(), 0.1f))
 		{
 			angles = DegToRad(angles);
 			SetLocalRotation(Quat::FromEulerXYZ(angles.x, angles.y, angles.z));
