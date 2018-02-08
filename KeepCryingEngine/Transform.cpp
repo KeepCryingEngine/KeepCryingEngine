@@ -40,6 +40,11 @@ void Transform::DrawUI()
 		float3 localScale = this->localScale;
 		if (ImGui::DragFloat3(" Scale", localScale.ptr(), 0.1f))
 		{
+			//This is just a temporal fix to prevent the program from crashing
+			for (size_t i = 0; i < 3; i++)
+			{
+				localScale[i] = max(localScale[i], 0.1f);
+			}
 			SetLocalScale(localScale);
 		}
 	}
