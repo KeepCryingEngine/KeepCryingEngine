@@ -51,6 +51,8 @@ private:
 	mutable float3 worldPosition;
 	mutable Quat worldRotation;
 	mutable float3 worldScale;
+
+	mutable float3 eulerLocalRotation;
 };
 
 #endif // !_TRANSFORM_H_
