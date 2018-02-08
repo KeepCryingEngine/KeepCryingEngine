@@ -21,26 +21,26 @@ void Transform::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Transform"))
 	{
+		//Position
 		float3 localPosition = this->localPosition;
 		if (ImGui::DragFloat3(" Position", localPosition.ptr(), 0.1f))
 		{
 			SetLocalPosition(localPosition);
-			SetDirty();
 		}
 
+		//Rotation
 		float3 angles = RadToDeg(localRotation.ToEulerXYZ());
-		if(ImGui::DragFloat3(" Rotation", angles.ptr()), 0.1f)
+		if (ImGui::DragFloat3(" Rotation", angles.ptr()), 0.1f)
 		{
 			angles = DegToRad(angles);
 			SetLocalRotation(Quat::FromEulerXYZ(angles.x, angles.y, angles.z));
-			SetDirty();
 		}
 
+		//Scale
 		float3 localScale = this->localScale;
 		if (ImGui::DragFloat3(" Scale", localScale.ptr(), 0.1f))
 		{
 			SetLocalScale(localScale);
-			SetDirty();
 		}
 	}
 }
@@ -134,11 +134,14 @@ const float4x4 & Transform::GetModelMatrix() const
 
 void Transform::SetDirty() const
 {
-	dirty = true;
-	for (GameObject* child : gameObject->GetChildren())
+	if (!dirty)
 	{
-		Transform* transform = (Transform*)child->GetComponent(ComponentType::Transform);
-		transform->SetDirty();
+		dirty = true;
+		for (GameObject* child : gameObject->GetChildren())
+		{
+			Transform* transform = (Transform*)child->GetComponent(ComponentType::Transform);
+			transform->SetDirty();
+		}
 	}
 }
 
