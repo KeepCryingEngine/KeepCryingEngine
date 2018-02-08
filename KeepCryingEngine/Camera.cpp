@@ -52,15 +52,14 @@ void Camera::Translate(const float3& offset)
 
 void Camera::SetFOV(float radians)
 {
-	frustum.horizontalFov = ComputeHorizontalFov(radians, (float)App->configuration.screenWidth, (float)App->configuration.screenHeight);
+	frustum.horizontalFov = ComputeHorizontalFov(radians, frustum.AspectRatio());
 	frustum.verticalFov = radians;
 	SetUpFrustumBuffer();
 }
 
-void Camera::SetAspectRatio()
+void Camera::SetAspectRatio(float aspect)
 {
-	//Aspect ratio IS NOT set directly. To modify it, we must modify HorizontalFOV -> As a result, the Aspect Ratio (tan(hFOV/2)*tan(vFOV/2)) will be modified.
-	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->configuration.screenWidth, (float)App->configuration.screenHeight);
+	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, aspect);
 }
 
 void Camera::SetNearPlane(float distance)
@@ -161,11 +160,6 @@ uint Camera::GetFrustumBufferId() const
 	return frustumBufferId;
 }
 
-float Camera::GetWidth() const
-{
-	return frustum.orthographicWidth;
-}
-
 int Camera::GetNumberOfPoints() const
 {
 	return numberOfPoints;
@@ -180,7 +174,7 @@ void Camera::SetUpFrustum(const float3& position, const Quat& rotation, float ne
 	frustum.nearPlaneDistance = nearPlaneDistance;
 	frustum.farPlaneDistance = farPlaneDistance;
 	frustum.verticalFov = DegToRad(fov);
-	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->configuration.screenWidth, (float)App->configuration.screenHeight);
+	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->configuration.screenWidth/(float)App->configuration.screenHeight);
 	SetUpFrustumBuffer();
 }
 
@@ -209,7 +203,8 @@ void Camera::DrawUI()
 		ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi);
 		SetFOV(verticalFOV);
 		float aspectRatio = GetAspectRatio();
-		ImGui::InputFloat("Aspect ratio", &aspectRatio);//TODO
+		ImGui::DragFloat("Aspect ratio", &aspectRatio, 0.1f, 0.1, 5, "%.2f");
+		SetAspectRatio(aspectRatio);
 	}
 }
 
@@ -252,9 +247,9 @@ bool Camera::IsInsideFrustum(const AABB& aabb) const
 	return true;
 }
 
-float Camera::ComputeHorizontalFov(float radians, float width, float height) const
+float Camera::ComputeHorizontalFov(float verticalFovRad, float aspect) const
 {
-	return 2.0f * atan(tan(radians / 2.0f) * (width / height));
+	return 2.0f * atan(tan(verticalFovRad / 2.0f) * aspect);
 }
 
 void Camera::SetUpFrustumBuffer()
