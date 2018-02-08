@@ -215,8 +215,8 @@ void ModuleRender::DrawFrustrum(Camera & camera)
 	transformMatrix.RemoveScale();
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, transformMatrix.Transposed().ptr());
 
-	GLint width = glGetUniformLocation(progId, "ourColor");
-	glUniform4f(width, 1.0f, 0.0f, 0.0f, 1.0f);
+	GLint color = glGetUniformLocation(progId, "inputColor");
+	glUniform4f(color, 255.0f, 0.0f, 0.0f, 1.0f);
 
 	glDrawArrays(GL_LINES, 0, camera.GetNumberOfPoints());
 
