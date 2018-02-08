@@ -241,6 +241,17 @@ std::vector<Component*> GameObject::GetComponents(ComponentType type)
 	return ret;
 }
 
+std::vector<Component*> GameObject::GetComponentsInChildren(ComponentType type)
+{
+	vector<Component*> components;
+	for (GameObject* child : children)
+	{
+		vector<Component*> childComponents = child->GetComponents(type);
+		components.insert(components.end(),childComponents.begin(), childComponents.end());
+	}
+	return components;
+}
+
 void GameObject::GetComponents(ComponentType type, std::vector<Component*>& ret)
 {
 	for (Component* component : components)

@@ -38,6 +38,7 @@ public:
 	Component* GetComponent(ComponentType type) const;
 	const std::vector<Component*>& GetComponents() const;
 	std::vector<Component*> GetComponents(ComponentType type);
+	std::vector<Component*> GetComponentsInChildren(ComponentType type);
 	void GetComponents(ComponentType type, std::vector<Component*>& components);
 
 	void DrawUI();
