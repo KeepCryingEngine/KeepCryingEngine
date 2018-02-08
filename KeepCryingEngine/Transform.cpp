@@ -147,16 +147,16 @@ float4x4 Transform::GetLocalMatrix() const
 	return float4x4::FromTRS(localPosition, localRotation, localScale);
 }
 
-float4x4 Transform::GetParentMatrix() const
+const float4x4& Transform::GetParentMatrix() const
 {
-	float4x4 parentMatrix = float4x4::identity;
+	const float4x4* parentMatrix = &float4x4::identity;
 	GameObject* parent = gameObject->GetParent();
 	if (parent)
 	{
 		Transform* parentTransform = (Transform*)parent->GetComponent(ComponentType::Transform);
-		parentMatrix = parentTransform->GetModelMatrix();
+		parentMatrix = &parentTransform->GetModelMatrix();
 	}
-	return parentMatrix;
+	return *parentMatrix;
 }
 
 /*
@@ -168,7 +168,7 @@ void Transform::RecalculateIfNecessary() const
 	if (dirty) 
 	{
 		float4x4 localMatrix = GetLocalMatrix();
-		float4x4 parentMatrix = GetParentMatrix();
+		const float4x4& parentMatrix = GetParentMatrix();
 		modelMatrix = parentMatrix * localMatrix;
 		modelMatrix.Decompose(worldPosition, worldRotation, worldScale);
 		dirty = false;

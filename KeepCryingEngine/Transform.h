@@ -38,7 +38,7 @@ public:
 private:
 	void SetDirty() const;
 	float4x4 GetLocalMatrix() const;
-	float4x4 GetParentMatrix() const;
+	const float4x4& GetParentMatrix() const;
 	void RecalculateIfNecessary() const;
 
 private:
