@@ -12,6 +12,8 @@ using namespace std;
 
 MaterialEntity::MaterialEntity()
 {
+	SetTexture("Assets/Lenna.png");
+	programId = App->shader->GetShaderId(ShaderType::Default);
 }
 
 MaterialEntity::~MaterialEntity()

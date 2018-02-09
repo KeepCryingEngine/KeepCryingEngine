@@ -27,8 +27,8 @@ public:
 private:
 	void SetUpCube();
 
-	void FillVerticesData(Vertex* vertices, GLuint nVertices, const float3 * positions, const float4 * colors, const float2 * texCoords) const;
-	void CalculateAABBForMesh(float * newVertices, size_t nVertices);
+	void FillVerticesData(Vertex* vertices, GLuint nVertices, const float3 * positions, const float4 * colors, const float2 * uvs) const;
+	void CalculateAABBForMesh(float3 * verticesPositions, size_t nVertices);
 
 private:
 	AABB aabb;

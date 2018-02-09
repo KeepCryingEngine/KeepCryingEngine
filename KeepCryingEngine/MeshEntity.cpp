@@ -118,13 +118,15 @@ void MeshEntity::SetUpCube()
 	Vertex vertices[nCubeVertices];
 	FillVerticesData(vertices, nCubeVertices, positions, colors, uv);
 
-	CalculateAABBForMesh(uniqueVertex, nVertices);
+	CalculateAABBForMesh(positions, verticesNumber);
 
 	glGenBuffers(1, (GLuint*) &(vertexBufferId));
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 24, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * nCubeVertices, vertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	GLushort indicesArray[24 * 3] =
+
+	const size_t indicesNumber = 36;
+	GLushort indicesArray[indicesNumber] =
 	{
 		3, 1, 0,
 		3, 2, 1,
@@ -145,15 +147,13 @@ void MeshEntity::SetUpCube()
 		23, 22, 21
 	};
 	
-	verticesNumber = sizeof(indicesArray)/sizeof(uint);
-
-	glGenBuffers(1, (GLuint*) &(indicesBufferId));
+	glGenBuffers(1, (GLuint*) &indicesBufferId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * verticesNumber, indicesArray, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * indicesNumber, indicesArray, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	float normal[24 * 3];
-	float offset = 3;
+	float3 normal[nCubeVertices];
+	/*float offset = 3;
 	for(size_t i = 0; i < 36; i+=3)
 	{
 		int x1 = indicesArray[i] * offset;
@@ -180,7 +180,7 @@ void MeshEntity::SetUpCube()
 		normal[i] = vNormal.x;
 		normal[i + 1] = vNormal.y;
 		normal[i + 2] = vNormal.z;
-	}
+	}*/
 
 	/* for(size_t i = 0; i < 36; i++)
 	{
@@ -189,46 +189,25 @@ void MeshEntity::SetUpCube()
 
 	glGenBuffers(1, (GLuint*) &(normalBufferId));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalBufferId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 24 * 3, normal, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float3) * nCubeVertices, normal, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	RELEASE(colors);
 }
 
-void MeshEntity::CalculateAABBForMesh(float * newVertices, size_t nVertices)
+void MeshEntity::CalculateAABBForMesh(float3 * verticesPositions, size_t nVertices)
 {
-	vector<float3> vertices;
-	for(size_t i = 0; i < nVertices; i++)
-	{
-		const int currentIndex = i * 3;
-		float3 vertex(newVertices[currentIndex], newVertices[currentIndex + 1], newVertices[currentIndex + 2]);
-		vertices.push_back(vertex);
-	}
-
 	aabb.SetNegativeInfinity();
-	if(vertices.size() != 0)
+	if(nVertices > 0)
 	{
-		aabb.Enclose(vertices.data(), vertices.size());
+		aabb.Enclose(verticesPositions, nVertices);
 	}
 }
 
-void MeshEntity::FillVerticesData(Vertex* vertices, GLuint nVertices, const float3 * positions, const float4 * colors, const float2 * texCoords) const
+void MeshEntity::FillVerticesData(Vertex* vertices, GLuint nVertices, const float3 * positions, const float4 * colors, const float2 * uvs) const
 {
 	for(GLuint i = 0; i < nVertices; ++i)
 	{
-		for(GLuint j = 0; j < 3; ++j)
-		{
-			vertices[i].position[j] = positions[i * 3 + j];
-		}
-
-		for(GLuint j = 0; j < 4; ++j)
-		{
-			vertices[i].color[j] = colors[i * 4 + j];
-		}
-
-		for(GLuint j = 0; j < 2; ++j)
-		{
-			vertices[i].uv[j] = texCoords[i * 2 + j];
-		}
+		vertices[i].position = positions[i];
+		vertices[i].color = colors[i];
+		vertices[i].uv = uvs[i];
 	}
 }

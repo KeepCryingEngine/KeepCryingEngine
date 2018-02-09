@@ -245,63 +245,6 @@ void ModuleRender::SetUpLight() const
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 }
 
-//void ModuleRender::DrawFromBuffer(Mesh& mesh)
-//{
-//	Material* material = (Material*)(mesh.gameObject->GetComponent(ComponentType::Material));
-//	uint progId = material->GetProgramId();
-//	uint textId = material->GetTextureId();
-//
-//	glUseProgram(progId);
-//	if(textId != 0)
-//	{
-//		GLint texture = glGetUniformLocation(progId, "ourTexture");
-//		glUniform1i(texture, 0);
-//
-//		glActiveTexture(GL_TEXTURE0);
-//		glBindTexture(GL_TEXTURE_2D, textId);
-//	}
-//
-//	glBindBuffer(GL_ARRAY_BUFFER, mesh.GetVertexBufferId());
-//
-//	glEnableVertexAttribArray(0);
-//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)0);
-//	glEnableVertexAttribArray(1);
-//	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-//	glEnableVertexAttribArray(2);
-//	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(7 * sizeof(GLfloat)));
-//	glEnableVertexAttribArray(3);
-//	glBindBuffer(GL_ARRAY_BUFFER, mesh.GetNormalBufferId());
-//	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-//
-//	GLint modelView = glGetUniformLocation(progId, "model_view");
-//	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->camera->GetViewMatrix().ptr());
-//
-//	GLint proyection = glGetUniformLocation(progId, "projection");
-//	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
-//
-//	GLint transformUniformId = glGetUniformLocation(progId, "transform");
-//	Transform* transform = ((Transform*)mesh.gameObject->GetComponent(ComponentType::Transform));
-//	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, transform->GetModelMatrix().Transposed().ptr());
-//
-//	GLint light = glGetUniformLocation(progId, "lightDir");
-//	if(light != -1)
-//	{
-//		glUniform3f(light, LIGHT_DIR.x, LIGHT_DIR.y, LIGHT_DIR.z);
-//	}
-//
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.GetIndicesBufferId());
-//	glDrawElements(mesh.GetDrawMode(), mesh.GetVerticesNumber(), GL_UNSIGNED_SHORT, nullptr);
-//
-//	glBindBuffer(GL_ARRAY_BUFFER, 0);
-//	glBindTexture(GL_TEXTURE_2D, 0);
-//
-//	glDisableVertexAttribArray(0);
-//	glDisableVertexAttribArray(1);
-//	glDisableVertexAttribArray(2);
-//
-//	glUseProgram(0);
-//}
-
 void ModuleRender::DrawGeometry()
 {
 	for (const DrawInfo& drawInfo : drawBuffer) 

@@ -19,9 +19,8 @@ private:
 	void SetTexture(const char* path);
 
 private:
-	ShaderType shaderType;
+	ShaderType shaderType = ShaderType::Default;
 	GLuint programId = 0;
-
 	GLuint textureId = 0;
 };
 

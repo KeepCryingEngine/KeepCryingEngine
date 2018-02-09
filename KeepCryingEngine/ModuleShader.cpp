@@ -140,14 +140,14 @@ uint ModuleShader::AddProgram(const list<uint>& shaders)
 
 void ModuleShader::SetUpDefaultShader()
 {
-	uint vertexId =AddShader("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShader("Assets/Shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
+	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShaderPath("Assets/Shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
 	defaultShaderId = AddProgram({ vertexId, fragmentId });
 }
 
 void ModuleShader::SetUpCartoonShader()
 {
-	uint vertexId = AddShader("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShader("Assets/Shaders/cartoon.frag", GL_FRAGMENT_SHADER);
+	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShaderPath("Assets/Shaders/cartoon.frag", GL_FRAGMENT_SHADER);
 	cartoonShaderId = AddProgram({ vertexId, fragmentId });
 }

@@ -2,7 +2,8 @@
 
 #include <queue>
 
-//#include "Mesh.h"
+#include "MeshFilter.h"
+#include "MeshRenderer.h"
 #include "GameObject.h"
 
 using namespace std;
@@ -78,8 +79,10 @@ GameObject* ModuleScene::AddCube(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Cube");
 
-	/*Mesh* mesh = (Mesh*)gameObject->AddComponent(ComponentType::Mesh, true);
-	mesh->SetMeshMode(MeshMode::CUBE);*/
+	MeshFilter* meshFilter = (MeshFilter*)gameObject->AddComponent(ComponentType::MeshFilter);
+	//Set Cube mesh to mesh filter
+
+	gameObject->AddComponent(ComponentType::MeshRenderer);
 
 	return gameObject;
 }
@@ -88,8 +91,10 @@ GameObject* ModuleScene::AddSphere(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Sphere");
 
-	/*Mesh* mesh = (Mesh*)gameObject->AddComponent(ComponentType::Mesh, true);
-	mesh->SetMeshMode(MeshMode::SPHERE);*/
+	MeshFilter* meshFilter = (MeshFilter*)gameObject->AddComponent(ComponentType::MeshFilter);
+	//Set Sphere mesh to mesh filter
+
+	gameObject->AddComponent(ComponentType::MeshRenderer);
 
 	return gameObject;
 }
