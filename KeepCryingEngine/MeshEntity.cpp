@@ -1,11 +1,15 @@
 #include "MeshEntity.h"
 
+#include <vector>
 
+#include "Globals.h"
+
+using namespace std;
 
 MeshEntity::MeshEntity()
 {
+	SetUpCube();
 }
-
 
 MeshEntity::~MeshEntity()
 {
@@ -34,4 +38,197 @@ GLuint MeshEntity::GetNormalBufferId() const
 GLsizei MeshEntity::GetVerticesNumber() const
 {
 	return verticesNumber;
+}
+
+void MeshEntity::SetUpCube()
+{
+	const int nCubeVertices = 24;
+	verticesNumber = nCubeVertices;
+
+	float3 positions[nCubeVertices] = {
+		{ -0.5f, -0.5f, -0.5f }, // 0 Front bottom left
+		{ 0.5f, -0.5f, -0.5f }, // 1 Front bottom right
+		{ 0.5f, 0.5f, -0.5f }, // 2 Front top right
+		{ -0.5f, 0.5f, -0.5f }, // 3 Front top left
+
+		{ -0.5f, -0.5f, 0.5f }, // 4 Left bottom left
+		{ -0.5f, -0.5f, -0.5f }, // 5 Left bottom right
+		{ -0.5f, 0.5f, -0.5f }, // 6 Left top right
+		{ -0.5f, 0.5f, 0.5f }, // 7 Left top left
+
+		{ -0.5f, 0.5f, 0.5f }, // 8 Back top left
+		{ 0.5f, 0.5f, 0.5f }, // 9 Back top right
+		{ 0.5f, -0.5f, 0.5f }, // 10 Back bottom right
+		{ -0.5f, -0.5f, 0.5f }, // 11 Back bottom left
+
+		{ 0.5f, -0.5f, -0.5f }, // 12 Right bottom left
+		{ 0.5f, -0.5f, 0.5f }, // 13 Right bottom right
+		{ 0.5f, 0.5f, 0.5f }, // 14 Right top right
+		{ 0.5f, 0.5f, -0.5f }, // 15 Right top left
+
+		{ -0.5f, -0.5f, 0.5f }, // 16 Bottom top left
+		{ 0.5f, -0.5f, 0.5f }, // 17 Bottom top right
+		{ 0.5f, -0.5f, -0.5f }, // 18 Bottom bottom right
+		{ -0.5f, -0.5f, -0.5f }, // 19 Bottom bottom left
+
+		{ -0.5f, 0.5f, -0.5f }, // 20 Top bottom left
+		{ 0.5f, 0.5f, -0.5f }, // 20.5f Top bottom right
+		{ 0.5f, 0.5f, 0.5f }, // 22 Top top right
+		{ -0.5f, 0.5f, 0.5f } // 23 Top top left
+	};
+	
+	float4 colors[nCubeVertices];
+	for (size_t i = 0; i < nCubeVertices; i++)
+	{
+		colors[i] = float4(100, 100, 100, 100);
+	}
+
+	float2 uv[nCubeVertices] = {
+		{0.0f, 0.0f},
+		{1.0f, 0.0f},
+		{1.0f, 1.0f},
+		{0.0f, 1.0f},
+	
+		{1.0f, 0.0f},
+		{0.0f, 0.0f},
+		{0.0f, 1.0f},
+		{1.0f, 1.0f},
+
+		{1.0f, 1.0f},
+		{0.0f, 1.0f},
+		{0.0f, 0.0f},
+		{1.0f, 0.0f},
+	
+		{0.0f, 0.0f},
+		{1.0f, 0.0f},
+		{1.0f, 1.0f},
+		{0.0f, 1.0f},
+
+		{0.0f, 1.0f},
+		{1.0f, 1.0f},
+		{1.0f, 0.0f},
+		{0.0f, 0.0f},
+
+		{0.0f, 0.0f},
+		{1.0f, 0.0f},
+		{1.0f, 1.0f},
+		{0.0f, 1.0f}
+	};
+
+	Vertex vertices[nCubeVertices];
+	FillVerticesData(vertices, nCubeVertices, positions, colors, uv);
+
+	CalculateAABBForMesh(uniqueVertex, nVertices);
+
+	glGenBuffers(1, (GLuint*) &(vertexBufferId));
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 24, vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLushort indicesArray[24 * 3] =
+	{
+		3, 1, 0,
+		3, 2, 1,
+
+		7, 5, 4,
+		7, 6, 5,
+
+		11, 9, 8,
+		11, 10, 9,
+
+		15, 13, 12,
+		15, 14, 13,
+
+		19, 17, 16,
+		19, 18, 17,
+
+		23, 21, 20,
+		23, 22, 21
+	};
+	
+	verticesNumber = sizeof(indicesArray)/sizeof(uint);
+
+	glGenBuffers(1, (GLuint*) &(indicesBufferId));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * verticesNumber, indicesArray, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	float normal[24 * 3];
+	float offset = 3;
+	for(size_t i = 0; i < 36; i+=3)
+	{
+		int x1 = indicesArray[i] * offset;
+		int x2 = indicesArray[i + 1] * offset;
+		int x3 = indicesArray[i + 2] * offset;
+
+		int y1 = (indicesArray[i] * offset) + 1;
+		int y2 = (indicesArray[i + 1] * offset) + 1;
+		int y3 = (indicesArray[i + 2] * offset) + 1;
+
+		int z1 = (indicesArray[i] * offset) + 2;
+		int z2 = (indicesArray[i + 1] * offset) + 2;
+		int z3 = (indicesArray[i + 2] * offset) + 2;
+
+		float edge1X = uniqueVertex[x2] - uniqueVertex[x1];
+		float edge1Y = uniqueVertex[y2] - uniqueVertex[y1];
+		float edge1Z = uniqueVertex[z2] - uniqueVertex[z1];
+
+		float edge2X = uniqueVertex[x3] - uniqueVertex[x1];
+		float edge2Y = uniqueVertex[y3] - uniqueVertex[y1];
+		float edge2Z = uniqueVertex[z3] - uniqueVertex[z1];
+
+		float3 vNormal = Cross(float3(edge1X, edge1Y, edge1Z), float3(edge2X, edge2Y, edge2Z)).Normalized();
+		normal[i] = vNormal.x;
+		normal[i + 1] = vNormal.y;
+		normal[i + 2] = vNormal.z;
+	}
+
+	/* for(size_t i = 0; i < 36; i++)
+	{
+		LOG_DEBUG("%f",normal[i]);
+	} */
+
+	glGenBuffers(1, (GLuint*) &(normalBufferId));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalBufferId);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 24 * 3, normal, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	RELEASE(colors);
+}
+
+void MeshEntity::CalculateAABBForMesh(float * newVertices, size_t nVertices)
+{
+	vector<float3> vertices;
+	for(size_t i = 0; i < nVertices; i++)
+	{
+		const int currentIndex = i * 3;
+		float3 vertex(newVertices[currentIndex], newVertices[currentIndex + 1], newVertices[currentIndex + 2]);
+		vertices.push_back(vertex);
+	}
+
+	aabb.SetNegativeInfinity();
+	if(vertices.size() != 0)
+	{
+		aabb.Enclose(vertices.data(), vertices.size());
+	}
+}
+
+void MeshEntity::FillVerticesData(Vertex* vertices, GLuint nVertices, const float3 * positions, const float4 * colors, const float2 * texCoords) const
+{
+	for(GLuint i = 0; i < nVertices; ++i)
+	{
+		for(GLuint j = 0; j < 3; ++j)
+		{
+			vertices[i].position[j] = positions[i * 3 + j];
+		}
+
+		for(GLuint j = 0; j < 4; ++j)
+		{
+			vertices[i].color[j] = colors[i * 4 + j];
+		}
+
+		for(GLuint j = 0; j < 2; ++j)
+		{
+			vertices[i].uv[j] = texCoords[i * 2 + j];
+		}
+	}
 }

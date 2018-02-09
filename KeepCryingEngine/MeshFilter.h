@@ -20,7 +20,7 @@ public:
 	void SetMesh(MeshEntity* mesh);
 
 private:
-	MeshEntity * mesh;
+	MeshEntity * mesh = nullptr;
 };
 
 #endif // !_MESHFILTER_H_

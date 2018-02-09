@@ -6,6 +6,7 @@
 
 MeshFilter::MeshFilter() : Component(ComponentType::MeshFilter)
 {
+	mesh = new MeshEntity();
 }
 
 MeshFilter::~MeshFilter()
