@@ -17,6 +17,7 @@ public:
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
 	MeshEntity* GetMesh() const;
+	void SetMesh(MeshEntity* mesh);
 
 private:
 	MeshEntity * mesh;

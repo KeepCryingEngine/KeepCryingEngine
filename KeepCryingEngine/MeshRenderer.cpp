@@ -9,17 +9,23 @@
 
 MeshRenderer::MeshRenderer() : Component(ComponentType::MeshRenderer)
 {
+	material = new MaterialEntity();
 }
 
 
 MeshRenderer::~MeshRenderer()
 {
+	delete material;
 }
 
 void MeshRenderer::DrawUI()
 {
 	if (ImGui::CollapsingHeader("MeshRenderer"))
 	{
+		if (material)
+		{
+			material->DrawUI();
+		}
 	}
 }
 

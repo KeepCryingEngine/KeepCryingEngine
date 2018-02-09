@@ -2,6 +2,7 @@
 
 #include "MeshRenderer.h"
 #include "GameObject.h"
+#include "MeshEntity.h"
 
 MeshFilter::MeshFilter() : Component(ComponentType::MeshFilter)
 {
@@ -15,6 +16,7 @@ void MeshFilter::DrawUI()
 {
 	if (ImGui::CollapsingHeader("MeshFilter"))
 	{
+		
 	}
 }
 
@@ -39,3 +41,9 @@ MeshEntity * MeshFilter::GetMesh() const
 {
 	return mesh;
 }
+
+void MeshFilter::SetMesh(MeshEntity * mesh)
+{
+	this->mesh = mesh;
+}
+
