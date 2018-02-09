@@ -4,6 +4,7 @@
 #include <list>
 
 #include "Module.h"
+#include "Quadtree.h"
 
 class GameObject;
 
@@ -32,6 +33,8 @@ public:
 	GameObject* AddSphere(GameObject& parent);
 	GameObject* AddCamera(GameObject& parent);
 
+	void AddCHAOS();
+
 	//void Add(GameObject& gameObject);
 	void Destroy(GameObject& gameObject);
 
@@ -43,13 +46,23 @@ private:
 
 	void DestroyAndRelease(GameObject* &gameObject) const;
 
+	void AddToQuadtree(GameObject* gameObject);
+
+	void SetRandomPositionRecursive(GameObject* gameObject, float minX, float maxX, float minY, float maxY, float minZ, float maxZ);
+
 private:
 	GameObject* root = nullptr;
+
+	Quadtree qTGameObjects;
 
 	//std::list<GameObject*> toStart;
 	std::list<GameObject*> toDestroy;
 
 	unsigned long long int currentGameObjectId = 0;
+
+	bool CHAOSAdded = false;
+
+	const float QUADTREE_SIZE = 150.0f;
 };
 
 #endif // !_MODULESCENE_H_

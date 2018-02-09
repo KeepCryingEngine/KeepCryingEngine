@@ -46,6 +46,7 @@ private:
 	bool addSphereGameObject = false;
 	bool addEmptyGameObject = false;
 	bool addCameraGameObject = false;
+	bool addCHAOS = false;
 
 	//Parameter control bools
 	bool wireframeEnabled = false;

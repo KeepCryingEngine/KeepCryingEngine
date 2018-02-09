@@ -358,6 +358,11 @@ void ModuleUI::CallEntityCreation()
 		App->scene->AddCamera(*App->scene->Get(selectedNodeID));
 		addCameraGameObject = false;
 	}
+	if(addCHAOS)
+	{
+		App->scene->AddCHAOS();
+		addCHAOS = false;
+	}
 }
 
 void ModuleUI::CallWindows()
@@ -497,6 +502,10 @@ void ModuleUI::DrawHierarchyWindow()
 			if(ImGui::MenuItem("Camera", nullptr, &addCameraGameObject))
 			{
 				addCameraGameObject = true;
+			}
+			if(ImGui::MenuItem("CHAOS", nullptr, &addCHAOS))
+			{
+				addCHAOS = true;
 			}
 			ImGui::EndMenu();
 		}
