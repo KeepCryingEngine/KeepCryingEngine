@@ -8,6 +8,7 @@
 struct Vertex
 {
 	float3 position;
+	float3 normal;
 	float4 color;
 	float2 uv;
 };
@@ -21,21 +22,22 @@ public:
 	const AABB& GetAABB() const;
 	GLuint GetVertexBufferId() const;
 	GLuint GetIndicesBufferId() const;
-	GLuint GetNormalBufferId() const;
 	GLsizei GetVerticesNumber() const;
 
 private:
+	void GenerateBuffers(Vertex* vertices, size_t verticesSize, GLushort* indices, size_t indicesSize);
+	
 	void SetUpCube();
 
-	void FillVerticesData(Vertex* vertices, GLuint nVertices, const float3 * positions, const float4 * colors, const float2 * uvs) const;
+	void FillVerticesData(Vertex* vertices, GLuint nVertices, const float3 * positions, const float3* normals, const float4 * colors, const float2 * uvs) const;
 	void CalculateAABBForMesh(float3 * verticesPositions, size_t nVertices);
 
 private:
 	AABB aabb;
 	GLuint vertexBufferId = 0;
 	GLuint indicesBufferId = 0;
-	GLuint normalBufferId = 0;
-	GLsizei verticesNumber = 0;
+	GLsizei nVertices = 0;
+	GLsizei nIndices = 0;
 
 };
 

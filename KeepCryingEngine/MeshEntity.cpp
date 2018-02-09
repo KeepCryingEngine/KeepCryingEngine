@@ -30,20 +30,15 @@ GLuint MeshEntity::GetIndicesBufferId() const
 	return indicesBufferId;
 }
 
-GLuint MeshEntity::GetNormalBufferId() const
-{
-	return normalBufferId;
-}
-
 GLsizei MeshEntity::GetVerticesNumber() const
 {
-	return verticesNumber;
+	return nVertices;
 }
 
 void MeshEntity::SetUpCube()
 {
 	const int nCubeVertices = 24;
-	verticesNumber = nCubeVertices;
+	nVertices = nCubeVertices;
 
 	float3 positions[nCubeVertices] = {
 		{ -0.5f, -0.5f, -0.5f }, // 0 Front bottom left
@@ -115,18 +110,9 @@ void MeshEntity::SetUpCube()
 		{0.0f, 1.0f}
 	};
 
-	Vertex vertices[nCubeVertices];
-	FillVerticesData(vertices, nCubeVertices, positions, colors, uv);
-
-	CalculateAABBForMesh(positions, verticesNumber);
-
-	glGenBuffers(1, (GLuint*) &(vertexBufferId));
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * nCubeVertices, vertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	const size_t indicesNumber = 36;
-	GLushort indicesArray[indicesNumber] =
+	const size_t cubeIndicesNumber = 36;
+	nIndices = cubeIndicesNumber;
+	GLushort indicesArray[cubeIndicesNumber] =
 	{
 		3, 1, 0,
 		3, 2, 1,
@@ -146,50 +132,57 @@ void MeshEntity::SetUpCube()
 		23, 21, 20,
 		23, 22, 21
 	};
-	
-	glGenBuffers(1, (GLuint*) &indicesBufferId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * indicesNumber, indicesArray, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	float3 normal[nCubeVertices];
+	float3 normals[nCubeVertices]; // TODO FILL THE NORMALS WITH THE NORMAL VALUE
 	/*float offset = 3;
 	for(size_t i = 0; i < 36; i+=3)
 	{
-		int x1 = indicesArray[i] * offset;
-		int x2 = indicesArray[i + 1] * offset;
-		int x3 = indicesArray[i + 2] * offset;
+	int x1 = indicesArray[i] * offset;
+	int x2 = indicesArray[i + 1] * offset;
+	int x3 = indicesArray[i + 2] * offset;
 
-		int y1 = (indicesArray[i] * offset) + 1;
-		int y2 = (indicesArray[i + 1] * offset) + 1;
-		int y3 = (indicesArray[i + 2] * offset) + 1;
+	int y1 = (indicesArray[i] * offset) + 1;
+	int y2 = (indicesArray[i + 1] * offset) + 1;
+	int y3 = (indicesArray[i + 2] * offset) + 1;
 
-		int z1 = (indicesArray[i] * offset) + 2;
-		int z2 = (indicesArray[i + 1] * offset) + 2;
-		int z3 = (indicesArray[i + 2] * offset) + 2;
+	int z1 = (indicesArray[i] * offset) + 2;
+	int z2 = (indicesArray[i + 1] * offset) + 2;
+	int z3 = (indicesArray[i + 2] * offset) + 2;
 
-		float edge1X = uniqueVertex[x2] - uniqueVertex[x1];
-		float edge1Y = uniqueVertex[y2] - uniqueVertex[y1];
-		float edge1Z = uniqueVertex[z2] - uniqueVertex[z1];
+	float edge1X = uniqueVertex[x2] - uniqueVertex[x1];
+	float edge1Y = uniqueVertex[y2] - uniqueVertex[y1];
+	float edge1Z = uniqueVertex[z2] - uniqueVertex[z1];
 
-		float edge2X = uniqueVertex[x3] - uniqueVertex[x1];
-		float edge2Y = uniqueVertex[y3] - uniqueVertex[y1];
-		float edge2Z = uniqueVertex[z3] - uniqueVertex[z1];
+	float edge2X = uniqueVertex[x3] - uniqueVertex[x1];
+	float edge2Y = uniqueVertex[y3] - uniqueVertex[y1];
+	float edge2Z = uniqueVertex[z3] - uniqueVertex[z1];
 
-		float3 vNormal = Cross(float3(edge1X, edge1Y, edge1Z), float3(edge2X, edge2Y, edge2Z)).Normalized();
-		normal[i] = vNormal.x;
-		normal[i + 1] = vNormal.y;
-		normal[i + 2] = vNormal.z;
+	float3 vNormal = Cross(float3(edge1X, edge1Y, edge1Z), float3(edge2X, edge2Y, edge2Z)).Normalized();
+	normal[i] = vNormal.x;
+	normal[i + 1] = vNormal.y;
+	normal[i + 2] = vNormal.z;
 	}*/
 
-	/* for(size_t i = 0; i < 36; i++)
-	{
-		LOG_DEBUG("%f",normal[i]);
-	} */
+	Vertex vertices[nCubeVertices];
+	FillVerticesData(vertices, nCubeVertices, positions, normals, colors, uv);
 
-	glGenBuffers(1, (GLuint*) &(normalBufferId));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalBufferId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float3) * nCubeVertices, normal, GL_STATIC_DRAW);
+	GenerateBuffers(vertices, nVertices, indicesArray, nIndices);
+
+	CalculateAABBForMesh(positions, nVertices);	
+}
+
+void MeshEntity::GenerateBuffers(Vertex* vertices, size_t nVertices, GLushort* indices, size_t nIndices)
+{
+	//Generate Vertex buffer
+	glGenBuffers(1, &vertexBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * nVertices, vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	//Generate Indices buffer
+	glGenBuffers(1, (GLuint*)&indicesBufferId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * nIndices, indices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
@@ -202,11 +195,12 @@ void MeshEntity::CalculateAABBForMesh(float3 * verticesPositions, size_t nVertic
 	}
 }
 
-void MeshEntity::FillVerticesData(Vertex* vertices, GLuint nVertices, const float3 * positions, const float4 * colors, const float2 * uvs) const
+void MeshEntity::FillVerticesData(Vertex* vertices, GLuint nVertices, const float3 * positions, const float3* normals, const float4 * colors, const float2 * uvs) const
 {
 	for(GLuint i = 0; i < nVertices; ++i)
 	{
 		vertices[i].position = positions[i];
+		vertices[i].normal = normals[i];
 		vertices[i].color = colors[i];
 		vertices[i].uv = uvs[i];
 	}
