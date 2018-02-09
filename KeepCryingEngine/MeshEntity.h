@@ -23,6 +23,7 @@ public:
 	GLuint GetVertexBufferId() const;
 	GLuint GetIndicesBufferId() const;
 	GLsizei GetVerticesNumber() const;
+	GLsizei GetIndicesNumber() const;
 
 private:
 	void GenerateBuffers(Vertex* vertices, size_t verticesSize, GLushort* indices, size_t indicesSize);

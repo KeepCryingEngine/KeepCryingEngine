@@ -299,7 +299,7 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawInfo.mesh.GetIndicesBufferId());
-	glDrawElements(GL_TRIANGLES, drawInfo.mesh.GetVerticesNumber(), GL_UNSIGNED_SHORT, nullptr);
+	glDrawElements(GL_TRIANGLES, drawInfo.mesh.GetIndicesNumber(), GL_UNSIGNED_SHORT, nullptr);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);

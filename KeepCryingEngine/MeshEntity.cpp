@@ -35,11 +35,15 @@ GLsizei MeshEntity::GetVerticesNumber() const
 	return nVertices;
 }
 
+GLsizei MeshEntity::GetIndicesNumber() const
+{
+	return nIndices;
+}
+
 void MeshEntity::SetUpCube()
 {
-	const int nCubeVertices = 24;
+	const size_t nCubeVertices = 24;
 	nVertices = nCubeVertices;
-
 	float3 positions[nCubeVertices] = {
 		{ -0.5f, -0.5f, -0.5f }, // 0 Front bottom left
 		{ 0.5f, -0.5f, -0.5f }, // 1 Front bottom right
