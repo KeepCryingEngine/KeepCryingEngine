@@ -173,6 +173,11 @@ void MeshEntity::SetUpCube()
 
 void MeshEntity::GenerateBuffers(Vertex* vertices, size_t nVertices, GLushort* indices, size_t nIndices)
 {
+	assert(vertices);
+	assert(nVertices > 0);
+	assert(indices);
+	assert(nIndices > 0);
+
 	//Generate Vertex buffer
 	glGenBuffers(1, &vertexBufferId);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
@@ -180,7 +185,7 @@ void MeshEntity::GenerateBuffers(Vertex* vertices, size_t nVertices, GLushort* i
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	//Generate Indices buffer
-	glGenBuffers(1, (GLuint*)&indicesBufferId);
+	glGenBuffers(1, &indicesBufferId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * nIndices, indices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -188,15 +193,20 @@ void MeshEntity::GenerateBuffers(Vertex* vertices, size_t nVertices, GLushort* i
 
 void MeshEntity::CalculateAABBForMesh(float3 * verticesPositions, size_t nVertices)
 {
-	aabb.SetNegativeInfinity();
-	if(nVertices > 0)
-	{
-		aabb.Enclose(verticesPositions, nVertices);
-	}
+	assert(verticesPositions);
+	assert(nVertices > 0);
+	aabb.Enclose(verticesPositions, nVertices);
 }
 
 void MeshEntity::FillVerticesData(Vertex* vertices, GLuint nVertices, const float3 * positions, const float3* normals, const float4 * colors, const float2 * uvs) const
 {
+	assert(vertices);
+	assert(nVertices > 0);
+	assert(positions);
+	assert(normals);
+	assert(colors);
+	assert(uvs);
+	
 	for(GLuint i = 0; i < nVertices; ++i)
 	{
 		vertices[i].position = positions[i];
