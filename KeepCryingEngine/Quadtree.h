@@ -1,8 +1,7 @@
 #ifndef _QUADTREE_H_
 #define _QUADTREE_H_
 
-// #include <vector>
-#include <AABB.h>
+#include <AABB2D.h>
 
 class GameObject;
 class QuadtreeNode;
@@ -13,13 +12,17 @@ public:
 	Quadtree();
 	virtual ~Quadtree();
 
-	void Create(const AABB& limits);
+	void Create(const AABB2D& limits);
 
-	// void Clear();
+	void Clear();
 
 	void Insert(GameObject* gameObject);
 
 	// void Intersect(std::vector<GameObject*>& gameObjects, PRIMITIVE) const;
+
+	void Print() const;
+
+	void Draw() const;
 
 private:
 	QuadtreeNode* root = nullptr;
