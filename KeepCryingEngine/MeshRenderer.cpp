@@ -18,6 +18,9 @@ MeshRenderer::~MeshRenderer()
 
 void MeshRenderer::DrawUI()
 {
+	if (ImGui::CollapsingHeader("MeshRenderer"))
+	{
+	}
 }
 
 std::vector<ComponentType> MeshRenderer::GetProhibitedComponents() const

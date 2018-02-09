@@ -13,6 +13,9 @@ MeshFilter::~MeshFilter()
 
 void MeshFilter::DrawUI()
 {
+	if (ImGui::CollapsingHeader("MeshFilter"))
+	{
+	}
 }
 
 std::vector<ComponentType> MeshFilter::GetProhibitedComponents() const

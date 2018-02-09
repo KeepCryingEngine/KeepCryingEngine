@@ -274,18 +274,23 @@ void GameObject::DrawUI()
 		name = buffer;
 	}
 	static int selectedComponent = 0;
-	ImGui::Combo("Comp.", &selectedComponent, "Mesh\0Camera");
+	ImGui::Combo("Comp.", &selectedComponent, "MeshFilter\0MeshRenderer\0Camera");
 	ImGui::SameLine();
 	if(ImGui::Button("Add"))
 	{
 		switch(selectedComponent)
 		{
 			case 0:
-				//AddComponent(ComponentType::Mesh);
+				AddComponent(ComponentType::MeshFilter);
 				break;
 			case 1:
+				AddComponent(ComponentType::MeshRenderer);
+				break;
+			case 2:
 				AddComponent(ComponentType::Camera);
 				break;
+			default:
+				assert(false);
 		}
 	}
 
