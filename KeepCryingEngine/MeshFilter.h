@@ -28,10 +28,13 @@ public:
 
 private:
 	void UpdateGameObjectAABB();
+	void DrawGameObjectAABB();
 
 private:
 	MeshEntity * mesh = nullptr;
+
 	MeshMode mode = MeshMode::CUBE;
+	bool debugAABB = true;
 };
 
 #endif // !_MESHFILTER_H_

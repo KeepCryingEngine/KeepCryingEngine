@@ -81,7 +81,8 @@ void MeshEntity::CalculateAABBForMesh(const vector<Vertex> &vertices)
 	{
 		positions[i] = vertices[i].position;
 	}
-	
+
+	aabb.SetNegativeInfinity();
 	aabb.Enclose(positions, vertices.size());
 	RELEASE_ARRAY(positions);
 }

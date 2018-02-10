@@ -43,6 +43,10 @@ void MeshFilter::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		if (meshRenderer)
 		{
 			meshRenderer->Render(*mesh);
+			if (debugAABB)
+			{
+				DrawGameObjectAABB();
+			}
 		}
 		UpdateGameObjectAABB();
 	}
@@ -50,15 +54,42 @@ void MeshFilter::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 
 void MeshFilter::UpdateGameObjectAABB()
 {
-
 	Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
 	OBB obb = mesh->GetAABB().ToOBB();
+	obb.Transform(transform->GetModelMatrix());
 
-	obb.Transform(transform->GetWorldRotation());
+	/*obb.Transform(transform->GetWorldRotation());
 	obb.Translate(transform->GetWorldPosition());
-	obb.Scale(transform->GetWorldPosition(), transform->GetWorldScale());
+	obb.Scale(transform->GetWorldPosition(), transform->GetWorldScale());*/
 
 	gameObject->GetAABB().SetFrom(obb);
+}
+
+void MeshFilter::DrawGameObjectAABB()
+{
+	float3 aabbcorners[8];
+	gameObject->GetAABB().GetCornerPoints(aabbcorners);
+	
+	float currentColor[4];
+	glGetFloatv(GL_CURRENT_COLOR, currentColor);
+	
+	glBegin(GL_LINES);
+	glColor4f(255.0f, 255.0f, 255.0f, 1.0f);
+	
+	for(int i = 0; i < 8; i++)
+	{
+		for(int j = 0; j < 8; j++)
+		{
+			if(i != j)
+			{
+				glVertex3f(aabbcorners[i].x, aabbcorners[i].y, aabbcorners[i].z);
+				glVertex3f(aabbcorners[j].x, aabbcorners[j].y, aabbcorners[j].z);
+			}
+		}
+	}
+	
+	glColor4f(currentColor[0], currentColor[1], currentColor[2], currentColor[3]);
+	glEnd();	
 }
 
 MeshEntity * MeshFilter::GetMesh() const
