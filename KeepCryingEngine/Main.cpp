@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <SDL.h>
+#include "Brofiler.h"
 
 #include "Application.h"
 
@@ -50,6 +51,7 @@ int main(int argc, char ** argv)
 
 			case main_states::MAIN_UPDATE:
 			{
+				BROFILER_FRAME("Update Loop");
 				update_status update_return = App->Update();
 
 				if(update_return == update_status::UPDATE_ERROR)

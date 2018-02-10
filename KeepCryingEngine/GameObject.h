@@ -30,6 +30,10 @@ public:
 	unsigned long long int GetId() const;
 
 	const bool IsEnabled() const;
+	const bool IsStatic() const;
+
+	void SetStatic(bool value);
+
 
 	void SetParent(GameObject& newParent);
 
@@ -74,6 +78,7 @@ private:
 	std::string name;
 
 	bool enable = true;
+	bool isStatic = false;
 	unsigned long long int id;
 
 	AABB aabb;
