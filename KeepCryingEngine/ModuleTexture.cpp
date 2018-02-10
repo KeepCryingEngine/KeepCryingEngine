@@ -13,15 +13,18 @@ ModuleTexture::ModuleTexture()
 ModuleTexture::~ModuleTexture()
 { }
 
-uint ModuleTexture::LoadCheckerTexture()
+bool ModuleTexture::Start()
 {
-	if(checkerTexture != 0)
-	{
-		return checkerTexture;
-	}
+	SetUpCheckerTexture();
 
+	return true;
+}
+
+void ModuleTexture::SetUpCheckerTexture()
+{
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
 	
+	//Fill texture data
 	for(int i = 0; i < CHECKERS_HEIGHT; ++i)
 	{
 		for(int j = 0; j < CHECKERS_WIDTH; ++j)
@@ -37,23 +40,26 @@ uint ModuleTexture::LoadCheckerTexture()
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	glGenTextures(1, &checkerTexture);
-	glBindTexture(GL_TEXTURE_2D, checkerTexture);
-
-	// Set texture clamping method
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-	// Set texture interpolation method to use linear interpolation (no MIPMAPS)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+	GLuint checkerTextureId = 0;
+	glGenTextures(1, &checkerTextureId);
+	
+	glBindTexture(GL_TEXTURE_2D, checkerTextureId);
+	
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT,
 		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	return checkerTexture;
+	TextureConfiguration textureConfiguration;
+	textureConfiguration.textureType = GL_TEXTURE_2D;
+	textureConfiguration.mipMap = false;
+	textureConfiguration.magFilterMode = GL_LINEAR;
+	textureConfiguration.minFilterMode = GL_LINEAR;
+	textureConfiguration.wrapModeS = GL_CLAMP;
+	textureConfiguration.wrapModeT = GL_CLAMP;
+	textureConfiguration.anisotropicFilter = true;
+
+	checkerTexture = new Texture(checkerTextureId, textureConfiguration);
 }
 
 Texture * ModuleTexture::LoadTexture(const char* texturePath) const
@@ -115,82 +121,7 @@ Texture * ModuleTexture::LoadTexture(const char* texturePath) const
 	return texture;
 }
 
-uint ModuleTexture::getWrapModeS() const
+Texture * ModuleTexture::GetCheckerTexture() const
 {
-	return wrapModeS;
-}
-
-void ModuleTexture::setWrapModeS(uint wrapModeS)
-{
-	this->wrapModeS = wrapModeS;
-}
-
-uint ModuleTexture::getWrapModeT() const
-{
-	return wrapModeT;
-}
-
-void ModuleTexture::setWrapModeT(uint wrapModeT)
-{
-	this->wrapModeT = wrapModeT;
-}
-
-bool ModuleTexture::getMagFilter() const
-{
-	return magFilter;
-}
-
-void ModuleTexture::setMagFilter(bool magFilter)
-{
-	this->magFilter = magFilter;
-}
-
-bool ModuleTexture::getMinFilter() const
-{
-	return minFilter;
-}
-
-void ModuleTexture::setMinFilter(bool minFilter)
-{
-	this->minFilter = minFilter;
-}
-
-uint ModuleTexture::getMagFilterMode() const
-{
-	return magFilterMode;
-}
-
-void ModuleTexture::setMagFilterMode(uint magFilterMode)
-{
-	this->magFilterMode = magFilterMode;
-}
-
-uint ModuleTexture::getMinFilterMode() const
-{
-	return minFilterMode;
-}
-
-void ModuleTexture::setMinFilterMode(uint minFilterMode)
-{
-	this->minFilterMode = minFilterMode;
-}
-
-bool ModuleTexture::getMipmap() const
-{
-	return mipmap;
-}
-
-void ModuleTexture::setMipmap(bool mipMap)
-{
-	this->mipmap = mipmap;
-}
-
-bool ModuleTexture::getAnisotropicFilter() const
-{
-	return anisotropicFilter;
-}
-
-void ModuleTexture::setAnisotropicFilter(bool anisotropicFilter)
-{
-	this->anisotropicFilter = anisotropicFilter;
+	return checkerTexture;
 }

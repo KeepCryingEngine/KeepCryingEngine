@@ -21,7 +21,7 @@ public:
 
 	virtual ~Texture();
 
-	GLuint GetTextureId() const;
+	GLuint GetId() const;
 
 	GLint GetWrapModeS() const;
 	void SetWrapModeS(GLint wrapModeS);

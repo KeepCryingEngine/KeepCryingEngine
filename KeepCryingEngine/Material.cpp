@@ -13,7 +13,7 @@ using namespace std;
 
 Material::Material()
 {
-	textureId = App->texture->LoadCheckerTexture();
+	texture = App->texture->GetCheckerTexture();
 	programId = App->shader->GetShaderId(ShaderType::Default);
 }
 
@@ -51,16 +51,16 @@ GLuint Material::GetProgramId() const
 	return programId;
 }
 
-GLuint Material::GetTextureId() const
+Texture* Material::GetTexture() const
 {
-	return textureId;
+	return texture;
 }
 
 void Material::SetTexture(const char* path)
 {
-	uint newTextureID = App->texture->LoadTexture(path)->GetTextureId();
-	if(newTextureID != 0)
+	Texture * texture = App->texture->LoadTexture(path);
+	if(texture)
 	{
-		textureId = newTextureID;
+		this->texture = texture;
 	}
 }
