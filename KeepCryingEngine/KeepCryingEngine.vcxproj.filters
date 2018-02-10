@@ -73,6 +73,7 @@
     <ClCompile Include="Material.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Material.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">
