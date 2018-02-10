@@ -108,6 +108,33 @@ const bool GameObject::IsEnabled() const
 	return enable;
 }
 
+const bool GameObject::IsStatic() const
+{
+	return isStatic;
+}
+
+void GameObject::SetStatic(bool value)
+{
+	isStatic = value;
+	if(value)
+	{
+		GameObject* root = App->scene->GetRoot();
+		GameObject* actualParent = parent;
+
+		if(parent != App->scene->GetRoot())
+		{
+			parent->SetStatic(value);
+		}
+	}
+	else
+	{
+		for(GameObject* g : children)
+		{
+			g->SetStatic(value);
+		}
+	}
+}
+
 /* void GameObject::AddChild(GameObject& newChild)
 {
 	newChild.SetParent(*this);
@@ -166,6 +193,16 @@ void GameObject::SetAABB(const AABB & newAABB)
 AABB & GameObject::GetAABB()
 {
 	return aabb;
+}
+
+bool GameObject::GetVisible() const
+{
+	return visible;
+}
+
+void GameObject::SetVisible(bool visible)
+{
+	this->visible = visible;
 }
 
 Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
@@ -274,6 +311,14 @@ std::vector<Component*> GameObject::GetComponentsInChildren(ComponentType type)
 
 void GameObject::GetComponents(ComponentType type, std::vector<Component*>& ret)
 {
+	for(Component* component : toStart)
+	{
+		if(component->type == type)
+		{
+			ret.push_back(component);
+		}
+	}
+
 	for (Component* component : components)
 	{
 		if (component->type == type)
@@ -293,6 +338,15 @@ void GameObject::DrawUI()
 	{
 		name = buffer;
 	}
+
+	bool tempStatic = IsStatic();
+
+	if(ImGui::Checkbox("Static", &tempStatic))
+	{
+		SetStatic(tempStatic);
+	}
+
+
 	static int selectedComponent = 0;
 	ImGui::Combo("Comp.", &selectedComponent, "MeshRenderer\0Camera");
 	ImGui::SameLine();

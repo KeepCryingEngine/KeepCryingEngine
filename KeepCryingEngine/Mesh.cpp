@@ -46,7 +46,7 @@ GLenum Mesh::GetDrawMode() const
 
 void Mesh::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& indices, GLenum drawMode)
 {
-	GenerateBuffers(vertices,indices);
+	GenerateBuffers(vertices, indices);
 	CalculateAABBForMesh(vertices);
 	this->drawMode = drawMode;
 }

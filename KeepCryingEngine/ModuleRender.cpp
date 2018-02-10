@@ -84,6 +84,11 @@ bool ModuleRender::Init()
 		ret = false;
 	}
 
+	if(App->configuration.vsync)
+	{
+		SDL_GL_SetSwapInterval(1);
+	}
+
 	return ret;
 }
 

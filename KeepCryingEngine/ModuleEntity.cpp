@@ -69,39 +69,40 @@ void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& i
 
 	//Vertices
 	{
+		const float size = 1.0f;
 		const size_t nCubeVertices = 24;
 		vertices.resize(nCubeVertices);
 
 		float3 positions[nCubeVertices] = {
-			{ -0.5f, -0.5f, -0.5f }, // 0 Front bottom left
-		{ 0.5f, -0.5f, -0.5f }, // 1 Front bottom right
-		{ 0.5f, 0.5f, -0.5f }, // 2 Front top right
-		{ -0.5f, 0.5f, -0.5f }, // 3 Front top left
+		{ -size, -size, -size }, // 0 Front bottom left
+		{ size, -size, -size }, // 1 Front bottom right
+		{ size, size, -size }, // 2 Front top right
+		{ -size, size, -size }, // 3 Front top left
 
-		{ -0.5f, -0.5f, 0.5f }, // 4 Left bottom left
-		{ -0.5f, -0.5f, -0.5f }, // 5 Left bottom right
-		{ -0.5f, 0.5f, -0.5f }, // 6 Left top right
-		{ -0.5f, 0.5f, 0.5f }, // 7 Left top left
+		{ -size, -size, size }, // 4 Left bottom left
+		{ -size, -size, -size }, // 5 Left bottom right
+		{ -size, size, -size }, // 6 Left top right
+		{ -size, size, size }, // 7 Left top left
 
-		{ -0.5f, 0.5f, 0.5f }, // 8 Back top left
-		{ 0.5f, 0.5f, 0.5f }, // 9 Back top right
-		{ 0.5f, -0.5f, 0.5f }, // 10 Back bottom right
-		{ -0.5f, -0.5f, 0.5f }, // 11 Back bottom left
+		{ -size, size, size }, // 8 Back top left
+		{ size, size, size }, // 9 Back top right
+		{ size, -size, size }, // 10 Back bottom right
+		{ -size, -size, size }, // 11 Back bottom left
 
-		{ 0.5f, -0.5f, -0.5f }, // 12 Right bottom left
-		{ 0.5f, -0.5f, 0.5f }, // 13 Right bottom right
-		{ 0.5f, 0.5f, 0.5f }, // 14 Right top right
-		{ 0.5f, 0.5f, -0.5f }, // 15 Right top left
+		{ size, -size, -size }, // 12 Right bottom left
+		{ size, -size, size }, // 13 Right bottom right
+		{ size, size, size }, // 14 Right top right
+		{ size, size, -size }, // 15 Right top left
 
-		{ -0.5f, -0.5f, 0.5f }, // 16 Bottom top left
-		{ 0.5f, -0.5f, 0.5f }, // 17 Bottom top right
-		{ 0.5f, -0.5f, -0.5f }, // 18 Bottom bottom right
-		{ -0.5f, -0.5f, -0.5f }, // 19 Bottom bottom left
+		{ -size, -size, size }, // 16 Bottom top left
+		{ size, -size, size }, // 17 Bottom top right
+		{ size, -size, -size }, // 18 Bottom bottom right
+		{ -size, -size, -size }, // 19 Bottom bottom left
 
-		{ -0.5f, 0.5f, -0.5f }, // 20 Top bottom left
-		{ 0.5f, 0.5f, -0.5f }, // 21 Top bottom right
-		{ 0.5f, 0.5f, 0.5f }, // 22 Top top right
-		{ -0.5f, 0.5f, 0.5f } // 23 Top top left
+		{ -size, size, -size }, // 20 Top bottom left
+		{ size, size, -size }, // 21 Top bottom right
+		{ size, size, size }, // 22 Top top right
+		{ -size, size, size } // 23 Top top left
 		};
 
 		float4 colors[nCubeVertices];

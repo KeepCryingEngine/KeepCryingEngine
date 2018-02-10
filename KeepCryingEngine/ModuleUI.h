@@ -28,10 +28,10 @@ private:
 	void DrawAboutMenu();
 	void DrawCameraWindow();
 	void DrawSpeedWindow();
-	void DrawStyleWindow();
 	void DrawShaderWindow();
 	void DrawHierarchyWindow();
 	void DrawInspectorWindow();
+	void DrawGenerateGameObjectWindow();
 
 	void PrintChildrenOnHierarchy(std::vector<GameObject*> children);
 
@@ -60,10 +60,10 @@ private:
 	//One bool control for each window
 	bool cameraWindow = false;
 	bool speedWindow = false;
-	bool styleWindow = false;
 	bool shaderEditorWindow = false;
 	bool hierarchyWindow = true;
 	bool inspectorWindow = false;
+	bool generateGameObjectWindow = true;
 
 	//Probably there's a better way of doing this thing...
 	float movementSpeed = 10.0f;

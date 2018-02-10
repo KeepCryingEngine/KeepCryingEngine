@@ -86,21 +86,22 @@ void ModuleUI::DrawMainMenu()
 		{
 			if(ImGui::BeginMenu("Windows"))
 			{
-				if (ImGui::Button("Hierarchy", buttonSize))
+				if (ImGui::Selectable("Hierarchy"))
 				{
 					hierarchyWindow ^= 1;
 				}
-				if(ImGui::Button("Camera Controls", buttonSize))
+
+				if(ImGui::BeginMenu("Control Panel"))
 				{
-					cameraWindow ^= 1;
-				}
-				if(ImGui::Button("Speed Controls", buttonSize))
-				{
-					speedWindow ^= 1;
-				}
-				if(ImGui::Button("Style Controls", buttonSize))
-				{
-					styleWindow ^= 1;
+					if(ImGui::Selectable("Camera"))
+					{
+						cameraWindow ^= 1;
+					}
+					if(ImGui::Selectable("Movement"))
+					{
+						speedWindow ^= 1;
+					}
+					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
 			}
@@ -153,6 +154,32 @@ void ModuleUI::DrawMainMenu()
 					SetTextOnEditor(shaderMode);
 					shaderEditorWindow ^= 1;
 				}
+				ImGui::EndMenu();
+			}
+
+			if(ImGui::BeginMenu("Personalization"))
+			{
+				if(ImGui::BeginMenu("Themes"))
+				{
+					if(ImGui::Selectable("Default Theme"))
+					{
+						ImGui::StyleColorsClassic();
+					}
+					if(ImGui::Selectable("Dark Theme"))
+					{
+						ImGui::StyleColorsDark();
+					}
+					if(ImGui::Selectable("Light Theme"))
+					{
+						ImGui::StyleColorsLight();
+					}
+					ImGui::EndMenu();
+				}
+				if(ImGui::BeginMenu("Background Color"))
+				{
+					ImGui::DragFloat3("##backgroundcolor", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
+					ImGui::EndMenu();
+				}			
 				ImGui::EndMenu();
 			}
 
@@ -370,10 +397,6 @@ void ModuleUI::CallWindows()
 	{
 		DrawSpeedWindow();
 	}
-	if(styleWindow)
-	{
-		DrawStyleWindow();
-	}
 	if(shaderEditorWindow)
 	{
 		DrawShaderWindow();
@@ -385,6 +408,10 @@ void ModuleUI::CallWindows()
 	if(inspectorWindow)
 	{
 		DrawInspectorWindow();
+	}
+	if(generateGameObjectWindow)
+	{
+		DrawGenerateGameObjectWindow();
 	}
 }
 
@@ -431,13 +458,6 @@ void ModuleUI::DrawSpeedWindow()
 	ImGui::End();
 }
 
-void ModuleUI::DrawStyleWindow()
-{
-	ImGui::Begin("Style Controls", &styleWindow, ImGuiWindowFlags_MenuBar);
-ImGui::DragFloat3("Background", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
-ImGui::End();
-}
-
 void ModuleUI::DrawShaderWindow()
 {
 	ImGui::Begin("Text Editor Demo", &shaderEditorWindow, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
@@ -477,32 +497,7 @@ void ModuleUI::DrawShaderWindow()
 
 void ModuleUI::DrawHierarchyWindow()
 {
-	ImGui::Begin("Game Object Inspector", &hierarchyWindow, ImGuiWindowFlags_MenuBar);
-
-	if(ImGui::BeginMenuBar())
-	{
-		if(ImGui::BeginMenu("Add"))
-		{
-			if(ImGui::MenuItem("Empty", nullptr, &addEmptyGameObject))
-			{
-				addEmptyGameObject = true;
-			}
-			if(ImGui::MenuItem("Cube", nullptr, &addCubeGameObject))
-			{
-				addCubeGameObject = true;
-			}
-			if(ImGui::MenuItem("Sphere", nullptr, &addSphereGameObject))
-			{
-				addSphereGameObject = true;
-			}
-			if(ImGui::MenuItem("Camera", nullptr, &addCameraGameObject))
-			{
-				addCameraGameObject = true;
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMenuBar();
-	}
+	ImGui::Begin("Game Object Hierarchy", &hierarchyWindow);
 
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_DefaultOpen;
 
@@ -516,6 +511,31 @@ void ModuleUI::DrawHierarchyWindow()
 	}
 
 	bool opened = ImGui::TreeNodeEx(App->scene->GetRoot()->GetName().c_str(), nodeFlags);
+
+	if(ImGui::BeginPopupContextItem("Add Item ..."))
+	{
+		if(ImGui::BeginMenu("Add..."))
+		{
+			if(ImGui::Selectable("Empty"))
+			{
+				addEmptyGameObject = true;
+			}
+			if(ImGui::Selectable("Cube"))
+			{
+				addCubeGameObject = true;
+			}
+			if(ImGui::Selectable("Sphere"))
+			{
+				addSphereGameObject = true;
+			}
+			if(ImGui::Selectable("Camera"))
+			{
+				addCameraGameObject = true;
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndPopup();
+	}
 
 	if(ImGui::IsItemClicked())
 	{
@@ -565,19 +585,45 @@ void ModuleUI::DrawInspectorWindow()
 	ImGui::End();
 }
 
+void ModuleUI::DrawGenerateGameObjectWindow()
+{
+	ImGui::Begin("Generate GameObject Controls", &generateGameObjectWindow, ImGuiWindowFlags_MenuBar);
+
+	static int generateGameObjectWindowCount = 100;
+	ImGui::DragInt("Count", &generateGameObjectWindowCount);
+
+	static float generateGameObjectWindowLimitX[2] = { -100.0f, 100.0f };
+	ImGui::DragFloat2("Limit X", generateGameObjectWindowLimitX);
+
+	static float generateGameObjectWindowLimitY[2] = { -5.0f, 5.0f };
+	ImGui::DragFloat2("Limit Y", generateGameObjectWindowLimitY);
+
+	static float generateGameObjectWindowLimitZ[2] = { -100.0f, 100.0f };
+	ImGui::DragFloat2("Limit Z", generateGameObjectWindowLimitZ);
+
+	if(ImGui::Button("Generate"))
+	{
+		App->scene->Generate(generateGameObjectWindowCount, generateGameObjectWindowLimitX[0], generateGameObjectWindowLimitX[1], generateGameObjectWindowLimitY[0], generateGameObjectWindowLimitY[1], generateGameObjectWindowLimitZ[0], generateGameObjectWindowLimitZ[1]);
+	}
+
+	ImGui::End();
+}
+
 void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 {
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
 	for(GameObject* child : children)
 	{
+		nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
 		if(selectedNodeID == child->GetId())
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 		}
-		else
+		if(child->GetChildCount() == 0)
 		{
-			nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			nodeFlags |= ImGuiTreeNodeFlags_Bullet;
 		}
 
 		if(!child->IsEnabled())
@@ -585,7 +631,29 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 			ImGui::PushStyleColor(0, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
 		}
 
-		bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
+		ImGui::PushID(child->GetId());
+		bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);				
+		if(ImGui::BeginPopupContextItem("Add Item ..."))
+		{
+			if(ImGui::BeginMenu("Add..."))
+			{
+				if(ImGui::Selectable("Empty"))
+				{
+					addEmptyGameObject = true;
+				}
+				if(ImGui::Selectable("Cube"))
+				{
+					addCubeGameObject = true;
+				}
+				if(ImGui::Selectable("Sphere"))
+				{
+					addSphereGameObject = true;
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
 
 		if(ImGui::IsItemClicked())
 		{

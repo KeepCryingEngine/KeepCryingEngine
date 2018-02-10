@@ -42,11 +42,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(ProjectDir)external\ImGuiTextEditor;$(ProjectDir)external\ImGui;$(ProjectDir)external\MathGeoLib-1.5\include\Time;$(ProjectDir)external\MathGeoLib-1.5\include\Math;$(ProjectDir)external\MathGeoLib-1.5\include\Algorithm\Random;$(ProjectDir)external\MathGeoLib-1.5\include\Geometry;$(ProjectDir)external\MathGeoLib-1.5\include;$(ProjectDir)external\devil\include;$(ProjectDir)external\SDL\include;$(ProjectDir)external\Glew\include;$(ProjectDir)external\json;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)external\MathGeoLib-1.5\libx86\d;$(ProjectDir)external\Glew\lib\Win32;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir);$(ProjectDir)external\SDL\libx86;$(ProjectDir)external\devil\lib\</LibraryPath>
+    <LibraryPath>$(ProjectDir)external\MathGeoLib-1.5\libx86\d;$(ProjectDir)external\Glew\lib\Win32;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir);$(ProjectDir)external\SDL\libx86;$(ProjectDir)Brofiler\;$(ProjectDir)external\devil\lib\</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(ProjectDir)external\ImGuiTextEditor;$(ProjectDir)external\ImGui;$(ProjectDir)external\MathGeoLib-1.5\include\Time;$(ProjectDir)external\MathGeoLib-1.5\include\Math;$(ProjectDir)external\MathGeoLib-1.5\include\Algorithm\Random;$(ProjectDir)external\MathGeoLib-1.5\include\Geometry;$(ProjectDir)external\MathGeoLib-1.5\include;$(ProjectDir)external\devil\include;$(ProjectDir)external\SDL\include;$(ProjectDir)external\Glew\include;$(ProjectDir)external\json;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)external\MathGeoLib-1.5\libx86\r;$(ProjectDir)external\Glew\lib\Win32;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir);$(ProjectDir)external\SDL\libx86;$(ProjectDir)external\devil\lib\</LibraryPath>
+    <LibraryPath>$(ProjectDir)Brofiler\;$(ProjectDir)external\MathGeoLib-1.5\libx86\r;$(ProjectDir)external\Glew\lib\Win32;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir);$(ProjectDir)external\SDL\libx86;$(ProjectDir)external\devil\lib\</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -59,7 +59,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>MathGeoLib.lib;glew32.lib;glew32s.lib;OpenGl32.lib;SDL2.lib;SDL2main.lib;DevIL.lib;ILU.lib;ILUT.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MathGeoLib.lib;glew32.lib;glew32s.lib;OpenGl32.lib;SDL2.lib;SDL2main.lib;DevIL.lib;ILU.lib;ILUT.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;ProfilerCore32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -77,11 +77,12 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>MathGeoLib.lib;glew32.lib;glew32s.lib;OpenGl32.lib;SDL2.lib;SDL2main.lib;DevIL.lib;ILU.lib;ILUT.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MathGeoLib.lib;glew32.lib;glew32s.lib;OpenGl32.lib;SDL2.lib;SDL2main.lib;DevIL.lib;ILU.lib;ILUT.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;ProfilerCore32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Brofiler.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentFabric.h" />
@@ -111,6 +112,8 @@
     <ClInclude Include="ModuleTexture.h" />
     <ClInclude Include="ModuleUI.h" />
     <ClInclude Include="ModuleWindow.h" />
+    <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="QuadtreeNode.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
@@ -140,6 +143,8 @@
     <ClCompile Include="ModuleTexture.cpp" />
     <ClCompile Include="ModuleUI.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
+    <ClCompile Include="Quadtree.cpp" />
+    <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
