@@ -22,6 +22,12 @@ void MeshRenderer::DrawUI()
 {
 	if (ImGui::CollapsingHeader("MeshRenderer"))
 	{
+		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		if(ImGui::Button("Delete Component"))
+		{
+			gameObject->RemoveComponent(this);
+		}
+
 		if (material)
 		{
 			material->DrawUI();

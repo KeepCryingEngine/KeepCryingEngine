@@ -1,5 +1,7 @@
 #include "MeshEntity.h"
+#define _USE_MATH_DEFINES
 
+#include <math.h>
 #include <vector>
 
 #include "Globals.h"
@@ -8,7 +10,6 @@ using namespace std;
 
 MeshEntity::MeshEntity()
 {
-	SetUpCube();
 }
 
 MeshEntity::~MeshEntity()
@@ -40,40 +41,47 @@ GLsizei MeshEntity::GetIndicesNumber() const
 	return nIndices;
 }
 
+GLenum MeshEntity::GetDrawMode() const
+{
+	return drawMode;
+}
+
 void MeshEntity::SetUpCube()
 {
+	drawMode = GL_TRIANGLES;
+	const float size = 1.0f;
 	const size_t nCubeVertices = 24;
 	nVertices = nCubeVertices;
 	float3 positions[nCubeVertices] = {
-		{ -0.5f, -0.5f, -0.5f }, // 0 Front bottom left
-		{ 0.5f, -0.5f, -0.5f }, // 1 Front bottom right
-		{ 0.5f, 0.5f, -0.5f }, // 2 Front top right
-		{ -0.5f, 0.5f, -0.5f }, // 3 Front top left
+		{ -size, -size, -size }, // 0 Front bottom left
+		{ size, -size, -size }, // 1 Front bottom right
+		{ size, size, -size }, // 2 Front top right
+		{ -size, size, -size }, // 3 Front top left
 
-		{ -0.5f, -0.5f, 0.5f }, // 4 Left bottom left
-		{ -0.5f, -0.5f, -0.5f }, // 5 Left bottom right
-		{ -0.5f, 0.5f, -0.5f }, // 6 Left top right
-		{ -0.5f, 0.5f, 0.5f }, // 7 Left top left
+		{ -size, -size, size }, // 4 Left bottom left
+		{ -size, -size, -size }, // 5 Left bottom right
+		{ -size, size, -size }, // 6 Left top right
+		{ -size, size, size }, // 7 Left top left
 
-		{ -0.5f, 0.5f, 0.5f }, // 8 Back top left
-		{ 0.5f, 0.5f, 0.5f }, // 9 Back top right
-		{ 0.5f, -0.5f, 0.5f }, // 10 Back bottom right
-		{ -0.5f, -0.5f, 0.5f }, // 11 Back bottom left
+		{ -size, size, size }, // 8 Back top left
+		{ size, size, size }, // 9 Back top right
+		{ size, -size, size }, // 10 Back bottom right
+		{ -size, -size, size }, // 11 Back bottom left
 
-		{ 0.5f, -0.5f, -0.5f }, // 12 Right bottom left
-		{ 0.5f, -0.5f, 0.5f }, // 13 Right bottom right
-		{ 0.5f, 0.5f, 0.5f }, // 14 Right top right
-		{ 0.5f, 0.5f, -0.5f }, // 15 Right top left
+		{ size, -size, -size }, // 12 Right bottom left
+		{ size, -size, size }, // 13 Right bottom right
+		{ size, size, size }, // 14 Right top right
+		{ size, size, -size }, // 15 Right top left
 
-		{ -0.5f, -0.5f, 0.5f }, // 16 Bottom top left
-		{ 0.5f, -0.5f, 0.5f }, // 17 Bottom top right
-		{ 0.5f, -0.5f, -0.5f }, // 18 Bottom bottom right
-		{ -0.5f, -0.5f, -0.5f }, // 19 Bottom bottom left
+		{ -size, -size, size }, // 16 Bottom top left
+		{ size, -size, size }, // 17 Bottom top right
+		{ size, -size, -size }, // 18 Bottom bottom right
+		{ -size, -size, -size }, // 19 Bottom bottom left
 
-		{ -0.5f, 0.5f, -0.5f }, // 20 Top bottom left
-		{ 0.5f, 0.5f, -0.5f }, // 20.5f Top bottom right
-		{ 0.5f, 0.5f, 0.5f }, // 22 Top top right
-		{ -0.5f, 0.5f, 0.5f } // 23 Top top left
+		{ -size, size, -size }, // 20 Top bottom left
+		{ size, size, -size }, // 2size Top bottom right
+		{ size, size, size }, // 22 Top top right
+		{ -size, size, size } // 23 Top top left
 	};
 	
 	float4 colors[nCubeVertices];
@@ -173,6 +181,81 @@ void MeshEntity::SetUpCube()
 	GenerateBuffers(vertices, nVertices, indicesArray, nIndices);
 
 	CalculateAABBForMesh(positions, nVertices);	
+}
+
+void MeshEntity::SetUpSphere()
+{
+	drawMode = GL_QUADS;
+	const uint rings = 100;
+	const uint sectors = 100;
+	uint radius = 1;
+
+	float R = 1.0f / (float)(rings - 1);
+	float S = 1.0f / (float)(sectors - 1);
+
+	vector<float3> vertices;
+	vector<GLushort> indices;
+	vector<float2> texcoords;
+	vector<float3> normals;
+	
+	const size_t nSphereVertices = rings * sectors;
+	nVertices = nSphereVertices;
+
+	vertices.resize(nSphereVertices * 3);
+	texcoords.resize(nSphereVertices * 2);
+	normals.resize(nSphereVertices * 3);
+
+	vector<float3>::iterator v = vertices.begin();
+	vector<float2>::iterator t = texcoords.begin();
+	vector<float3>::iterator n = normals.begin();
+	for(unsigned int r = 0; r < rings; r++)
+	{
+		for(unsigned int s = 0; s < sectors; s++)
+		{
+			float y = (float)sin(-M_PI_2 + M_PI * r * R);
+			float x = (float)cos(2 * M_PI * s * S) * (float)sin(M_PI * r * R);
+			float z = (float)sin(2 * M_PI * s * S) * (float)sin(M_PI * r * R);
+
+			*t++ = float2(s * S, r * R);
+
+			*v++ = float3(x * radius, y * radius, z * radius);
+
+			*n++ = float3(x, y, z);
+		}
+	}
+
+	float4 colors[nSphereVertices];
+	for(size_t i = 0; i < nSphereVertices; i++)
+	{
+		colors[i] = float4(100, 100, 100, 100);
+	}
+
+	indices.resize(rings * sectors * 4);
+	const size_t sphereIndicesNumber = indices.size();
+	nIndices = sphereIndicesNumber;
+
+	vector<GLushort>::iterator i = indices.begin();
+
+	for(unsigned int r = 0; r < rings - 1; r++)
+	{
+		for(unsigned int s = 0; s < sectors - 1; s++)
+		{
+			*i++ = (r + 1) * sectors + s;
+			*i++ = (r + 1) * sectors + s + 1;
+			*i++ = r * sectors + s + 1;
+			*i++ = r * sectors + s;
+		}
+	}
+
+	// Cannot Vertex vVertices[nVertices];
+	Vertex* vVertices = (Vertex*)malloc(sizeof(Vertex) * nVertices * 3);
+	FillVerticesData(vVertices, nSphereVertices, &vertices[0], &normals[0], colors, &texcoords[0]);
+
+	GenerateBuffers(vVertices, nVertices, &indices[0], nIndices);
+
+	CalculateAABBForMesh(&vertices[0], nVertices);
+
+	RELEASE(vVertices);
 }
 
 void MeshEntity::GenerateBuffers(Vertex* vertices, size_t nVertices, GLushort* indices, size_t nIndices)

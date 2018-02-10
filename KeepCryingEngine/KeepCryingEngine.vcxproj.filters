@@ -76,6 +76,9 @@
     <ClCompile Include="MaterialEntity.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleEntity.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -167,6 +170,9 @@
     </ClInclude>
     <ClInclude Include="MaterialEntity.h">
       <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleEntity.h">
+      <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

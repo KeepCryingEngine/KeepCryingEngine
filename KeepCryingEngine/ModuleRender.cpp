@@ -112,6 +112,7 @@ update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 	}
 	drawBuffer.clear();*/
 	DrawGeometry();
+	drawBuffer.clear();
 
 	SDL_GL_SwapWindow(App->window->window);
 
@@ -299,7 +300,7 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawInfo.mesh.GetIndicesBufferId());
-	glDrawElements(GL_TRIANGLES, drawInfo.mesh.GetIndicesNumber(), GL_UNSIGNED_SHORT, nullptr);
+	glDrawElements(drawInfo.mesh.GetDrawMode(), drawInfo.mesh.GetIndicesNumber(), GL_UNSIGNED_SHORT, nullptr);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);

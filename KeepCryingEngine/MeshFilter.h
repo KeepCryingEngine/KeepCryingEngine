@@ -5,6 +5,12 @@
 
 class MeshEntity;
 
+enum class MeshMode
+{
+	CUBE,
+	SPHERE,
+};
+
 class MeshFilter : public Component
 {
 public:
@@ -17,10 +23,14 @@ public:
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
 	MeshEntity* GetMesh() const;
+	void SetMeshMode(MeshMode mode);
+
+private:
 	void SetMesh(MeshEntity* mesh);
 
 private:
 	MeshEntity * mesh = nullptr;
+	MeshMode mode = MeshMode::CUBE;
 };
 
 #endif // !_MESHFILTER_H_

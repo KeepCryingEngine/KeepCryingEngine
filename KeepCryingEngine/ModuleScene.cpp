@@ -79,9 +79,6 @@ GameObject* ModuleScene::AddCube(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Cube");
 
-	MeshFilter* meshFilter = (MeshFilter*)gameObject->AddComponent(ComponentType::MeshFilter);
-	//Set Cube mesh to mesh filter
-
 	gameObject->AddComponent(ComponentType::MeshRenderer);
 
 	return gameObject;
@@ -91,10 +88,11 @@ GameObject* ModuleScene::AddSphere(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Sphere");
 
-	MeshFilter* meshFilter = (MeshFilter*)gameObject->AddComponent(ComponentType::MeshFilter);
-	//Set Sphere mesh to mesh filter
-
 	gameObject->AddComponent(ComponentType::MeshRenderer);
+	MeshFilter* temp= ((MeshFilter*)gameObject->GetComponent(ComponentType::MeshFilter));
+	assert(temp);
+	temp->SetMeshMode(MeshMode::SPHERE);
+
 
 	return gameObject;
 }

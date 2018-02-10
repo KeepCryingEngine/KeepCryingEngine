@@ -12,7 +12,7 @@ using namespace std;
 
 MaterialEntity::MaterialEntity()
 {
-	SetTexture("Assets/Lenna.png");
+	textureId = App->texture->LoadCheckerTexture();
 	programId = App->shader->GetShaderId(ShaderType::Default);
 }
 
