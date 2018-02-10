@@ -2,9 +2,9 @@
 #define _MODULEENTITY_H_
 
 #include "Module.h"
-#include "MeshEntity.h"
+#include "Mesh.h"
 
-class MeshEntity;
+class Mesh;
 
 class ModuleEntity : public Module
 {
@@ -15,8 +15,8 @@ public:
 	bool Init() override;
 	bool CleanUp() override;
 
-	MeshEntity* GetCube();
-	MeshEntity* GetSphere();
+	Mesh* GetCube();
+	Mesh* GetSphere();
 
 private:
 	void SetUpCube();
@@ -28,8 +28,8 @@ private:
 
 
 private:
-	MeshEntity* cube;
-	MeshEntity* sphere;
+	Mesh* cube;
+	Mesh* sphere;
 };
 
 #endif // !_MODULEENTITY_H_

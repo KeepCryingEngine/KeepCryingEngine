@@ -28,12 +28,12 @@ bool ModuleEntity::CleanUp()
 	return true;
 }
 
-MeshEntity * ModuleEntity::GetCube()
+Mesh * ModuleEntity::GetCube()
 {
 	return cube;
 }
 
-MeshEntity * ModuleEntity::GetSphere()
+Mesh * ModuleEntity::GetSphere()
 {
 	return sphere;
 }
@@ -45,7 +45,7 @@ void ModuleEntity::SetUpCube()
 	GLenum drawMode;
 	GetCubeMeshData(vertices, indices, drawMode);
 
-	cube = new MeshEntity();
+	cube = new Mesh();
 	cube->SetMeshData(vertices,indices, drawMode);
 }
 
@@ -56,7 +56,7 @@ void ModuleEntity::SetUpSphere()
 	GLenum drawMode;
 	GetSphereMeshData(vertices, indices, drawMode);
 
-	sphere = new MeshEntity();
+	sphere = new Mesh();
 	sphere->SetMeshData(vertices, indices, drawMode);
 }
 

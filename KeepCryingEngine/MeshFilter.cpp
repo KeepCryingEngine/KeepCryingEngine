@@ -4,7 +4,7 @@
 #include "ModuleEntity.h"
 #include "MeshRenderer.h"
 #include "GameObject.h"
-#include "MeshEntity.h"
+#include "Mesh.h"
 #include "Transform.h"
 
 MeshFilter::MeshFilter() : Component(ComponentType::MeshFilter)
@@ -88,7 +88,7 @@ void MeshFilter::DrawGameObjectAABB()
 	glEnd();	
 }
 
-MeshEntity * MeshFilter::GetMesh() const
+Mesh * MeshFilter::GetMesh() const
 {
 	return mesh;
 }
@@ -111,7 +111,7 @@ void MeshFilter::SetMeshMode(MeshMode mode)
 	}
 }
 
-void MeshFilter::SetMesh(MeshEntity * mesh)
+void MeshFilter::SetMesh(Mesh * mesh)
 {
 	this->mesh = mesh;
 }

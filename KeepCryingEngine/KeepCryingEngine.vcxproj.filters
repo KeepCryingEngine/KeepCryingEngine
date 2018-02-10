@@ -61,9 +61,6 @@
     <ClCompile Include="MeshFilter.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="MeshEntity.cpp">
-      <Filter>Entities</Filter>
-    </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -72,6 +69,9 @@
     </ClCompile>
     <ClCompile Include="ModuleEntity.cpp">
       <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -150,9 +150,6 @@
     <ClInclude Include="MeshFilter.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="MeshEntity.h">
-      <Filter>Entities</Filter>
-    </ClInclude>
     <ClInclude Include="MeshRenderer.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -161,6 +158,9 @@
     </ClInclude>
     <ClInclude Include="ModuleEntity.h">
       <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

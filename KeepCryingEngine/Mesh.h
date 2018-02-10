@@ -1,5 +1,5 @@
-#ifndef _MESHENTITY_H_
-#define _MESHENTITY_H_
+#ifndef _MESH_H_
+#define _MESH_H_
 
 #include <GL/glew.h>
 #include <AABB.h>
@@ -13,11 +13,11 @@ struct Vertex
 	float2 uv;
 };
 
-class MeshEntity
+class Mesh
 {
 public:
-	MeshEntity();
-	virtual ~MeshEntity();
+	Mesh();
+	virtual ~Mesh();
 
 	const AABB& GetAABB() const;
 	GLuint GetVertexBufferId() const;

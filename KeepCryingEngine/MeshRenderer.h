@@ -4,7 +4,7 @@
 #include "Component.h"
 
 class MaterialEntity;
-class MeshEntity;
+class Mesh;
 
 class MeshRenderer : public Component
 {
@@ -15,7 +15,7 @@ public:
 	void DrawUI() override;
 	std::vector<ComponentType> GetProhibitedComponents() const override;
 
-	void Render(MeshEntity& mesh);
+	void Render(Mesh& mesh);
 
 	void SetMaterial(MaterialEntity& MaterialEntity);
 	MaterialEntity* GetMaterial() const;

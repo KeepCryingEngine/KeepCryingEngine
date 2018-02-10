@@ -1,7 +1,7 @@
 #include "MeshRenderer.h"
 
 #include "Application.h"
-#include "MeshEntity.h"
+#include "Mesh.h"
 #include "MaterialEntity.h"
 #include "GameObject.h"
 #include "MeshFilter.h"
@@ -43,7 +43,7 @@ std::vector<ComponentType> MeshRenderer::GetProhibitedComponents() const
 	return { ComponentType::MeshRenderer };
 }
 
-void MeshRenderer::Render(MeshEntity& mesh)
+void MeshRenderer::Render(Mesh& mesh)
 {
 	if (material)
 	{

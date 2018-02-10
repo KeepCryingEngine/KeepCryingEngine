@@ -3,7 +3,7 @@
 
 #include "Component.h"
 
-class MeshEntity;
+class Mesh;
 
 enum class MeshMode
 {
@@ -22,8 +22,8 @@ public:
 
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
-	MeshEntity* GetMesh() const;
-	void SetMesh(MeshEntity* mesh);
+	Mesh* GetMesh() const;
+	void SetMesh(Mesh* mesh);
 	void SetMeshMode(MeshMode mode);
 
 private:
@@ -31,7 +31,7 @@ private:
 	void DrawGameObjectAABB();
 
 private:
-	MeshEntity * mesh = nullptr;
+	Mesh * mesh = nullptr;
 
 	MeshMode mode = MeshMode::CUBE;
 	bool debugAABB = true;

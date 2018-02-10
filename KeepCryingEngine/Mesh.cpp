@@ -1,4 +1,4 @@
-#include "MeshEntity.h"
+#include "Mesh.h"
 
 #include <vector>
 
@@ -6,52 +6,52 @@
 
 using namespace std;
 
-MeshEntity::MeshEntity()
+Mesh::Mesh()
 {
 }
 
-MeshEntity::~MeshEntity()
+Mesh::~Mesh()
 {
 }
 
-const AABB & MeshEntity::GetAABB() const
+const AABB & Mesh::GetAABB() const
 {
 	return aabb;
 }
 
-GLuint MeshEntity::GetVertexBufferId() const
+GLuint Mesh::GetVertexBufferId() const
 {
 	return vertexBufferId;
 }
 
-GLuint MeshEntity::GetIndicesBufferId() const
+GLuint Mesh::GetIndicesBufferId() const
 {
 	return indicesBufferId;
 }
 
-GLsizei MeshEntity::GetVerticesNumber() const
+GLsizei Mesh::GetVerticesNumber() const
 {
 	return nVertices;
 }
 
-GLsizei MeshEntity::GetIndicesNumber() const
+GLsizei Mesh::GetIndicesNumber() const
 {
 	return nIndices;
 }
 
-GLenum MeshEntity::GetDrawMode() const
+GLenum Mesh::GetDrawMode() const
 {
 	return drawMode;
 }
 
-void MeshEntity::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& indices, GLenum drawMode)
+void Mesh::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& indices, GLenum drawMode)
 {
 	GenerateBuffers(vertices,indices);
 	CalculateAABBForMesh(vertices);
 	this->drawMode = drawMode;
 }
 
-void MeshEntity::GenerateBuffers(const vector<Vertex> vertices, const vector<GLushort> indices)
+void Mesh::GenerateBuffers(const vector<Vertex> vertices, const vector<GLushort> indices)
 {
 	assert(vertices.size() > 0);
 	assert(indices.size() > 0);
@@ -74,7 +74,7 @@ void MeshEntity::GenerateBuffers(const vector<Vertex> vertices, const vector<GLu
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void MeshEntity::CalculateAABBForMesh(const vector<Vertex> &vertices)
+void Mesh::CalculateAABBForMesh(const vector<Vertex> &vertices)
 {
 	float3 * positions = new float3[vertices.size()];
 	for (size_t i = 0; i < vertices.size(); i++)
