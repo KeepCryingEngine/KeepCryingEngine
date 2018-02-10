@@ -2,6 +2,8 @@
 
 #include <DevIL.h>
 
+#include "Texture.h"
+
 const uint ModuleTexture::CHECKERS_HEIGHT = 128;
 const uint ModuleTexture::CHECKERS_WIDTH = 128;
 
@@ -54,24 +56,15 @@ uint ModuleTexture::LoadCheckerTexture()
 	return checkerTexture;
 }
 
-uint ModuleTexture::LoadTexture(const char* texturePath) const
+Texture * ModuleTexture::LoadTexture(const char* texturePath) const
 {
-	ILuint imageID; // Create an image ID as a ULuint
+	Texture * texture = nullptr;
 
-	GLuint textureID = 0; // Create a texture ID as a GLuint
-
-	ILboolean success; // Create a flag to keep track of success/failure
-
-	ILenum error; // Create a flag to keep track of the IL error state
-
-	ilGenImages(1, &imageID); // Generate the image ID
-
-	ilBindImage(imageID); // Bind the image
-
-	success = ilLoadImage(texturePath); // Load the image file
-
-	// If we managed to load the image, then we can start to do things with it...
-	if(success)
+	ILuint imageId;
+	ilGenImages(1, &imageId);
+	ilBindImage(imageId);
+	
+	if(ilLoadImage(texturePath))
 	{
 		ILinfo imageInfo;
 
@@ -85,50 +78,20 @@ uint ModuleTexture::LoadTexture(const char* texturePath) const
 
 		// Convert the image into a suitable format to work with
 		// NOTE: If your image contains alpha channel you can replace IL_RGB with IL_RGBA
-		success = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
-
-		// Quit out if we failed the conversion
-		if(!success)
+		if(!ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE))
 		{
-			error = ilGetError();
+			ILenum error = ilGetError();
 			LOG_DEBUG("Image conversion failed - IL reports error: %u - %s", error, iluErrorString(error));
 		}
 
+		GLuint textureId = 0;
+
 		// Generate a new texture
-		glGenTextures(1, &textureID);
+		glGenTextures(1, &textureId);
 
 		// Bind the texture to a name
-		glBindTexture(GL_TEXTURE_2D, textureID);
-
-		// Set texture clamping method
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapModeS);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapModeT);
-
-		// Set texture interpolation method to use linear interpolation (no MIPMAPS)
-		if(magFilter)
-		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilterMode);
-		}
-
-		if(minFilter)
-		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilterMode);
-		}
-
-		if(mipmap)
-		{
-			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mipmap);
-		}
-
-		if(anisotropicFilter)
-		{
-			GLfloat maxAniso = 0.0f;
-			glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
-
-			glSamplerParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
-		}
-
-		// Specify the texture specification
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		
 		glTexImage2D(GL_TEXTURE_2D, // Type of texture
 			0, // Pyramid level (for mip-mapping) - 0 is the top level
 			ilGetInteger(IL_IMAGE_FORMAT), // Internal pixel format to use. Can be a generic type like GL_RGB or GL_RGBA, or a sized type
@@ -138,16 +101,18 @@ uint ModuleTexture::LoadTexture(const char* texturePath) const
 			ilGetInteger(IL_IMAGE_FORMAT), // Format of image pixel data
 			GL_UNSIGNED_BYTE, // Image data type
 			ilGetData()); // The actual image data itself
+
+		ilDeleteImages(1, &imageId); // Because we have already copied image data into texture data we can release memory used by image.
+
+		texture = new Texture(textureId);
 	}
 	else // If we failed to open the image file in the first place...
 	{
-		error = ilGetError();
+		ILenum error = ilGetError();
 		LOG_DEBUG("Image load failed - IL reports error: %u - %s", error, iluErrorString(error));
 	}
 
-	ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
-
-	return (uint)textureID; // Return the GLuint to the texture so you can use it!
+	return texture;
 }
 
 uint ModuleTexture::getWrapModeS() const

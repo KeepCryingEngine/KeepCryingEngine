@@ -7,6 +7,7 @@
 #include "Application.h"
 #include "ModuleShader.h"
 #include "ModuleTexture.h"
+#include "Texture.h"
 
 using namespace std;
 
@@ -57,7 +58,7 @@ GLuint Material::GetTextureId() const
 
 void Material::SetTexture(const char* path)
 {
-	uint newTextureID = App->texture->LoadTexture(path);
+	uint newTextureID = App->texture->LoadTexture(path)->GetTextureId();
 	if(newTextureID != 0)
 	{
 		textureId = newTextureID;

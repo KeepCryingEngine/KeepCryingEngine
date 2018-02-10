@@ -5,6 +5,8 @@
 
 #include "Module.h"
 
+class Texture;
+
 class ModuleTexture : public Module
 {
 public:
@@ -12,7 +14,7 @@ public:
 	virtual ~ModuleTexture();
 
 	uint LoadCheckerTexture();
-	uint LoadTexture(const char* texturePath) const;
+	Texture * LoadTexture(const char* texturePath) const;
 
 	uint getWrapModeS() const;
 	void setWrapModeS(uint wrapModeS);
