@@ -156,6 +156,11 @@ void ModuleUI::DrawMainMenu()
 				ImGui::EndMenu();
 			}
 
+			if(ImGui::BeginMenu("Personalization"))
+			{
+
+			}
+
 			if(ImGui::BeginMenu("About"))
 			{
 				DrawAboutMenu();
@@ -517,6 +522,27 @@ void ModuleUI::DrawHierarchyWindow()
 
 	bool opened = ImGui::TreeNodeEx(App->scene->GetRoot()->GetName().c_str(), nodeFlags);
 
+	if(ImGui::BeginPopupContextItem("Add Item ..."))
+	{
+		if(ImGui::BeginMenu("Add..."))
+		{
+			if(ImGui::Selectable("Empty"))
+			{
+				addEmptyGameObject = true;
+			}
+			if(ImGui::Selectable("Cube"))
+			{
+				addCubeGameObject = true;
+			}
+			if(ImGui::Selectable("Sphere"))
+			{
+				addSphereGameObject = true;
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndPopup();
+	}
+
 	if(ImGui::IsItemClicked())
 	{
 		inspectorWindow = false;
@@ -571,13 +597,15 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 
 	for(GameObject* child : children)
 	{
+		nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
 		if(selectedNodeID == child->GetId())
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 		}
-		else
+		if(child->GetChildCount() == 0)
 		{
-			nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			nodeFlags |= ImGuiTreeNodeFlags_Bullet;
 		}
 
 		if(!child->IsEnabled())
@@ -585,7 +613,29 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 			ImGui::PushStyleColor(0, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
 		}
 
-		bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
+		ImGui::PushID(child->GetId());
+		bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);				
+		if(ImGui::BeginPopupContextItem("Add Item ..."))
+		{
+			if(ImGui::BeginMenu("Add..."))
+			{
+				if(ImGui::Selectable("Empty"))
+				{
+					addEmptyGameObject = true;
+				}
+				if(ImGui::Selectable("Cube"))
+				{
+					addCubeGameObject = true;
+				}
+				if(ImGui::Selectable("Sphere"))
+				{
+					addSphereGameObject = true;
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
 
 		if(ImGui::IsItemClicked())
 		{
