@@ -1,6 +1,8 @@
 #include "ModuleEntity.h"
 
 #include <vector>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 #include "Globals.h"
 
@@ -36,14 +38,12 @@ MeshEntity * ModuleEntity::GetSphere()
 	return sphere;
 }
 
-
 void ModuleEntity::SetUpCube()
 {
 	vector<Vertex> vertices;
 	vector<GLushort> indices;
-	GetCubeMeshData(vertices, indices);
-
-	GLenum drawMode = GL_TRIANGLES;
+	GLenum drawMode;
+	GetCubeMeshData(vertices, indices, drawMode);
 
 	cube = new MeshEntity();
 	cube->SetMeshData(vertices,indices, drawMode);
@@ -51,14 +51,21 @@ void ModuleEntity::SetUpCube()
 
 void ModuleEntity::SetUpSphere()
 {
+	vector<Vertex> vertices;
+	vector<GLushort> indices;
+	GLenum drawMode;
+	GetSphereMeshData(vertices, indices, drawMode);
+
 	sphere = new MeshEntity();
-	//sphere->SetUpSphere();
+	sphere->SetMeshData(vertices, indices, drawMode);
 }
 
-void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& indices) const
+void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& indices, GLenum& drawMode) const
 {
 	assert(vertices.size() == 0);
 	assert(indices.size() == 0);
+
+	drawMode = GL_TRIANGLES;
 
 	//Vertices
 	{
@@ -194,6 +201,82 @@ void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& i
 	}
 }
 	
+void ModuleEntity::GetSphereMeshData(vector<Vertex>& vertices, vector<GLushort>& indices, GLenum& drawMode) const
+{
+	assert(vertices.size() == 0);
+	assert(indices.size() == 0);
+
+	drawMode = GL_QUADS;
+
+	const uint rings = 100;
+	const uint sectors = 100;
+
+	//Vertices
+	{
+		const size_t nSphereVertices = rings * sectors;
+		vertices.resize(nSphereVertices);
+
+		uint radius = 1;
+
+		float R = 1.0f / (float)(rings - 1);
+		float S = 1.0f / (float)(sectors - 1);
+
+		vector<float3> positions;
+		vector<float2> texcoords;
+		vector<float3> normals;
+
+
+		positions.resize(nSphereVertices * 3);
+		texcoords.resize(nSphereVertices * 2);
+		normals.resize(nSphereVertices * 3);
+
+		vector<float3>::iterator v = positions.begin();
+		vector<float2>::iterator t = texcoords.begin();
+		vector<float3>::iterator n = normals.begin();
+		for (unsigned int r = 0; r < rings; r++)
+		{
+			for (unsigned int s = 0; s < sectors; s++)
+			{
+				float y = (float)sin(-M_PI_2 + M_PI * r * R);
+				float x = (float)cos(2 * M_PI * s * S) * (float)sin(M_PI * r * R);
+				float z = (float)sin(2 * M_PI * s * S) * (float)sin(M_PI * r * R);
+
+				*t++ = float2(s * S, r * R);
+
+				*v++ = float3(x * radius, y * radius, z * radius);
+
+				*n++ = float3(x, y, z);
+			}
+		}
+
+		float4 colors[nSphereVertices];
+		for (size_t i = 0; i < nSphereVertices; i++)
+		{
+			colors[i] = float4(100, 100, 100, 100);
+		}
+
+		FillVerticesData(vertices, &positions[0], &normals[0], colors, &texcoords[0]);
+	}
+
+	//Indices
+	{
+		const size_t sphereIndicesNumber = rings * sectors * 4;
+		indices.resize(sphereIndicesNumber);
+
+		vector<GLushort>::iterator i = indices.begin();
+
+		for (unsigned int r = 0; r < rings - 1; r++)
+		{
+			for (unsigned int s = 0; s < sectors - 1; s++)
+			{
+				*i++ = (r + 1) * sectors + s;
+				*i++ = (r + 1) * sectors + s + 1;
+				*i++ = r * sectors + s + 1;
+				*i++ = r * sectors + s;
+			}
+		}
+	}
+}
 
 void ModuleEntity::FillVerticesData(vector<Vertex>& vertices, const float3 * positions, const float3* normals, const float4 * colors, const float2 * uvs) const
 {
