@@ -33,34 +33,35 @@ public:
 	GameObject* AddSphere(GameObject& parent);
 	GameObject* AddCamera(GameObject& parent);
 
-	void AddCHAOS();
+	void Generate(int count, float minX, float maxX, float minY, float maxY, float minZ, float maxZ);
 
-	//void Add(GameObject& gameObject);
 	void Destroy(GameObject& gameObject);
 
 private:
-	//void CheckToStart();
 	void CheckToDestroy();
 
 	void Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const;
 
 	void DestroyAndRelease(GameObject* &gameObject) const;
 
-	void AddToQuadtree(GameObject* gameObject);
+	void AddToQuadtreeRecursive(GameObject* gameObject);
 
-	void SetRandomPositionRecursive(GameObject* gameObject, float minX, float maxX, float minY, float maxY, float minZ, float maxZ);
+	void SetVisibleRecursive(GameObject* gameObject, bool visible) const;
+
+	void SetVisibilityRecursive(GameObject* gameObject) const;
 
 private:
 	GameObject* root = nullptr;
 
 	Quadtree qTGameObjects;
 
-	//std::list<GameObject*> toStart;
+	bool useQuadtree = true;
+
 	std::list<GameObject*> toDestroy;
 
 	unsigned long long int currentGameObjectId = 0;
 
-	bool CHAOSAdded = false;
+	std::list<std::pair<GameObject*, float3>> generatedGameObjects;
 
 	const float QUADTREE_SIZE = 150.0f;
 };

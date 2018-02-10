@@ -86,6 +86,11 @@ void Camera::SetPosition(const float3& position)
 	frustum.pos = position;
 }
 
+const Frustum& Camera::GetFrustum() const
+{
+	return frustum;
+}
+
 float Camera::GetFOV() const
 {
 	return frustum.verticalFov;
@@ -218,7 +223,7 @@ std::vector<ComponentType> Camera::GetProhibitedComponents() const
 	return { ComponentType::Camera };
 }
 
-bool Camera::IsInsideFrustum(const AABB& aabb) const
+bool Camera::Intersects(const Frustum& frustum, const AABB& aabb)
 {
 	Plane planes[6];
 	frustum.GetPlanes(planes);

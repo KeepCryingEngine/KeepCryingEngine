@@ -32,6 +32,7 @@ private:
 	void DrawShaderWindow();
 	void DrawHierarchyWindow();
 	void DrawInspectorWindow();
+	void DrawGenerateGameObjectWindow();
 
 	void PrintChildrenOnHierarchy(std::vector<GameObject*> children);
 
@@ -46,7 +47,6 @@ private:
 	bool addSphereGameObject = false;
 	bool addEmptyGameObject = false;
 	bool addCameraGameObject = false;
-	bool addCHAOS = false;
 
 	//Parameter control bools
 	bool wireframeEnabled = false;
@@ -65,6 +65,7 @@ private:
 	bool shaderEditorWindow = false;
 	bool hierarchyWindow = true;
 	bool inspectorWindow = false;
+	bool generateGameObjectWindow = true;
 
 	//Probably there's a better way of doing this thing...
 	float movementSpeed = 10.0f;

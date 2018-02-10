@@ -1,18 +1,15 @@
 #include "Quadtree.h"
 
-#include "Globals.h"
-#include "QuadtreeNode.h"
-
 Quadtree::Quadtree()
 { }
 
 Quadtree::~Quadtree()
 { }
 
-void Quadtree::Create(const AABB2D& limits)
+void Quadtree::Create(const AABB& aabb)
 {
 	root = new QuadtreeNode();
-	root->Create(limits);
+	root->Create(aabb);
 }
 
 void Quadtree::Clear()
@@ -30,6 +27,14 @@ void Quadtree::Insert(GameObject* gameObject)
 	if(root != nullptr)
 	{
 		root->Insert(gameObject);
+	}
+}
+
+void Quadtree::Intersect(std::vector<GameObject*>& gameObjects, const Frustum& frustum) const
+{
+	if(root)
+	{
+		root->Intersect(gameObjects, frustum);
 	}
 }
 

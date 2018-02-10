@@ -1,6 +1,8 @@
 #include "QuadtreeNode.h"
 
-#include "Globals.h"
+#include <Frustum.h>
+
+#include "Camera.h"
 #include "GameObject.h"
 
 using namespace std;
@@ -11,9 +13,9 @@ QuadtreeNode::QuadtreeNode()
 QuadtreeNode::~QuadtreeNode()
 { }
 
-void QuadtreeNode::Create(const AABB2D& limits)
+void QuadtreeNode::Create(const AABB& aabb)
 {
-	aabb2D = limits;
+	this->aabb = aabb;
 }
 
 void QuadtreeNode::Clear()
@@ -33,10 +35,7 @@ void QuadtreeNode::Clear()
 
 void QuadtreeNode::Insert(GameObject* gameObject)
 {
-	AABB gameObjectAABB = gameObject->GetAABB();
-	AABB2D gameObjectAABB2D(gameObjectAABB.minPoint.xz(), gameObjectAABB.maxPoint.xz());
-
-	if(aabb2D.Intersects(gameObjectAABB2D))
+	if(aabb.Intersects(gameObject->GetAABB()))
 	{
 		if(children == nullptr)
 		{
@@ -54,11 +53,33 @@ void QuadtreeNode::Insert(GameObject* gameObject)
 	}
 }
 
+void QuadtreeNode::Intersect(std::vector<GameObject*>& gameObjects, const Frustum& frustum) const
+{
+	if(Camera::Intersects(frustum, aabb))
+	{
+		for(GameObject* candidate : content)
+		{
+			if(Camera::Intersects(frustum, candidate->GetAABB()))
+			{
+				gameObjects.push_back(candidate);
+			}
+		}
+
+		if(children != nullptr)
+		{
+			for(size_t i = 0; i < 4; ++i)
+			{
+				children[i].Intersect(gameObjects, frustum);
+			}
+		}
+	}
+}
+
 void QuadtreeNode::Print(uint level) const
 {
 	string indentSpace = "";
 
-	for(int i = 0; i < level; ++i)
+	for(uint i = 0; i < level; ++i)
 	{
 		indentSpace += "  ";
 	}
@@ -96,14 +117,14 @@ void QuadtreeNode::Draw() const
 	
 	glColor3f(255, 255, 0);
 
-	float minX = aabb2D.minPoint.x;
-	float minZ = aabb2D.minPoint.y;
+	float minX = aabb.minPoint.x;
+	float minZ = aabb.minPoint.z;
 
 	float minY = -5.0f;
 	float maxY = 5.0f;
 
-	float maxX = aabb2D.maxPoint.x;
-	float maxZ = aabb2D.maxPoint.y;
+	float maxX = aabb.maxPoint.x;
+	float maxZ = aabb.maxPoint.z;
 
 	glVertex3f(minX, minY, minZ);
 	glVertex3f(maxX, minY, minZ);
@@ -171,8 +192,8 @@ void QuadtreeNode::Add(GameObject* gameObject)
 
 void QuadtreeNode::DivideAndReorganizeContent()
 {
-	float2 bL = aabb2D.minPoint;
-	float2 tR = aabb2D.maxPoint;
+	float2 bL = aabb.minPoint.xz();
+	float2 tR = aabb.maxPoint.xz();
 
 	float minX = bL.x;
 	float minZ = bL.y;
@@ -181,24 +202,16 @@ void QuadtreeNode::DivideAndReorganizeContent()
 	float midX = 0.5f * (minX + maxX);
 	float midZ = 0.5f * (minZ + maxZ);
 
-	float2 bM(midX, minZ);
-	float2 bR(maxX, minZ);
-	float2 tL(minX, maxZ);
-	float2 tM(midX, maxZ);
-	float2 mL(minX, midZ);
-	float2 mR(maxX, midZ);
-	float2 center(midX, midZ);
+	AABB topLeft(float3(minX, -1011, midZ), float3(midX, 1011, maxZ));
+	AABB topRight(float3(midX, -1011, midZ), float3(maxX, 1011, maxZ));
+	AABB bottomLeft(float3(minX, -1011, minZ), float3(midX, 1011, midZ));
+	AABB bottomRight(float3(midX, -1011, minZ), float3(maxX, 1011, midZ));
 
-	AABB2D topLeft(mL, tM);
-	AABB2D topRight(center, tR);
-	AABB2D bottomLeft(bL, center);
-	AABB2D bottomRight(bM, mR);
-
-	AABB2D aabb2Ds[4] = { topLeft, topRight, bottomLeft, bottomRight };
+	AABB aabbs[4] = { topLeft, topRight, bottomLeft, bottomRight };
 
 	for(size_t i = 0; i < 4; ++i)
 	{
-		if(GetNumberIntersections(aabb2Ds[i], content) == content.size())
+		if(GetNumberIntersections(aabbs[i], content) == content.size())
 		{
 			return;
 		}
@@ -208,7 +221,7 @@ void QuadtreeNode::DivideAndReorganizeContent()
 
 	for(size_t i = 0; i < 4; ++i)
 	{
-		children[i].Create(aabb2Ds[i]);
+		children[i].Create(aabbs[i]);
 	}
 
 	for(GameObject* gameObject : content)
@@ -222,16 +235,13 @@ void QuadtreeNode::DivideAndReorganizeContent()
 	content.clear();
 }
 
-uint QuadtreeNode::GetNumberIntersections(const AABB2D& aabb2D, const vector<GameObject*>& content)
+uint QuadtreeNode::GetNumberIntersections(const AABB& aabb, const vector<GameObject*>& content)
 {
 	uint count = 0;
 
 	for(GameObject* gameObject : content)
 	{
-		AABB gameObjectAABB = gameObject->GetAABB();
-		AABB2D gameObjectAABB2D(gameObjectAABB.minPoint.xz(), gameObjectAABB.maxPoint.xz());
-
-		count += aabb2D.Intersects(gameObjectAABB2D);
+		count += aabb.Intersects(gameObject->GetAABB());
 	}
 
 	return count;

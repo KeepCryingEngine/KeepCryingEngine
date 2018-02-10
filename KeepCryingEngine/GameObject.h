@@ -55,6 +55,9 @@ public:
 	void SetAABB(const AABB& newAABB);
 	AABB &GetAABB();
 
+	bool GetVisible() const;
+	void SetVisible(bool visible);
+
 private:
 	void CheckToStart();
 	void CheckToDestroy();
@@ -77,6 +80,8 @@ private:
 	unsigned long long int id;
 
 	AABB aabb;
+
+	bool visible = false;
 };
 
 #endif

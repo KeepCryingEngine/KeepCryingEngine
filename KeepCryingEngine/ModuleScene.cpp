@@ -8,6 +8,8 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "Transform.h"
+#include "Camera.h"
+#include "ModuleCamera.h"
 
 using namespace std;
 
@@ -33,7 +35,27 @@ update_status ModuleScene::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 {
-	//CheckToStart();
+	Camera* camera = App->camera->GetEnabledCamera();
+
+	if(camera != nullptr)
+	{
+		if(useQuadtree)
+		{
+			SetVisibleRecursive(root, false);
+
+			vector<GameObject*> visibleGameObjects;
+			qTGameObjects.Intersect(visibleGameObjects, camera->GetFrustum());
+
+			for(GameObject* visibleGameObject : visibleGameObjects)
+			{
+				visibleGameObject->SetVisible(true);
+			}
+		}
+		else
+		{
+			SetVisibilityRecursive(root);
+		}
+	}
 
 	Update(root, deltaTimeS, realDeltaTimeS);
 
@@ -41,24 +63,22 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 	{
 		qTGameObjects.Clear();
 
-		qTGameObjects.Create(AABB2D(float2(-QUADTREE_SIZE, -QUADTREE_SIZE), float2(QUADTREE_SIZE, QUADTREE_SIZE)));
+		qTGameObjects.Create(AABB(float3(-QUADTREE_SIZE, -1011, -QUADTREE_SIZE), float3(QUADTREE_SIZE, 1011, QUADTREE_SIZE)));
 
-		AddToQuadtree(root);
+		AddToQuadtreeRecursive(root);
 
 		qTGameObjects.Print();
 	}
 
 	qTGameObjects.Draw();
 
-	if(CHAOSAdded)
+	for(pair<GameObject*, float3> generateGameObject : generatedGameObjects)
 	{
-		float valueXZ = QUADTREE_SIZE;
-		float valueY = 5.0f;
-
-		SetRandomPositionRecursive(root, -valueXZ, valueXZ, -valueY, valueY, -valueXZ, valueXZ);
-
-		CHAOSAdded = false;
+		Transform* transform = ((Transform*)generateGameObject.first->GetComponent(ComponentType::Transform));
+		transform->SetWorldPosition(generateGameObject.second);
 	}
+
+	generatedGameObjects.clear();
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -98,8 +118,6 @@ GameObject* ModuleScene::AddEmpty(GameObject& parent, const char* name)
 	GameObject* gameObject = new GameObject(name);
 	gameObject->SetParent(parent);
 
-	//toStart.push_back(gameObject);
-
 	return gameObject;
 }
 
@@ -132,11 +150,9 @@ GameObject* ModuleScene::AddCamera(GameObject& parent)
 	return gameObject;
 }
 
-void ModuleScene::AddCHAOS()
+void ModuleScene::Generate(int count, float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
 {
-	size_t amount = 300;
-
-	for(size_t i = 0; i < amount; ++i)
+	for(size_t i = 0; i < count; ++i)
 	{
 		int gameObjectType = rand() % 2;
 
@@ -151,15 +167,14 @@ void ModuleScene::AddCHAOS()
 				gameObject = AddSphere(*root);
 				break;
 		}
+
+		float x = minX + (float)(rand()) / ((float)(RAND_MAX / (maxX - minX)));
+		float y = minY + (float)(rand()) / ((float)(RAND_MAX / (maxY - minY)));
+		float z = minZ + (float)(rand()) / ((float)(RAND_MAX / (maxZ - minZ)));
+
+		generatedGameObjects.push_back(pair<GameObject*, float3>(gameObject, float3(x, y, z)));
 	}
-
-	CHAOSAdded = true;
 }
-
-//void ModuleScene::Add(GameObject& gameObject)
-//{
-//	toStart.push_back(&gameObject);
-//}
 
 void ModuleScene::Destroy(GameObject& gameObject)
 {
@@ -206,16 +221,6 @@ void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDel
 	*/
 }
 
-//void ModuleScene::CheckToStart()
-//{
-//	for(GameObject* gameObject : toStart)
-//	{
-//		// gameObject->Start();
-//	}
-//
-//	toStart.clear();
-//}
-
 void ModuleScene::CheckToDestroy()
 {
 	for(GameObject* &gameObject : toDestroy)
@@ -261,33 +266,32 @@ void ModuleScene::DestroyAndRelease(GameObject* &gameObject) const
 	RELEASE(gameObject);
 }
 
-void ModuleScene::AddToQuadtree(GameObject* gameObject)
+void ModuleScene::AddToQuadtreeRecursive(GameObject* gameObject)
 {
 	qTGameObjects.Insert(gameObject);
 
 	for(GameObject* gameObjectChild : gameObject->GetChildren())
 	{
-		AddToQuadtree(gameObjectChild);
+		AddToQuadtreeRecursive(gameObjectChild);
 	}
 }
 
-void ModuleScene::SetRandomPositionRecursive(GameObject* gameObject, float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
+void ModuleScene::SetVisibleRecursive(GameObject* gameObject, bool visible) const
 {
-	if(gameObject != nullptr)
+	gameObject->SetVisible(visible);
+
+	for(GameObject* child : gameObject->GetChildren())
 	{
-		if(gameObject != root)
-		{
-			float x = minX + (float)(rand()) / ((float)(RAND_MAX / (maxX - minX)));
-			float y = minY + (float)(rand()) / ((float)(RAND_MAX / (maxY - minY)));
-			float z = minZ + (float)(rand()) / ((float)(RAND_MAX / (maxZ - minZ)));
+		SetVisibleRecursive(child, visible);
+	}
+}
 
-			Transform* transform = ((Transform*)gameObject->GetComponent(ComponentType::Transform));
-			transform->SetWorldPosition(float3(x, y, z));
-		}
+void ModuleScene::SetVisibilityRecursive(GameObject* gameObject) const
+{
+	gameObject->SetVisible(Camera::Intersects(App->camera->GetEnabledCamera()->GetFrustum(), gameObject->GetAABB()));
 
-		for(GameObject* gameObjectChild : gameObject->GetChildren())
-		{
-			SetRandomPositionRecursive(gameObjectChild, minX, maxX, minY, maxY, minZ, maxZ);
-		}
+	for(GameObject* child : gameObject->GetChildren())
+	{
+		SetVisibilityRecursive(child);
 	}
 }

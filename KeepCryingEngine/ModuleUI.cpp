@@ -358,11 +358,6 @@ void ModuleUI::CallEntityCreation()
 		App->scene->AddCamera(*App->scene->Get(selectedNodeID));
 		addCameraGameObject = false;
 	}
-	if(addCHAOS)
-	{
-		App->scene->AddCHAOS();
-		addCHAOS = false;
-	}
 }
 
 void ModuleUI::CallWindows()
@@ -390,6 +385,10 @@ void ModuleUI::CallWindows()
 	if(inspectorWindow)
 	{
 		DrawInspectorWindow();
+	}
+	if(generateGameObjectWindow)
+	{
+		DrawGenerateGameObjectWindow();
 	}
 }
 
@@ -503,10 +502,6 @@ void ModuleUI::DrawHierarchyWindow()
 			{
 				addCameraGameObject = true;
 			}
-			if(ImGui::MenuItem("CHAOS", nullptr, &addCHAOS))
-			{
-				addCHAOS = true;
-			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMenuBar();
@@ -570,6 +565,30 @@ void ModuleUI::DrawInspectorWindow()
 		temp->DrawUI();
 	}
 	
+	ImGui::End();
+}
+
+void ModuleUI::DrawGenerateGameObjectWindow()
+{
+	ImGui::Begin("Generate GameObject Controls", &generateGameObjectWindow, ImGuiWindowFlags_MenuBar);
+
+	static int generateGameObjectWindowCount = 100;
+	ImGui::DragInt("Count", &generateGameObjectWindowCount);
+
+	static float generateGameObjectWindowLimitX[2] = { -100.0f, 100.0f };
+	ImGui::DragFloat2("Limit X", generateGameObjectWindowLimitX);
+
+	static float generateGameObjectWindowLimitY[2] = { -5.0f, 5.0f };
+	ImGui::DragFloat2("Limit Y", generateGameObjectWindowLimitY);
+
+	static float generateGameObjectWindowLimitZ[2] = { -100.0f, 100.0f };
+	ImGui::DragFloat2("Limit Z", generateGameObjectWindowLimitZ);
+
+	if(ImGui::Button("Generate"))
+	{
+		App->scene->Generate(generateGameObjectWindowCount, generateGameObjectWindowLimitX[0], generateGameObjectWindowLimitX[1], generateGameObjectWindowLimitY[0], generateGameObjectWindowLimitY[1], generateGameObjectWindowLimitZ[0], generateGameObjectWindowLimitZ[1]);
+	}
+
 	ImGui::End();
 }
 

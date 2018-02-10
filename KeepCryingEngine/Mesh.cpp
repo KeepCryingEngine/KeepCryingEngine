@@ -59,12 +59,17 @@ void Mesh::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		RenderAABB();
 	}
 
-	Camera* enabledCamera = App->camera->GetEnabledCamera();
+	if(gameObject->GetVisible())
+	{
+		App->renderer->AddToDrawBuffer(*this);
+	}
+
+	/* Camera* enabledCamera = App->camera->GetEnabledCamera();
 
 	if(enabledCamera != nullptr && enabledCamera->IsInsideFrustum(gameObject->GetAABB()))
 	{
 		App->renderer->AddToDrawBuffer(*this);
-	}
+	} */
 }
 
 void Mesh::RenderAABB()
