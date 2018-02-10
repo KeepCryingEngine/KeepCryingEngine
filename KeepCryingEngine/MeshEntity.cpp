@@ -46,6 +46,12 @@ GLenum MeshEntity::GetDrawMode() const
 	return drawMode;
 }
 
+void MeshEntity::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& indices)
+{
+	GenerateBuffers(vertices,indices);
+	CalculateAABBForMesh(vertices);
+}
+
 void MeshEntity::SetUpCube()
 {
 	drawMode = GL_TRIANGLES;
@@ -193,7 +199,7 @@ void MeshEntity::SetUpSphere()
 	float R = 1.0f / (float)(rings - 1);
 	float S = 1.0f / (float)(sectors - 1);
 
-	vector<float3> vertices;
+	vector<float3> positions;
 	vector<GLushort> indices;
 	vector<float2> texcoords;
 	vector<float3> normals;
@@ -201,11 +207,11 @@ void MeshEntity::SetUpSphere()
 	const size_t nSphereVertices = rings * sectors;
 	nVertices = nSphereVertices;
 
-	vertices.resize(nSphereVertices * 3);
+	positions.resize(nSphereVertices * 3);
 	texcoords.resize(nSphereVertices * 2);
 	normals.resize(nSphereVertices * 3);
 
-	vector<float3>::iterator v = vertices.begin();
+	vector<float3>::iterator v = positions.begin();
 	vector<float2>::iterator t = texcoords.begin();
 	vector<float3>::iterator n = normals.begin();
 	for(unsigned int r = 0; r < rings; r++)
@@ -247,41 +253,41 @@ void MeshEntity::SetUpSphere()
 		}
 	}
 
-	// Cannot Vertex vVertices[nVertices];
-	Vertex* vVertices = (Vertex*)malloc(sizeof(Vertex) * nVertices * 3);
-	FillVerticesData(vVertices, nSphereVertices, &vertices[0], &normals[0], colors, &texcoords[0]);
+	Vertex vertices[nSphereVertices];
+	FillVerticesData(vertices, nSphereVertices, &positions[0], &normals[0], colors, &texcoords[0]);
 
-	GenerateBuffers(vVertices, nVertices, &indices[0], nIndices);
+	GenerateBuffers(vertices, nVertices, &indices[0], nIndices);
 
-	CalculateAABBForMesh(&vertices[0], nVertices);
-
-	RELEASE(vVertices);
+	CalculateAABBForMesh(&positions[0], nVertices);
 }
 
-void MeshEntity::GenerateBuffers(Vertex* vertices, size_t nVertices, GLushort* indices, size_t nIndices)
+void MeshEntity::GenerateBuffers(const vector<Vertex> vertices, const vector<GLushort> indices)
 {
 	assert(vertices);
-	assert(nVertices > 0);
 	assert(indices);
-	assert(nIndices > 0);
 
 	//Generate Vertex buffer
+	const Vertex * verticesPointer = &vertices[0];
 	glGenBuffers(1, &vertexBufferId);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * nVertices, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * nVertices, verticesPointer, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	//Generate Indices buffer
+	const GLushort* indicesPointer = &indices[0];
 	glGenBuffers(1, &indicesBufferId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * nIndices, indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * nIndices, indicesPointer, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void MeshEntity::CalculateAABBForMesh(float3 * verticesPositions, size_t nVertices)
+void MeshEntity::CalculateAABBForMesh(const vector<Vertex> &vertices)
 {
-	assert(verticesPositions);
-	assert(nVertices > 0);
+	const size_t size = vertices.size();
+	float3 * positions = new float3[vertices.size()];
+	for()
+
+	
 	aabb.Enclose(verticesPositions, nVertices);
 }
 
