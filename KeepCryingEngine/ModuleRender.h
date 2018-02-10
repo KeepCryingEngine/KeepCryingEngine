@@ -40,7 +40,6 @@ public:
 
 	void DrawCross(const float3& pos, float scale) const;
 
-	//void AddToDrawBuffer(Mesh& mesh);
 	void AddToDrawBuffer(MeshEntity& mesh, MaterialEntity& material, GameObject& gameObject, Transform& transform);
 
 	void DrawFrustrum(Camera& camera);

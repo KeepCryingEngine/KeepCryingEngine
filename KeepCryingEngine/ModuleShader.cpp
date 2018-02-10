@@ -108,7 +108,8 @@ GLuint ModuleShader::GetShaderId(ShaderType shaderType) const
 void ModuleShader::SetUpCameraProgram()
 {
 	uint vertexId = AddShaderPath("Assets/Shaders/cameraShader.vert", GL_VERTEX_SHADER);
-	cameraProgramId = AddProgram({ vertexId });
+	uint fragmentId = AddShaderPath("Assets/Shaders/uniformFragment.frag", GL_FRAGMENT_SHADER);
+	cameraProgramId = AddProgram({ vertexId, fragmentId });
 }
 
 uint ModuleShader::AddProgram(const list<uint>& shaders)

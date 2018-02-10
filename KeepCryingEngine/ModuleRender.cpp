@@ -106,11 +106,6 @@ update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-	/*for(Mesh* mesh : drawBuffer)
-	{
-		DrawFromBuffer(*mesh);
-	}
-	drawBuffer.clear();*/
 	DrawGeometry();
 	drawBuffer.clear();
 
@@ -184,11 +179,6 @@ void ModuleRender::DrawCross(const float3& pos,float scale)const
 	glPopMatrix();
 }
 
-//void ModuleRender::AddToDrawBuffer(Mesh & mesh)
-//{
-//	drawBuffer.push_back(&mesh);
-//}
-
 void ModuleRender::AddToDrawBuffer(MeshEntity & mesh, MaterialEntity& material, GameObject& gameObject, Transform& transform)
 {
 	DrawInfo drawCall = { mesh, material, gameObject, transform };
@@ -223,8 +213,8 @@ void ModuleRender::DrawFrustrum(Camera & camera)
 	transformMatrix.RemoveScale();
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, transformMatrix.Transposed().ptr());
 
-	GLint width = glGetUniformLocation(progId, "ourColor");
-	glUniform4f(width, 1.0f, 0.0f, 0.0f, 1.0f);
+	GLint color = glGetUniformLocation(progId, "inputColor");
+	glUniform4f(color, 255.0f, 0.0f, 0.0f, 1.0f);
 
 	glDrawArrays(GL_LINES, 0, camera.GetNumberOfPoints());
 
@@ -298,6 +288,18 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	{
 		glUniform3f(light, LIGHT_DIR.x, LIGHT_DIR.y, LIGHT_DIR.z);
 	}
+
+	/*GLint camera = glGetUniformLocation(progId, "actualCameraModelView");
+	if(camera != -1)
+	{
+		glUniformMatrix4fv(camera, 1, GL_FALSE, App->camera->GetEnabledCamera()->GetViewMatrix().ptr());
+	}
+
+	GLint cameraFar = glGetUniformLocation(progId, "actualCameraFar");
+	if(cameraFar != -1)
+	{
+		glUniform1f(cameraFar,App->camera->GetEnabledCamera()->GetFarPlane());
+	}*/
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawInfo.mesh.GetIndicesBufferId());
 	glDrawElements(drawInfo.mesh.GetDrawMode(), drawInfo.mesh.GetIndicesNumber(), GL_UNSIGNED_SHORT, nullptr);
