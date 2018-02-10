@@ -3,7 +3,7 @@
 
 #include "Component.h"
 
-class MaterialEntity;
+class Material;
 class Mesh;
 
 class MeshRenderer : public Component
@@ -17,11 +17,11 @@ public:
 
 	void Render(Mesh& mesh);
 
-	void SetMaterial(MaterialEntity& MaterialEntity);
-	MaterialEntity* GetMaterial() const;
+	void SetMaterial(Material& MaterialEntity);
+	Material* GetMaterial() const;
 
 private:
-	MaterialEntity * material = nullptr;
+	Material * material = nullptr;
 };
 
 #endif // !_MESHRENDERER_H_

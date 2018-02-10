@@ -14,7 +14,7 @@
 class Mesh;
 class Camera;
 class Mesh;
-class MaterialEntity;
+class Material;
 class GameObject;
 class Transform;
 
@@ -23,7 +23,7 @@ class ModuleRender : public Module
 private:
 	struct DrawInfo {
 		Mesh& mesh;
-		MaterialEntity& material;
+		Material& material;
 		GameObject& gameObject;
 		Transform& transform;
 	};
@@ -40,7 +40,7 @@ public:
 
 	void DrawCross(const float3& pos, float scale) const;
 
-	void AddToDrawBuffer(Mesh& mesh, MaterialEntity& material, GameObject& gameObject, Transform& transform);
+	void AddToDrawBuffer(Mesh& mesh, Material& material, GameObject& gameObject, Transform& transform);
 
 	void DrawFrustrum(Camera& camera);
 

@@ -13,7 +13,7 @@
 #include "Camera.h"
 #include "GameObject.h"
 #include "Transform.h"
-#include "MaterialEntity.h"
+#include "Material.h"
 #include "Mesh.h"
 
 const float3 ModuleRender::LIGHT_DIR = { -1.0,1.0,0.0 };
@@ -179,7 +179,7 @@ void ModuleRender::DrawCross(const float3& pos,float scale)const
 	glPopMatrix();
 }
 
-void ModuleRender::AddToDrawBuffer(Mesh & mesh, MaterialEntity& material, GameObject& gameObject, Transform& transform)
+void ModuleRender::AddToDrawBuffer(Mesh & mesh, Material& material, GameObject& gameObject, Transform& transform)
 {
 	DrawInfo drawCall = { mesh, material, gameObject, transform };
 	drawBuffer.push_back(drawCall);

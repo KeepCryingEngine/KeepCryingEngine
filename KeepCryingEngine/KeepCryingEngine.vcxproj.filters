@@ -64,13 +64,13 @@
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="MaterialEntity.cpp">
-      <Filter>Entities</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleEntity.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
   </ItemGroup>
@@ -153,13 +153,13 @@
     <ClInclude Include="MeshRenderer.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="MaterialEntity.h">
-      <Filter>Entities</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleEntity.h">
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
       <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>

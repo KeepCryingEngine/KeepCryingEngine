@@ -1,4 +1,4 @@
-#include "MaterialEntity.h"
+#include "Material.h"
 
 #include <string>
 
@@ -10,17 +10,17 @@
 
 using namespace std;
 
-MaterialEntity::MaterialEntity()
+Material::Material()
 {
 	textureId = App->texture->LoadCheckerTexture();
 	programId = App->shader->GetShaderId(ShaderType::Default);
 }
 
-MaterialEntity::~MaterialEntity()
+Material::~Material()
 {
 }
 
-void MaterialEntity::DrawUI()
+void Material::DrawUI()
 {
 	if (ImGui::CollapsingHeader("Material"))
 	{
@@ -45,17 +45,17 @@ void MaterialEntity::DrawUI()
 	}
 }
 
-GLuint MaterialEntity::GetProgramId() const
+GLuint Material::GetProgramId() const
 {
 	return programId;
 }
 
-GLuint MaterialEntity::GetTextureId() const
+GLuint Material::GetTextureId() const
 {
 	return textureId;
 }
 
-void MaterialEntity::SetTexture(const char* path)
+void Material::SetTexture(const char* path)
 {
 	uint newTextureID = App->texture->LoadTexture(path);
 	if(newTextureID != 0)

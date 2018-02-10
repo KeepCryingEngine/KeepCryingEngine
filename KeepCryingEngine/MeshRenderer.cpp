@@ -2,7 +2,7 @@
 
 #include "Application.h"
 #include "Mesh.h"
-#include "MaterialEntity.h"
+#include "Material.h"
 #include "GameObject.h"
 #include "MeshFilter.h"
 #include "Application.h"
@@ -12,7 +12,7 @@
 
 MeshRenderer::MeshRenderer() : Component(ComponentType::MeshRenderer)
 {
-	material = new MaterialEntity();
+	material = new Material();
 }
 
 
@@ -59,12 +59,12 @@ void MeshRenderer::Render(Mesh& mesh)
 	}
 }
 
-void MeshRenderer::SetMaterial(MaterialEntity & material)
+void MeshRenderer::SetMaterial(Material & material)
 {
 	this->material = &material;
 }
 
-MaterialEntity * MeshRenderer::GetMaterial() const
+Material * MeshRenderer::GetMaterial() const
 {
 	return material;
 }

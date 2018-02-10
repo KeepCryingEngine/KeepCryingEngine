@@ -1,14 +1,14 @@
-#ifndef _MATERIALENTITY_H_
-#define _MATERIALENTITY_H_
+#ifndef _MATERIAL_H_
+#define _MATERIAL_H_
 
 #include <GL/glew.h>
 #include "ModuleShader.h"
 
-class MaterialEntity
+class Material
 {
 public:
-	MaterialEntity();
-	virtual ~MaterialEntity();
+	Material();
+	virtual ~Material();
 
 	void DrawUI();
 
