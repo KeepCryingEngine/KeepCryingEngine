@@ -23,10 +23,11 @@ public:
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
 	MeshEntity* GetMesh() const;
+	void SetMesh(MeshEntity* mesh);
 	void SetMeshMode(MeshMode mode);
 
 private:
-	void SetMesh(MeshEntity* mesh);
+	void UpdateGameObjectAABB();
 
 private:
 	MeshEntity * mesh = nullptr;

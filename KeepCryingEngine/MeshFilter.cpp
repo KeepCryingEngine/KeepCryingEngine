@@ -5,6 +5,7 @@
 #include "MeshRenderer.h"
 #include "GameObject.h"
 #include "MeshEntity.h"
+#include "Transform.h"
 
 MeshFilter::MeshFilter() : Component(ComponentType::MeshFilter)
 {
@@ -43,7 +44,21 @@ void MeshFilter::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		{
 			meshRenderer->Render(*mesh);
 		}
+		UpdateGameObjectAABB();
 	}
+}
+
+void MeshFilter::UpdateGameObjectAABB()
+{
+
+	Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
+	OBB obb = mesh->GetAABB().ToOBB();
+
+	obb.Transform(transform->GetWorldRotation());
+	obb.Translate(transform->GetWorldPosition());
+	obb.Scale(transform->GetWorldPosition(), transform->GetWorldScale());
+
+	gameObject->GetAABB().SetFrom(obb);
 }
 
 MeshEntity * MeshFilter::GetMesh() const
