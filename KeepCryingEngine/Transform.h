@@ -35,8 +35,9 @@ public:
 
 	const float4x4& GetModelMatrix() const;
 
-private:
 	void SetDirty() const;
+
+private:
 	float4x4 GetLocalMatrix() const;
 	const float4x4& GetParentMatrix() const;
 	void RecalculateIfNecessary() const;

@@ -7,6 +7,7 @@
 #include "Application.h"
 #include "ModuleScene.h"
 #include "ComponentFabric.h"
+#include "Transform.h"
 
 using namespace std;
 
@@ -123,6 +124,9 @@ void GameObject::SetParent(GameObject& newParent)
 	
 	parent = &newParent;
 	newParent.children.push_back(this);
+
+	Transform* transform = (Transform*)GetComponent(ComponentType::Transform);
+	transform->SetDirty();
 }
 
 void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
