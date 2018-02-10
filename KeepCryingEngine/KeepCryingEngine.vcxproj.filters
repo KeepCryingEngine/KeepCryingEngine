@@ -33,6 +33,12 @@
     <ClCompile Include="Log.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
     <ClCompile Include="ModuleCamera.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -73,6 +79,11 @@
     <ClCompile Include="Material.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Quadtree.cpp" />
+    <ClCompile Include="QuadtreeNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -110,8 +121,14 @@
     <ClInclude Include="json_serializer.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Components</Filter>
+    </ClInclude>
     <ClInclude Include="MemLeaks.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="ModuleCamera.h">
       <Filter>Modules</Filter>
@@ -162,9 +179,11 @@
     <ClInclude Include="Material.h">
       <Filter>Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Brofiler.h">
-      <Filter>Utils</Filter>
+    <ClInclude Include="Texture.h">
+      <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="QuadtreeNode.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">

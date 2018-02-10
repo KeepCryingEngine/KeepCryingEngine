@@ -11,15 +11,18 @@ ModuleTexture::ModuleTexture()
 ModuleTexture::~ModuleTexture()
 { }
 
-uint ModuleTexture::LoadCheckerTexture()
+bool ModuleTexture::Start()
 {
-	if(checkerTexture != 0)
-	{
-		return checkerTexture;
-	}
+	SetUpCheckerTexture();
 
+	return true;
+}
+
+void ModuleTexture::SetUpCheckerTexture()
+{
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
 	
+	//Fill texture data
 	for(int i = 0; i < CHECKERS_HEIGHT; ++i)
 	{
 		for(int j = 0; j < CHECKERS_WIDTH; ++j)
@@ -35,197 +38,90 @@ uint ModuleTexture::LoadCheckerTexture()
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	glGenTextures(1, &checkerTexture);
-	glBindTexture(GL_TEXTURE_2D, checkerTexture);
-
-	// Set texture clamping method
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-	// Set texture interpolation method to use linear interpolation (no MIPMAPS)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+	GLuint checkerTextureId = 0;
+	glGenTextures(1, &checkerTextureId);
+	
+	glBindTexture(GL_TEXTURE_2D, checkerTextureId);
+	
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT,
 		0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	return checkerTexture;
+	TextureConfiguration textureConfiguration;
+	textureConfiguration.textureType = GL_TEXTURE_2D;
+	textureConfiguration.mipMap = false;
+	textureConfiguration.magFilterMode = GL_LINEAR;
+	textureConfiguration.minFilterMode = GL_LINEAR;
+	textureConfiguration.wrapModeS = GL_CLAMP;
+	textureConfiguration.wrapModeT = GL_CLAMP;
+	textureConfiguration.anisotropicFilter = true;
+
+	checkerTexture = new Texture(checkerTextureId, textureConfiguration);
 }
 
-uint ModuleTexture::LoadTexture(const char* texturePath) const
+Texture * ModuleTexture::LoadTexture(const char * texturePath, const TextureConfiguration & textureConfiguration) const
 {
-	ILuint imageID; // Create an image ID as a ULuint
+	Texture * texture = nullptr;
 
-	GLuint textureID = 0; // Create a texture ID as a GLuint
+	ILuint imageId;
+	ilGenImages(1, &imageId);
+	ilBindImage(imageId);
 
-	ILboolean success; // Create a flag to keep track of success/failure
-
-	ILenum error; // Create a flag to keep track of the IL error state
-
-	ilGenImages(1, &imageID); // Generate the image ID
-
-	ilBindImage(imageID); // Bind the image
-
-	success = ilLoadImage(texturePath); // Load the image file
-
-	// If we managed to load the image, then we can start to do things with it...
-	if(success)
+	if (ilLoadImage(texturePath))
 	{
 		ILinfo imageInfo;
 
 		iluGetImageInfo(&imageInfo);
 
 		// If the image is flipped (i.e. upside-down and mirrored, flip it the right way up!)
-		if(imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+		if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
 		{
 			iluFlipImage();
 		}
 
 		// Convert the image into a suitable format to work with
 		// NOTE: If your image contains alpha channel you can replace IL_RGB with IL_RGBA
-		success = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
-
-		// Quit out if we failed the conversion
-		if(!success)
+		if (!ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE))
 		{
-			error = ilGetError();
+			ILenum error = ilGetError();
 			LOG_DEBUG("Image conversion failed - IL reports error: %u - %s", error, iluErrorString(error));
 		}
 
-		// Generate a new texture
-		glGenTextures(1, &textureID);
+		GLuint textureId = 0;
 
-		// Bind the texture to a name
-		glBindTexture(GL_TEXTURE_2D, textureID);
+		glGenTextures(1, &textureId);
+		glBindTexture(textureConfiguration.textureType, textureId);
 
-		// Set texture clamping method
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapModeS);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapModeT);
-
-		// Set texture interpolation method to use linear interpolation (no MIPMAPS)
-		if(magFilter)
-		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilterMode);
-		}
-
-		if(minFilter)
-		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilterMode);
-		}
-
-		if(mipmap)
-		{
-			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, mipmap);
-		}
-
-		if(anisotropicFilter)
-		{
-			GLfloat maxAniso = 0.0f;
-			glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
-
-			glSamplerParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
-		}
-
-		// Specify the texture specification
-		glTexImage2D(GL_TEXTURE_2D, // Type of texture
-			0, // Pyramid level (for mip-mapping) - 0 is the top level
+		glTexImage2D(textureConfiguration.textureType,
+			0,
 			ilGetInteger(IL_IMAGE_FORMAT), // Internal pixel format to use. Can be a generic type like GL_RGB or GL_RGBA, or a sized type
-			ilGetInteger(IL_IMAGE_WIDTH), // Image width
-			ilGetInteger(IL_IMAGE_HEIGHT), // Image height
-			0, // Border width in pixels (can either be 1 or 0)
+			ilGetInteger(IL_IMAGE_WIDTH),
+			ilGetInteger(IL_IMAGE_HEIGHT),
+			0,
 			ilGetInteger(IL_IMAGE_FORMAT), // Format of image pixel data
 			GL_UNSIGNED_BYTE, // Image data type
 			ilGetData()); // The actual image data itself
+
+		ilDeleteImages(1, &imageId); // Because we have already copied image data into texture data we can release memory used by image.
+
+		texture = new Texture(textureId, textureConfiguration);
 	}
 	else // If we failed to open the image file in the first place...
 	{
-		error = ilGetError();
+		ILenum error = ilGetError();
 		LOG_DEBUG("Image load failed - IL reports error: %u - %s", error, iluErrorString(error));
 	}
 
-	ilDeleteImages(1, &imageID); // Because we have already copied image data into texture data we can release memory used by image.
-
-	return (uint)textureID; // Return the GLuint to the texture so you can use it!
+	return texture;
 }
 
-uint ModuleTexture::getWrapModeS() const
+Texture * ModuleTexture::LoadTexture(const char* texturePath) const
 {
-	return wrapModeS;
+	return LoadTexture(texturePath, loadingTextureConfiguration);
 }
 
-void ModuleTexture::setWrapModeS(uint wrapModeS)
+Texture * ModuleTexture::GetCheckerTexture() const
 {
-	this->wrapModeS = wrapModeS;
-}
-
-uint ModuleTexture::getWrapModeT() const
-{
-	return wrapModeT;
-}
-
-void ModuleTexture::setWrapModeT(uint wrapModeT)
-{
-	this->wrapModeT = wrapModeT;
-}
-
-bool ModuleTexture::getMagFilter() const
-{
-	return magFilter;
-}
-
-void ModuleTexture::setMagFilter(bool magFilter)
-{
-	this->magFilter = magFilter;
-}
-
-bool ModuleTexture::getMinFilter() const
-{
-	return minFilter;
-}
-
-void ModuleTexture::setMinFilter(bool minFilter)
-{
-	this->minFilter = minFilter;
-}
-
-uint ModuleTexture::getMagFilterMode() const
-{
-	return magFilterMode;
-}
-
-void ModuleTexture::setMagFilterMode(uint magFilterMode)
-{
-	this->magFilterMode = magFilterMode;
-}
-
-uint ModuleTexture::getMinFilterMode() const
-{
-	return minFilterMode;
-}
-
-void ModuleTexture::setMinFilterMode(uint minFilterMode)
-{
-	this->minFilterMode = minFilterMode;
-}
-
-bool ModuleTexture::getMipmap() const
-{
-	return mipmap;
-}
-
-void ModuleTexture::setMipmap(bool mipMap)
-{
-	this->mipmap = mipmap;
-}
-
-bool ModuleTexture::getAnisotropicFilter() const
-{
-	return anisotropicFilter;
-}
-
-void ModuleTexture::setAnisotropicFilter(bool anisotropicFilter)
-{
-	this->anisotropicFilter = anisotropicFilter;
+	return checkerTexture;
 }

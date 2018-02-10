@@ -15,6 +15,7 @@
 #include "Transform.h"
 #include "Material.h"
 #include "Mesh.h"
+#include "Texture.h"
 
 const float3 ModuleRender::LIGHT_DIR = { -1.0,1.0,0.0 };
 
@@ -253,7 +254,7 @@ void ModuleRender::DrawGeometry()
 void ModuleRender::Draw(const DrawInfo & drawInfo)
 {
 	GLuint progId = drawInfo.material.GetProgramId();
-	GLuint textId = drawInfo.material.GetTextureId();
+	GLuint textId = drawInfo.material.GetTexture()->GetId();
 
 	glUseProgram(progId);
 	if (textId != 0)

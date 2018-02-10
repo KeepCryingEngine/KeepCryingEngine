@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 
 #include "Module.h"
+#include "Texture.h"
 
 class ModuleTexture : public Module
 {
@@ -11,44 +12,20 @@ public:
 	ModuleTexture();
 	virtual ~ModuleTexture();
 
-	uint LoadCheckerTexture();
-	uint LoadTexture(const char* texturePath) const;
+	bool Start() override;
 
-	uint getWrapModeS() const;
-	void setWrapModeS(uint wrapModeS);
+	Texture * LoadTexture(const char* texturePath, const TextureConfiguration& textureConfiguration) const;
+	Texture * LoadTexture(const char* texturePath) const;
 
-	uint getWrapModeT() const;
-	void setWrapModeT(uint wrapModeT);
-
-	bool getMagFilter() const;
-	void setMagFilter(bool magFilter);
-
-	bool getMinFilter() const;
-	void setMinFilter(bool minFilter);
-
-	uint getMagFilterMode() const;
-	void setMagFilterMode(uint magFilterMode);
-
-	uint getMinFilterMode() const;
-	void setMinFilterMode(uint minFilterMode);
-
-	bool getMipmap() const;
-	void setMipmap(bool mipMap);
-
-	bool getAnisotropicFilter() const;
-	void setAnisotropicFilter(bool anisotropicFilter);
+	Texture* GetCheckerTexture() const;
 
 private:
-	uint checkerTexture = 0;
+	void SetUpCheckerTexture();
 
-	uint wrapModeS = GL_CLAMP;
-	uint wrapModeT = GL_CLAMP;
-	bool magFilter = true;
-	bool minFilter = true;
-	uint magFilterMode = GL_LINEAR;
-	uint minFilterMode = GL_LINEAR;
-	bool mipmap = false;
-	bool anisotropicFilter = false;
+private:
+	TextureConfiguration loadingTextureConfiguration;
+
+	Texture * checkerTexture = nullptr;
 
 	static const uint CHECKERS_HEIGHT;
 	static const uint CHECKERS_WIDTH;

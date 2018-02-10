@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include "ModuleShader.h"
 
+class Texture;
+
 class Material
 {
 public:
@@ -13,7 +15,7 @@ public:
 	void DrawUI();
 
 	GLuint GetProgramId() const;
-	GLuint GetTextureId() const;
+	Texture* GetTexture() const;
 
 private:
 	void SetTexture(const char* path);
@@ -21,7 +23,7 @@ private:
 private:
 	ShaderType shaderType = ShaderType::Default;
 	GLuint programId = 0;
-	GLuint textureId = 0;
+	Texture* texture = nullptr;
 };
 
 #endif // !_MATERIALENTITY_H_
