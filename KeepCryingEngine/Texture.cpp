@@ -1,5 +1,7 @@
 #include "Texture.h"
 
+#include "ModuleTexture.h"
+
 
 Texture::Texture(GLuint textureId) :
 	textureId(textureId)

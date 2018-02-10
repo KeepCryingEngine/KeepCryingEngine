@@ -2,8 +2,6 @@
 
 #include <DevIL.h>
 
-#include "Texture.h"
-
 const uint ModuleTexture::CHECKERS_HEIGHT = 128;
 const uint ModuleTexture::CHECKERS_WIDTH = 128;
 
@@ -62,29 +60,29 @@ void ModuleTexture::SetUpCheckerTexture()
 	checkerTexture = new Texture(checkerTextureId, textureConfiguration);
 }
 
-Texture * ModuleTexture::LoadTexture(const char* texturePath) const
+Texture * ModuleTexture::LoadTexture(const char * texturePath, const TextureConfiguration & textureConfiguration) const
 {
 	Texture * texture = nullptr;
 
 	ILuint imageId;
 	ilGenImages(1, &imageId);
 	ilBindImage(imageId);
-	
-	if(ilLoadImage(texturePath))
+
+	if (ilLoadImage(texturePath))
 	{
 		ILinfo imageInfo;
 
 		iluGetImageInfo(&imageInfo);
 
 		// If the image is flipped (i.e. upside-down and mirrored, flip it the right way up!)
-		if(imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+		if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
 		{
 			iluFlipImage();
 		}
 
 		// Convert the image into a suitable format to work with
 		// NOTE: If your image contains alpha channel you can replace IL_RGB with IL_RGBA
-		if(!ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE))
+		if (!ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE))
 		{
 			ILenum error = ilGetError();
 			LOG_DEBUG("Image conversion failed - IL reports error: %u - %s", error, iluErrorString(error));
@@ -92,25 +90,22 @@ Texture * ModuleTexture::LoadTexture(const char* texturePath) const
 
 		GLuint textureId = 0;
 
-		// Generate a new texture
 		glGenTextures(1, &textureId);
+		glBindTexture(textureConfiguration.textureType, textureId);
 
-		// Bind the texture to a name
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		
-		glTexImage2D(GL_TEXTURE_2D, // Type of texture
-			0, // Pyramid level (for mip-mapping) - 0 is the top level
+		glTexImage2D(textureConfiguration.textureType,
+			0,
 			ilGetInteger(IL_IMAGE_FORMAT), // Internal pixel format to use. Can be a generic type like GL_RGB or GL_RGBA, or a sized type
-			ilGetInteger(IL_IMAGE_WIDTH), // Image width
-			ilGetInteger(IL_IMAGE_HEIGHT), // Image height
-			0, // Border width in pixels (can either be 1 or 0)
+			ilGetInteger(IL_IMAGE_WIDTH),
+			ilGetInteger(IL_IMAGE_HEIGHT),
+			0,
 			ilGetInteger(IL_IMAGE_FORMAT), // Format of image pixel data
 			GL_UNSIGNED_BYTE, // Image data type
 			ilGetData()); // The actual image data itself
 
 		ilDeleteImages(1, &imageId); // Because we have already copied image data into texture data we can release memory used by image.
 
-		texture = new Texture(textureId);
+		texture = new Texture(textureId, textureConfiguration);
 	}
 	else // If we failed to open the image file in the first place...
 	{
@@ -119,6 +114,11 @@ Texture * ModuleTexture::LoadTexture(const char* texturePath) const
 	}
 
 	return texture;
+}
+
+Texture * ModuleTexture::LoadTexture(const char* texturePath) const
+{
+	return LoadTexture(texturePath, loadingTextureConfiguration);
 }
 
 Texture * ModuleTexture::GetCheckerTexture() const

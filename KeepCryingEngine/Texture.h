@@ -1,7 +1,7 @@
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
 
-#include "ModuleTexture.h"
+#include <GL/glew.h>
 
 struct TextureConfiguration {
 	GLenum textureType = GL_TEXTURE_2D;

@@ -4,8 +4,7 @@
 #include <GL/glew.h>
 
 #include "Module.h"
-
-class Texture;
+#include "Texture.h"
 
 class ModuleTexture : public Module
 {
@@ -15,6 +14,7 @@ public:
 
 	bool Start() override;
 
+	Texture * LoadTexture(const char* texturePath, const TextureConfiguration& textureConfiguration) const;
 	Texture * LoadTexture(const char* texturePath) const;
 
 	Texture* GetCheckerTexture() const;
@@ -22,8 +22,9 @@ public:
 private:
 	void SetUpCheckerTexture();
 
-
 private:
+	TextureConfiguration loadingTextureConfiguration;
+
 	Texture * checkerTexture = nullptr;
 
 	static const uint CHECKERS_HEIGHT;
