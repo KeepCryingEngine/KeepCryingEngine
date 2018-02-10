@@ -9,7 +9,6 @@ class GameObject;
 enum class ComponentType
 {
 	Transform,
-	//Mesh,
 	//Material,
 	Camera,
 	MeshFilter,

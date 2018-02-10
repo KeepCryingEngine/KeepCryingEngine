@@ -36,9 +36,6 @@
     <ClCompile Include="Material.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleCamera.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -121,9 +118,6 @@
     </ClInclude>
     <ClInclude Include="MemLeaks.h">
       <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="ModuleCamera.h">
       <Filter>Modules</Filter>

@@ -99,7 +99,6 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialEntity.h" />
     <ClInclude Include="MemLeaks.h" />
-    <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshEntity.h" />
     <ClInclude Include="MeshFilter.h" />
     <ClInclude Include="MeshRenderer.h" />
@@ -130,7 +129,6 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialEntity.cpp" />
-    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshEntity.cpp" />
     <ClCompile Include="MeshFilter.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
