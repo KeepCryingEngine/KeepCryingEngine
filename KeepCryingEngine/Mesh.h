@@ -1,65 +1,48 @@
 #ifndef _MESH_H_
 #define _MESH_H_
 
-#include "Globals.h"
-#include "Component.h"
-
 #include <GL/glew.h>
-
 #include <AABB.h>
+#include <MathGeoLib.h>
 
 struct Vertex
 {
-	float position[3];
-	float color[4];
-	float uv[2];
+	float3 position;
+	float3 normal;
+	float4 color;
+	float2 uv;
 };
 
-enum class MeshMode
-{
-	CUBE,
-	SPHERE
-};
-
-class Mesh : public Component
+class Mesh
 {
 public:
 	Mesh();
 	virtual ~Mesh();
 
-	void RealUpdate(float deltaTimeS, float realDeltaTimeS)override;
-	void DrawUI() override;
+	const AABB& GetAABB() const;
+	GLuint GetVertexBufferId() const;
+	GLuint GetIndicesBufferId() const;
+	GLsizei GetVerticesNumber() const;
+	GLsizei GetIndicesNumber() const;
+	GLenum GetDrawMode()const;
 
-	void SetMeshMode(MeshMode mode);
-
-	virtual std::vector<ComponentType> GetNeededComponents() const override;
-	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
-
-	GLenum GetDrawMode();
-	uint GetVertexBufferId() const;
-	uint GetIndicesBufferId() const;
-	uint GetNormalBufferId() const;
-	uint GetVerticesNumber() const;
+	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, GLenum drawMode);
 
 private:
-	void SetUpCube();
-	void SetUpSphere();
-	void FillVerticesData(uint n, const float* positions, const float* colors, const float* texCoords, Vertex* vertices) const;
-	void RenderAABB();
-	void CalculateAABBForMesh(float * newVertices, size_t nVertices);
+	void GenerateBuffers(const std::vector<Vertex> vertices, const std::vector<GLushort> indices);
+	void CalculateAABBForMesh(const std::vector<Vertex> &vertices);
 
 private:
-	GLenum drawMode;
-	AABB originalaabb;
-	uint vertexBufferId;
-	uint indicesBufferId;
-	uint normalBufferId;
-	uint verticesNumber;
+	AABB aabb;
+	GLuint vertexBufferId = 0;
+	GLuint indicesBufferId = 0;
+	GLsizei nVertices = 0;
+	GLsizei nIndices = 0;
+	GLenum drawMode = GL_TRIANGLES;
 
-	bool debugAABB = true;
-	bool changedMode = true;
-	MeshMode meshMode = MeshMode::CUBE;
 };
 
-#endif // !_MESH_H_
+#endif // !_MESHENTITY_H_
+
+
 

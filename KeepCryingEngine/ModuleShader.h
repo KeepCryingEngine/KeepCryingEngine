@@ -7,6 +7,11 @@
 
 #include "Module.h"
 
+enum class ShaderType {
+	Default,
+	Cartoon
+};
+
 class ModuleShader : public Module
 {
 public:
@@ -20,11 +25,21 @@ public:
 	
 	uint AddProgram(const std::list<uint>& shaders);
 	uint AddProgram(std::initializer_list<uint> shaders);
-private:
-	void SetUpCameraProgram();
+
+	GLuint GetShaderId(ShaderType shaderType) const;
 
 public:
 	uint cameraProgramId = 0;
+
+private:
+	void SetUpCameraProgram();
+
+	void SetUpDefaultShader();
+	void SetUpCartoonShader();
+
+private:
+	GLuint cartoonShaderId = 0;
+	GLuint defaultShaderId = 0;
 };
 
 #endif
