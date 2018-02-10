@@ -198,7 +198,13 @@ void Transform::RecalculateIfNecessary() const
 		float4x4 localMatrix = GetLocalMatrix();
 		const float4x4& parentMatrix = GetParentMatrix();
 		modelMatrix = parentMatrix * localMatrix;
+		modelMatrix.Orthonormalize3();
 		modelMatrix.Decompose(worldPosition, worldRotation, worldScale);
+
+		/*worldPosition = modelMatrix.TranslatePart();
+		worldRotation = modelMatrix.RotatePart().ToQuat();
+		worldScale = modelMatrix.GetScale();*/
+
 		dirty = false;
 	}
 }
