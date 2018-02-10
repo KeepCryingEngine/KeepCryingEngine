@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "ModuleEntity.h"
 #include "MeshRenderer.h"
+#include "ModuleUI.h"
 #include "GameObject.h"
 #include "Mesh.h"
 #include "Transform.h"
@@ -43,7 +44,7 @@ void MeshFilter::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		if (meshRenderer)
 		{
 			meshRenderer->Render(*mesh);
-			if (debugAABB)
+			if (App->ui->GetDebugMode())
 			{
 				DrawGameObjectAABB();
 			}

@@ -8,6 +8,7 @@
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
+#include "ModuleUI.h"
 #include "Camera.h"
 
 MeshRenderer::MeshRenderer() : Component(ComponentType::MeshRenderer)
@@ -45,15 +46,25 @@ std::vector<ComponentType> MeshRenderer::GetProhibitedComponents() const
 
 void MeshRenderer::Render(Mesh& mesh)
 {
-	if (material)
+	if(enabled)
 	{
-		Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
-		if (transform)
+		if(material)
 		{
-			Camera* enabledCamera = App->camera->GetEnabledCamera();
-			if (enabledCamera != nullptr && enabledCamera->IsInsideFrustum(gameObject->GetAABB()))
+			Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
+			if(transform)
 			{
-				App->renderer->AddToDrawBuffer(mesh, *material, *gameObject, *transform);
+				if(App->ui->GetFrustumCulling())
+				{
+					Camera* enabledCamera = App->camera->GetEnabledCamera();
+					if(enabledCamera != nullptr && enabledCamera->IsInsideFrustum(gameObject->GetAABB()))
+					{
+						App->renderer->AddToDrawBuffer(mesh, *material, *gameObject, *transform);
+					}
+				}
+				else
+				{
+					App->renderer->AddToDrawBuffer(mesh, *material, *gameObject, *transform);
+				}
 			}
 		}
 	}

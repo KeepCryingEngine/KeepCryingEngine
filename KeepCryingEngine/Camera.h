@@ -6,6 +6,12 @@
 #include "Component.h"
 #include "Globals.h"
 
+struct camVertex
+{
+	float3 pos;
+	float4 color;
+};
+
 class Camera : public Component
 {
 public:
@@ -34,6 +40,7 @@ public:
 	float4x4 GetViewMatrix() const;
 	float4x4 GetProyectionMatrix() const;
 	uint GetFrustumBufferId() const;
+	uint GetFrustumIndicesId() const;
 	int GetNumberOfPoints()const;
 
 	const float3& GetUpVector() const;
@@ -61,6 +68,7 @@ private:
 private:
 	Frustum frustum;
 	uint frustumBufferId = 0;
+	uint frustumIndicesId = 0;
 	int numberOfPoints;
 };
 

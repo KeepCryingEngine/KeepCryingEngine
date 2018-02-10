@@ -19,6 +19,9 @@ public:
 	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
 	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
+	bool GetFrustumCulling()const;
+	bool GetDebugMode()const;
+
 private:
 	void SetUpTextEditor();
 	void SetTextOnEditor(int shaderMode);
@@ -47,6 +50,7 @@ private:
 	bool addCameraGameObject = false;
 
 	//Parameter control bools
+	bool frustumCulling = false;
 	bool wireframeEnabled = false;
 	bool antialiasingEnabled = true;
 	bool textureEnabled = true;
@@ -55,6 +59,7 @@ private:
 	bool depthEnabled = true;
 	bool colormaterialEnabled = true;
 	bool fogEnabled = false;
+	bool debugMode = false;
 
 	//One bool control for each window
 	bool cameraWindow = false;

@@ -67,6 +67,16 @@ update_status ModuleUI::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 	return update_status::UPDATE_CONTINUE;
 }
 
+bool ModuleUI::GetFrustumCulling() const
+{
+	return frustumCulling;
+}
+
+bool ModuleUI::GetDebugMode() const
+{
+	return debugMode;
+}
+
 bool ModuleUI::CleanUp()
 {
 	ImGui_ImplSdlGL3_Shutdown();
@@ -109,6 +119,7 @@ void ModuleUI::DrawMainMenu()
 			static GLfloat color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 			if(ImGui::BeginMenu("Parameters"))
 			{
+				ImGui::Checkbox(" Frustum Culling", &frustumCulling);
 				ImGui::Checkbox(" Wireframe Mode", &wireframeEnabled);
 				ImGui::Checkbox(" Textures", &textureEnabled);
 				ImGui::Checkbox(" Depth Test", &depthEnabled);
@@ -116,6 +127,7 @@ void ModuleUI::DrawMainMenu()
 				ImGui::Checkbox(" Color Material", &colormaterialEnabled);
 				ImGui::Checkbox(" Antialiasing", &antialiasingEnabled);				
 				ImGui::Checkbox(" Fog", &fogEnabled);
+				ImGui::Checkbox(" Debug Mode", &debugMode);
 
 				if(ImGui::BeginMenu("Fog parameters"))
 				{
@@ -524,6 +536,10 @@ void ModuleUI::DrawHierarchyWindow()
 			{
 				addSphereGameObject = true;
 			}
+			if(ImGui::Selectable("Camera"))
+			{
+				addCameraGameObject = true;
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndPopup();
@@ -616,6 +632,10 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 				if(ImGui::Selectable("Sphere"))
 				{
 					addSphereGameObject = true;
+				}
+				if(ImGui::Selectable("Camera"))
+				{
+					addCameraGameObject = true;
 				}
 				ImGui::EndMenu();
 			}

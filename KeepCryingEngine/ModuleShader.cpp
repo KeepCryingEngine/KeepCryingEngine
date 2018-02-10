@@ -13,8 +13,8 @@ ModuleShader::~ModuleShader()
 
 bool ModuleShader::Init()
 {
-	SetUpCameraProgram();
-
+	SetUpColorProgram();
+	SetUpDepthShader();
 	SetUpDefaultShader();
 	SetUpCartoonShader();
 
@@ -91,13 +91,26 @@ GLuint ModuleShader::GetShaderId(ShaderType shaderType) const
 	switch (shaderType) 
 	{
 	case ShaderType::Default:
+	{
 		shaderId = defaultShaderId;
+	}
 		break;
 
 	case ShaderType::Cartoon:
+	{
 		shaderId = cartoonShaderId;
+	}
 		break;
-
+	case ShaderType::Color:
+	{
+		shaderId = colorShaderId;
+	}
+		break;
+	case ShaderType::Depth:
+	{
+		shaderId = depthShaderId;
+	}
+		break;
 	default:
 		assert(false);
 	}
@@ -105,11 +118,11 @@ GLuint ModuleShader::GetShaderId(ShaderType shaderType) const
 	return shaderId;
 }
 
-void ModuleShader::SetUpCameraProgram()
+void ModuleShader::SetUpColorProgram()
 {
-	uint vertexId = AddShaderPath("Assets/Shaders/cameraShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShaderPath("Assets/Shaders/uniformFragment.frag", GL_FRAGMENT_SHADER);
-	cameraProgramId = AddProgram({ vertexId, fragmentId });
+	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShaderPath("Assets/Shaders/colorFragment.frag", GL_FRAGMENT_SHADER);
+	colorShaderId = AddProgram({ vertexId, fragmentId });
 }
 
 uint ModuleShader::AddProgram(const list<uint>& shaders)
@@ -142,7 +155,7 @@ uint ModuleShader::AddProgram(const list<uint>& shaders)
 void ModuleShader::SetUpDefaultShader()
 {
 	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShaderPath("Assets/Shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
+	uint fragmentId = AddShaderPath("Assets/Shaders/textureFragment.frag", GL_FRAGMENT_SHADER);
 	defaultShaderId = AddProgram({ vertexId, fragmentId });
 }
 
@@ -151,4 +164,11 @@ void ModuleShader::SetUpCartoonShader()
 	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
 	uint fragmentId = AddShaderPath("Assets/Shaders/cartoon.frag", GL_FRAGMENT_SHADER);
 	cartoonShaderId = AddProgram({ vertexId, fragmentId });
+}
+
+void ModuleShader::SetUpDepthShader()
+{
+	uint vertexId = AddShaderPath("Assets/Shaders/cameraShader.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShaderPath("Assets/Shaders/depthShader.frag", GL_FRAGMENT_SHADER);
+	depthShaderId = AddProgram({ vertexId, fragmentId });
 }

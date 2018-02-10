@@ -198,13 +198,15 @@ void ModuleRender::DrawFrustrum(Camera & camera)
 
 	glLineWidth(5.0f);
 
-	uint progId = App->shader->cameraProgramId;
+	uint progId = App->shader->GetShaderId(ShaderType::Color);
 	glUseProgram(progId);
 
 	glBindBuffer(GL_ARRAY_BUFFER, camera.GetFrustumBufferId());
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(camVertex), (GLvoid*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(camVertex), (GLvoid*)(3 * sizeof(GLfloat)));
 
 	GLint modelView = glGetUniformLocation(progId, "model_view");
 	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->camera->GetViewMatrix().ptr());
@@ -218,14 +220,13 @@ void ModuleRender::DrawFrustrum(Camera & camera)
 	transformMatrix.RemoveScale();
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, transformMatrix.Transposed().ptr());
 
-	GLint color = glGetUniformLocation(progId, "inputColor");
-	glUniform4f(color, 255.0f, 0.0f, 0.0f, 1.0f);
-
-	glDrawArrays(GL_LINES, 0, camera.GetNumberOfPoints());
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, camera.GetFrustumIndicesId());
+	glDrawElements(GL_LINES, camera.GetNumberOfPoints(), GL_UNSIGNED_SHORT, nullptr);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 
 	glUseProgram(0);
 
@@ -294,17 +295,17 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 		glUniform3f(light, LIGHT_DIR.x, LIGHT_DIR.y, LIGHT_DIR.z);
 	}
 
-	/*GLint camera = glGetUniformLocation(progId, "actualCameraModelView");
-	if(camera != -1)
+	GLint camera = glGetUniformLocation(progId, "actualCameraModelView");
+	if(camera != -1 && App->camera->GetEnabledCamera() != nullptr)
 	{
 		glUniformMatrix4fv(camera, 1, GL_FALSE, App->camera->GetEnabledCamera()->GetViewMatrix().ptr());
 	}
 
 	GLint cameraFar = glGetUniformLocation(progId, "actualCameraFar");
-	if(cameraFar != -1)
+	if(cameraFar != -1 && App->camera->GetEnabledCamera() != nullptr)
 	{
 		glUniform1f(cameraFar,App->camera->GetEnabledCamera()->GetFarPlane());
-	}*/
+	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawInfo.mesh.GetIndicesBufferId());
 	glDrawElements(drawInfo.mesh.GetDrawMode(), drawInfo.mesh.GetIndicesNumber(), GL_UNSIGNED_SHORT, nullptr);

@@ -169,6 +169,11 @@ uint Camera::GetFrustumBufferId() const
 	return frustumBufferId;
 }
 
+uint Camera::GetFrustumIndicesId() const
+{
+	return frustumIndicesId;
+}
+
 int Camera::GetNumberOfPoints() const
 {
 	return numberOfPoints;
@@ -279,25 +284,40 @@ void Camera::SetUpFrustumBuffer()
 
 	frustum.pos = tempPos;
 
-	float3 orderedPoints[] = {
-		points[0],points[2],
-		points[2],points[6],
-		points[6],points[4],
-		points[4],points[0],
-		points[1],points[3],
-		points[3],points[7],
-		points[7],points[5],
-		points[5],points[1],
-		points[0],points[1],
-		points[2],points[3],
-		points[6],points[7],
-		points[4],points[5],
+	numberOfPoints = 24;
+	vector<GLushort> orderedPoints = {
+		0,2,
+		2,6,
+		6,4,
+		4,0,
+		1,3,
+		3,7,
+		7,5,
+		5,1,
+		0,1,
+		2,3,
+		6,7,
+		4,5
 	};
 
-	numberOfPoints=sizeof(orderedPoints)/sizeof(float3);
+	vector<camVertex> vertex;
+	vertex.resize(8);
+
+	for(int i=0;i < 8; i++)
+	{
+		vertex[i].pos = points[i];
+		vertex[i].color = float4(255.0f, 0.0f, 0.0f, 255.0f);
+	}
+
+	
 
 	glGenBuffers(1, (GLuint*) &(frustumBufferId));
 	glBindBuffer(GL_ARRAY_BUFFER, frustumBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * numberOfPoints, orderedPoints, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(camVertex) * 8, &vertex[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &frustumIndicesId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, frustumIndicesId);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * numberOfPoints, &orderedPoints[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

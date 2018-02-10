@@ -9,7 +9,9 @@
 
 enum class ShaderType {
 	Default,
-	Cartoon
+	Cartoon,
+	Color,
+	Depth
 };
 
 class ModuleShader : public Module
@@ -28,18 +30,18 @@ public:
 
 	GLuint GetShaderId(ShaderType shaderType) const;
 
-public:
-	uint cameraProgramId = 0;
-
 private:
-	void SetUpCameraProgram();
 
+	void SetUpColorProgram();
 	void SetUpDefaultShader();
 	void SetUpCartoonShader();
+	void SetUpDepthShader();
 
 private:
 	GLuint cartoonShaderId = 0;
 	GLuint defaultShaderId = 0;
+	GLuint colorShaderId = 0;
+	GLuint depthShaderId = 0;
 };
 
 #endif
