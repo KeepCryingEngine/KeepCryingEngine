@@ -195,6 +195,16 @@ AABB & GameObject::GetAABB()
 	return aabb;
 }
 
+bool GameObject::GetVisible() const
+{
+	return visible;
+}
+
+void GameObject::SetVisible(bool visible)
+{
+	this->visible = visible;
+}
+
 Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
 {
 	Component* component = ComponentFabric::CreateComponent(type);

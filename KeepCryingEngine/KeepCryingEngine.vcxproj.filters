@@ -33,6 +33,12 @@
     <ClCompile Include="Log.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
     <ClCompile Include="ModuleCamera.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -58,21 +64,8 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="MeshFilter.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshRenderer.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleEntity.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Entities</Filter>
-    </ClCompile>
+    <ClCompile Include="Quadtree.cpp" />
+    <ClCompile Include="QuadtreeNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -110,8 +103,14 @@
     <ClInclude Include="json_serializer.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Components</Filter>
+    </ClInclude>
     <ClInclude Include="MemLeaks.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="ModuleCamera.h">
       <Filter>Modules</Filter>
@@ -147,24 +146,8 @@
     <ClInclude Include="Camera.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="MeshFilter.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshRenderer.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleEntity.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Brofiler.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
+    <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="QuadtreeNode.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">

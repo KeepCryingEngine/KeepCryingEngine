@@ -31,6 +31,7 @@ private:
 	void DrawShaderWindow();
 	void DrawHierarchyWindow();
 	void DrawInspectorWindow();
+	void DrawGenerateGameObjectWindow();
 
 	void PrintChildrenOnHierarchy(std::vector<GameObject*> children);
 
@@ -62,6 +63,7 @@ private:
 	bool shaderEditorWindow = false;
 	bool hierarchyWindow = true;
 	bool inspectorWindow = false;
+	bool generateGameObjectWindow = true;
 
 	//Probably there's a better way of doing this thing...
 	float movementSpeed = 10.0f;

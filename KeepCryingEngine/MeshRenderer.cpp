@@ -50,8 +50,7 @@ void MeshRenderer::Render(Mesh& mesh)
 		Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
 		if (transform)
 		{
-			Camera* enabledCamera = App->camera->GetEnabledCamera();
-			if (enabledCamera != nullptr && enabledCamera->IsInsideFrustum(gameObject->GetAABB()))
+			if(gameObject->GetVisible())
 			{
 				App->renderer->AddToDrawBuffer(mesh, *material, *gameObject, *transform);
 			}

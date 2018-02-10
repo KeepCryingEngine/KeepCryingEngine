@@ -26,6 +26,8 @@ public:
 	void SetFarPlane(float distance);
 	void SetPosition(const float3& position);
 
+	const Frustum& GetFrustum() const;
+
 	float GetFOV() const;
 	float GetAspectRatio() const;
 	float GetNearPlane() const;
@@ -52,7 +54,7 @@ public:
 	virtual std::vector<ComponentType> GetNeededComponents() const override;
 	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
 
-	bool IsInsideFrustum(const AABB& aabb) const;
+	static bool Intersects(const Frustum& frustum, const AABB& aabb);
 
 private:
 	float ComputeHorizontalFov(float verticalFovRad, float aspect) const;
