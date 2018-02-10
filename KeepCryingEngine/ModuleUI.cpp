@@ -524,6 +524,10 @@ void ModuleUI::DrawHierarchyWindow()
 			{
 				addSphereGameObject = true;
 			}
+			if(ImGui::Selectable("Camera"))
+			{
+				addCameraGameObject = true;
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndPopup();
