@@ -58,10 +58,6 @@ void MeshFilter::UpdateGameObjectAABB()
 	OBB obb = mesh->GetAABB().ToOBB();
 	obb.Transform(transform->GetModelMatrix());
 
-	/*obb.Transform(transform->GetWorldRotation());
-	obb.Translate(transform->GetWorldPosition());
-	obb.Scale(transform->GetWorldPosition(), transform->GetWorldScale());*/
-
 	gameObject->GetAABB().SetFrom(obb);
 }
 
