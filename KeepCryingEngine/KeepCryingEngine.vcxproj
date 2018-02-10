@@ -96,7 +96,6 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="json_serializer.h" />
-    <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialEntity.h" />
     <ClInclude Include="MemLeaks.h" />
     <ClInclude Include="MeshEntity.h" />
@@ -127,7 +126,6 @@
     <ClCompile Include="json_serializer.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialEntity.cpp" />
     <ClCompile Include="MeshEntity.cpp" />
     <ClCompile Include="MeshFilter.cpp" />

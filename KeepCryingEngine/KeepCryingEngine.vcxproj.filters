@@ -33,9 +33,6 @@
     <ClCompile Include="Log.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleCamera.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -112,9 +109,6 @@
     </ClInclude>
     <ClInclude Include="json_serializer.h">
       <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="MemLeaks.h">
       <Filter>Utils</Filter>
