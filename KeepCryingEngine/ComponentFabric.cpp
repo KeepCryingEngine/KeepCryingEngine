@@ -3,9 +3,9 @@
 #include <assert.h>
 
 #include "Transform.h"
-#include "Material.h"
-#include "Mesh.h"
 #include "Camera.h"
+#include "MeshFilter.h"
+#include "MeshRenderer.h"
 
 Component * ComponentFabric::CreateComponent(ComponentType type)
 {
@@ -15,14 +15,20 @@ Component * ComponentFabric::CreateComponent(ComponentType type)
 		case ComponentType::Transform:
 			component = new Transform();
 			break;
-		case ComponentType::Material:
+		/*case ComponentType::Material:
 			component = new Material();
-			break;
-		case ComponentType::Mesh:
+			break;*/
+		/*case ComponentType::Mesh:
 			component = new Mesh();
-			break;
+			break;*/
 		case ComponentType::Camera:
 			component = new Camera();
+			break;
+		case ComponentType::MeshFilter:
+			component = new MeshFilter();
+			break;
+		case ComponentType::MeshRenderer:
+			component = new MeshRenderer();
 			break;
 	}
 	assert(component);

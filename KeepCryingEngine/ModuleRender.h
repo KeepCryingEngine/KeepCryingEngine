@@ -7,14 +7,27 @@
 #include <GL/glew.h>
 #include <float3.h>
 #include <list>
+#include <vector>
 
 #include "Module.h"
 
 class Mesh;
 class Camera;
+class Mesh;
+class Material;
+class GameObject;
+class Transform;
 
 class ModuleRender : public Module
 {
+private:
+	struct DrawInfo {
+		Mesh& mesh;
+		Material& material;
+		GameObject& gameObject;
+		Transform& transform;
+	};
+
 public:
 	ModuleRender();
 	virtual ~ModuleRender();
@@ -27,7 +40,8 @@ public:
 
 	void DrawCross(const float3& pos, float scale) const;
 
-	void AddToDrawBuffer(Mesh& mesh);
+	void AddToDrawBuffer(Mesh& mesh, Material& material, GameObject& gameObject, Transform& transform);
+
 	void DrawFrustrum(Camera& camera);
 
 private:
@@ -35,16 +49,22 @@ private:
 
 	void SetUpLight() const;
 
-	void DrawFromBuffer(Mesh& mesh);
+	//void DrawFromBuffer(Mesh& mesh);
+
+	void DrawGeometry();
+	void Draw(const DrawInfo& drawInfo);
 
 public:
-	GLfloat globalAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	GLfloat globalAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };	
 
 private:	
 	SDL_GLContext glcontext = nullptr;
-	std::list<Mesh*> drawBuffer;
+	//std::list<Mesh*> drawBuffer;
+
+	std::vector<DrawInfo> drawBuffer;
 
 	static const float3 LIGHT_DIR;
+
 };
 
 #endif // !_MODULERENDER_H_

@@ -12,9 +12,9 @@
 #include "ModuleShader.h"
 #include "Camera.h"
 #include "GameObject.h"
+#include "Transform.h"
 #include "Material.h"
 #include "Mesh.h"
-#include "Transform.h"
 
 const float3 ModuleRender::LIGHT_DIR = { -1.0,1.0,0.0 };
 
@@ -83,6 +83,11 @@ bool ModuleRender::Init()
 		ret = false;
 	}
 
+	if(App->configuration.vsync)
+	{
+		SDL_GL_SetSwapInterval(1);
+	}
+
 	return ret;
 }
 
@@ -106,10 +111,7 @@ update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-	for(Mesh* mesh : drawBuffer)
-	{
-		DrawFromBuffer(*mesh);
-	}
+	DrawGeometry();
 	drawBuffer.clear();
 
 	SDL_GL_SwapWindow(App->window->window);
@@ -182,9 +184,10 @@ void ModuleRender::DrawCross(const float3& pos,float scale)const
 	glPopMatrix();
 }
 
-void ModuleRender::AddToDrawBuffer(Mesh & mesh)
+void ModuleRender::AddToDrawBuffer(Mesh & mesh, Material& material, GameObject& gameObject, Transform& transform)
 {
-	drawBuffer.push_back(&mesh);
+	DrawInfo drawCall = { mesh, material, gameObject, transform };
+	drawBuffer.push_back(drawCall);
 }
 
 void ModuleRender::DrawFrustrum(Camera & camera)
@@ -215,8 +218,8 @@ void ModuleRender::DrawFrustrum(Camera & camera)
 	transformMatrix.RemoveScale();
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, transformMatrix.Transposed().ptr());
 
-	GLint width = glGetUniformLocation(progId, "ourColor");
-	glUniform4f(width, 1.0f, 0.0f, 0.0f, 1.0f);
+	GLint color = glGetUniformLocation(progId, "inputColor");
+	glUniform4f(color, 255.0f, 0.0f, 0.0f, 1.0f);
 
 	glDrawArrays(GL_LINES, 0, camera.GetNumberOfPoints());
 
@@ -238,14 +241,21 @@ void ModuleRender::SetUpLight() const
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 }
 
-void ModuleRender::DrawFromBuffer(Mesh& mesh)
+void ModuleRender::DrawGeometry()
 {
-	Material* material = (Material*)(mesh.gameObject->GetComponent(ComponentType::Material));
-	uint progId = material->GetProgramId();
-	uint textId = material->GetTextureId();
+	for (const DrawInfo& drawInfo : drawBuffer) 
+	{
+		Draw(drawInfo);
+	}
+}
+
+void ModuleRender::Draw(const DrawInfo & drawInfo)
+{
+	GLuint progId = drawInfo.material.GetProgramId();
+	GLuint textId = drawInfo.material.GetTextureId();
 
 	glUseProgram(progId);
-	if(textId != 0)
+	if (textId != 0)
 	{
 		GLint texture = glGetUniformLocation(progId, "ourTexture");
 		glUniform1i(texture, 0);
@@ -254,17 +264,20 @@ void ModuleRender::DrawFromBuffer(Mesh& mesh)
 		glBindTexture(GL_TEXTURE_2D, textId);
 	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.GetVertexBufferId());
+	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetVertexBufferId());
 
+	//position
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+	//color
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
+	//uv
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(7 * sizeof(GLfloat)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(10 * sizeof(GLfloat)));
+	//normal
 	glEnableVertexAttribArray(3);
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.GetNormalBufferId());
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
 
 	GLint modelView = glGetUniformLocation(progId, "model_view");
 	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->camera->GetViewMatrix().ptr());
@@ -273,17 +286,28 @@ void ModuleRender::DrawFromBuffer(Mesh& mesh)
 	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
 
 	GLint transformUniformId = glGetUniformLocation(progId, "transform");
-	Transform* transform = ((Transform*)mesh.gameObject->GetComponent(ComponentType::Transform));
-	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, transform->GetModelMatrix().Transposed().ptr());
+	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, drawInfo.transform.GetModelMatrix().Transposed().ptr());
 
 	GLint light = glGetUniformLocation(progId, "lightDir");
-	if(light != -1)
+	if (light != -1)
 	{
 		glUniform3f(light, LIGHT_DIR.x, LIGHT_DIR.y, LIGHT_DIR.z);
 	}
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.GetIndicesBufferId());
-	glDrawElements(mesh.GetDrawMode(), mesh.GetVerticesNumber(), GL_UNSIGNED_SHORT, nullptr);
+	/*GLint camera = glGetUniformLocation(progId, "actualCameraModelView");
+	if(camera != -1)
+	{
+		glUniformMatrix4fv(camera, 1, GL_FALSE, App->camera->GetEnabledCamera()->GetViewMatrix().ptr());
+	}
+
+	GLint cameraFar = glGetUniformLocation(progId, "actualCameraFar");
+	if(cameraFar != -1)
+	{
+		glUniform1f(cameraFar,App->camera->GetEnabledCamera()->GetFarPlane());
+	}*/
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawInfo.mesh.GetIndicesBufferId());
+	glDrawElements(drawInfo.mesh.GetDrawMode(), drawInfo.mesh.GetIndicesNumber(), GL_UNSIGNED_SHORT, nullptr);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -291,6 +315,7 @@ void ModuleRender::DrawFromBuffer(Mesh& mesh)
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
+	glDisableVertexAttribArray(3);
 
 	glUseProgram(0);
 }

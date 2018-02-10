@@ -3,7 +3,8 @@
 #include <queue>
 #include <SDL_scancode.h>
 
-#include "Mesh.h"
+#include "MeshFilter.h"
+#include "MeshRenderer.h"
 #include "GameObject.h"
 #include "Application.h"
 #include "ModuleInput.h"
@@ -35,14 +36,14 @@ update_status ModuleScene::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 {
+	SetVisibleRecursive(root, false);
+
 	Camera* camera = App->camera->GetEnabledCamera();
 
 	if(camera != nullptr)
 	{
 		if(useQuadtree)
 		{
-			SetVisibleRecursive(root, false);
-
 			vector<GameObject*> visibleGameObjects;
 			qTGameObjects.Intersect(visibleGameObjects, camera->GetFrustum());
 
@@ -125,8 +126,7 @@ GameObject* ModuleScene::AddCube(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Cube");
 
-	Mesh* mesh = (Mesh*)gameObject->AddComponent(ComponentType::Mesh, true);
-	mesh->SetMeshMode(MeshMode::CUBE);
+	gameObject->AddComponent(ComponentType::MeshRenderer);
 
 	return gameObject;
 }
@@ -135,8 +135,11 @@ GameObject* ModuleScene::AddSphere(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Sphere");
 
-	Mesh* mesh = (Mesh*)gameObject->AddComponent(ComponentType::Mesh, true);
-	mesh->SetMeshMode(MeshMode::SPHERE);
+	gameObject->AddComponent(ComponentType::MeshRenderer);
+	MeshFilter* temp= ((MeshFilter*)gameObject->GetComponent(ComponentType::MeshFilter));
+	assert(temp);
+	temp->SetMeshMode(MeshMode::SPHERE);
+
 
 	return gameObject;
 }

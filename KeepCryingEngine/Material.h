@@ -1,47 +1,27 @@
 #ifndef _MATERIAL_H_
 #define _MATERIAL_H_
 
-#include "Component.h"
-
 #include <GL/glew.h>
-#include <list>
+#include "ModuleShader.h"
 
-#include "Globals.h"
-
-enum class ShaderMode
-{
-	DEFAULT,
-	CARTOON
-};
-
-class Material : public Component
+class Material
 {
 public:
 	Material();
 	virtual ~Material();
 
-	void DrawUI() override;
+	void DrawUI();
 
-	uint GetTextureId();
-	uint GetProgramId();
-
-	virtual std::vector<ComponentType> GetNeededComponents() const override;
-	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
+	GLuint GetProgramId() const;
+	GLuint GetTextureId() const;
 
 private:
 	void SetTexture(const char* path);
-	uint AddShader(const char* path, GLenum shaderType);
 
 private:
-	void SetUpDefaultShader();
-	void SetUpCartoonShader();
-	
-
-private:
-	uint textureId;
-	uint programId;
-	ShaderMode shaderMode = ShaderMode::DEFAULT;
+	ShaderType shaderType = ShaderType::Default;
+	GLuint programId = 0;
+	GLuint textureId = 0;
 };
 
-#endif // !_MATERIAL_H_
-
+#endif // !_MATERIALENTITY_H_

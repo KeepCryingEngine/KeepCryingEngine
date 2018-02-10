@@ -10,7 +10,6 @@ using namespace std;
 
 Camera::Camera() : Component(ComponentType::Camera)
 {
-	// SetUpFrustum();
 	SetUpFrustum(float3::zero, Quat::identity);
 }
 
@@ -61,24 +60,27 @@ void Camera::Translate(const float3& offset)
 
 void Camera::SetFOV(float radians)
 {
-	frustum.horizontalFov = ComputeHorizontalFov(radians, (float)App->configuration.screenWidth, (float)App->configuration.screenHeight);
+	frustum.horizontalFov = ComputeHorizontalFov(radians, frustum.AspectRatio());
 	frustum.verticalFov = radians;
+	SetUpFrustumBuffer();
 }
 
-void Camera::SetAspectRatio()
+void Camera::SetAspectRatio(float aspect)
 {
-	//Aspect ratio IS NOT set directly. To modify it, we must modify HorizontalFOV -> As a result, the Aspect Ratio (tan(hFOV/2)*tan(vFOV/2)) will be modified.
-	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->configuration.screenWidth, (float)App->configuration.screenHeight);
+	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, aspect);
+	SetUpFrustumBuffer();
 }
 
 void Camera::SetNearPlane(float distance)
 {
 	frustum.nearPlaneDistance = distance;
+	SetUpFrustumBuffer();
 }
 
 void Camera::SetFarPlane(float distance)
 {
 	frustum.farPlaneDistance = distance;
+	SetUpFrustumBuffer();
 }
 
 void Camera::SetPosition(const float3& position)
@@ -172,11 +174,6 @@ uint Camera::GetFrustumBufferId() const
 	return frustumBufferId;
 }
 
-float Camera::GetWidth() const
-{
-	return frustum.orthographicWidth;
-}
-
 int Camera::GetNumberOfPoints() const
 {
 	return numberOfPoints;
@@ -191,7 +188,7 @@ void Camera::SetUpFrustum(const float3& position, const Quat& rotation, float ne
 	frustum.nearPlaneDistance = nearPlaneDistance;
 	frustum.farPlaneDistance = farPlaneDistance;
 	frustum.verticalFov = DegToRad(fov);
-	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->configuration.screenWidth, (float)App->configuration.screenHeight);
+	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->configuration.screenWidth/(float)App->configuration.screenHeight);
 	SetUpFrustumBuffer();
 }
 
@@ -209,6 +206,26 @@ void Camera::DrawUI()
 		if(ImGui::Button("Delete Component"))
 		{
 			gameObject->RemoveComponent(this);
+		}
+		float nearPlane = GetNearPlane();
+		if(ImGui::DragFloat("Near plane", &nearPlane, 0.01f, 0.01f, 2.0f, "%.2f"))
+		{
+			SetNearPlane(nearPlane);
+		}
+		float farPlane = GetFarPlane();
+		if(ImGui::DragFloat("Far plane", &farPlane, 2.0f, 10.0f, 1000.0f, "%.2f"))
+		{
+			SetFarPlane(farPlane);
+		}
+		float verticalFOV = GetFOV();
+		if(ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi))
+		{
+			SetFOV(verticalFOV);
+		}
+		float aspectRatio = GetAspectRatio();
+		if(ImGui::DragFloat("Aspect ratio", &aspectRatio, 0.1f, 0.1, 5, "%.2f"))
+		{
+			SetAspectRatio(aspectRatio);
 		}
 	}
 }
@@ -252,16 +269,20 @@ bool Camera::Intersects(const Frustum& frustum, const AABB& aabb)
 	return true;
 }
 
-float Camera::ComputeHorizontalFov(float radians, float width, float height) const
+float Camera::ComputeHorizontalFov(float verticalFovRad, float aspect) const
 {
-	return 2.0f * atan(tan(radians / 2.0f) * (width / height));
+	return 2.0f * atan(tan(verticalFovRad / 2.0f) * aspect);
 }
 
 void Camera::SetUpFrustumBuffer()
 {
+	float3 tempPos = frustum.pos;
+	frustum.pos = float3(0, 0, 0);
 	float3 points[8];
 	frustum.GetCornerPoints(points);
 	assert(points);
+
+	frustum.pos = tempPos;
 
 	float3 orderedPoints[] = {
 		points[0],points[2],

@@ -21,7 +21,7 @@ public:
 	void Translate(const float3& offset);
 
 	void SetFOV(float radians);
-	void SetAspectRatio();
+	void SetAspectRatio(float aspect);
 	void SetNearPlane(float distance);
 	void SetFarPlane(float distance);
 	void SetPosition(const float3& position);
@@ -36,7 +36,6 @@ public:
 	float4x4 GetViewMatrix() const;
 	float4x4 GetProyectionMatrix() const;
 	uint GetFrustumBufferId() const;
-	float GetWidth()const;
 	int GetNumberOfPoints()const;
 
 	const float3& GetUpVector() const;
@@ -58,7 +57,7 @@ public:
 	static bool Intersects(const Frustum& frustum, const AABB& aabb);
 
 private:
-	float ComputeHorizontalFov(float radians, float width, float height) const;
+	float ComputeHorizontalFov(float verticalFovRad, float aspect) const;
 	void SetUpFrustumBuffer();
 
 private:

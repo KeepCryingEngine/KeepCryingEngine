@@ -14,6 +14,7 @@ class ModuleCamera;
 class ModuleShader;
 class ModuleScene;
 class ModuleTexture;
+class ModuleEntity;
 
 class Application
 {
@@ -41,6 +42,7 @@ public:
 	ModuleShader* shader = nullptr;
 	ModuleScene* scene = nullptr;
 	ModuleTexture* texture = nullptr;
+	ModuleEntity* entity = nullptr;
 
 	// Cargar información desde json
 	// Tamaño pantalla, nombre, fps, etc

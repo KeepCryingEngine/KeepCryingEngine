@@ -20,32 +20,34 @@ Transform::~Transform()
 
 void Transform::DrawUI()
 {
-	if(ImGui::CollapsingHeader("Transform"))
-	{
-		//Position
-		float3 localPosition = this->localPosition;
-		if (ImGui::DragFloat3(" Position", localPosition.ptr(), 0.1f))
+	if(!gameObject->IsStatic()){
+		if(ImGui::CollapsingHeader("Transform"))
 		{
-			SetLocalPosition(localPosition);
-		}
-
-		//Rotation
-		if (ImGui::DragFloat3(" Rotation", eulerLocalRotation.ptr(), 0.1f))
-		{
-			float3 radAngles = DegToRad(eulerLocalRotation);
-			SetLocalRotation(Quat::FromEulerXYZ(radAngles.x, radAngles.y, radAngles.z));
-		}
-
-		//Scale
-		float3 localScale = this->localScale;
-		if (ImGui::DragFloat3(" Scale", localScale.ptr(), 0.1f))
-		{
-			//This is just a temporal fix to prevent the program from crashing
-			for (size_t i = 0; i < 3; i++)
+			//Position
+			float3 localPosition = this->localPosition;
+			if(ImGui::DragFloat3(" Position", localPosition.ptr(), 0.1f))
 			{
-				localScale[i] = max(localScale[i], 0.1f);
+				SetLocalPosition(localPosition);
 			}
-			SetLocalScale(localScale);
+
+			//Rotation
+			if(ImGui::DragFloat3(" Rotation", eulerLocalRotation.ptr(), 0.1f))
+			{
+				float3 radAngles = DegToRad(eulerLocalRotation);
+				SetLocalRotation(Quat::FromEulerXYZ(radAngles.x, radAngles.y, radAngles.z));
+			}
+
+			//Scale
+			float3 localScale = this->localScale;
+			if(ImGui::DragFloat3(" Scale", localScale.ptr(), 0.1f))
+			{
+				//This is just a temporal fix to prevent the program from crashing
+				for(size_t i = 0; i < 3; i++)
+				{
+					localScale[i] = max(localScale[i], 0.1f);
+				}
+				SetLocalScale(localScale);
+			}
 		}
 	}
 }
@@ -72,20 +74,29 @@ const float3 & Transform::GetLocalScale() const
 
 void Transform::SetLocalPosition(const float3 & position)
 {
-	SetDirty();
-	localPosition = position;
+	if(!gameObject->IsStatic())
+	{
+		SetDirty();
+		localPosition = position;
+	}
 }
 
 void Transform::SetLocalRotation(const Quat & rotation)
 {
-	SetDirty();
-	localRotation = rotation;
+	if(!gameObject->IsStatic())
+	{
+		SetDirty();
+		localRotation = rotation;
+	}
 }
 
 void Transform::SetLocalScale(const float3 & scale)
 {
-	SetDirty();
-	localScale = scale;
+	if(!gameObject->IsStatic())
+	{
+		SetDirty();
+		localScale = scale;
+	}
 }
 
 const float3 & Transform::GetWorldPosition() const
@@ -112,23 +123,32 @@ const float3 & Transform::GetWorldScale() const
 */
 void Transform::SetWorldPosition(const float3 & position)
 {
-	SetDirty();
-	float3 worldPositionDelta = position - worldPosition;
-	localPosition = localPosition + worldPositionDelta;
+	if(!gameObject->IsStatic())
+	{
+		SetDirty();
+		float3 worldPositionDelta = position - worldPosition;
+		localPosition = localPosition + worldPositionDelta;
+	}
 }
 
 void Transform::SetWorldRotation(const Quat & rotation)
 {
-	SetDirty();
-	Quat worldRotationDelta = rotation.Mul(worldRotation.Inverted());
-	worldRotation = localRotation.Mul(worldRotationDelta);
+	if(!gameObject->IsStatic())
+	{
+		SetDirty();
+		Quat worldRotationDelta = rotation.Mul(worldRotation.Inverted());
+		worldRotation = localRotation.Mul(worldRotationDelta);
+	}
 }
 
 void Transform::SetWorldScale(const float3 & scale)
 {
-	SetDirty();
-	float3 worldScaleDelta = scale - worldScale;
-	localScale = localScale + worldScaleDelta;
+	if(!gameObject->IsStatic())
+	{
+		SetDirty();
+		float3 worldScaleDelta = scale - worldScale;
+		localScale = localScale + worldScaleDelta;
+	}
 }
 
 const float4x4 & Transform::GetModelMatrix() const

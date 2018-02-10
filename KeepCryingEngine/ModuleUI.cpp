@@ -86,21 +86,22 @@ void ModuleUI::DrawMainMenu()
 		{
 			if(ImGui::BeginMenu("Windows"))
 			{
-				if (ImGui::Button("Hierarchy", buttonSize))
+				if (ImGui::Selectable("Hierarchy"))
 				{
 					hierarchyWindow ^= 1;
 				}
-				if(ImGui::Button("Camera Controls", buttonSize))
+
+				if(ImGui::BeginMenu("Control Panel"))
 				{
-					cameraWindow ^= 1;
-				}
-				if(ImGui::Button("Speed Controls", buttonSize))
-				{
-					speedWindow ^= 1;
-				}
-				if(ImGui::Button("Style Controls", buttonSize))
-				{
-					styleWindow ^= 1;
+					if(ImGui::Selectable("Camera"))
+					{
+						cameraWindow ^= 1;
+					}
+					if(ImGui::Selectable("Movement"))
+					{
+						speedWindow ^= 1;
+					}
+					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
 			}
@@ -153,6 +154,32 @@ void ModuleUI::DrawMainMenu()
 					SetTextOnEditor(shaderMode);
 					shaderEditorWindow ^= 1;
 				}
+				ImGui::EndMenu();
+			}
+
+			if(ImGui::BeginMenu("Personalization"))
+			{
+				if(ImGui::BeginMenu("Themes"))
+				{
+					if(ImGui::Selectable("Default Theme"))
+					{
+						ImGui::StyleColorsClassic();
+					}
+					if(ImGui::Selectable("Dark Theme"))
+					{
+						ImGui::StyleColorsDark();
+					}
+					if(ImGui::Selectable("Light Theme"))
+					{
+						ImGui::StyleColorsLight();
+					}
+					ImGui::EndMenu();
+				}
+				if(ImGui::BeginMenu("Background Color"))
+				{
+					ImGui::DragFloat3("##backgroundcolor", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
+					ImGui::EndMenu();
+				}			
 				ImGui::EndMenu();
 			}
 
@@ -370,10 +397,6 @@ void ModuleUI::CallWindows()
 	{
 		DrawSpeedWindow();
 	}
-	if(styleWindow)
-	{
-		DrawStyleWindow();
-	}
 	if(shaderEditorWindow)
 	{
 		DrawShaderWindow();
@@ -414,7 +437,8 @@ void ModuleUI::DrawCameraWindow()
 	ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi);
 	App->camera->camera->SetFOV(verticalFOV);
 	aspectRatio = App->camera->camera->GetAspectRatio();
-	ImGui::InputFloat("Aspect ratio", &aspectRatio);
+	ImGui::DragFloat("Aspect ratio", &aspectRatio, 0.1f, 0.1, 5, "%.2f");
+	App->camera->camera->SetAspectRatio(aspectRatio);
 	ImGui::End();
 }
 
@@ -432,13 +456,6 @@ void ModuleUI::DrawSpeedWindow()
 	ImGui::DragFloat("Zoom", &zoomSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
 	App->camera->SetZoomSpeed(zoomSpeed);
 	ImGui::End();
-}
-
-void ModuleUI::DrawStyleWindow()
-{
-	ImGui::Begin("Style Controls", &styleWindow, ImGuiWindowFlags_MenuBar);
-ImGui::DragFloat3("Background", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
-ImGui::End();
 }
 
 void ModuleUI::DrawShaderWindow()
@@ -480,32 +497,7 @@ void ModuleUI::DrawShaderWindow()
 
 void ModuleUI::DrawHierarchyWindow()
 {
-	ImGui::Begin("Game Object Inspector", &hierarchyWindow, ImGuiWindowFlags_MenuBar);
-
-	if(ImGui::BeginMenuBar())
-	{
-		if(ImGui::BeginMenu("Add"))
-		{
-			if(ImGui::MenuItem("Empty", nullptr, &addEmptyGameObject))
-			{
-				addEmptyGameObject = true;
-			}
-			if(ImGui::MenuItem("Cube", nullptr, &addCubeGameObject))
-			{
-				addCubeGameObject = true;
-			}
-			if(ImGui::MenuItem("Sphere", nullptr, &addSphereGameObject))
-			{
-				addSphereGameObject = true;
-			}
-			if(ImGui::MenuItem("Camera", nullptr, &addCameraGameObject))
-			{
-				addCameraGameObject = true;
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMenuBar();
-	}
+	ImGui::Begin("Game Object Hierarchy", &hierarchyWindow);
 
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_DefaultOpen;
 
@@ -519,6 +511,31 @@ void ModuleUI::DrawHierarchyWindow()
 	}
 
 	bool opened = ImGui::TreeNodeEx(App->scene->GetRoot()->GetName().c_str(), nodeFlags);
+
+	if(ImGui::BeginPopupContextItem("Add Item ..."))
+	{
+		if(ImGui::BeginMenu("Add..."))
+		{
+			if(ImGui::Selectable("Empty"))
+			{
+				addEmptyGameObject = true;
+			}
+			if(ImGui::Selectable("Cube"))
+			{
+				addCubeGameObject = true;
+			}
+			if(ImGui::Selectable("Sphere"))
+			{
+				addSphereGameObject = true;
+			}
+			if(ImGui::Selectable("Camera"))
+			{
+				addCameraGameObject = true;
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndPopup();
+	}
 
 	if(ImGui::IsItemClicked())
 	{
@@ -598,13 +615,15 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 
 	for(GameObject* child : children)
 	{
+		nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
 		if(selectedNodeID == child->GetId())
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 		}
-		else
+		if(child->GetChildCount() == 0)
 		{
-			nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			nodeFlags |= ImGuiTreeNodeFlags_Bullet;
 		}
 
 		if(!child->IsEnabled())
@@ -612,7 +631,29 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 			ImGui::PushStyleColor(0, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
 		}
 
-		bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);
+		ImGui::PushID(child->GetId());
+		bool opened = ImGui::TreeNodeEx(child->GetName().c_str(), nodeFlags);				
+		if(ImGui::BeginPopupContextItem("Add Item ..."))
+		{
+			if(ImGui::BeginMenu("Add..."))
+			{
+				if(ImGui::Selectable("Empty"))
+				{
+					addEmptyGameObject = true;
+				}
+				if(ImGui::Selectable("Cube"))
+				{
+					addCubeGameObject = true;
+				}
+				if(ImGui::Selectable("Sphere"))
+				{
+					addSphereGameObject = true;
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
 
 		if(ImGui::IsItemClicked())
 		{

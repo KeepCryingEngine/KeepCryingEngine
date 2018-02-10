@@ -1,6 +1,7 @@
 #include "ModuleShader.h"
 
 #include <fstream>
+#include <assert.h>
 
 using namespace std;
 
@@ -13,6 +14,10 @@ ModuleShader::~ModuleShader()
 bool ModuleShader::Init()
 {
 	SetUpCameraProgram();
+
+	SetUpDefaultShader();
+	SetUpCartoonShader();
+
 	return true;
 }
 
@@ -80,10 +85,31 @@ uint ModuleShader::AddProgram(initializer_list<uint> shaders)
 	return shaderProgramId;
 }
 
+GLuint ModuleShader::GetShaderId(ShaderType shaderType) const
+{
+	GLuint shaderId = 0;
+	switch (shaderType) 
+	{
+	case ShaderType::Default:
+		shaderId = defaultShaderId;
+		break;
+
+	case ShaderType::Cartoon:
+		shaderId = cartoonShaderId;
+		break;
+
+	default:
+		assert(false);
+	}
+
+	return shaderId;
+}
+
 void ModuleShader::SetUpCameraProgram()
 {
 	uint vertexId = AddShaderPath("Assets/Shaders/cameraShader.vert", GL_VERTEX_SHADER);
-	cameraProgramId = AddProgram({ vertexId });
+	uint fragmentId = AddShaderPath("Assets/Shaders/uniformFragment.frag", GL_FRAGMENT_SHADER);
+	cameraProgramId = AddProgram({ vertexId, fragmentId });
 }
 
 uint ModuleShader::AddProgram(const list<uint>& shaders)
@@ -111,4 +137,18 @@ uint ModuleShader::AddProgram(const list<uint>& shaders)
 	}
 
 	return shaderProgramId;
+}
+
+void ModuleShader::SetUpDefaultShader()
+{
+	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShaderPath("Assets/Shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
+	defaultShaderId = AddProgram({ vertexId, fragmentId });
+}
+
+void ModuleShader::SetUpCartoonShader()
+{
+	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShaderPath("Assets/Shaders/cartoon.frag", GL_FRAGMENT_SHADER);
+	cartoonShaderId = AddProgram({ vertexId, fragmentId });
 }

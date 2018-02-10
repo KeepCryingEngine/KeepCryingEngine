@@ -1,25 +1,28 @@
 #include "Material.h"
 
-#include <fstream>
+#include <string>
+
+#include <imgui.h>
 
 #include "Application.h"
-#include "ModuleTexture.h"
 #include "ModuleShader.h"
+#include "ModuleTexture.h"
 
 using namespace std;
 
-Material::Material():Component(ComponentType::Material)
+Material::Material()
 {
-	SetUpDefaultShader();
 	textureId = App->texture->LoadCheckerTexture();
+	programId = App->shader->GetShaderId(ShaderType::Default);
 }
 
 Material::~Material()
-{ }
+{
+}
 
 void Material::DrawUI()
 {
-	if(ImGui::CollapsingHeader("Material"))
+	if (ImGui::CollapsingHeader("Material"))
 	{
 		static char materialBuffer[252] = {};
 		ImGui::InputText("##setTexture", materialBuffer, 252); ImGui::SameLine();
@@ -27,52 +30,29 @@ void Material::DrawUI()
 		{
 			string s = "Assets/";
 			s += materialBuffer;
-
+		
 			SetTexture(s.c_str());
 		}
-
+		
 		ImGui::NewLine();
-
-		int tmpShaderMode = (int)shaderMode;
-
+		
+		int tmpShaderMode = (int)shaderType;
 		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Cartoon"))
 		{
-			shaderMode = (ShaderMode)tmpShaderMode;
-			switch(shaderMode)
-			{
-				case ShaderMode::DEFAULT:
-				{
-					SetUpDefaultShader();
-				}
-					break;
-				case ShaderMode::CARTOON:
-				{
-					SetUpCartoonShader();
-				}
-					break;
-			}
+			shaderType = (ShaderType)tmpShaderMode;
+			programId = App->shader->GetShaderId(shaderType);
 		}
 	}
 }
 
-uint Material::GetTextureId()
-{
-	return textureId;
-}
-
-uint Material::GetProgramId()
+GLuint Material::GetProgramId() const
 {
 	return programId;
 }
 
-vector<ComponentType> Material::GetNeededComponents() const
+GLuint Material::GetTextureId() const
 {
-	return { ComponentType::Transform, ComponentType::Mesh };
-}
-
-vector<ComponentType> Material::GetProhibitedComponents() const
-{
-	return { ComponentType::Material };
+	return textureId;
 }
 
 void Material::SetTexture(const char* path)
@@ -82,23 +62,4 @@ void Material::SetTexture(const char* path)
 	{
 		textureId = newTextureID;
 	}
-}
-
-uint Material::AddShader(const char* path, GLenum shaderType)
-{
-	return App->shader->AddShaderPath(path,shaderType);
-}
-
-void Material::SetUpDefaultShader()
-{
-	uint vertexId =AddShader("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShader("Assets/Shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
-	programId = App->shader->AddProgram({ vertexId, fragmentId });
-}
-
-void Material::SetUpCartoonShader()
-{
-	uint vertexId = AddShader("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShader("Assets/Shaders/cartoon.frag", GL_FRAGMENT_SHADER);
-	programId = App->shader->AddProgram({ vertexId, fragmentId });
 }

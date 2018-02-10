@@ -11,6 +11,7 @@
 #include "ModuleShader.h"
 #include "ModuleScene.h"
 #include "ModuleTexture.h"
+#include "ModuleEntity.h"
 
 using namespace std;
 using nlohmann::json;
@@ -25,6 +26,7 @@ Application::Application()
 	modules.push_back(camera = new ModuleCamera());
 	modules.push_back(shader = new ModuleShader());
 	modules.push_back(texture = new ModuleTexture());
+	modules.push_back(entity = new ModuleEntity());//After Renderer, it needs access to buffer on init
 }
 
 Application::~Application()

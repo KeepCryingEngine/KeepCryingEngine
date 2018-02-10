@@ -7,6 +7,7 @@
 #include "Application.h"
 #include "ModuleScene.h"
 #include "ComponentFabric.h"
+#include "Transform.h"
 
 using namespace std;
 
@@ -107,6 +108,33 @@ const bool GameObject::IsEnabled() const
 	return enable;
 }
 
+const bool GameObject::IsStatic() const
+{
+	return isStatic;
+}
+
+void GameObject::SetStatic(bool value)
+{
+	isStatic = value;
+	if(value)
+	{
+		GameObject* root = App->scene->GetRoot();
+		GameObject* actualParent = parent;
+
+		if(parent != App->scene->GetRoot())
+		{
+			parent->SetStatic(value);
+		}
+	}
+	else
+	{
+		for(GameObject* g : children)
+		{
+			g->SetStatic(value);
+		}
+	}
+}
+
 /* void GameObject::AddChild(GameObject& newChild)
 {
 	newChild.SetParent(*this);
@@ -123,6 +151,9 @@ void GameObject::SetParent(GameObject& newParent)
 	
 	parent = &newParent;
 	newParent.children.push_back(this);
+
+	Transform* transform = (Transform*)GetComponent(ComponentType::Transform);
+	transform->SetDirty();
 }
 
 void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
@@ -183,9 +214,9 @@ Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
 	{
 		AddInternalComponent(component);
 
-		if(type == ComponentType::Mesh)
+		if(type == ComponentType::MeshRenderer)
 		{
-			Component* mat = ComponentFabric::CreateComponent(ComponentType::Material);
+			Component* mat = ComponentFabric::CreateComponent(ComponentType::MeshFilter);
 			assert(mat);
 			AddInternalComponent(mat);
 		}
@@ -200,9 +231,9 @@ Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
 
 void GameObject::RemoveComponent(Component * component)
 {
-	if(component->type == ComponentType::Mesh)
+	if(component->type == ComponentType::MeshRenderer)
 	{
-		Component* mat = GetComponent(ComponentType::Material);
+		Component* mat = GetComponent(ComponentType::MeshFilter);
 		assert(mat);
 		vector<Component*>::iterator it = find(components.begin(), components.end(), mat);
 		if(it != components.end())
@@ -220,6 +251,14 @@ void GameObject::RemoveComponent(Component * component)
 
 Component* GameObject::GetComponent(ComponentType type) const
 {
+	for(Component* component : toStart)
+	{
+		if(component->type == type)
+		{
+			return component;
+		}
+	}
+
 	for(Component* component : components)
 	{
 		if(component->type == type)
@@ -239,6 +278,14 @@ const std::vector<Component*>& GameObject::GetComponents() const
 std::vector<Component*> GameObject::GetComponents(ComponentType type)
 {
 	std::vector<Component*> ret;
+
+	for(Component* component : toStart)
+	{
+		if(component->type == type)
+		{
+			ret.push_back(component);
+		}
+	}
 
 	for (Component* component : components)
 	{
@@ -264,6 +311,14 @@ std::vector<Component*> GameObject::GetComponentsInChildren(ComponentType type)
 
 void GameObject::GetComponents(ComponentType type, std::vector<Component*>& ret)
 {
+	for(Component* component : toStart)
+	{
+		if(component->type == type)
+		{
+			ret.push_back(component);
+		}
+	}
+
 	for (Component* component : components)
 	{
 		if (component->type == type)
@@ -283,19 +338,30 @@ void GameObject::DrawUI()
 	{
 		name = buffer;
 	}
+
+	bool tempStatic = IsStatic();
+
+	if(ImGui::Checkbox("Static", &tempStatic))
+	{
+		SetStatic(tempStatic);
+	}
+
+
 	static int selectedComponent = 0;
-	ImGui::Combo("Comp.", &selectedComponent, "Mesh\0Camera");
+	ImGui::Combo("Comp.", &selectedComponent, "MeshRenderer\0Camera");
 	ImGui::SameLine();
 	if(ImGui::Button("Add"))
 	{
 		switch(selectedComponent)
 		{
 			case 0:
-				AddComponent(ComponentType::Mesh);
+				AddComponent(ComponentType::MeshRenderer);
 				break;
 			case 1:
 				AddComponent(ComponentType::Camera);
 				break;
+			default:
+				assert(false);
 		}
 	}
 
