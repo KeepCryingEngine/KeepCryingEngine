@@ -26,16 +26,17 @@ public:
 	GLsizei GetIndicesNumber() const;
 	GLenum GetDrawMode()const;
 
-	void SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& indices);
+	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, GLenum drawMode);
+	void CleanMeshData();
 
-	void SetUpCube();
-	void SetUpSphere();
+	//void SetUpCube();
+	//void SetUpSphere();
 
 private:
-	void GenerateBuffers(const vector<Vertex> vertices, const vector<GLushort> indices);
+	void GenerateBuffers(const std::vector<Vertex> vertices, const std::vector<GLushort> indices);
 
 	void FillVerticesData(Vertex* vertices, GLuint nVertices, const float3 * positions, const float3* normals, const float4 * colors, const float2 * uvs) const;
-	void CalculateAABBForMesh(float3 * verticesPositions, size_t nVertices);
+	void CalculateAABBForMesh(const std::vector<Vertex> &vertices);
 
 private:
 	AABB aabb;
