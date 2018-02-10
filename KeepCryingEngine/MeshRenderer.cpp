@@ -54,17 +54,17 @@ void MeshRenderer::Render(Mesh& mesh)
 			Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
 			if(transform)
 			{
-				if(gameObject->GetVisible())
+				if(App->ui->GetFrustumCulling())
 				{
-					if(App->ui->GetFrustumCulling())
+					if(gameObject->GetVisible())
 					{
 
 						App->renderer->AddToDrawBuffer(mesh, *material, *gameObject, *transform);
 					}
-					else
-					{
-						App->renderer->AddToDrawBuffer(mesh, *material, *gameObject, *transform);
-					}
+				}
+				else
+				{
+					App->renderer->AddToDrawBuffer(mesh, *material, *gameObject, *transform);
 				}
 			}
 		}
