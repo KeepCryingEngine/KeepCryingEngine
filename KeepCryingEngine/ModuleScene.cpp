@@ -25,7 +25,7 @@ bool ModuleScene::Init()
 {
 	root = new GameObject("Root");
 
-	qTGameObjects.Create(AABB(float3(-QUADTREE_SIZE, -1011, -QUADTREE_SIZE), float3(QUADTREE_SIZE, 1011, QUADTREE_SIZE)));
+	qTGameObjects.Create(AABB(float3(-QUADTREE_SIZE, -QUADTREE_HEIGHT, -QUADTREE_SIZE), float3(QUADTREE_SIZE, QUADTREE_HEIGHT, QUADTREE_SIZE)));
 	// qTGameObjects.Insert(root);
 
 	return true;
@@ -53,8 +53,8 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 		//    If quadtree
 		//       Get game objects inside camera's frustum
 		//       All previous game objects visible
-		// Else (no camera)
-		//    Check all game objects visibility
+		//    Else
+		//       Check all game objects visibility
 
 		SetVisibleRecursive(root, false);
 
@@ -241,7 +241,7 @@ void ModuleScene::AddStatic(GameObject* gameObject)
 
 void ModuleScene::RemoveStatic(GameObject* gameObject)
 {
-
+	qTGameObjects.Remove(gameObject);
 }
 
 void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const

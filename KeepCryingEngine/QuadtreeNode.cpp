@@ -2,6 +2,7 @@
 
 #include <Frustum.h>
 #include <GL/glew.h>
+#include <algorithm>
 
 #include "Camera.h"
 #include "GameObject.h"
@@ -50,6 +51,40 @@ void QuadtreeNode::Insert(GameObject* gameObject)
 		else
 		{
 			Add(gameObject);
+		}
+	}
+}
+
+void QuadtreeNode::Remove(GameObject* gameObject)
+{
+	if(aabb.Intersects(gameObject->GetAABB()))
+	{
+		if(children == nullptr)
+		{
+			content.erase(remove(content.begin(), content.end(), gameObject), content.end());
+		}
+		else
+		{
+			bool allLeaves = true;
+			int countContentChildren = 0;
+
+			for(size_t i = 0; i < 4; ++i)
+			{
+				children[i].Remove(gameObject);
+
+				allLeaves &= children[i].children == nullptr;
+				countContentChildren += children[i].content.size();
+			}
+
+			if(allLeaves && countContentChildren <= bucketSize)
+			{
+				for(size_t i = 0; i < 4; ++i)
+				{
+					content.insert(content.end(), children[i].content.begin(), children[i].content.end());
+				}
+
+				RELEASE_ARRAY(children);
+			}
 		}
 	}
 }
@@ -201,10 +236,13 @@ void QuadtreeNode::DivideAndReorganizeContent()
 	float midX = 0.5f * (minX + maxX);
 	float midZ = 0.5f * (minZ + maxZ);
 
-	AABB topLeft(float3(minX, -1011, midZ), float3(midX, 1011, maxZ));
-	AABB topRight(float3(midX, -1011, midZ), float3(maxX, 1011, maxZ));
-	AABB bottomLeft(float3(minX, -1011, minZ), float3(midX, 1011, midZ));
-	AABB bottomRight(float3(midX, -1011, minZ), float3(maxX, 1011, midZ));
+	float minY = aabb.minPoint.y;
+	float maxY = aabb.maxPoint.y;
+
+	AABB topLeft(float3(minX, minY, midZ), float3(midX, maxY, maxZ));
+	AABB topRight(float3(midX, minY, midZ), float3(maxX, maxY, maxZ));
+	AABB bottomLeft(float3(minX, minY, minZ), float3(midX, maxY, midZ));
+	AABB bottomRight(float3(midX, minY, minZ), float3(maxX, maxY, midZ));
 
 	AABB aabbs[4] = { topLeft, topRight, bottomLeft, bottomRight };
 

@@ -180,6 +180,11 @@ void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
 
 void GameObject::OnDestroy()
 {
+	if(isStatic)
+	{
+		App->scene->RemoveStatic(this);
+	}
+
 	for(Component* component : components)
 	{
 		component->Destroy();

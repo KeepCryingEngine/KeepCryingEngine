@@ -30,6 +30,14 @@ void Quadtree::Insert(GameObject* gameObject)
 	}
 }
 
+void Quadtree::Remove(GameObject* gameObject)
+{
+	if(root != nullptr)
+	{
+		root->Remove(gameObject);
+	}
+}
+
 void Quadtree::Intersect(std::vector<GameObject*>& gameObjects, const Frustum& frustum) const
 {
 	if(root)

@@ -20,6 +20,8 @@ public:
 
 	void Insert(GameObject* gameObject);
 
+	void Remove(GameObject* gameObject);
+
 	void Intersect(std::vector<GameObject*>& gameObjects, const Frustum& frustum) const;
 
 	/* template<typename TYPE>

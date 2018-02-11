@@ -67,6 +67,7 @@ private:
 	std::list<std::pair<GameObject*, std::pair<float3, bool>>> generatedGameObjects;
 
 	const float QUADTREE_SIZE = 150.0f;
+	const float QUADTREE_HEIGHT = 1000.0f;
 };
 
 #endif // !_MODULESCENE_H_
