@@ -576,21 +576,53 @@ void ModuleUI::DrawHierarchyWindow()
 
 void ModuleUI::DrawInspectorWindow()
 {
-	static int potato = 0;
+	GameObject* temp = App->scene->Get(selectedNodeID);
+
 	ImGui::Begin("Inspector", &inspectorWindow, ImGuiWindowFlags_MenuBar);
 
-
-	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
-	if(ImGui::Button("Delete GameObject"))
+	if(ImGui::BeginMenuBar())
 	{
-		inspectorWindow = false;
-		App->scene->Destroy(*App->scene->Get(selectedNodeID));
+		if(ImGui::BeginMenu("Add"))
+		{
+			static int selectedComponent = 0;
+			if(ImGui::Selectable("MeshRenderer"))
+			{
+				temp->AddComponent(ComponentType::MeshRenderer);
+			}
+			if(ImGui::Selectable("Camera"))
+			{
+				temp->AddComponent(ComponentType::Camera);
+			}
+			ImGui::EndMenu();
+		}
+		if(ImGui::BeginMenu("Options"))
+		{
+			bool tempStatic = temp->IsStatic();
+			if(ImGui::Checkbox("Static", &tempStatic))
+			{
+				temp->SetStatic(tempStatic);
+			}
+
+			ImGui::EndMenu();
+		}
+		ImGui::PushStyleColor(0, ImVec4(0.9f, 0.3f, 0.3f, 1.0f));
+		if(ImGui::BeginMenu("Delete"))
+		{
+			ImGui::PushStyleColor(0, ImVec4(0.9f, 0.9f, 0.9f, 1.0f));
+			if(ImGui::Selectable("Confirm"))
+			{
+				inspectorWindow = false;
+				App->scene->Destroy(*App->scene->Get(selectedNodeID));
+			}
+			ImGui::PopStyleColor();
+			ImGui::EndMenu();
+		}
+		ImGui::PopStyleColor();
+		ImGui::EndMenuBar();
 	}
-	ImGui::PopStyleColor();
 
 	if(selectedNodeID != 0)
 	{
-		GameObject* temp = App->scene->Get(selectedNodeID);
 		temp->DrawUI();
 	}
 	

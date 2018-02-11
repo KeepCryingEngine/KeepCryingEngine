@@ -8,6 +8,7 @@
 #include "ModuleScene.h"
 #include "ComponentFabric.h"
 #include "Transform.h"
+#include "ModuleUI.h"
 
 using namespace std;
 
@@ -337,32 +338,6 @@ void GameObject::DrawUI()
 	if(ImGui::InputText("##label", buffer, sizeof(buffer)))
 	{
 		name = buffer;
-	}
-
-	bool tempStatic = IsStatic();
-
-	if(ImGui::Checkbox("Static", &tempStatic))
-	{
-		SetStatic(tempStatic);
-	}
-
-
-	static int selectedComponent = 0;
-	ImGui::Combo("Comp.", &selectedComponent, "MeshRenderer\0Camera");
-	ImGui::SameLine();
-	if(ImGui::Button("Add"))
-	{
-		switch(selectedComponent)
-		{
-			case 0:
-				AddComponent(ComponentType::MeshRenderer);
-				break;
-			case 1:
-				AddComponent(ComponentType::Camera);
-				break;
-			default:
-				assert(false);
-		}
 	}
 
 	ImGui::NewLine();
