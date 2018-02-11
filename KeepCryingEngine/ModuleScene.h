@@ -33,9 +33,12 @@ public:
 	GameObject* AddSphere(GameObject& parent);
 	GameObject* AddCamera(GameObject& parent);
 
-	void Generate(int count, float minX, float maxX, float minY, float maxY, float minZ, float maxZ);
+	void Generate(int count, float staticPercentage, float minX, float maxX, float minY, float maxY, float minZ, float maxZ);
 
 	void Destroy(GameObject& gameObject);
+
+	void AddStatic(GameObject* gameObject);
+	void RemoveStatic(GameObject* gameObject);
 
 private:
 	void CheckToDestroy();
@@ -44,7 +47,7 @@ private:
 
 	void DestroyAndRelease(GameObject* &gameObject) const;
 
-	void AddToQuadtreeRecursive(GameObject* gameObject);
+	// void AddToQuadtreeRecursive(GameObject* gameObject);
 
 	void SetVisibleRecursive(GameObject* gameObject, bool visible) const;
 
@@ -61,7 +64,7 @@ private:
 
 	unsigned long long int currentGameObjectId = 0;
 
-	std::list<std::pair<GameObject*, float3>> generatedGameObjects;
+	std::list<std::pair<GameObject*, std::pair<float3, bool>>> generatedGameObjects;
 
 	const float QUADTREE_SIZE = 150.0f;
 };

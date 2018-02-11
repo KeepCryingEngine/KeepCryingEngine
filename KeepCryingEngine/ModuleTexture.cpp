@@ -18,6 +18,13 @@ bool ModuleTexture::Start()
 	return true;
 }
 
+bool ModuleTexture::CleanUp()
+{
+	RELEASE(checkerTexture);
+
+	return true;
+}
+
 void ModuleTexture::SetUpCheckerTexture()
 {
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];

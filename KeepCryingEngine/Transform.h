@@ -49,7 +49,7 @@ private:
 
 	mutable bool dirty;
 	mutable float4x4 modelMatrix;
-	mutable float3 worldPosition;
+	mutable float3 worldPosition = { 0.0f, 0.0f, 0.0f };
 	mutable Quat worldRotation;
 	mutable float3 worldScale;
 

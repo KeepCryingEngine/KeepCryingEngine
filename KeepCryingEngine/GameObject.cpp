@@ -116,9 +116,14 @@ const bool GameObject::IsStatic() const
 void GameObject::SetStatic(bool value)
 {
 	isStatic = value;
+
+	ModuleScene* scene = App->scene;
+
 	if(value)
 	{
-		GameObject* root = App->scene->GetRoot();
+		scene->AddStatic(this);
+
+		GameObject* root = scene->GetRoot();
 		GameObject* actualParent = parent;
 
 		if(parent != App->scene->GetRoot())
@@ -128,6 +133,8 @@ void GameObject::SetStatic(bool value)
 	}
 	else
 	{
+		scene->RemoveStatic(this);
+
 		for(GameObject* g : children)
 		{
 			g->SetStatic(value);

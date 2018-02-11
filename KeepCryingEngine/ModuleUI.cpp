@@ -604,6 +604,9 @@ void ModuleUI::DrawGenerateGameObjectWindow()
 	static int generateGameObjectWindowCount = 100;
 	ImGui::DragInt("Count", &generateGameObjectWindowCount);
 
+	static float generateGameObjectWindowStaticPercentage = 100.0f;
+	ImGui::DragFloat("Static percentage", &generateGameObjectWindowStaticPercentage);
+
 	static float generateGameObjectWindowLimitX[2] = { -100.0f, 100.0f };
 	ImGui::DragFloat2("Limit X", generateGameObjectWindowLimitX);
 
@@ -615,7 +618,7 @@ void ModuleUI::DrawGenerateGameObjectWindow()
 
 	if(ImGui::Button("Generate"))
 	{
-		App->scene->Generate(generateGameObjectWindowCount, generateGameObjectWindowLimitX[0], generateGameObjectWindowLimitX[1], generateGameObjectWindowLimitY[0], generateGameObjectWindowLimitY[1], generateGameObjectWindowLimitZ[0], generateGameObjectWindowLimitZ[1]);
+		App->scene->Generate(generateGameObjectWindowCount, generateGameObjectWindowStaticPercentage, generateGameObjectWindowLimitX[0], generateGameObjectWindowLimitX[1], generateGameObjectWindowLimitY[0], generateGameObjectWindowLimitY[1], generateGameObjectWindowLimitZ[0], generateGameObjectWindowLimitZ[1]);
 	}
 
 	ImGui::End();
