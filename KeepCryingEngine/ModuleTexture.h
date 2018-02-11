@@ -13,6 +13,7 @@ public:
 	virtual ~ModuleTexture();
 
 	bool Start() override;
+	bool CleanUp() override;
 
 	Texture * LoadTexture(const char* texturePath, const TextureConfiguration& textureConfiguration) const;
 	Texture * LoadTexture(const char* texturePath) const;

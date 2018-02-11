@@ -1,6 +1,7 @@
 #include "QuadtreeNode.h"
 
 #include <Frustum.h>
+#include <GL/glew.h>
 
 #include "Camera.h"
 #include "GameObject.h"
@@ -98,8 +99,6 @@ void QuadtreeNode::Print(uint level) const
 		}
 	}
 }
-
-#include <GL/glew.h>
 
 void QuadtreeNode::Draw() const
 {

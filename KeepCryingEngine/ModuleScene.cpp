@@ -11,6 +11,7 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "ModuleCamera.h"
+#include "ModuleUI.h"
 
 using namespace std;
 
@@ -24,6 +25,9 @@ bool ModuleScene::Init()
 {
 	root = new GameObject("Root");
 
+	qTGameObjects.Create(AABB(float3(-QUADTREE_SIZE, -1011, -QUADTREE_SIZE), float3(QUADTREE_SIZE, 1011, QUADTREE_SIZE)));
+	// qTGameObjects.Insert(root);
+
 	return true;
 }
 
@@ -36,50 +40,80 @@ update_status ModuleScene::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 {
-	SetVisibleRecursive(root, false);
-
-	Camera* camera = App->camera->GetEnabledCamera();
-
-	if(camera != nullptr)
+	if(!App->ui->GetFrustumCulling())
 	{
-		if(useQuadtree)
-		{
-			vector<GameObject*> visibleGameObjects;
-			qTGameObjects.Intersect(visibleGameObjects, camera->GetFrustum());
+		// All visible
 
-			for(GameObject* visibleGameObject : visibleGameObjects)
+		SetVisibleRecursive(root, true);
+	}
+	else
+	{
+		// All invisible
+		// If camera
+		//    If quadtree
+		//       Get game objects inside camera's frustum
+		//       All previous game objects visible
+		// Else (no camera)
+		//    Check all game objects visibility
+
+		SetVisibleRecursive(root, false);
+
+		Camera* camera = App->camera->GetEnabledCamera();
+
+		if(camera != nullptr)
+		{
+			if(useQuadtree)
 			{
-				visibleGameObject->SetVisible(true);
+				vector<GameObject*> visibleGameObjects;
+				qTGameObjects.Intersect(visibleGameObjects, camera->GetFrustum());
+
+				for(GameObject* visibleGameObject : visibleGameObjects)
+				{
+					visibleGameObject->SetVisible(true);
+				}
+			}
+			else
+			{
+				SetVisibilityRecursive(root);
 			}
 		}
-		else
-		{
-			SetVisibilityRecursive(root);
-		}
+	}
+
+	// Generated game objects are already added to the scene
+	// Set their position
+	// Update aabb (mesh filter)
+	// Set their static (if static, it is added to the qt)
+
+	for(pair<GameObject*, pair<float3, bool>> generateGameObject : generatedGameObjects)
+	{
+		Transform* transform = ((Transform*)generateGameObject.first->GetComponent(ComponentType::Transform));
+		transform->SetWorldPosition(generateGameObject.second.first);
 	}
 
 	Update(root, deltaTimeS, realDeltaTimeS);
 
-	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KeyState::KEY_DOWN)
+	for(pair<GameObject*, pair<float3, bool>> generateGameObject : generatedGameObjects)
 	{
-		qTGameObjects.Clear();
-
-		qTGameObjects.Create(AABB(float3(-QUADTREE_SIZE, -1011, -QUADTREE_SIZE), float3(QUADTREE_SIZE, 1011, QUADTREE_SIZE)));
-
-		AddToQuadtreeRecursive(root);
-
-		qTGameObjects.Print();
-	}
-
-	qTGameObjects.Draw();
-
-	for(pair<GameObject*, float3> generateGameObject : generatedGameObjects)
-	{
-		Transform* transform = ((Transform*)generateGameObject.first->GetComponent(ComponentType::Transform));
-		transform->SetWorldPosition(generateGameObject.second);
+		generateGameObject.first->SetStatic(generateGameObject.second.second);
 	}
 
 	generatedGameObjects.clear();
+
+	if(App->ui->GetDebugMode())
+	{
+		if(App->input->GetKey(SDL_SCANCODE_SPACE) == KeyState::KEY_DOWN)
+		{
+			// qTGameObjects.Clear();
+
+			// qTGameObjects.Create(AABB(float3(-QUADTREE_SIZE, -1011, -QUADTREE_SIZE), float3(QUADTREE_SIZE, 1011, QUADTREE_SIZE)));
+
+			// AddToQuadtreeRecursive(root);
+
+			qTGameObjects.Print();
+		}
+
+		qTGameObjects.Draw();
+	}
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -140,7 +174,6 @@ GameObject* ModuleScene::AddSphere(GameObject& parent)
 	assert(temp);
 	temp->SetMeshMode(MeshMode::SPHERE);
 
-
 	return gameObject;
 }
 
@@ -153,8 +186,10 @@ GameObject* ModuleScene::AddCamera(GameObject& parent)
 	return gameObject;
 }
 
-void ModuleScene::Generate(int count, float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
+void ModuleScene::Generate(int count, float staticPercentage, float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
 {
+	int staticCount = count * Clamp01(0.01f * staticPercentage);
+
 	for(size_t i = 0; i < count; ++i)
 	{
 		int gameObjectType = rand() % 2;
@@ -171,17 +206,42 @@ void ModuleScene::Generate(int count, float minX, float maxX, float minY, float 
 				break;
 		}
 
-		float x = minX + (float)(rand()) / ((float)(RAND_MAX / (maxX - minX)));
-		float y = minY + (float)(rand()) / ((float)(RAND_MAX / (maxY - minY)));
-		float z = minZ + (float)(rand()) / ((float)(RAND_MAX / (maxZ - minZ)));
+		if(gameObject)
+		{
+			float x = minX + (float)(rand()) / ((float)(RAND_MAX / (maxX - minX)));
+			float y = minY + (float)(rand()) / ((float)(RAND_MAX / (maxY - minY)));
+			float z = minZ + (float)(rand()) / ((float)(RAND_MAX / (maxZ - minZ)));
 
-		generatedGameObjects.push_back(pair<GameObject*, float3>(gameObject, float3(x, y, z)));
+			bool gameObjectStatic = false;
+
+			if(staticCount > 0)
+			{
+				--staticCount;
+				gameObjectStatic = true;
+			}
+
+			/* Transform* transform = ((Transform*)gameObject->GetComponent(ComponentType::Transform));
+			transform->SetWorldPosition(float3(x, y, z));
+			gameObject->SetStatic(gameObjectStatic); */
+
+			generatedGameObjects.push_back(pair<GameObject*, pair<float3, bool>>(gameObject, pair<float3, bool>(float3(x, y, z), gameObjectStatic)));
+		}
 	}
 }
 
 void ModuleScene::Destroy(GameObject& gameObject)
 {
 	toDestroy.push_back(&gameObject);
+}
+
+void ModuleScene::AddStatic(GameObject* gameObject)
+{
+	qTGameObjects.Insert(gameObject);
+}
+
+void ModuleScene::RemoveStatic(GameObject* gameObject)
+{
+
 }
 
 void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const
@@ -269,7 +329,7 @@ void ModuleScene::DestroyAndRelease(GameObject* &gameObject) const
 	RELEASE(gameObject);
 }
 
-void ModuleScene::AddToQuadtreeRecursive(GameObject* gameObject)
+/* void ModuleScene::AddToQuadtreeRecursive(GameObject* gameObject)
 {
 	qTGameObjects.Insert(gameObject);
 
@@ -277,7 +337,7 @@ void ModuleScene::AddToQuadtreeRecursive(GameObject* gameObject)
 	{
 		AddToQuadtreeRecursive(gameObjectChild);
 	}
-}
+} */
 
 void ModuleScene::SetVisibleRecursive(GameObject* gameObject, bool visible) const
 {
