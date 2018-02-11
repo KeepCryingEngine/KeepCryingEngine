@@ -107,13 +107,16 @@ update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 {
 	DrawGrid();
 
+	DrawGeometry();
+	drawBuffer.clear();
+
 	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-	DrawGeometry();
-	drawBuffer.clear();
+	// DrawGeometry();
+	// drawBuffer.clear();
 
 	SDL_GL_SwapWindow(App->window->window);
 
