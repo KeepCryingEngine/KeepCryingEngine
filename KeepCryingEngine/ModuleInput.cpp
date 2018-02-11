@@ -138,7 +138,10 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 				mouse.y = (float)event.motion.y;
 				break;
 			case SDL_MOUSEWHEEL:
-				wheel_motion = event.wheel.y;
+				if(!mouseHoveringAnyWindow)
+				{
+					wheel_motion = event.wheel.y;
+				}
 				break;
 		}
 	}
