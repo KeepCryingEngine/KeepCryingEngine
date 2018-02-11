@@ -4,6 +4,7 @@
 #include <list>
 
 #include "Module.h"
+#include "Octree.h"
 #include "Quadtree.h"
 
 class GameObject;
@@ -56,18 +57,26 @@ private:
 private:
 	GameObject* root = nullptr;
 
-	Quadtree qTGameObjects;
-
-	bool useQuadtree = true;
-
 	std::list<GameObject*> toDestroy;
 
 	unsigned long long int currentGameObjectId = 0;
 
 	std::list<std::pair<GameObject*, std::pair<float3, bool>>> generatedGameObjects;
 
+	uint spaceStructure = 2; // 0 None, 1 Quadtree, 2 Octree
+
+	// Quadtree stuff
+
+	Quadtree qTGameObjects;
+
 	const float QUADTREE_SIZE = 150.0f;
 	const float QUADTREE_HEIGHT = 1000.0f;
+
+	// Octree stuff
+
+	Octree oTGameObjects;
+
+	const float OCTREE_SIZE = 150.0f;
 };
 
 #endif // !_MODULESCENE_H_

@@ -1,5 +1,5 @@
-#ifndef _QUADTREENODE_H_
-#define _QUADTREENODE_H_
+#ifndef _OCTREENODE_H_
+#define _OCTREENODE_H_
 
 #include <vector>
 #include <AABB.h>
@@ -8,11 +8,11 @@
 
 class GameObject;
 
-class QuadtreeNode
+class OctreeNode
 {
 public:
-	QuadtreeNode();
-	virtual ~QuadtreeNode();
+	OctreeNode();
+	virtual ~OctreeNode();
 
 	void Create(const AABB& aabb);
 
@@ -37,9 +37,9 @@ private:
 
 private:
 	const static int bucketSize = 5;
-	
+
 	AABB aabb;
-	QuadtreeNode* children = nullptr;
+	OctreeNode* children = nullptr;
 	std::vector<GameObject*> content;
 };
 

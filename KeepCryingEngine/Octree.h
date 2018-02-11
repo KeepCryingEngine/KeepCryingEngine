@@ -1,17 +1,17 @@
-#ifndef _QUADTREE_H_
-#define _QUADTREE_H_
+#ifndef _OCTREE_H_
+#define _OCTREE_H_
 
 #include <AABB.h>
 #include <vector>
 
 class GameObject;
-class QuadtreeNode;
+class OctreeNode;
 
-class Quadtree
+class Octree
 {
 public:
-	Quadtree();
-	virtual ~Quadtree();
+	Octree();
+	virtual ~Octree();
 
 	void Create(const AABB& aabb);
 
@@ -28,7 +28,7 @@ public:
 	void Draw() const;
 
 private:
-	QuadtreeNode* root = nullptr;
+	OctreeNode* root = nullptr;
 };
 
 #endif

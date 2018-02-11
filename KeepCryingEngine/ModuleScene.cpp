@@ -26,7 +26,7 @@ bool ModuleScene::Init()
 	root = new GameObject("Root");
 
 	qTGameObjects.Create(AABB(float3(-QUADTREE_SIZE, -QUADTREE_HEIGHT, -QUADTREE_SIZE), float3(QUADTREE_SIZE, QUADTREE_HEIGHT, QUADTREE_SIZE)));
-	// qTGameObjects.Insert(root);
+	oTGameObjects.Create(AABB(float3(-OCTREE_SIZE, -OCTREE_SIZE, -OCTREE_SIZE), float3(OCTREE_SIZE, OCTREE_SIZE, OCTREE_SIZE)));
 
 	return true;
 }
@@ -50,7 +50,7 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 	{
 		// All invisible
 		// If camera
-		//    If quadtree
+		//    If spaceStructure
 		//       Get game objects inside camera's frustum
 		//       All previous game objects visible
 		//    Else
@@ -62,19 +62,27 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 
 		if(camera != nullptr)
 		{
-			if(useQuadtree)
+			if(spaceStructure == 0)
+			{
+				SetVisibilityRecursive(root);
+			}
+			else
 			{
 				vector<GameObject*> visibleGameObjects;
-				qTGameObjects.Intersect(visibleGameObjects, camera->GetFrustum());
+
+				if(spaceStructure == 1)
+				{
+					qTGameObjects.Intersect(visibleGameObjects, camera->GetFrustum());
+				}
+				else if(spaceStructure == 2)
+				{
+					oTGameObjects.Intersect(visibleGameObjects, camera->GetFrustum());
+				}
 
 				for(GameObject* visibleGameObject : visibleGameObjects)
 				{
 					visibleGameObject->SetVisible(true);
 				}
-			}
-			else
-			{
-				SetVisibilityRecursive(root);
 			}
 		}
 	}
@@ -103,16 +111,24 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 	{
 		if(App->input->GetKey(SDL_SCANCODE_SPACE) == KeyState::KEY_DOWN)
 		{
-			// qTGameObjects.Clear();
-
-			// qTGameObjects.Create(AABB(float3(-QUADTREE_SIZE, -1011, -QUADTREE_SIZE), float3(QUADTREE_SIZE, 1011, QUADTREE_SIZE)));
-
-			// AddToQuadtreeRecursive(root);
-
-			qTGameObjects.Print();
+			if(spaceStructure == 1)
+			{
+				qTGameObjects.Print();
+			}
+			else if(spaceStructure == 2)
+			{
+				oTGameObjects.Print();
+			}
 		}
 
-		qTGameObjects.Draw();
+		if(spaceStructure == 1)
+		{
+			qTGameObjects.Draw();
+		}
+		else if(spaceStructure == 2)
+		{
+			oTGameObjects.Draw();
+		}
 	}
 
 	return update_status::UPDATE_CONTINUE;
@@ -123,6 +139,7 @@ bool ModuleScene::CleanUp()
 	DestroyAndRelease(root);
 
 	qTGameObjects.Clear();
+	oTGameObjects.Clear();
 
 	return true;
 }
@@ -237,11 +254,13 @@ void ModuleScene::Destroy(GameObject& gameObject)
 void ModuleScene::AddStatic(GameObject* gameObject)
 {
 	qTGameObjects.Insert(gameObject);
+	oTGameObjects.Insert(gameObject);
 }
 
 void ModuleScene::RemoveStatic(GameObject* gameObject)
 {
 	qTGameObjects.Remove(gameObject);
+	oTGameObjects.Remove(gameObject);
 }
 
 void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const
@@ -328,16 +347,6 @@ void ModuleScene::DestroyAndRelease(GameObject* &gameObject) const
 
 	RELEASE(gameObject);
 }
-
-/* void ModuleScene::AddToQuadtreeRecursive(GameObject* gameObject)
-{
-	qTGameObjects.Insert(gameObject);
-
-	for(GameObject* gameObjectChild : gameObject->GetChildren())
-	{
-		AddToQuadtreeRecursive(gameObjectChild);
-	}
-} */
 
 void ModuleScene::SetVisibleRecursive(GameObject* gameObject, bool visible) const
 {

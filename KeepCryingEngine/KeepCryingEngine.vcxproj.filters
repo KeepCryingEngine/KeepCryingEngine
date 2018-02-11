@@ -84,6 +84,8 @@
     </ClCompile>
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
+    <ClCompile Include="Octree.cpp" />
+    <ClCompile Include="OctreeNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -184,6 +186,9 @@
     </ClInclude>
     <ClInclude Include="Quadtree.h" />
     <ClInclude Include="QuadtreeNode.h" />
+    <ClInclude Include="Brofiler.h" />
+    <ClInclude Include="Octree.h" />
+    <ClInclude Include="OctreeNode.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">

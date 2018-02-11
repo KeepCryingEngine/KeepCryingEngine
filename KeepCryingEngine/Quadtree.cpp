@@ -1,5 +1,7 @@
 #include "Quadtree.h"
 
+#include "QuadtreeNode.h"
+
 Quadtree::Quadtree()
 { }
 
