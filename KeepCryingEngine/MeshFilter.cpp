@@ -71,19 +71,34 @@ void MeshFilter::DrawGameObjectAABB()
 	glGetFloatv(GL_CURRENT_COLOR, currentColor);
 	
 	glBegin(GL_LINES);
-	glColor4f(255.0f, 255.0f, 255.0f, 1.0f);
+	glColor4f(0.0f, 255.0f, 0.0f, 1.0f);
 	
-	for(int i = 0; i < 8; i++)
-	{
-		for(int j = 0; j < 8; j++)
-		{
-			if(i != j)
-			{
-				glVertex3f(aabbcorners[i].x, aabbcorners[i].y, aabbcorners[i].z);
-				glVertex3f(aabbcorners[j].x, aabbcorners[j].y, aabbcorners[j].z);
-			}
-		}
-	}
+	glVertex3f(aabbcorners[0].x, aabbcorners[0].y, aabbcorners[0].z);
+	glVertex3f(aabbcorners[1].x, aabbcorners[1].y, aabbcorners[1].z);
+	glVertex3f(aabbcorners[1].x, aabbcorners[1].y, aabbcorners[1].z);
+	glVertex3f(aabbcorners[3].x, aabbcorners[3].y, aabbcorners[3].z);
+	glVertex3f(aabbcorners[3].x, aabbcorners[3].y, aabbcorners[3].z);
+	glVertex3f(aabbcorners[2].x, aabbcorners[2].y, aabbcorners[2].z);
+	glVertex3f(aabbcorners[2].x, aabbcorners[2].y, aabbcorners[2].z);
+	glVertex3f(aabbcorners[0].x, aabbcorners[0].y, aabbcorners[0].z);
+
+	glVertex3f(aabbcorners[4].x, aabbcorners[4].y, aabbcorners[4].z);
+	glVertex3f(aabbcorners[5].x, aabbcorners[5].y, aabbcorners[5].z);
+	glVertex3f(aabbcorners[5].x, aabbcorners[5].y, aabbcorners[5].z);
+	glVertex3f(aabbcorners[7].x, aabbcorners[7].y, aabbcorners[7].z);
+	glVertex3f(aabbcorners[7].x, aabbcorners[7].y, aabbcorners[7].z);
+	glVertex3f(aabbcorners[6].x, aabbcorners[6].y, aabbcorners[6].z);
+	glVertex3f(aabbcorners[6].x, aabbcorners[6].y, aabbcorners[6].z);
+	glVertex3f(aabbcorners[4].x, aabbcorners[4].y, aabbcorners[4].z);
+
+	glVertex3f(aabbcorners[7].x, aabbcorners[7].y, aabbcorners[7].z);
+	glVertex3f(aabbcorners[3].x, aabbcorners[3].y, aabbcorners[3].z);
+	glVertex3f(aabbcorners[5].x, aabbcorners[5].y, aabbcorners[5].z);
+	glVertex3f(aabbcorners[1].x, aabbcorners[1].y, aabbcorners[1].z);
+	glVertex3f(aabbcorners[4].x, aabbcorners[4].y, aabbcorners[4].z);
+	glVertex3f(aabbcorners[0].x, aabbcorners[0].y, aabbcorners[0].z);
+	glVertex3f(aabbcorners[6].x, aabbcorners[6].y, aabbcorners[6].z);
+	glVertex3f(aabbcorners[2].x, aabbcorners[2].y, aabbcorners[2].z);
 	
 	glColor4f(currentColor[0], currentColor[1], currentColor[2], currentColor[3]);
 	glEnd();	
