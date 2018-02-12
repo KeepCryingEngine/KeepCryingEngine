@@ -228,7 +228,7 @@ void Camera::DrawUI()
 			SetFOV(verticalFOV);
 		}
 		float aspectRatio = GetAspectRatio();
-		if(ImGui::DragFloat("Aspect ratio", &aspectRatio, 0.1f, 0.1, 5, "%.2f"))
+		if(ImGui::DragFloat("Aspect ratio", &aspectRatio, 0.1f, 0.1f, 5.0f, "%.2f"))
 		{
 			SetAspectRatio(aspectRatio);
 		}

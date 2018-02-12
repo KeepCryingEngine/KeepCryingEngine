@@ -351,7 +351,7 @@ void GameObject::DrawUI()
 	ImGui::Checkbox("", &enable); ImGui::SameLine();
 
 	static char buffer[180] = {};
-	strcpy(buffer, name.c_str());
+	strcpy_s(buffer, name.c_str());
 	if(ImGui::InputText("##label", buffer, sizeof(buffer)))
 	{
 		name = buffer;

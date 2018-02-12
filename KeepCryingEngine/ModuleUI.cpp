@@ -24,7 +24,6 @@ bool ModuleUI::Init()
 {
 	ImGui_ImplSdlGL3_Init(App->window->window);
 	ImGui::StyleColorsClassic();
-
 	return true;
 }
 
@@ -449,7 +448,7 @@ void ModuleUI::DrawCameraWindow()
 	ImGui::SliderFloat("Field of View", &verticalFOV, 0.1f, pi);
 	App->camera->camera->SetFOV(verticalFOV);
 	aspectRatio = App->camera->camera->GetAspectRatio();
-	ImGui::DragFloat("Aspect ratio", &aspectRatio, 0.1f, 0.1, 5, "%.2f");
+	ImGui::DragFloat("Aspect ratio", &aspectRatio, 0.1f, 0.1f, 5.0f, "%.2f");
 	App->camera->camera->SetAspectRatio(aspectRatio);
 	ImGui::End();
 }
