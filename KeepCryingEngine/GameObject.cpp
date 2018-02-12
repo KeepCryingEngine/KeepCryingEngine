@@ -160,7 +160,8 @@ void GameObject::SetParent(GameObject& newParent)
 	parent = &newParent;
 	newParent.children.push_back(this);
 
-	transform->SetDirty();
+	if(transform)
+		transform->Recalculate();
 }
 
 void GameObject::Update(float deltaTimeS, float realDeltaTimeS)

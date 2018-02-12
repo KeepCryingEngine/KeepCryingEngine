@@ -157,6 +157,11 @@ const float4x4 & Transform::GetModelMatrix() const
 	return modelMatrix;
 }
 
+void Transform::Recalculate()
+{
+	SetDirty();
+}
+
 void Transform::SetDirty() const
 {
 	if (!dirty)

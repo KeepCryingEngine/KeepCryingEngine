@@ -35,9 +35,11 @@ public:
 
 	const float4x4& GetModelMatrix() const;
 
-	void SetDirty() const;
+	void Recalculate();
 
 private:
+	// Const method that modify mutable data
+	void SetDirty() const; 
 	float4x4 GetLocalMatrix() const;
 	const float4x4& GetParentMatrix() const;
 	void RecalculateIfNecessary() const;
