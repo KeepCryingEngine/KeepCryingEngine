@@ -53,12 +53,7 @@ void MeshRenderer::Render(Mesh& mesh)
 			Transform* transform = gameObject->GetTransform();
 			if(transform)
 			{
-				if(gameObject->GetVisible())
-				{
-					App->renderer->AddToDrawBuffer(mesh, *material, *gameObject, *transform);
-				}
-
-				/* if(App->ui->GetFrustumCulling())
+				if(gameObject->IsStatic())
 				{
 					if(gameObject->GetVisible())
 					{
@@ -67,8 +62,18 @@ void MeshRenderer::Render(Mesh& mesh)
 				}
 				else
 				{
-					App->renderer->AddToDrawBuffer(mesh, *material, *gameObject, *transform);
-				} */
+					if(App->ui->GetFrustumCulling())
+					{
+						if(App->camera->GetEnabledCamera() != nullptr && App->camera->GetEnabledCamera()->Intersects(App->camera->GetEnabledCamera()->GetFrustum(), gameObject->GetAABB()))
+						{
+							App->renderer->AddToDrawBuffer(mesh, *material, *gameObject, *transform);
+						}
+					}
+					else
+					{
+						App->renderer->AddToDrawBuffer(mesh, *material, *gameObject, *transform);
+					}
+				}
 			}
 		}
 	}

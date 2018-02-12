@@ -99,7 +99,7 @@ const string& GameObject::GetName() const
 	return name;
 }
 
-unsigned long long int GameObject::GetId() const
+int GameObject::GetId() const
 {
 	return id;
 }

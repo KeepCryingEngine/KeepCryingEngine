@@ -29,7 +29,7 @@ public:
 
 	const std::string& GetName() const;
 
-	unsigned long long int GetId() const;
+	int GetId() const;
 
 	const bool IsEnabled() const;
 	const bool IsStatic() const;
@@ -86,7 +86,7 @@ private:
 
 	bool enable = true;
 	bool isStatic = false;
-	unsigned long long int id;
+	int id;
 
 	AABB aabb;
 
