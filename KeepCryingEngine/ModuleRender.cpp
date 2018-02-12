@@ -194,13 +194,13 @@ void ModuleRender::AddToDrawBuffer(Mesh & mesh, Material& material, GameObject& 
 	drawBuffer.push_back(drawCall);
 }
 
-void ModuleRender::DrawFrustrum(Camera & camera)
+void ModuleRender::DrawFrustum(Camera & camera)
 {
 	float lineWidth;
 
 	glGetFloatv(GL_LINE_WIDTH, &lineWidth);
 
-	glLineWidth(5.0f);
+	glLineWidth(1.0f);
 
 	uint progId = App->shader->GetShaderId(ShaderType::Color);
 	glUseProgram(progId);

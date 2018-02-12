@@ -50,7 +50,7 @@ void Camera::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 
 	// LOG_DEBUG("%s", frustum.pos.ToString().c_str());
 
-	App->renderer->DrawFrustrum(*this);
+	App->renderer->DrawFrustum(*this);
 }
 
 void Camera::Translate(const float3& offset)

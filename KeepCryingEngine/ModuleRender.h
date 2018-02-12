@@ -42,7 +42,7 @@ public:
 
 	void AddToDrawBuffer(Mesh& mesh, Material& material, GameObject& gameObject, Transform& transform);
 
-	void DrawFrustrum(Camera& camera);
+	void DrawFrustum(Camera& camera);
 
 private:
 	void DrawGrid() const;
