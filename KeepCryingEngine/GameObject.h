@@ -8,6 +8,8 @@
 
 #include "Component.h"
 
+class Transform;
+
 class GameObject
 {
 public:
@@ -44,6 +46,7 @@ public:
 	std::vector<Component*> GetComponents(ComponentType type);
 	std::vector<Component*> GetComponentsInChildren(ComponentType type);
 	void GetComponents(ComponentType type, std::vector<Component*>& components);
+	Transform* GetTransform() const;
 
 	void DrawUI();
 
@@ -78,6 +81,7 @@ private:
 
 	std::vector<GameObject*> children;
 	std::vector<Component*> components;
+	Transform* transform = nullptr;
 	std::string name;
 
 	bool enable = true;

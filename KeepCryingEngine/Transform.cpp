@@ -164,8 +164,7 @@ void Transform::SetDirty() const
 		dirty = true;
 		for (GameObject* child : gameObject->GetChildren())
 		{
-			Transform* transform = (Transform*)child->GetComponent(ComponentType::Transform);
-			transform->SetDirty();
+			child->GetTransform()->SetDirty();
 		}
 	}
 }
@@ -181,7 +180,7 @@ const float4x4& Transform::GetParentMatrix() const
 	GameObject* parent = gameObject->GetParent();
 	if (parent)
 	{
-		Transform* parentTransform = (Transform*)parent->GetComponent(ComponentType::Transform);
+		Transform* parentTransform = parent->GetTransform();
 		parentMatrix = &parentTransform->GetModelMatrix();
 	}
 	return *parentMatrix;
@@ -223,7 +222,7 @@ float3 Transform::CalculateWorldPosition() const
 	GameObject* parent = gameObject->GetParent();
 	if (parent)
 	{
-		Transform* parentTransform = (Transform*)parent->GetComponent(ComponentType::Transform);
+		Transform* parentTransform = parent->GetTransform();
 		float3 calculatedWorldPosition = parentTransform->GetModelMatrix().Mul(float4(localPosition, 0)).xyz();
 		worldPosition = &calculatedWorldPosition;
 	}
@@ -236,7 +235,7 @@ Quat Transform::CalculateWorldRotation() const
 	GameObject* parent = gameObject->GetParent();
 	if (parent)
 	{
-		Transform* parentTransform = (Transform*)parent->GetComponent(ComponentType::Transform);
+		Transform* parentTransform = parent->GetTransform();
 		Quat calculatedWorldRotation = parentTransform->GetWorldRotation().Mul(localRotation);
 		worldRotation = &calculatedWorldRotation;
 	}
@@ -249,7 +248,7 @@ float3 Transform::CalculateWorldScale() const
 	GameObject* parent = gameObject->GetParent();
 	if (parent)
 	{
-		Transform* parentTransform = (Transform*)parent->GetComponent(ComponentType::Transform);
+		Transform* parentTransform = parent->GetTransform();
 		float3 calculatedWorldScale = parentTransform->GetWorldScale() + localScale;
 		worldScale = &calculatedWorldScale;
 	}

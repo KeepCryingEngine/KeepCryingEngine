@@ -219,8 +219,7 @@ void ModuleRender::DrawFrustrum(Camera & camera)
 	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
 
 	GLint transformUniformId = glGetUniformLocation(progId, "transform");
-	Transform* transform = (Transform*)camera.gameObject->GetComponent(ComponentType::Transform);
-	float4x4 transformMatrix = transform->GetModelMatrix();
+	float4x4 transformMatrix = camera.gameObject->GetTransform()->GetModelMatrix();
 	transformMatrix.RemoveScale();
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, transformMatrix.Transposed().ptr());
 

@@ -92,17 +92,20 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 	// Update aabb (mesh filter)
 	// Set their static (if static, it is added to the qt)
 
-	for(pair<GameObject*, pair<float3, bool>> generateGameObject : generatedGameObjects)
+	for(pair<GameObject*, pair<float3, bool>> generatedGameObject : generatedGameObjects)
 	{
-		Transform* transform = ((Transform*)generateGameObject.first->GetComponent(ComponentType::Transform));
-		transform->SetWorldPosition(generateGameObject.second.first);
+		GameObject* gameObject = generatedGameObject.first;
+		const float3& worldPosition = generatedGameObject.second.first;
+		gameObject->GetTransform()->SetWorldPosition(worldPosition);
 	}
 
 	Update(root, deltaTimeS, realDeltaTimeS);
 
 	for(pair<GameObject*, pair<float3, bool>> generateGameObject : generatedGameObjects)
 	{
-		generateGameObject.first->SetStatic(generateGameObject.second.second);
+		GameObject* gameObject = generateGameObject.first;
+		bool isStatic = generateGameObject.second.second;
+		gameObject->SetStatic(isStatic);
 	}
 
 	generatedGameObjects.clear();
@@ -237,7 +240,7 @@ void ModuleScene::Generate(int count, float staticPercentage, float minX, float 
 				gameObjectStatic = true;
 			}
 
-			/* Transform* transform = ((Transform*)gameObject->GetComponent(ComponentType::Transform));
+			/* Transform* transform = gameObject->GetTransform();
 			transform->SetWorldPosition(float3(x, y, z));
 			gameObject->SetStatic(gameObjectStatic); */
 

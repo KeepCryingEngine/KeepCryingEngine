@@ -31,13 +31,13 @@ void Camera::Destroy()
 
 /* void Camera::Start()
 {
-	Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
+	Transform* transform = gameObject->GetTransform();
 	SetUpFrustum(transform->position, transform->rotation);
 } */
 
 void Camera::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-	Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
+	Transform* transform = gameObject->GetTransform();
 
 	const float3& worldPosition = transform->GetWorldPosition();
 	const Quat& worldRotation = transform->GetWorldRotation();

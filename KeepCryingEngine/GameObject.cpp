@@ -15,7 +15,7 @@ using namespace std;
 GameObject::GameObject(const string& name) : name(name)
 {
 	id = App->scene->GetNewGameObjectId();
-	AddComponent(ComponentType::Transform, true);
+	transform = (Transform*)AddComponent(ComponentType::Transform, true);
 
 	aabb.SetNegativeInfinity();
 }
@@ -160,7 +160,6 @@ void GameObject::SetParent(GameObject& newParent)
 	parent = &newParent;
 	newParent.children.push_back(this);
 
-	Transform* transform = (Transform*)GetComponent(ComponentType::Transform);
 	transform->SetDirty();
 }
 
@@ -339,6 +338,11 @@ void GameObject::GetComponents(ComponentType type, std::vector<Component*>& ret)
 			ret.push_back(component);
 		}
 	}
+}
+
+Transform * GameObject::GetTransform() const
+{
+	return transform;
 }
 
 void GameObject::DrawUI()

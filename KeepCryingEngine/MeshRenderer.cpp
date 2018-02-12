@@ -50,7 +50,7 @@ void MeshRenderer::Render(Mesh& mesh)
 	{
 		if(material)
 		{
-			Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
+			Transform* transform = gameObject->GetTransform();
 			if(transform)
 			{
 				if(gameObject->GetVisible())

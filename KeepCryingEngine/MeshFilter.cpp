@@ -55,9 +55,8 @@ void MeshFilter::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 
 void MeshFilter::UpdateGameObjectAABB()
 {
-	Transform* transform = (Transform*)gameObject->GetComponent(ComponentType::Transform);
 	OBB obb = mesh->GetAABB().ToOBB();
-	obb.Transform(transform->GetModelMatrix());
+	obb.Transform(gameObject->GetTransform()->GetModelMatrix());
 
 	gameObject->GetAABB().SetFrom(obb);
 }
