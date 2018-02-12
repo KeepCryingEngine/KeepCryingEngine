@@ -195,11 +195,12 @@ void Transform::RecalculateIfNecessary() const
 {
 	if (dirty) 
 	{
-		float4x4 localMatrix = GetLocalMatrix();
-		const float4x4& parentMatrix = GetParentMatrix();
-		modelMatrix = parentMatrix * localMatrix;
-		modelMatrix.Orthonormalize3();
-		modelMatrix.Decompose(worldPosition, worldRotation, worldScale);
+		modelMatrix = CalculateModelMatrix();
+		worldPosition = CalculateWorldPosition();
+		worldScale = CalculateWorldScale();
+		worldRotation = CalculateWorldRotation();
+		
+		//modelMatrix.Decompose(worldPosition, worldRotation, worldScale);
 
 		/*worldPosition = modelMatrix.TranslatePart();
 		worldRotation = modelMatrix.RotatePart().ToQuat();
@@ -207,4 +208,50 @@ void Transform::RecalculateIfNecessary() const
 
 		dirty = false;
 	}
+}
+
+float4x4 Transform::CalculateModelMatrix() const
+{
+	float4x4 localMatrix = GetLocalMatrix();
+	const float4x4& parentMatrix = GetParentMatrix();
+	return parentMatrix * localMatrix;
+}
+
+float3 Transform::CalculateWorldPosition() const
+{
+	const float3* worldPosition = &localPosition;
+	GameObject* parent = gameObject->GetParent();
+	if (parent)
+	{
+		Transform* parentTransform = (Transform*)parent->GetComponent(ComponentType::Transform);
+		float3 calculatedWorldPosition = parentTransform->GetModelMatrix().Mul(float4(localPosition, 0)).xyz();
+		worldPosition = &calculatedWorldPosition;
+	}
+	return *worldPosition;
+}
+
+Quat Transform::CalculateWorldRotation() const
+{
+	const Quat* worldRotation = &localRotation;
+	GameObject* parent = gameObject->GetParent();
+	if (parent)
+	{
+		Transform* parentTransform = (Transform*)parent->GetComponent(ComponentType::Transform);
+		Quat calculatedWorldRotation = parentTransform->GetWorldRotation().Mul(localRotation);
+		worldRotation = &calculatedWorldRotation;
+	}
+	return *worldRotation;
+}
+
+float3 Transform::CalculateWorldScale() const
+{
+	const float3* worldScale = &localScale;
+	GameObject* parent = gameObject->GetParent();
+	if (parent)
+	{
+		Transform* parentTransform = (Transform*)parent->GetComponent(ComponentType::Transform);
+		float3 calculatedWorldScale = parentTransform->GetWorldScale() + localScale;
+		worldScale = &calculatedWorldScale;
+	}
+	return *worldScale;
 }

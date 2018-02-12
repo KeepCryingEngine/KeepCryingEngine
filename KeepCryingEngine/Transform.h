@@ -41,6 +41,10 @@ private:
 	float4x4 GetLocalMatrix() const;
 	const float4x4& GetParentMatrix() const;
 	void RecalculateIfNecessary() const;
+	float4x4 CalculateModelMatrix() const;
+	float3 CalculateWorldPosition() const;
+	Quat CalculateWorldRotation() const;
+	float3 CalculateWorldScale() const;
 
 private:
 	float3 localPosition;
