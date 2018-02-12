@@ -523,6 +523,7 @@ void ModuleUI::DrawHierarchyWindow()
 
 	bool opened = ImGui::TreeNodeEx(App->scene->GetRoot()->GetName().c_str(), nodeFlags);
 
+	ImGui::PushStyleColor(0, ImVec4(0.9f, 0.9f, 0.9f, 1.0f));
 	if(ImGui::BeginPopupContextItem("Add Item ..."))
 	{
 		if(ImGui::BeginMenu("Add..."))
@@ -547,6 +548,7 @@ void ModuleUI::DrawHierarchyWindow()
 		}
 		ImGui::EndPopup();
 	}
+	ImGui::PopStyleColor();
 
 	if(ImGui::IsItemClicked())
 	{
