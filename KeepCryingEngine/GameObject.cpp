@@ -357,6 +357,14 @@ void GameObject::DrawUI()
 		name = buffer;
 	}
 
+	ImGui::SameLine();
+
+	bool tempStatic = IsStatic();
+	if(ImGui::Checkbox("Static", &tempStatic))
+	{
+		SetStatic(tempStatic);
+	}
+	
 	ImGui::NewLine();
 
 	for(Component* c : components)

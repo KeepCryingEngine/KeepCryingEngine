@@ -596,16 +596,6 @@ void ModuleUI::DrawInspectorWindow()
 			}
 			ImGui::EndMenu();
 		}
-		if(ImGui::BeginMenu("Options"))
-		{
-			bool tempStatic = temp->IsStatic();
-			if(ImGui::Checkbox("Static", &tempStatic))
-			{
-				temp->SetStatic(tempStatic);
-			}
-
-			ImGui::EndMenu();
-		}
 		ImGui::PushStyleColor(0, ImVec4(0.9f, 0.3f, 0.3f, 1.0f));
 		if(ImGui::BeginMenu("Delete"))
 		{
