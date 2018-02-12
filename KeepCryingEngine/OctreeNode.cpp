@@ -216,6 +216,16 @@ void OctreeNode::Draw() const
 	}
 }
 
+AABB & OctreeNode::GetAABB()
+{
+	return aabb;
+}
+
+std::vector<GameObject*> OctreeNode::GetContent() const
+{
+	return content;
+}
+
 void OctreeNode::Add(GameObject* gameObject)
 {
 	for(size_t i = 0; i < 8; ++i)

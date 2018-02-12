@@ -63,7 +63,7 @@ private:
 
 	std::list<std::pair<GameObject*, std::pair<float3, bool>>> generatedGameObjects;
 
-	uint spaceStructure = 2; // 0 None, 1 Quadtree, 2 Octree
+	uint spaceStructure = 1; // 0 None, 1 Quadtree, 2 Octree
 
 	// Quadtree stuff
 

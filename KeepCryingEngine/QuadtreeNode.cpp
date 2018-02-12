@@ -216,6 +216,16 @@ void QuadtreeNode::Draw() const
 	}
 }
 
+AABB & QuadtreeNode::GetAABB() 
+{
+	return aabb;
+}
+
+std::vector<GameObject*> QuadtreeNode::GetContent() const
+{
+	return content;
+}
+
 void QuadtreeNode::Add(GameObject* gameObject)
 {
 	for(size_t i = 0; i < 4; ++i)

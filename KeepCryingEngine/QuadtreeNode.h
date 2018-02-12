@@ -28,6 +28,9 @@ public:
 
 	void Draw() const;
 
+	AABB & GetAABB();
+	std::vector<GameObject*> GetContent() const;
+
 private:
 	void Add(GameObject* gameObject);
 
