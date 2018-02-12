@@ -17,7 +17,8 @@ enum class ComponentType
 class Component
 {
 public:
-	Component(ComponentType type) : enabled(true), type(type) {}
+	Component(ComponentType type) : enabled(true), wasEnabled(true), type(type)
+	{}
 	virtual ~Component() {}
 
 	virtual void Awake(){};
@@ -32,6 +33,11 @@ public:
 		}
 	};
 
+	virtual void SetEnable(bool setEnable)
+	{
+		enabled = setEnable;
+	};
+
 	virtual void RealUpdate(float deltaTimeS, float realDeltaTimeS){};
 	
 	virtual void DrawUI(){};
@@ -41,6 +47,7 @@ public:
 
 public:
 	bool enabled;
+	bool wasEnabled;
 	ComponentType type;
 	GameObject* gameObject = nullptr;
 };

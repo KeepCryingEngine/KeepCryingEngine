@@ -197,13 +197,35 @@ void Camera::SetUpFrustum(const float3& position, const Quat& rotation, float ne
 	SetUpFrustumBuffer();
 }
 
+void Camera::SetEnable(bool setEnable)
+{
+	if(setEnable)
+	{
+		enabled = wasEnabled;
+	}
+	else
+	{
+		enabled = setEnable;
+	}
+
+	App->camera->EnableCamera(enabled ? this : nullptr);
+}
+
 void Camera::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Camera"))
 	{
 		if(ImGui::Checkbox("Active", &enabled))
 		{
-			App->camera->EnableCamera(enabled ? this : nullptr);
+			if(gameObject->IsEnabled())
+			{
+				wasEnabled = enabled;
+				App->camera->EnableCamera(enabled ? this : nullptr);
+			}
+			else
+			{
+				enabled = false;
+			}
 		}
 		
 		ImGui::SameLine();

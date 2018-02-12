@@ -348,7 +348,15 @@ Transform * GameObject::GetTransform() const
 
 void GameObject::DrawUI()
 {
-	ImGui::Checkbox("", &enable); ImGui::SameLine();
+	if(ImGui::Checkbox("", &enable))
+	{
+		for(Component* c : components)
+		{
+			c->SetEnable(enable);
+		}
+	}
+
+	ImGui::SameLine();
 
 	static char buffer[180] = {};
 	strcpy_s(buffer, name.c_str());

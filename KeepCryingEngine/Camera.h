@@ -22,6 +22,8 @@ public:
 	// virtual void Start() override;
 	virtual void Destroy() override;
 
+	virtual void SetEnable(bool setEnable);
+
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
 	void Translate(const float3& offset);
