@@ -22,7 +22,7 @@ public:
 
 	bool CleanUp() override;
 
-	unsigned long long int GetNewGameObjectId();
+	int GetNewGameObjectId();
 
 	GameObject* GetRoot() const;
 
@@ -59,7 +59,7 @@ private:
 
 	std::list<GameObject*> toDestroy;
 
-	unsigned long long int currentGameObjectId = 0;
+	int currentGameObjectId = 0;
 
 	std::list<std::pair<GameObject*, std::pair<float3, bool>>> generatedGameObjects;
 

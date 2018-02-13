@@ -147,7 +147,7 @@ bool ModuleScene::CleanUp()
 	return true;
 }
 
-unsigned long long int ModuleScene::GetNewGameObjectId()
+int ModuleScene::GetNewGameObjectId()
 {
 	return currentGameObjectId++;
 }
@@ -208,9 +208,9 @@ GameObject* ModuleScene::AddCamera(GameObject& parent)
 
 void ModuleScene::Generate(int count, float staticPercentage, float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
 {
-	int staticCount = count * Clamp01(0.01f * staticPercentage);
+	int staticCount = count * (int)Clamp01(0.01f * staticPercentage);
 
-	for(size_t i = 0; i < count; ++i)
+	for(size_t i = 0; i < (unsigned int)count; ++i)
 	{
 		int gameObjectType = rand() % 2;
 
