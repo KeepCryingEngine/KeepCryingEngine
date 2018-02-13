@@ -82,10 +82,18 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
-    <ClCompile Include="Quadtree.cpp" />
-    <ClCompile Include="QuadtreeNode.cpp" />
-    <ClCompile Include="Octree.cpp" />
-    <ClCompile Include="OctreeNode.cpp" />
+    <ClCompile Include="Octree.cpp">
+      <Filter>Trees</Filter>
+    </ClCompile>
+    <ClCompile Include="OctreeNode.cpp">
+      <Filter>Trees</Filter>
+    </ClCompile>
+    <ClCompile Include="Quadtree.cpp">
+      <Filter>Trees</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadtreeNode.cpp">
+      <Filter>Trees</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -184,11 +192,19 @@
     <ClInclude Include="Texture.h">
       <Filter>Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Quadtree.h" />
-    <ClInclude Include="QuadtreeNode.h" />
     <ClInclude Include="Brofiler.h" />
-    <ClInclude Include="Octree.h" />
-    <ClInclude Include="OctreeNode.h" />
+    <ClInclude Include="Octree.h">
+      <Filter>Trees</Filter>
+    </ClInclude>
+    <ClInclude Include="OctreeNode.h">
+      <Filter>Trees</Filter>
+    </ClInclude>
+    <ClInclude Include="Quadtree.h">
+      <Filter>Trees</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadtreeNode.h">
+      <Filter>Trees</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">
@@ -202,6 +218,9 @@
     </Filter>
     <Filter Include="Entities">
       <UniqueIdentifier>{01380f7f-a4ed-4758-b89f-e430ec5dfc0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Trees">
+      <UniqueIdentifier>{e8de5526-ebf0-460c-bf9a-014579bfdf1c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
