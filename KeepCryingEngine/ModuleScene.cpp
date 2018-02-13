@@ -1,9 +1,12 @@
 #include "ModuleScene.h"
 
 #include <queue>
+#include <stack>
 #include <SDL_scancode.h>
+#include <LineSegment.h>
 
 #include "MeshFilter.h"
+#include "Mesh.h"
 #include "MeshRenderer.h"
 #include "GameObject.h"
 #include "Application.h"
@@ -286,6 +289,37 @@ void ModuleScene::SetSpacePartitioningStructure(int spacePartitioningStructure)
 	spaceStructure = spacePartitioningStructure;
 }
 
+bool ModuleScene::RayCast(const float3& origin, const float3& direction, float maxDistance, RayCastHit& rayCastHit) const
+{
+	InitializeRayCastHit(rayCastHit);
+	LineSegment lineSegment = BuildLineSegmentForRayCast(origin, direction, maxDistance);
+
+	bool hit = false;
+	stack<GameObject*> gameObjects;
+	while(!gameObjects.empty())
+	{
+		GameObject* currentGameObject = gameObjects.top();
+		gameObjects.pop();
+
+		for (GameObject * child : currentGameObject->GetChildren())
+		{
+			gameObjects.push(child);
+		}
+
+		hit = RayCastGameObject(currentGameObject, lineSegment, rayCastHit) || hit;
+	}
+
+	return hit;
+}
+
+LineSegment ModuleScene::BuildLineSegmentForRayCast(const math::float3 & origin, const math::float3 & direction, float maxDistance) const
+{
+	LineSegment lineSegment;
+	lineSegment.a = origin;
+	lineSegment.b = direction.Normalized() * maxDistance;
+	return lineSegment;
+}
+
 void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const
 {
 	// Iterative
@@ -324,6 +358,61 @@ void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDel
 	}
 
 	*/
+}
+
+void ModuleScene::InitializeRayCastHit(RayCastHit & rayCastHit) const 
+{
+	rayCastHit.gameObject = nullptr;
+	rayCastHit.normal = float3::zero;
+	rayCastHit.point = float3::zero;
+	rayCastHit.distance = INFINITY;
+	rayCastHit.normalizedDistance = INFINITY;
+}
+
+bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment & lineSegment, RayCastHit& rayCastHit) const
+{
+	bool hit = false;
+	MeshFilter* meshFilter = (MeshFilter*)gameObject->GetComponent(ComponentType::MeshFilter);
+	if (meshFilter)
+	{
+		Mesh* mesh = meshFilter->GetMesh();
+		if (mesh)
+		{
+			hit = RayCastMesh(gameObject, mesh, lineSegment, rayCastHit);
+		}
+	}
+	return hit;
+}
+
+bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSegment & lineSegment, RayCastHit& rayCastHit) const
+{
+	bool hit = false;
+	if (mesh->GetDrawMode() == GL_TRIANGLES)
+	{
+		Triangle triangle;
+		float3 point;
+		float normalizedDistance;
+		size_t currentIndex = 0;
+		for (size_t i = 0; i < 3; i++)
+		{
+			triangle.a = mesh->GetVertices().at(currentIndex++).position;
+			triangle.b = mesh->GetVertices().at(currentIndex++).position;
+			triangle.c = mesh->GetVertices().at(currentIndex++).position;
+			if (lineSegment.Intersects(triangle, &normalizedDistance, &point))
+			{
+				if (normalizedDistance < rayCastHit.normalizedDistance)
+				{
+					rayCastHit.gameObject = gameObject;
+					rayCastHit.normalizedDistance = normalizedDistance;
+					rayCastHit.point = point;
+					rayCastHit.distance = lineSegment.a.Distance(point);
+					rayCastHit.normal = triangle.NormalCCW();
+					hit = true;
+				}
+			}
+		}
+	}
+	return hit;
 }
 
 void ModuleScene::CheckToDestroy()

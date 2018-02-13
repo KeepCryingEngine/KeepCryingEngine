@@ -9,6 +9,21 @@
 #include "KDTree.h"
 
 class GameObject;
+class Mesh;
+
+struct RayCastHit 
+{
+	//The gameObject that was hit
+	GameObject* gameObject;
+	//The impact point in world space where the ray hit the collider.
+	float3 point;
+	//The normal of the surface the ray hit.
+	float3 normal;
+	//The distance from the ray's origin to the impact point.
+	float distance;
+	//The normalized distance from the ray's origin to the impact point
+	float normalizedDistance;
+};
 
 class ModuleScene : public Module
 {
@@ -43,8 +58,13 @@ public:
 	void RemoveStatic(GameObject* gameObject);
 
 	void SetSpacePartitioningStructure(int spacePartitioningStructure);
+	bool RayCast(const float3& origin, const float3& direction, float maxDistance, RayCastHit& rayCastHit) const;
+	LineSegment BuildLineSegmentForRayCast(const math::float3 & origin, const math::float3 & direction, float maxDistance) const;
 
 private:
+	void InitializeRayCastHit(RayCastHit& rayCastHit) const;
+	bool RayCastGameObject(GameObject* gameObject, const LineSegment& lineSegment, RayCastHit& rayCastHit) const;
+	bool RayCastMesh(GameObject* gameObject, Mesh* mesh, const LineSegment& lineSegment, RayCastHit& rayCastHit) const;
 	void CheckToDestroy();
 
 	void Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const;
