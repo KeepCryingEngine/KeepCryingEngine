@@ -1,5 +1,6 @@
 #include "ModuleUI.h"
 
+#include <ImGuizmo.h>
 #include <imgui.h>
 #include <imgui_impl_sdl_gl3.h>
 #include <GL/glew.h>
@@ -13,6 +14,7 @@
 #include "ModuleScene.h"
 #include "GameObject.h"
 #include "Camera.h"
+#include "Transform.h"
 
 ModuleUI::ModuleUI()
 { }
@@ -113,6 +115,10 @@ void ModuleUI::DrawMainMenu()
 					if(ImGui::Selectable("Space Partitioning"))
 					{
 						spacePartitioningWindow ^= 1;
+					}
+					if(ImGui::Selectable("Guizmo"))
+					{
+						imGuizmoWindow ^= 1;
 					}
 					ImGui::EndMenu();
 				}
@@ -404,6 +410,10 @@ void ModuleUI::CallEntityCreation()
 
 void ModuleUI::CallWindows()
 {
+	if(imGuizmoWindow)
+	{
+		DrawGuizmoWindow();
+	}
 	if(cameraWindow)
 	{
 		DrawCameraWindow();
@@ -432,6 +442,78 @@ void ModuleUI::CallWindows()
 	{
 		DrawSpacePartitioningWindow();
 	}
+}
+
+void ModuleUI::DrawGuizmoWindow()
+{
+	ImGui::Begin("Guizmo Window");
+
+		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
+		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+		static bool useSnap = false;
+		static float snap[3] = { 1.f, 1.f, 1.f };
+
+		if(ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+			mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+
+		ImGui::SameLine();
+
+		if(ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
+			mCurrentGizmoOperation = ImGuizmo::ROTATE;
+
+		ImGui::SameLine();
+
+		if(ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
+			mCurrentGizmoOperation = ImGuizmo::SCALE;
+
+		Transform* temp = (Transform*)App->scene->Get(selectedNodeID)->GetComponent(ComponentType::Transform);
+		
+		//float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+
+		float3 matrixTranslation = temp->GetWorldPosition();
+		//float3 matrixRotation = temp->GetWorldRotation();
+		
+		//ImGuizmo::DecomposeMatrixToComponents(temp->GetModelMatrix(), matrixTranslation, matrixRotation, matrixScale);
+
+		ImGui::InputFloat3("Tr", matrixTranslation.ptr(), 3);
+		//ImGui::InputFloat3("Rt", matrixRotation, 3);
+		//ImGui::InputFloat3("Sc", matrixScale, 3);
+
+		//ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
+
+		//if(mCurrentGizmoOperation != ImGuizmo::SCALE)
+		//{
+		//	if(ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
+		//		mCurrentGizmoMode = ImGuizmo::LOCAL;
+		//	ImGui::SameLine();
+		//	if(ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
+		//		mCurrentGizmoMode = ImGuizmo::WORLD;
+		//}
+		//if(ImGui::IsKeyPressed(83))
+		//	useSnap = !useSnap;
+		//ImGui::Checkbox("", &useSnap);
+		//ImGui::SameLine();
+
+		//switch(mCurrentGizmoOperation)
+		//{
+		//	case ImGuizmo::TRANSLATE:
+		//		ImGui::InputFloat3("Snap", &snap[0]);
+		//		break;
+		//	case ImGuizmo::ROTATE:
+		//		ImGui::InputFloat("Angle Snap", &snap[0]);
+		//		break;
+		//	case ImGuizmo::SCALE:
+		//		ImGui::InputFloat("Scale Snap", &snap[0]);
+		//		break;
+		//}
+		ImGuiIO& io = ImGui::GetIO();
+		ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
+		//ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
+		ImGuizmo::Manipulate(App->camera->camera->GetViewMatrix(), App->camera->camera->GetProyectionMatrix(), mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL);
+	
+
+	ImGui::End();
 }
 
 void ModuleUI::DrawCameraWindow()
