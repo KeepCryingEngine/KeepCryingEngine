@@ -94,6 +94,12 @@
     <ClCompile Include="QuadtreeNode.cpp">
       <Filter>Trees</Filter>
     </ClCompile>
+    <ClCompile Include="KDTree.cpp">
+      <Filter>Trees</Filter>
+    </ClCompile>
+    <ClCompile Include="KDTreeNode.cpp">
+      <Filter>Trees</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -203,6 +209,12 @@
       <Filter>Trees</Filter>
     </ClInclude>
     <ClInclude Include="QuadtreeNode.h">
+      <Filter>Trees</Filter>
+    </ClInclude>
+    <ClInclude Include="KDTree.h">
+      <Filter>Trees</Filter>
+    </ClInclude>
+    <ClInclude Include="KDTreeNode.h">
       <Filter>Trees</Filter>
     </ClInclude>
   </ItemGroup>

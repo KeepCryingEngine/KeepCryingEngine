@@ -78,6 +78,10 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 				{
 					oTGameObjects.Intersect(visibleGameObjects, camera->GetFrustum());
 				}
+				else if(spaceStructure == 3)
+				{
+					kTGameObjects.Intersect(visibleGameObjects, camera->GetFrustum());
+				}
 
 				for(GameObject* visibleGameObject : visibleGameObjects)
 				{
@@ -122,6 +126,10 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 			{
 				oTGameObjects.Print();
 			}
+			else if(spaceStructure == 3)
+			{
+				kTGameObjects.Print();
+			}
 		}
 
 		if(spaceStructure == 1)
@@ -131,6 +139,10 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 		else if(spaceStructure == 2)
 		{
 			oTGameObjects.Draw();
+		}
+		else if(spaceStructure == 3)
+		{
+			kTGameObjects.Draw();
 		}
 	}
 
@@ -143,6 +155,7 @@ bool ModuleScene::CleanUp()
 
 	qTGameObjects.Clear();
 	oTGameObjects.Clear();
+	kTGameObjects.Clear();
 
 	return true;
 }
@@ -258,12 +271,14 @@ void ModuleScene::AddStatic(GameObject* gameObject)
 {
 	qTGameObjects.Insert(gameObject);
 	oTGameObjects.Insert(gameObject);
+	kTGameObjects.Insert(gameObject);
 }
 
 void ModuleScene::RemoveStatic(GameObject* gameObject)
 {
 	qTGameObjects.Remove(gameObject);
 	oTGameObjects.Remove(gameObject);
+	kTGameObjects.Remove(gameObject);
 }
 
 void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const

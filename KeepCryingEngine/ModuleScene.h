@@ -6,6 +6,7 @@
 #include "Module.h"
 #include "Octree.h"
 #include "Quadtree.h"
+#include "KDTree.h"
 
 class GameObject;
 
@@ -63,7 +64,7 @@ private:
 
 	std::list<std::pair<GameObject*, std::pair<float3, bool>>> generatedGameObjects;
 
-	uint spaceStructure = 2; // 0 None, 1 Quadtree, 2 Octree
+	uint spaceStructure = 3; // 0 None, 1 Quadtree, 2 Octree, 3 KDTree
 
 	// Quadtree stuff
 
@@ -77,6 +78,9 @@ private:
 	Octree oTGameObjects;
 
 	const float OCTREE_SIZE = 150.0f;
+
+	//KDTree stuff
+	KDtree kTGameObjects;
 };
 
 #endif // !_MODULESCENE_H_
