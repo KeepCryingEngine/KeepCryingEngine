@@ -35,6 +35,7 @@ private:
 	void DrawHierarchyWindow();
 	void DrawInspectorWindow();
 	void DrawGenerateGameObjectWindow();
+	void DrawSpacePartitioningWindow();
 
 	void PrintChildrenOnHierarchy(std::vector<GameObject*> children);
 
@@ -69,6 +70,7 @@ private:
 	bool hierarchyWindow = true;
 	bool inspectorWindow = false;
 	bool generateGameObjectWindow = true;
+	bool spacePartitioningWindow = true;
 
 	//Probably there's a better way of doing this thing...
 	float movementSpeed = 10.0f;

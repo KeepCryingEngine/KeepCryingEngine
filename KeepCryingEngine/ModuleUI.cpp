@@ -110,6 +110,10 @@ void ModuleUI::DrawMainMenu()
 					{
 						speedWindow ^= 1;
 					}
+					if(ImGui::Selectable("Space Partitioning"))
+					{
+						spacePartitioningWindow ^= 1;
+					}
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
@@ -424,6 +428,10 @@ void ModuleUI::CallWindows()
 	{
 		DrawGenerateGameObjectWindow();
 	}
+	if(spacePartitioningWindow)
+	{
+		DrawSpacePartitioningWindow();
+	}
 }
 
 void ModuleUI::DrawCameraWindow()
@@ -642,6 +650,20 @@ void ModuleUI::DrawGenerateGameObjectWindow()
 	if(ImGui::Button("Generate"))
 	{
 		App->scene->Generate(generateGameObjectWindowCount, generateGameObjectWindowStaticPercentage, generateGameObjectWindowLimitX[0], generateGameObjectWindowLimitX[1], generateGameObjectWindowLimitY[0], generateGameObjectWindowLimitY[1], generateGameObjectWindowLimitZ[0], generateGameObjectWindowLimitZ[1]);
+	}
+
+	ImGui::End();
+}
+
+void ModuleUI::DrawSpacePartitioningWindow()
+{
+	ImGui::Begin("Space Partitioning Controls", &spacePartitioningWindow, ImGuiWindowFlags_MenuBar);
+
+	static int spacePartitioningWindowStructure = 0;
+	
+	if(ImGui::Combo("Structure", &spacePartitioningWindowStructure, "None\0Quadtree\0Octree\0KDTree"))
+	{
+		App->scene->SetSpacePartitioningStructure(spacePartitioningWindowStructure);
 	}
 
 	ImGui::End();

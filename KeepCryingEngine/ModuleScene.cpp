@@ -281,6 +281,11 @@ void ModuleScene::RemoveStatic(GameObject* gameObject)
 	kTGameObjects.Remove(gameObject);
 }
 
+void ModuleScene::SetSpacePartitioningStructure(int spacePartitioningStructure)
+{
+	spaceStructure = spacePartitioningStructure;
+}
+
 void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const
 {
 	// Iterative

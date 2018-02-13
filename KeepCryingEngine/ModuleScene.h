@@ -42,6 +42,8 @@ public:
 	void AddStatic(GameObject* gameObject);
 	void RemoveStatic(GameObject* gameObject);
 
+	void SetSpacePartitioningStructure(int spacePartitioningStructure);
+
 private:
 	void CheckToDestroy();
 
@@ -64,22 +66,23 @@ private:
 
 	std::list<std::pair<GameObject*, std::pair<float3, bool>>> generatedGameObjects;
 
-	uint spaceStructure = 3; // 0 None, 1 Quadtree, 2 Octree, 3 KDTree
+	int spaceStructure = 0; // 0 None, 1 Quadtree, 2 Octree, 3 KDTree
 
 	// Quadtree stuff
 
 	Quadtree qTGameObjects;
 
-	const float QUADTREE_SIZE = 150.0f;
-	const float QUADTREE_HEIGHT = 1000.0f;
+	// const float QUADTREE_SIZE = 150.0f;
+	// const float QUADTREE_HEIGHT = 1000.0f;
 
 	// Octree stuff
 
 	Octree oTGameObjects;
 
-	const float OCTREE_SIZE = 150.0f;
+	// const float OCTREE_SIZE = 150.0f;
 
-	//KDTree stuff
+	// KDTree stuff
+
 	KDtree kTGameObjects;
 };
 
