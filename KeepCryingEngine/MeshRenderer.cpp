@@ -1,5 +1,7 @@
 #include "MeshRenderer.h"
 
+#include "Brofiler.h"
+
 #include "Application.h"
 #include "Mesh.h"
 #include "Material.h"
@@ -46,6 +48,7 @@ std::vector<ComponentType> MeshRenderer::GetProhibitedComponents() const
 
 void MeshRenderer::Render(Mesh& mesh)
 {
+	BROFILER_CATEGORY("Render", Profiler::Color::Orchid)
 	if(enabled)
 	{
 		if(material)
