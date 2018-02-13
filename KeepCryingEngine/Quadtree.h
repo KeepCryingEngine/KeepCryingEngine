@@ -1,34 +1,25 @@
 #ifndef _QUADTREE_H_
 #define _QUADTREE_H_
 
-#include <AABB.h>
-#include <vector>
+#include "Tree.h"
 
-class GameObject;
-class QuadtreeNode;
-
-class Quadtree
+class Quadtree : public Tree
 {
 public:
 	Quadtree();
+
 	virtual ~Quadtree();
 
-	void Create(const AABB& aabb);
+protected:
+	virtual void CreateRoot() override;
 
-	void Clear();
+	virtual bool CheckNewMinLimit(float3 minPointA, float3 minPointB) const override;
 
-	void Insert(GameObject* gameObject);
+	virtual bool CheckNewMaxLimit(float3 maxPointA, float3 maxPointB) const override;
 
-	void Remove(GameObject* gameObject);
+	virtual bool CheckSameMinLimit(float3 minPointA, float3 minPointB) const override;
 
-	void Intersect(std::vector<GameObject*>& gameObjects, const Frustum& frustum) const;
-
-	void Print() const;
-
-	void Draw() const;
-
-private:
-	QuadtreeNode* root = nullptr;
+	virtual bool CheckSameMaxLimit(float3 maxPointA, float3 maxPointB) const override;
 };
 
 #endif
