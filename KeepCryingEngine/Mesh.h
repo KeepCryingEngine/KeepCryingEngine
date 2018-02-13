@@ -5,6 +5,8 @@
 #include <AABB.h>
 #include <MathGeoLib.h>
 
+#include <vector>
+
 struct Vertex
 {
 	float3 position;
@@ -19,14 +21,16 @@ public:
 	Mesh();
 	virtual ~Mesh();
 
+	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, GLenum drawMode);
+
 	const AABB& GetAABB() const;
 	GLuint GetVertexBufferId() const;
 	GLuint GetIndicesBufferId() const;
 	GLsizei GetVerticesNumber() const;
 	GLsizei GetIndicesNumber() const;
 	GLenum GetDrawMode()const;
-
-	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, GLenum drawMode);
+	const std::vector<Vertex>& GetVertices() const;
+	const std::vector<GLushort>& GetIndices() const;
 
 private:
 	void GenerateBuffers(const std::vector<Vertex> vertices, const std::vector<GLushort> indices);
@@ -39,6 +43,9 @@ private:
 	GLsizei nVertices = 0;
 	GLsizei nIndices = 0;
 	GLenum drawMode = GL_TRIANGLES;
+
+	std::vector<Vertex> vertices;
+	std::vector<GLushort> indices;
 
 };
 
