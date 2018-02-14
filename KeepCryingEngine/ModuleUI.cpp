@@ -125,7 +125,6 @@ void ModuleUI::DrawMainMenu()
 			}
 			ImGui::EndMenu();
 		}
-
 		static GLfloat color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		if(ImGui::BeginMenu("Parameters"))
 		{
@@ -448,8 +447,9 @@ void ModuleUI::DrawGuizmoWindow()
 {
 	ImGui::Begin("Guizmo Window");
 
-	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::SCALE);
 	static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+
 	static bool useSnap = false;
 	static float snap[3] = { 1.f, 1.f, 1.f };
 
@@ -468,35 +468,33 @@ void ModuleUI::DrawGuizmoWindow()
 
 	Transform* temp = (Transform*)App->scene->Get(selectedNodeID)->GetComponent(ComponentType::Transform);
 		
-	float matrixTranslation[3] = { temp->GetLocalPosition().x, temp->GetLocalPosition().y, temp->GetLocalPosition().z };
-	float matrixRotation[3] = { temp->GetEulerLocalRotation().x, temp->GetEulerLocalRotation().y, temp->GetEulerLocalRotation().z};
-	float matrixScale[3] = { temp->GetLocalScale().x, temp->GetLocalScale().y, temp->GetLocalScale().z};
+	float matrixTranslation[3], matrixRotation[3], matrixScale[3];
 		
 	//ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
 
-	if(ImGui::DragFloat3("Position", matrixTranslation, 0.1f))
-	{
-		temp->SetLocalPosition((float3)matrixTranslation);
-	}
-	if(ImGui::DragFloat3("Rotation", matrixRotation, 0.1f))
-	{
+	//if(ImGui::DragFloat3("Position", matrixTranslation, 0.1f))
+	//{
+	//	temp->SetLocalPosition((float3)matrixTranslation);
+	//}
+	//if(ImGui::DragFloat3("Rotation", matrixRotation, 0.1f))
+	//{
 
-	}
-	if(ImGui::DragFloat3("Scale", matrixScale, 0.1f))
-	{
-		temp->SetLocalScale((float3)matrixScale);
-	}
+	//}
+	//if(ImGui::DragFloat3("Scale", matrixScale, 0.1f))
+	//{
+	//	temp->SetLocalScale((float3)matrixScale);
+	//}
 
 	//ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
 
-	if(mCurrentGizmoOperation != ImGuizmo::SCALE)
-	{
-		if(ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
-			mCurrentGizmoMode = ImGuizmo::LOCAL;
-		ImGui::SameLine();
-		if(ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
-			mCurrentGizmoMode = ImGuizmo::WORLD;
-	}
+	//if(mCurrentGizmoOperation != ImGuizmo::SCALE)
+	//{
+	//	if(ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
+	//		mCurrentGizmoMode = ImGuizmo::LOCAL;
+	//	ImGui::SameLine();
+	//	if(ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
+	//		mCurrentGizmoMode = ImGuizmo::WORLD;
+	//}
 	//if(ImGui::IsKeyPressed(83))
 	//	useSnap = !useSnap;
 	//ImGui::Checkbox("", &useSnap);
@@ -519,8 +517,14 @@ void ModuleUI::DrawGuizmoWindow()
 
 	float* objectMatrix = (float*)temp->GetModelMatrix().ptr();
 
-	ImGuizmo::Manipulate(App->camera->camera->GetViewMatrix().ptr(), App->camera->camera->GetProyectionMatrix().ptr(), mCurrentGizmoOperation, mCurrentGizmoMode, objectMatrix, NULL, useSnap ? &snap[0] : NULL);
-	
+	if (selectedNodeID != 0)
+	{
+		ImGuizmo::Manipulate(App->camera->camera->GetViewMatrix().ptr(), App->camera->camera->GetProyectionMatrix().ptr(), mCurrentGizmoOperation, mCurrentGizmoMode, objectMatrix, nullptr, useSnap ? &snap[0] : NULL);
+		ImGuizmo::DecomposeMatrixToComponents(objectMatrix, matrixTranslation, matrixRotation, matrixScale);
+
+		temp->SetWorldScale((float3)matrixScale);
+		
+	}
 	ImGui::End();
 }
 
