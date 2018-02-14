@@ -3,8 +3,6 @@
 
 #include "TreeNode.h"
 
-class GameObject;
-
 class KDtreeNode : public TreeNode
 {
 private:
@@ -27,7 +25,7 @@ protected:
 
 	virtual void Divide(AABB* aabbs) override;
 
-	virtual TreeNode* CreateChildren() const override;
+	virtual void CreateChildren() override;
 
 	virtual void SetUpChildren(const AABB* aabbs) const override;
 

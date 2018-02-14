@@ -2,6 +2,8 @@
 
 #include <float2.h>
 
+using namespace std;
+
 QuadtreeNode::QuadtreeNode()
 { }
 
@@ -34,17 +36,24 @@ void QuadtreeNode::Divide(AABB* aabbs)
 	aabbs[3] = AABB(float3(midX, minY, minZ), float3(maxX, maxY, midZ));
 }
 
-TreeNode* QuadtreeNode::CreateChildren() const
+void QuadtreeNode::CreateChildren()
 {
-	return new QuadtreeNode[GetChildrenAmount()];
+	children = vector<TreeNode*>();
+
+	for(size_t i = 0; i < GetChildrenAmount(); ++i)
+	{
+		children.push_back(new QuadtreeNode());
+	}
 }
 
-/* float QuadtreeNode::GetMinDrawY() const
+float QuadtreeNode::GetMinDrawY() const
 {
-	return -5.0f;
+	// return -5.0f;
+	return TreeNode::GetMinDrawY();
 }
 
 float QuadtreeNode::GetMaxDrawY() const
 {
-	return 5.0f;
-} */
+	// return 5.0f;
+	return TreeNode::GetMaxDrawY();
+}

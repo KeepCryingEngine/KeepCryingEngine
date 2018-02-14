@@ -3,8 +3,6 @@
 
 #include "TreeNode.h"
 
-class GameObject;
-
 class QuadtreeNode : public TreeNode
 {
 public:
@@ -17,11 +15,11 @@ protected:
 
 	virtual void Divide(AABB* aabbs) override;
 
-	virtual TreeNode* CreateChildren() const override;
+	virtual void CreateChildren() override;
 
-	// virtual float GetMinDrawY() const override;
+	virtual float GetMinDrawY() const override;
 
-	// virtual float GetMaxDrawY() const override;
+	virtual float GetMaxDrawY() const override;
 };
 
 #endif

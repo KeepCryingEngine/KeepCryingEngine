@@ -1,5 +1,7 @@
 #include "OctreeNode.h"
 
+using namespace std;
+
 OctreeNode::OctreeNode()
 { }
 
@@ -55,7 +57,12 @@ void OctreeNode::Divide(AABB* aabbs)
 	aabbs[7] = AABB(bbb, ccc);
 }
 
-TreeNode* OctreeNode::CreateChildren() const
+void OctreeNode::CreateChildren()
 {
-	return new OctreeNode[GetChildrenAmount()];
+	children = vector<TreeNode*>();
+
+	for(size_t i = 0; i < GetChildrenAmount(); ++i)
+	{
+		children.push_back(new OctreeNode());
+	}
 }

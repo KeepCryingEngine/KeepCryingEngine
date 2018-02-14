@@ -54,33 +54,35 @@ void KDtreeNode::Divide(AABB* aabbs)
 			rightAABBMin.z = median;
 		}
 		break;
-		default:
-			break;
 	}
 
 	aabbs[0] = AABB(minPoint, leftAABBMax);
 	aabbs[1] = AABB(rightAABBMin, maxPoint);
 }
 
-TreeNode* KDtreeNode::CreateChildren() const
+void KDtreeNode::CreateChildren()
 {
-	return new KDtreeNode[GetChildrenAmount()];
+	children = vector<TreeNode*>();
+
+	for(size_t i = 0; i < GetChildrenAmount(); ++i)
+	{
+		children.push_back(new KDtreeNode());
+	}
 }
 
 void KDtreeNode::SetUpChildren(const AABB* aabbs) const
 {
-	KDtreeNode* children = (KDtreeNode*)this->children;
-
 	for(size_t i = 0; i < GetChildrenAmount(); ++i)
 	{
-		children[i].Resize(aabbs[i]);
-		children[i].SetCutAxis(GetNextAxis(actualCut));
+		children[i]->Resize(aabbs[i]);
+		((KDtreeNode*)children[i])->SetCutAxis(GetNextAxis(actualCut));
 	}
 }
 
 KDtreeNode::CutAxis KDtreeNode::GetNextAxis(KDtreeNode::CutAxis actual) const
 {
 	CutAxis ret;
+
 	switch(actual)
 	{
 		case KDtreeNode::CutAxis::X:
@@ -101,12 +103,14 @@ KDtreeNode::CutAxis KDtreeNode::GetNextAxis(KDtreeNode::CutAxis actual) const
 		default:
 			assert(false);
 	}
+
 	return ret;
 }
 
 float KDtreeNode::GetMedianAxis(CutAxis axis) const
 {
 	list<float> points;
+
 	switch(actualCut)
 	{
 		case KDtreeNode::CutAxis::X:
@@ -137,18 +141,21 @@ float KDtreeNode::GetMedianAxis(CutAxis axis) const
 			assert(false);
 	}
 
-	bool isEven = ((points.size()%2)==0);
+	bool isEven = ((points.size() % 2) == 0);
 
 	points.sort();
 
 	float ret;
 	int higherIndex = (points.size() / 2);
 	int lowerIndex = higherIndex - 1;
+
 	if(isEven)
 	{
 		list<float>::iterator it = next(points.begin(), lowerIndex);
+
 		float v1 = (*it);
 		float v2 = *(++it);
+
 		ret = (v1 + v2) / 2.0f;
 	}
 	else

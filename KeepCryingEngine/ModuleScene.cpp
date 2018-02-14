@@ -150,8 +150,8 @@ bool ModuleScene::CleanUp()
 {
 	DestroyAndRelease(root);
 
-	//qTGameObjects.Clear();
-	//oTGameObjects.Clear();
+	qTGameObjects.Clear();
+	oTGameObjects.Clear();
 	kTGameObjects.Clear();
 
 	return true;
@@ -266,15 +266,15 @@ void ModuleScene::Destroy(GameObject& gameObject)
 
 void ModuleScene::AddStatic(GameObject* gameObject)
 {
-	//qTGameObjects.Insert(gameObject);
-	//oTGameObjects.Insert(gameObject);
+	qTGameObjects.Insert(gameObject);
+	oTGameObjects.Insert(gameObject);
 	kTGameObjects.Insert(gameObject);
 }
 
 void ModuleScene::RemoveStatic(GameObject* gameObject)
 {
-	//qTGameObjects.Remove(gameObject);
-	//oTGameObjects.Remove(gameObject);
+	qTGameObjects.Remove(gameObject);
+	oTGameObjects.Remove(gameObject);
 	kTGameObjects.Remove(gameObject);
 }
 

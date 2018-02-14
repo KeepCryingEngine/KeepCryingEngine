@@ -27,14 +27,16 @@ void TreeNode::Clear()
 
 	content.clear();
 
-	if(children != nullptr)
+	if(!IsLeaf())
 	{
 		for(size_t i = 0; i < GetChildrenAmount(); ++i)
 		{
-			children[i].Clear();
+			children[i]->Clear();
+
+			RELEASE(children[i]);
 		}
 
-		RELEASE_ARRAY(children);
+		children.clear();
 	}
 }
 
@@ -47,7 +49,7 @@ void TreeNode::Insert(GameObject* gameObject)
 
 	if(aabb.Intersects(gameObject->GetAABB()))
 	{
-		if(children == nullptr)
+		if(IsLeaf())
 		{
 			content.push_back(gameObject);
 
@@ -67,7 +69,7 @@ void TreeNode::Remove(GameObject* gameObject)
 {
 	if(aabb.Intersects(gameObject->GetAABB()))
 	{
-		if(children == nullptr)
+		if(IsLeaf())
 		{
 			content.erase(remove(content.begin(), content.end(), gameObject), content.end());
 		}
@@ -78,20 +80,22 @@ void TreeNode::Remove(GameObject* gameObject)
 
 			for(size_t i = 0; i < GetChildrenAmount(); ++i)
 			{
-				children[i].Remove(gameObject);
+				children[i]->Remove(gameObject);
 
-				allLeaves &= children[i].children == nullptr;
-				countContentChildren += children[i].content.size();
+				allLeaves &= children[i]->IsLeaf();
+				countContentChildren += children[i]->content.size();
 			}
 
 			if(allLeaves && countContentChildren <= bucketSize)
 			{
 				for(size_t i = 0; i < GetChildrenAmount(); ++i)
 				{
-					content.insert(content.end(), children[i].content.begin(), children[i].content.end());
+					content.insert(content.end(), children[i]->content.begin(), children[i]->content.end());
+
+					RELEASE(children[i]);
 				}
 
-				RELEASE_ARRAY(children);
+				children.clear();
 			}
 		}
 	}
@@ -109,11 +113,11 @@ void TreeNode::Intersect(vector<GameObject*>& gameObjects, const Frustum& frustu
 			}
 		}
 
-		if(children != nullptr)
+		if(!IsLeaf())
 		{
 			for(size_t i = 0; i < GetChildrenAmount(); ++i)
 			{
-				children[i].Intersect(gameObjects, frustum);
+				children[i]->Intersect(gameObjects, frustum);
 			}
 		}
 	}
@@ -134,11 +138,11 @@ void TreeNode::Print(uint level) const
 
 	LOG_DEBUG(node.c_str(), this, content.size());
 
-	if(children != nullptr)
+	if(!IsLeaf())
 	{
 		for(size_t i = 0; i < GetChildrenAmount(); ++i)
 		{
-			children[i].Print(level + 1);
+			children[i]->Print(level + 1);
 		}
 	}
 }
@@ -211,11 +215,11 @@ void TreeNode::Draw() const
 
 	glPopMatrix();
 
-	if(children != nullptr)
+	if(!IsLeaf())
 	{
 		for(size_t i = 0; i < GetChildrenAmount(); ++i)
 		{
-			children[i].Draw();
+			children[i]->Draw();
 		}
 	}
 }
@@ -234,21 +238,36 @@ void TreeNode::GetAllContent(set<GameObject*>& allContent) const
 {
 	allContent.insert(content.begin(), content.end());
 
-	if(children != nullptr)
+	if(!IsLeaf())
 	{
 		for(size_t i = 0; i < GetChildrenAmount(); ++i)
 		{
-			children[i].GetAllContent(allContent);
+			children[i]->GetAllContent(allContent);
 		}
 	}
+}
+
+bool TreeNode::IsLeaf() const
+{
+	return children.empty();
 }
 
 void TreeNode::SetUpChildren(const AABB* aabbs) const
 {
 	for(size_t i = 0; i < GetChildrenAmount(); ++i)
 	{
-		children[i].Resize(aabbs[i]);
+		children[i]->Resize(aabbs[i]);
 	}
+}
+
+float TreeNode::GetMinDrawY() const
+{
+	return aabb.minPoint.y;
+}
+
+float TreeNode::GetMaxDrawY() const
+{
+	return aabb.maxPoint.y;
 }
 
 bool TreeNode::EndRecursion(AABB* aabbs) const
@@ -264,21 +283,11 @@ bool TreeNode::EndRecursion(AABB* aabbs) const
 	return false;
 }
 
-float TreeNode::GetMinDrawY() const
-{
-	return aabb.minPoint.y;
-}
-
-float TreeNode::GetMaxDrawY() const
-{
-	return aabb.maxPoint.y;
-}
-
 void TreeNode::Add(GameObject* gameObject)
 {
 	for(size_t i = 0; i < GetChildrenAmount(); ++i)
 	{
-		children[i].Insert(gameObject);
+		children[i]->Insert(gameObject);
 	}
 }
 
@@ -295,7 +304,7 @@ void TreeNode::DivideAndReorganizeContent()
 		return;
 	}
 
-	children = CreateChildren();
+	CreateChildren();
 
 	SetUpChildren(aabbs);
 
@@ -305,7 +314,7 @@ void TreeNode::DivideAndReorganizeContent()
 	{
 		for(size_t i = 0; i < GetChildrenAmount(); ++i)
 		{
-			children[i].Insert(gameObject);
+			children[i]->Insert(gameObject);
 		}
 	}
 

@@ -36,20 +36,22 @@ public:
 
 	void GetAllContent(std::set<GameObject*>& allContent) const;
 
+	bool IsLeaf() const;
+
 protected:
 	virtual uint GetChildrenAmount() const = 0;
 
 	virtual void Divide(AABB* aabbs) = 0;
 
-	virtual TreeNode* CreateChildren() const = 0;
+	virtual void CreateChildren() = 0;
 
 	virtual void SetUpChildren(const AABB* aabbs) const;
-
-	virtual bool EndRecursion(AABB* aabbs) const;
 
 	virtual float GetMinDrawY() const;
 
 	virtual float GetMaxDrawY() const;
+
+	bool EndRecursion(AABB* aabbs) const;
 
 	void Add(GameObject* gameObject);
 
@@ -58,10 +60,10 @@ protected:
 	static uint GetNumberIntersections(const AABB& aabb, const std::vector<GameObject*>& content);
 
 protected:
-	const static int bucketSize = 1;
+	const static int bucketSize = 5;
 
 	AABB aabb;
-	TreeNode* children = nullptr;
+	std::vector<TreeNode*> children;
 	std::vector<GameObject*> content;
 };
 
