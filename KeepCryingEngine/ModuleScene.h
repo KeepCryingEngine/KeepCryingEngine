@@ -59,10 +59,12 @@ public:
 
 	void SetSpacePartitioningStructure(int spacePartitioningStructure);
 	bool RayCast(const float3& origin, const float3& direction, float maxDistance, RayCastHit& rayCastHit) const;
-	LineSegment BuildLineSegmentForRayCast(const math::float3 & origin, const math::float3 & direction, float maxDistance) const;
+	std::vector<RayCastHit> RayCastAll(const float3& origin, const float3& direction, float maxDistance) const;
+
 
 private:
 	void InitializeRayCastHit(RayCastHit& rayCastHit) const;
+	LineSegment BuildLineSegmentForRayCast(const math::float3 & origin, const math::float3 & direction, float maxDistance) const;
 	bool RayCastGameObject(GameObject* gameObject, const LineSegment& lineSegment, RayCastHit& rayCastHit) const;
 	bool RayCastMesh(GameObject* gameObject, Mesh* mesh, const LineSegment& lineSegment, RayCastHit& rayCastHit) const;
 	void CheckToDestroy();

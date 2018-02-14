@@ -353,6 +353,7 @@ bool ModuleScene::RayCast(const float3& origin, const float3& direction, float m
 
 	bool hit = false;
 	stack<GameObject*> gameObjects;
+	gameObjects.push(root);
 	while (!gameObjects.empty())
 	{
 		GameObject* currentGameObject = gameObjects.top();
@@ -363,10 +364,47 @@ bool ModuleScene::RayCast(const float3& origin, const float3& direction, float m
 			gameObjects.push(child);
 		}
 
-		hit = RayCastGameObject(currentGameObject, lineSegment, rayCastHit) || hit;
+		bool currentGameObjectHit = RayCastGameObject(currentGameObject, lineSegment, rayCastHit);
+		hit = hit || currentGameObjectHit;
 	}
 
 	return hit;
+}
+
+std::vector<RayCastHit> ModuleScene::RayCastAll(const float3 & origin, const float3 & direction, float maxDistance) const
+{
+	vector<RayCastHit> rayCastHits;
+	RayCastHit rayCastHit;
+	InitializeRayCastHit(rayCastHit);
+
+	LineSegment lineSegment = BuildLineSegmentForRayCast(origin, direction, maxDistance);
+
+	stack<GameObject*> gameObjects;
+	gameObjects.push(root);
+
+
+	while (!gameObjects.empty())
+	{
+		GameObject* currentGameObject = gameObjects.top();
+		gameObjects.pop();
+
+		for (GameObject * child : currentGameObject->GetChildren())
+		{
+			gameObjects.push(child);
+		}
+		
+		bool hit = RayCastGameObject(currentGameObject, lineSegment, rayCastHit);
+		if (hit)
+		{
+			rayCastHits.push_back(rayCastHit);
+			InitializeRayCastHit(rayCastHit);
+		}
+	}
+
+	auto sortRayCastFunction = [](const RayCastHit& a, const RayCastHit& b) -> bool { return a.normalizedDistance < b.normalizedDistance; };
+	sort(rayCastHits.begin(), rayCastHits.end(), sortRayCastFunction);
+
+	return rayCastHits;
 }
 
 bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment & lineSegment, RayCastHit& rayCastHit) const
@@ -383,6 +421,8 @@ bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment &
 	}
 	return hit;
 }
+
+bool NextMeshTriangle(Mesh* mesh, Triangle& triangle, size_t& index);
 
 bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSegment & lineSegment, RayCastHit& rayCastHit) const
 {
@@ -424,9 +464,9 @@ bool NextMeshTriangle(Mesh* mesh, Triangle& triangle, size_t& index)
 		if (mesh->GetDrawMode() == GL_TRIANGLES)
 		{
 			assert(index <= mesh->GetIndicesNumber() - 3);
-			triangle.a = mesh->GetVertices().at(index++).position;
-			triangle.b = mesh->GetVertices().at(index++).position;
-			triangle.c = mesh->GetVertices().at(index++).position;
+			triangle.a = mesh->GetVertices().at(mesh->GetIndices().at(index++)).position;
+			triangle.b = mesh->GetVertices().at(mesh->GetIndices().at(index++)).position;
+			triangle.c = mesh->GetVertices().at(mesh->GetIndices().at(index++)).position;
 			ret = true;
 		}
 	}
