@@ -65,8 +65,11 @@ public:
 private:
 	void InitializeRayCastHit(RayCastHit& rayCastHit) const;
 	LineSegment BuildLineSegmentForRayCast(const math::float3 & origin, const math::float3 & direction, float maxDistance) const;
+	LineSegment ProjectLineSegmentToGameObjectsLocalSpace(const LineSegment& worldSpaceLineSegment, const GameObject& gameObject) const;
 	bool RayCastGameObject(GameObject* gameObject, const LineSegment& lineSegment, RayCastHit& rayCastHit) const;
 	bool RayCastMesh(GameObject* gameObject, Mesh* mesh, const LineSegment& lineSegment, RayCastHit& rayCastHit) const;
+	
+
 	void CheckToDestroy();
 
 	void Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const;

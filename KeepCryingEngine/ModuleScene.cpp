@@ -43,6 +43,13 @@ update_status ModuleScene::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 {
+	if (App->input->GetKeyPressed(SDL_SCANCODE_SPACE))
+	{
+		RayCastHit rch;
+		bool hit = RayCast(float3(0, 0, -10), float3(0, 0, 1), 20, rch);
+		hit = hit;
+	}
+
 	if(!App->ui->GetFrustumCulling())
 	{
 		// All visible
@@ -293,8 +300,30 @@ LineSegment ModuleScene::BuildLineSegmentForRayCast(const math::float3 & origin,
 {
 	LineSegment lineSegment;
 	lineSegment.a = origin;
-	lineSegment.b = direction.Normalized() * maxDistance;
+	lineSegment.b = origin + direction.Normalized() * maxDistance;
 	return lineSegment;
+}
+
+LineSegment ModuleScene::ProjectLineSegmentToGameObjectsLocalSpace(const LineSegment & worldSpaceLineSegment, const GameObject& gameObject) const
+{
+	float4x4 worldSpaceLineSegmentMatrix = float4x4::Translate(worldSpaceLineSegment.a);
+
+	float4x4 gameObjectWorldMatrixWithoutTranslation = gameObject.GetTransform()->GetModelMatrix();
+	gameObjectWorldMatrixWithoutTranslation.SetTranslatePart(float3::zero);
+
+	float3 lineSegmentOriginInWorldSpace = worldSpaceLineSegment.a - gameObject.GetTransform()->GetWorldPosition();
+	float4x4 worldSpaceTranslationMatrix = float4x4::Translate(lineSegmentOriginInWorldSpace);
+
+	//float4x4 worldToLocal = worldSpaceLineSegmentMatrix.Inverted().Mul(gameObjectWorldMatrixWithoutTranslation).Mul(worldSpaceTranslationMatrix);
+	//float4x4 worldToLocal = localSpaceTranslationMatrix.Mul(gameObjectWorldMatrixWithoutTranslation).Mul(worldSpaceLineSegmentMatrix.Inverted());
+
+	LineSegment gameObjectSpaceLineSegment(worldSpaceLineSegment);
+	gameObjectSpaceLineSegment.Transform(worldSpaceLineSegmentMatrix.Inverted());
+	gameObjectSpaceLineSegment.Transform(gameObjectWorldMatrixWithoutTranslation);
+	gameObjectSpaceLineSegment.Transform(worldSpaceTranslationMatrix);
+
+	//gameObjectSpaceLineSegment.Transform(worldToLocal);
+	return gameObjectSpaceLineSegment;
 }
 
 void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const
@@ -427,17 +456,18 @@ bool NextMeshTriangle(Mesh* mesh, Triangle& triangle, size_t& index);
 bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
 {
 	bool hit = false;
-
+	LineSegment localGameObjectSpaceLineSegment = ProjectLineSegmentToGameObjectsLocalSpace(worldSpaceLineSegment, *gameObject);
 	Triangle triangle;
 	size_t index = 0;
 	while (NextMeshTriangle(mesh, triangle, index))
 	{
 		float3 point;
 		float normalizedDistance;
-		if (worldSpaceLineSegment.Intersects(triangle, &normalizedDistance, &point))
+		if (localGameObjectSpaceLineSegment.Intersects(triangle, &normalizedDistance, &point))
 		{
 			if (normalizedDistance < rayCastHit.normalizedDistance)
 			{
+				//TODO transform point and normal to world space
 				rayCastHit.gameObject = gameObject;
 				rayCastHit.normalizedDistance = normalizedDistance;
 				rayCastHit.point = point;
