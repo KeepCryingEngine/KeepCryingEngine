@@ -27,17 +27,17 @@ public:
 	void Draw() const;
 
 protected:
-	virtual void CreateRoot() = 0;
-
-	virtual bool CheckNewMinLimit(float3 minPointA, float3 minPointB) const = 0;
-
-	virtual bool CheckNewMaxLimit(float3 maxPointA, float3 maxPointB) const = 0;
-
-	virtual bool CheckSameMinLimit(float3 minPointA, float3 minPointB) const = 0;
-
-	virtual bool CheckSameMaxLimit(float3 maxPointA, float3 maxPointB) const = 0;
+	virtual TreeNode* CreateRoot() const = 0;
 
 private:
+	bool CheckNewMinLimit(float3 minPointA, float3 minPointB) const;
+
+	bool CheckNewMaxLimit(float3 maxPointA, float3 maxPointB) const;
+
+	bool CheckSameMinLimit(float3 minPointA, float3 minPointB) const;
+
+	bool CheckSameMaxLimit(float3 maxPointA, float3 maxPointB) const;
+
 	void Rebuild();
 
 	void Resize(const AABB& aabb);

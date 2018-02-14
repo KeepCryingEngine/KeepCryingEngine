@@ -25,9 +25,6 @@ bool ModuleScene::Init()
 {
 	root = new GameObject("Root");
 
-	//qTGameObjects.Create(AABB(float3(-QUADTREE_SIZE, -QUADTREE_HEIGHT, -QUADTREE_SIZE), float3(QUADTREE_SIZE, QUADTREE_HEIGHT, QUADTREE_SIZE)));
-	//oTGameObjects.Create(AABB(float3(-OCTREE_SIZE, -OCTREE_SIZE, -OCTREE_SIZE), float3(OCTREE_SIZE, OCTREE_SIZE, OCTREE_SIZE)));
-
 	return true;
 }
 
@@ -80,7 +77,7 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 				}
 				else if(spaceStructure == 3)
 				{
-					//kTGameObjects.Intersect(visibleGameObjects, camera->GetFrustum());
+					kTGameObjects.Intersect(visibleGameObjects, camera->GetFrustum());
 				}
 
 				for(GameObject* visibleGameObject : visibleGameObjects)
@@ -128,7 +125,7 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 			}
 			else if(spaceStructure == 3)
 			{
-				//kTGameObjects.Print();
+				kTGameObjects.Print();
 			}
 		}
 
@@ -142,7 +139,7 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 		}
 		else if(spaceStructure == 3)
 		{
-			//kTGameObjects.Draw();
+			kTGameObjects.Draw();
 		}
 	}
 
@@ -153,9 +150,9 @@ bool ModuleScene::CleanUp()
 {
 	DestroyAndRelease(root);
 
-	qTGameObjects.Clear();
-	oTGameObjects.Clear();
-	//kTGameObjects.Clear();
+	//qTGameObjects.Clear();
+	//oTGameObjects.Clear();
+	kTGameObjects.Clear();
 
 	return true;
 }
@@ -269,16 +266,16 @@ void ModuleScene::Destroy(GameObject& gameObject)
 
 void ModuleScene::AddStatic(GameObject* gameObject)
 {
-	qTGameObjects.Insert(gameObject);
-	oTGameObjects.Insert(gameObject);
-	//kTGameObjects.Insert(gameObject);
+	//qTGameObjects.Insert(gameObject);
+	//oTGameObjects.Insert(gameObject);
+	kTGameObjects.Insert(gameObject);
 }
 
 void ModuleScene::RemoveStatic(GameObject* gameObject)
 {
-	qTGameObjects.Remove(gameObject);
-	oTGameObjects.Remove(gameObject);
-	//kTGameObjects.Remove(gameObject);
+	//qTGameObjects.Remove(gameObject);
+	//oTGameObjects.Remove(gameObject);
+	kTGameObjects.Remove(gameObject);
 }
 
 void ModuleScene::SetSpacePartitioningStructure(int spacePartitioningStructure)

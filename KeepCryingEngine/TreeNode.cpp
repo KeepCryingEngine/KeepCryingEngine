@@ -1,6 +1,5 @@
 #include "TreeNode.h"
 
-#include <Frustum.h>
 #include <GL/glew.h>
 #include <algorithm>
 
@@ -24,6 +23,8 @@ void TreeNode::Resize(const AABB& aabb)
 
 void TreeNode::Clear()
 {
+	aabb.SetNegativeInfinity();
+
 	content.clear();
 
 	if(children != nullptr)
@@ -39,7 +40,7 @@ void TreeNode::Clear()
 
 void TreeNode::Insert(GameObject* gameObject)
 {
-	if(aabb.Volume() == 0.0f)
+	if(aabb.Volume() == -inf)
 	{
 		Resize(gameObject->GetAABB());
 	}
@@ -96,7 +97,7 @@ void TreeNode::Remove(GameObject* gameObject)
 	}
 }
 
-void TreeNode::Intersect(std::vector<GameObject*>& gameObjects, const Frustum& frustum) const
+void TreeNode::Intersect(vector<GameObject*>& gameObjects, const Frustum& frustum) const
 {
 	if(Camera::Intersects(frustum, aabb))
 	{
@@ -179,8 +180,6 @@ void TreeNode::Draw() const
 	glVertex3f(minX, minY, maxZ);
 	glVertex3f(minX, minY, minZ);
 
-	// ...
-
 	glVertex3f(minX, maxY, minZ);
 	glVertex3f(maxX, maxY, minZ);
 
@@ -192,8 +191,6 @@ void TreeNode::Draw() const
 
 	glVertex3f(minX, maxY, maxZ);
 	glVertex3f(minX, maxY, minZ);
-
-	// ...
 
 	glVertex3f(minX, minY, minZ);
 	glVertex3f(minX, maxY, minZ);
@@ -228,16 +225,42 @@ const AABB& TreeNode::GetAABB() const
 	return aabb;
 }
 
-const std::vector<GameObject*>& TreeNode::GetContent() const
+const vector<GameObject*>& TreeNode::GetContent() const
 {
 	return content;
 }
 
-void TreeNode::GetAllContent(std::vector<GameObject*>& allContent) const
-{}
+void TreeNode::GetAllContent(set<GameObject*>& allContent) const
+{
+	allContent.insert(content.begin(), content.end());
+
+	if(children != nullptr)
+	{
+		for(size_t i = 0; i < GetChildrenAmount(); ++i)
+		{
+			children[i].GetAllContent(allContent);
+		}
+	}
+}
+
+void TreeNode::SetUpChildren(const AABB* aabbs) const
+{
+	for(size_t i = 0; i < GetChildrenAmount(); ++i)
+	{
+		children[i].Resize(aabbs[i]);
+	}
+}
 
 bool TreeNode::EndRecursion(AABB* aabbs) const
 {
+	for(size_t i = 0; i < GetChildrenAmount(); ++i)
+	{
+		if(GetNumberIntersections(aabbs[i], content) == content.size())
+		{
+			return true;
+		}
+	}
+
 	return false;
 }
 
@@ -267,15 +290,14 @@ void TreeNode::DivideAndReorganizeContent()
 
 	if(EndRecursion(aabbs))
 	{
+		RELEASE_ARRAY(aabbs);
+
 		return;
 	}
 
-	CreateChildren();
+	children = CreateChildren();
 
-	for(size_t i = 0; i < GetChildrenAmount(); ++i)
-	{
-		children[i].Resize(aabbs[i]);
-	}
+	SetUpChildren(aabbs);
 
 	RELEASE_ARRAY(aabbs);
 

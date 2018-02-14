@@ -1,13 +1,6 @@
 #include "QuadtreeNode.h"
 
-#include <Frustum.h>
-#include <GL/glew.h>
-#include <algorithm>
-
-#include "Camera.h"
-#include "GameObject.h"
-
-using namespace std;
+#include <float2.h>
 
 QuadtreeNode::QuadtreeNode()
 { }
@@ -15,226 +8,12 @@ QuadtreeNode::QuadtreeNode()
 QuadtreeNode::~QuadtreeNode()
 { }
 
-void QuadtreeNode::Create(const AABB& aabb)
+uint QuadtreeNode::GetChildrenAmount() const
 {
-	this->aabb = aabb;
+	return 4;
 }
 
-void QuadtreeNode::Clear()
-{
-	content.clear();
-
-	if(children != nullptr)
-	{
-		for(size_t i = 0; i < 4; ++i)
-		{
-			children[i].Clear();
-		}
-
-		RELEASE_ARRAY(children);
-	}
-}
-
-void QuadtreeNode::Insert(GameObject* gameObject)
-{
-	if(aabb.Intersects(gameObject->GetAABB()))
-	{
-		if(children == nullptr)
-		{
-			content.push_back(gameObject);
-
-			if(content.size() > bucketSize)
-			{
-				DivideAndReorganizeContent();
-			}
-		}
-		else
-		{
-			Add(gameObject);
-		}
-	}
-}
-
-void QuadtreeNode::Remove(GameObject* gameObject)
-{
-	if(aabb.Intersects(gameObject->GetAABB()))
-	{
-		if(children == nullptr)
-		{
-			content.erase(remove(content.begin(), content.end(), gameObject), content.end());
-		}
-		else
-		{
-			bool allLeaves = true;
-			int countContentChildren = 0;
-
-			for(size_t i = 0; i < 4; ++i)
-			{
-				children[i].Remove(gameObject);
-
-				allLeaves &= children[i].children == nullptr;
-				countContentChildren += children[i].content.size();
-			}
-
-			if(allLeaves && countContentChildren <= bucketSize)
-			{
-				for(size_t i = 0; i < 4; ++i)
-				{
-					content.insert(content.end(), children[i].content.begin(), children[i].content.end());
-				}
-
-				RELEASE_ARRAY(children);
-			}
-		}
-	}
-}
-
-void QuadtreeNode::Intersect(std::vector<GameObject*>& gameObjects, const Frustum& frustum) const
-{
-	if(Camera::Intersects(frustum, aabb))
-	{
-		for(GameObject* candidate : content)
-		{
-			if(Camera::Intersects(frustum, candidate->GetAABB()))
-			{
-				gameObjects.push_back(candidate);
-			}
-		}
-
-		if(children != nullptr)
-		{
-			for(size_t i = 0; i < 4; ++i)
-			{
-				children[i].Intersect(gameObjects, frustum);
-			}
-		}
-	}
-}
-
-void QuadtreeNode::Print(uint level) const
-{
-	string indentSpace = "";
-
-	for(uint i = 0; i < level; ++i)
-	{
-		indentSpace += "  ";
-	}
-
-	string node = indentSpace;
-
-	node += "Id: %i, Content size: %u";
-
-	LOG_DEBUG(node.c_str(), this, content.size());
-
-	if(children != nullptr)
-	{
-		for(size_t i = 0; i < 4; ++i)
-		{
-			children[i].Print(level + 1);
-		}
-	}
-}
-
-void QuadtreeNode::Draw() const
-{
-	glPushMatrix();
-
-	float lineWidth;
-	glGetFloatv(GL_LINE_WIDTH, &lineWidth);
-
-	GLfloat previousColor[4];
-	glGetFloatv(GL_CURRENT_COLOR, previousColor);
-
-	glLineWidth(5.0f);
-
-	glBegin(GL_LINES);
-	
-	glColor3f(255, 255, 0);
-
-	float minX = aabb.minPoint.x;
-	float minZ = aabb.minPoint.z;
-
-	float minY = -5.0f;
-	float maxY = 5.0f;
-
-	float maxX = aabb.maxPoint.x;
-	float maxZ = aabb.maxPoint.z;
-
-	glVertex3f(minX, minY, minZ);
-	glVertex3f(maxX, minY, minZ);
-
-	glVertex3f(maxX, minY, minZ);
-	glVertex3f(maxX, minY, maxZ);
-
-	glVertex3f(maxX, minY, maxZ);
-	glVertex3f(minX, minY, maxZ);
-
-	glVertex3f(minX, minY, maxZ);
-	glVertex3f(minX, minY, minZ);
-
-	// ...
-
-	glVertex3f(minX, maxY, minZ);
-	glVertex3f(maxX, maxY, minZ);
-
-	glVertex3f(maxX, maxY, minZ);
-	glVertex3f(maxX, maxY, maxZ);
-
-	glVertex3f(maxX, maxY, maxZ);
-	glVertex3f(minX, maxY, maxZ);
-
-	glVertex3f(minX, maxY, maxZ);
-	glVertex3f(minX, maxY, minZ);
-
-	// ...
-
-	glVertex3f(minX, minY, minZ);
-	glVertex3f(minX, maxY, minZ);
-
-	glVertex3f(maxX, minY, minZ);
-	glVertex3f(maxX, maxY, minZ);
-
-	glVertex3f(maxX, minY, maxZ);
-	glVertex3f(maxX, maxY, maxZ);
-
-	glVertex3f(minX, minY, maxZ);
-	glVertex3f(minX, maxY, maxZ);
-
-	glEnd();
-
-	glLineWidth(lineWidth);
-	glColor3f(previousColor[0], previousColor[1], previousColor[2]);
-	
-	glPopMatrix();
-
-	if(children != nullptr)
-	{
-		for(size_t i = 0; i < 4; ++i)
-		{
-			children[i].Draw();
-		}
-	}
-}
-
-AABB & QuadtreeNode::GetAABB() 
-{
-	return aabb;
-}
-
-std::vector<GameObject*> QuadtreeNode::GetContent() const
-{
-	return content;
-}
-
-void QuadtreeNode::Add(GameObject* gameObject)
-{
-	for(size_t i = 0; i < 4; ++i)
-	{
-		children[i].Insert(gameObject);
-	}
-}
-
-void QuadtreeNode::DivideAndReorganizeContent()
+void QuadtreeNode::Divide(AABB* aabbs)
 {
 	float2 bL = aabb.minPoint.xz();
 	float2 tR = aabb.maxPoint.xz();
@@ -249,47 +28,23 @@ void QuadtreeNode::DivideAndReorganizeContent()
 	float minY = aabb.minPoint.y;
 	float maxY = aabb.maxPoint.y;
 
-	AABB topLeft(float3(minX, minY, midZ), float3(midX, maxY, maxZ));
-	AABB topRight(float3(midX, minY, midZ), float3(maxX, maxY, maxZ));
-	AABB bottomLeft(float3(minX, minY, minZ), float3(midX, maxY, midZ));
-	AABB bottomRight(float3(midX, minY, minZ), float3(maxX, maxY, midZ));
-
-	AABB aabbs[4] = { topLeft, topRight, bottomLeft, bottomRight };
-
-	for(size_t i = 0; i < 4; ++i)
-	{
-		if(GetNumberIntersections(aabbs[i], content) == content.size())
-		{
-			return;
-		}
-	}
-
-	children = new QuadtreeNode[4];
-
-	for(size_t i = 0; i < 4; ++i)
-	{
-		children[i].Create(aabbs[i]);
-	}
-
-	for(GameObject* gameObject : content)
-	{
-		for(size_t i = 0; i < 4; ++i)
-		{
-			children[i].Insert(gameObject);
-		}
-	}
-
-	content.clear();
+	aabbs[0] = AABB(float3(minX, minY, midZ), float3(midX, maxY, maxZ));
+	aabbs[1] = AABB(float3(midX, minY, midZ), float3(maxX, maxY, maxZ));
+	aabbs[2] = AABB(float3(minX, minY, minZ), float3(midX, maxY, midZ));
+	aabbs[3] = AABB(float3(midX, minY, minZ), float3(maxX, maxY, midZ));
 }
 
-uint QuadtreeNode::GetNumberIntersections(const AABB& aabb, const vector<GameObject*>& content)
+TreeNode* QuadtreeNode::CreateChildren() const
 {
-	uint count = 0;
-
-	for(GameObject* gameObject : content)
-	{
-		count += aabb.Intersects(gameObject->GetAABB());
-	}
-
-	return count;
+	return new QuadtreeNode[GetChildrenAmount()];
 }
+
+/* float QuadtreeNode::GetMinDrawY() const
+{
+	return -5.0f;
+}
+
+float QuadtreeNode::GetMaxDrawY() const
+{
+	return 5.0f;
+} */

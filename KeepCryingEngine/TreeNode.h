@@ -1,8 +1,9 @@
 #ifndef _TREENODE_H_
 #define _TREENODE_H_
 
-#include <vector>
+#include <set>
 #include <AABB.h>
+#include <vector>
 
 #include "Globals.h"
 
@@ -33,16 +34,18 @@ public:
 
 	const std::vector<GameObject*>& GetContent() const;
 
-	void GetAllContent(std::vector<GameObject*>& allContent) const;
+	void GetAllContent(std::set<GameObject*>& allContent) const;
 
 protected:
 	virtual uint GetChildrenAmount() const = 0;
 
 	virtual void Divide(AABB* aabbs) = 0;
 
-	virtual bool EndRecursion(AABB* aabbs) const;
+	virtual TreeNode* CreateChildren() const = 0;
 
-	virtual bool CreateChildren() const = 0;
+	virtual void SetUpChildren(const AABB* aabbs) const;
+
+	virtual bool EndRecursion(AABB* aabbs) const;
 
 	virtual float GetMinDrawY() const;
 
@@ -55,7 +58,7 @@ protected:
 	static uint GetNumberIntersections(const AABB& aabb, const std::vector<GameObject*>& content);
 
 protected:
-	const static int bucketSize = 5;
+	const static int bucketSize = 1;
 
 	AABB aabb;
 	TreeNode* children = nullptr;

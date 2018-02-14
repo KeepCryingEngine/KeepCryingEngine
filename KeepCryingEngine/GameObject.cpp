@@ -116,6 +116,11 @@ const bool GameObject::IsStatic() const
 
 void GameObject::SetStatic(bool value)
 {
+	if(isStatic == value)
+	{
+		return;
+	}
+
 	isStatic = value;
 
 	ModuleScene* scene = App->scene;

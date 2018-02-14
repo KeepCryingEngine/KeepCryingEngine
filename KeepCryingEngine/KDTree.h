@@ -1,34 +1,17 @@
 #ifndef _KDTREE_H_
 #define _KDTREE_H_
 
-#include <AABB.h>
-#include <vector>
+#include "Tree.h"
 
-class GameObject;
-class KDtreeNode;
-
-class KDtree
+class KDtree : public Tree
 {
 public:
 	KDtree();
+
 	virtual ~KDtree();
 
-	void Create(const AABB& aabb);
-
-	void Clear();
-
-	void Insert(GameObject* gameObject);
-
-	void Remove(GameObject* gameObject);
-
-	void Intersect(std::vector<GameObject*>& gameObjects, const Frustum& frustum) const;
-
-	void Print() const;
-
-	void Draw() const;
-
-private:
-	KDtreeNode * root = nullptr;
+protected:
+	virtual TreeNode* CreateRoot() const override;
 };
 
 #endif

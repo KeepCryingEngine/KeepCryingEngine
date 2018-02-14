@@ -1,14 +1,11 @@
 #ifndef _KDTREENODE_H_
 #define _KDTREENODE_H_
 
-#include <vector>
-#include <AABB.h>
-
-#include "Globals.h"
+#include "TreeNode.h"
 
 class GameObject;
 
-class KDtreeNode
+class KDtreeNode : public TreeNode
 {
 private:
 	enum class CutAxis
@@ -17,45 +14,30 @@ private:
 		Y,
 		Z
 	};
+
 public:
 	KDtreeNode();
+
 	virtual ~KDtreeNode();
 
-	void Create(const AABB& aabb,CutAxis cut = CutAxis::X);
+	void SetCutAxis(CutAxis cut);
 
-	void Clear();
+protected:
+	virtual uint GetChildrenAmount() const override;
 
-	void Insert(GameObject* gameObject);
+	virtual void Divide(AABB* aabbs) override;
 
-	void Remove(GameObject* gameObject);
+	virtual TreeNode* CreateChildren() const override;
 
-	void Intersect(std::vector<GameObject*>& gameObjects, const Frustum& frustum) const;
-
-	void Print(uint level = 0) const;
-
-	void Draw() const;
-
-	AABB & GetAABB();
-	std::vector<GameObject*> GetContent() const;
+	virtual void SetUpChildren(const AABB* aabbs) const override;
 
 private:
-	void Add(GameObject* gameObject);
-
-	void DivideAndReorganizeContent();
-
-	static uint GetNumberIntersections(const AABB& aabb, const std::vector<GameObject*>& content);
-
 	CutAxis GetNextAxis(CutAxis actual) const;
 
-	float GetMedianAxis(CutAxis axis);
+	float GetMedianAxis(CutAxis axis) const;
 
 private:
-	const static int bucketSize = 1;
-
-	AABB aabb;
-	KDtreeNode* children = nullptr;
-	std::vector<GameObject*> content;
-	CutAxis actualCut;
+	CutAxis actualCut = CutAxis::X;
 };
 
 #endif

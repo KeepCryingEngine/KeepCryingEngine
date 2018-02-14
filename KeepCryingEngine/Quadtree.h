@@ -11,15 +11,7 @@ public:
 	virtual ~Quadtree();
 
 protected:
-	virtual void CreateRoot() override;
-
-	virtual bool CheckNewMinLimit(float3 minPointA, float3 minPointB) const override;
-
-	virtual bool CheckNewMaxLimit(float3 maxPointA, float3 maxPointB) const override;
-
-	virtual bool CheckSameMinLimit(float3 minPointA, float3 minPointB) const override;
-
-	virtual bool CheckSameMaxLimit(float3 maxPointA, float3 maxPointB) const override;
+	virtual TreeNode* CreateRoot() const override;
 };
 
 #endif

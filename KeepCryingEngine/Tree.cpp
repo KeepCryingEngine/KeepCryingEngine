@@ -57,7 +57,7 @@ void Tree::Insert(GameObject* gameObject)
 	}
 	else
 	{
-		CreateRoot();
+		root = CreateRoot();
 		root->Insert(gameObject);
 	}
 }
@@ -83,7 +83,7 @@ void Tree::Remove(GameObject* gameObject)
 	}
 }
 
-void Tree::Intersect(std::vector<GameObject*>& gameObjects, const Frustum& frustum) const
+void Tree::Intersect(vector<GameObject*>& gameObjects, const Frustum& frustum) const
 {
 	if(root)
 	{
@@ -107,16 +107,39 @@ void Tree::Draw() const
 	}
 }
 
+bool Tree::CheckNewMinLimit(float3 minPointA, float3 minPointB) const
+{
+	return minPointA.x < minPointB.x || minPointA.y < minPointB.y || minPointA.z < minPointB.z;
+}
+
+bool Tree::CheckNewMaxLimit(float3 maxPointA, float3 maxPointB) const
+{
+	return maxPointA.x > maxPointB.x || maxPointA.y > maxPointB.y || maxPointA.z > maxPointB.z;
+}
+
+bool Tree::CheckSameMinLimit(float3 minPointA, float3 minPointB) const
+{
+	return minPointA.x == minPointB.x || minPointA.y == minPointB.y || minPointA.z == minPointB.z;
+}
+
+bool Tree::CheckSameMaxLimit(float3 maxPointA, float3 maxPointB) const
+{
+	return maxPointA.x == maxPointB.x || maxPointA.y == maxPointB.y || maxPointA.z == maxPointB.z;
+}
+
 void Tree::Rebuild()
 {
-	vector<GameObject*> allContent;
-	root->GetAllContent(allContent);
-
-	Clear();
-
-	for(GameObject* gOContent : allContent)
+	if(root != nullptr)
 	{
-		Insert(gOContent);
+		set<GameObject*> allContent;
+		root->GetAllContent(allContent);
+
+		Clear();
+
+		for(GameObject* gOContent : allContent)
+		{
+			Insert(gOContent);
+		}
 	}
 }
 
@@ -124,7 +147,7 @@ void Tree::Resize(const AABB& aabb)
 {
 	if(root != nullptr)
 	{
-		vector<GameObject*> allContent;
+		set<GameObject*> allContent;
 		root->GetAllContent(allContent);
 
 		root->Clear();
