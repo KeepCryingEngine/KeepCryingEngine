@@ -36,6 +36,8 @@ public:
 
 	const float4x4& GetModelMatrix() const;
 
+	void GuizmoSetModelMatrix(const float4x4& modelMatrix, const float3& position, const float3& rotation, const float3& scale);
+
 	void Recalculate();
 
 private:
