@@ -168,13 +168,13 @@ void Transform::GuizmoSetModelMatrix(const float4x4 & setmodelMatrix, const floa
 	{
 		modelMatrix = setmodelMatrix;
 
-		localPosition = position;
+		SetLocalPosition(position);
 
 		eulerLocalRotation = rotation;
 		float3 radAngles = DegToRad(rotation);
-		localRotation = Quat::FromEulerXYZ(radAngles.x, radAngles.y, radAngles.z);
+		SetLocalRotation(Quat::FromEulerXYZ(radAngles.x, radAngles.y, radAngles.z));
 
-		localScale = scale;
+		SetLocalScale(scale);
 	}
 }
 
