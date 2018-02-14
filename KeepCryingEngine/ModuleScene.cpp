@@ -377,7 +377,7 @@ std::vector<RayCastHit> ModuleScene::RayCastAll(const float3 & origin, const flo
 	RayCastHit rayCastHit;
 	InitializeRayCastHit(rayCastHit);
 
-	LineSegment lineSegment = BuildLineSegmentForRayCast(origin, direction, maxDistance);
+	LineSegment worldSpaceLineSegment = BuildLineSegmentForRayCast(origin, direction, maxDistance);
 
 	stack<GameObject*> gameObjects;
 	gameObjects.push(root);
@@ -393,7 +393,7 @@ std::vector<RayCastHit> ModuleScene::RayCastAll(const float3 & origin, const flo
 			gameObjects.push(child);
 		}
 		
-		bool hit = RayCastGameObject(currentGameObject, lineSegment, rayCastHit);
+		bool hit = RayCastGameObject(currentGameObject, worldSpaceLineSegment, rayCastHit);
 		if (hit)
 		{
 			rayCastHits.push_back(rayCastHit);
@@ -407,7 +407,7 @@ std::vector<RayCastHit> ModuleScene::RayCastAll(const float3 & origin, const flo
 	return rayCastHits;
 }
 
-bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment & lineSegment, RayCastHit& rayCastHit) const
+bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
 {
 	bool hit = false;
 	MeshFilter* meshFilter = (MeshFilter*)gameObject->GetComponent(ComponentType::MeshFilter);
@@ -416,7 +416,7 @@ bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment &
 		Mesh* mesh = meshFilter->GetMesh();
 		if (mesh)
 		{
-			hit = RayCastMesh(gameObject, mesh, lineSegment, rayCastHit);
+			hit = RayCastMesh(gameObject, mesh, worldSpaceLineSegment, rayCastHit);
 		}
 	}
 	return hit;
@@ -424,7 +424,7 @@ bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment &
 
 bool NextMeshTriangle(Mesh* mesh, Triangle& triangle, size_t& index);
 
-bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSegment & lineSegment, RayCastHit& rayCastHit) const
+bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
 {
 	bool hit = false;
 
@@ -434,14 +434,14 @@ bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSeg
 	{
 		float3 point;
 		float normalizedDistance;
-		if (lineSegment.Intersects(triangle, &normalizedDistance, &point))
+		if (worldSpaceLineSegment.Intersects(triangle, &normalizedDistance, &point))
 		{
 			if (normalizedDistance < rayCastHit.normalizedDistance)
 			{
 				rayCastHit.gameObject = gameObject;
 				rayCastHit.normalizedDistance = normalizedDistance;
 				rayCastHit.point = point;
-				rayCastHit.distance = lineSegment.a.Distance(point);
+				rayCastHit.distance = worldSpaceLineSegment.a.Distance(point);
 				rayCastHit.normal = triangle.NormalCCW();
 				hit = true;
 			}
