@@ -36,10 +36,10 @@ private:
 	void DrawInspectorWindow();
 	void DrawGenerateGameObjectWindow();
 	void DrawSpacePartitioningWindow();
-	void DrawGuizmoWindow();
 
 	void PrintChildrenOnHierarchy(std::vector<GameObject*> children);
 
+	void CallGuizmo();
 	void CallEntityCreation();
 
 private:
@@ -65,7 +65,6 @@ private:
 	bool debugMode = false;
 
 	//One bool control for each window
-	bool imGuizmoWindow = false;
 	bool cameraWindow = false;
 	bool speedWindow = false;
 	bool shaderEditorWindow = false;

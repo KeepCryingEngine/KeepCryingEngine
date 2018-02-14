@@ -117,10 +117,6 @@ void ModuleUI::DrawMainMenu()
 				{
 					spacePartitioningWindow ^= 1;
 				}
-				if(ImGui::Selectable("Guizmo"))
-				{
-					imGuizmoWindow ^= 1;
-				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
@@ -409,10 +405,6 @@ void ModuleUI::CallEntityCreation()
 
 void ModuleUI::CallWindows()
 {
-	if(imGuizmoWindow)
-	{
-		DrawGuizmoWindow();
-	}
 	if(cameraWindow)
 	{
 		DrawCameraWindow();
@@ -443,11 +435,9 @@ void ModuleUI::CallWindows()
 	}
 }
 
-void ModuleUI::DrawGuizmoWindow()
+void ModuleUI::CallGuizmo()
 {
-	ImGui::Begin("Guizmo Window");
-
-	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::SCALE);
+	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 	static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
 
 	static bool useSnap = false;
@@ -469,24 +459,8 @@ void ModuleUI::DrawGuizmoWindow()
 	Transform* temp = (Transform*)App->scene->Get(selectedNodeID)->GetComponent(ComponentType::Transform);
 		
 	float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-		
-	//ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
 
-	//if(ImGui::DragFloat3("Position", matrixTranslation, 0.1f))
-	//{
-	//	temp->SetLocalPosition((float3)matrixTranslation);
-	//}
-	//if(ImGui::DragFloat3("Rotation", matrixRotation, 0.1f))
-	//{
-
-	//}
-	//if(ImGui::DragFloat3("Scale", matrixScale, 0.1f))
-	//{
-	//	temp->SetLocalScale((float3)matrixScale);
-	//}
-
-	//ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
-
+	//Xavo: Do not delete this or I'll haunt your dreams -----------------------
 	//if(mCurrentGizmoOperation != ImGuizmo::SCALE)
 	//{
 	//	if(ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
@@ -495,37 +469,25 @@ void ModuleUI::DrawGuizmoWindow()
 	//	if(ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
 	//		mCurrentGizmoMode = ImGuizmo::WORLD;
 	//}
-	//if(ImGui::IsKeyPressed(83))
-	//	useSnap = !useSnap;
 	//ImGui::Checkbox("", &useSnap);
-	//ImGui::SameLine();
+	//--------------------------------------------------------------------------
 
-	//switch(mCurrentGizmoOperation)
-	//{
-	//	case ImGuizmo::TRANSLATE:
-	//		ImGui::InputFloat3("Snap", &snap[0]);
-	//		break;
-	//	case ImGuizmo::ROTATE:
-	//		ImGui::InputFloat("Angle Snap", &snap[0]);
-	//		break;
-	//	case ImGuizmo::SCALE:
-	//		ImGui::InputFloat("Scale Snap", &snap[0]);
-	//		break;
-	//}
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
-	float* objectMatrix = (float*)temp->GetModelMatrix().ptr();
+	float4x4 matrixTransposed = temp->GetModelMatrix().Transposed();
+	float* objectMatrix = (float*)matrixTransposed.ptr();
 
 	if (selectedNodeID != 0)
 	{
 		ImGuizmo::Manipulate(App->camera->camera->GetViewMatrix().ptr(), App->camera->camera->GetProyectionMatrix().ptr(), mCurrentGizmoOperation, mCurrentGizmoMode, objectMatrix, nullptr, useSnap ? &snap[0] : NULL);
-		ImGuizmo::DecomposeMatrixToComponents(objectMatrix, matrixTranslation, matrixRotation, matrixScale);
-
-		temp->SetWorldScale((float3)matrixScale);
-		
+				
+		if(ImGuizmo::IsUsing())
+		{
+			ImGuizmo::DecomposeMatrixToComponents(objectMatrix, matrixTranslation, matrixRotation, matrixScale);
+			temp->GuizmoSetModelMatrix(matrixTransposed.Transposed(), (float3)matrixTranslation, (float3)matrixRotation, (float3)matrixScale);
+		}	
 	}
-	ImGui::End();
 }
 
 void ModuleUI::DrawCameraWindow()
@@ -611,6 +573,10 @@ void ModuleUI::DrawShaderWindow()
 void ModuleUI::DrawHierarchyWindow()
 {
 	ImGui::Begin("Game Object Hierarchy", &hierarchyWindow);
+
+	CallGuizmo();
+
+	ImGui::Separator();
 
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_DefaultOpen;
 
