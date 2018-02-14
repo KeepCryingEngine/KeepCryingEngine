@@ -387,32 +387,51 @@ bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment &
 bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSegment & lineSegment, RayCastHit& rayCastHit) const
 {
 	bool hit = false;
-	if (mesh->GetDrawMode() == GL_TRIANGLES)
+
+	Triangle triangle;
+	size_t index = 0;
+	while (NextMeshTriangle(mesh, triangle, index))
 	{
-		Triangle triangle;
 		float3 point;
 		float normalizedDistance;
-		size_t currentIndex = 0;
-		for (size_t i = 0; i < 3; i++)
+		if (lineSegment.Intersects(triangle, &normalizedDistance, &point))
 		{
-			triangle.a = mesh->GetVertices().at(currentIndex++).position;
-			triangle.b = mesh->GetVertices().at(currentIndex++).position;
-			triangle.c = mesh->GetVertices().at(currentIndex++).position;
-			if (lineSegment.Intersects(triangle, &normalizedDistance, &point))
+			if (normalizedDistance < rayCastHit.normalizedDistance)
 			{
-				if (normalizedDistance < rayCastHit.normalizedDistance)
-				{
-					rayCastHit.gameObject = gameObject;
-					rayCastHit.normalizedDistance = normalizedDistance;
-					rayCastHit.point = point;
-					rayCastHit.distance = lineSegment.a.Distance(point);
-					rayCastHit.normal = triangle.NormalCCW();
-					hit = true;
-				}
+				rayCastHit.gameObject = gameObject;
+				rayCastHit.normalizedDistance = normalizedDistance;
+				rayCastHit.point = point;
+				rayCastHit.distance = lineSegment.a.Distance(point);
+				rayCastHit.normal = triangle.NormalCCW();
+				hit = true;
 			}
 		}
 	}
+
 	return hit;
+}
+
+/// Loads the next triangle adapting triangles to mesh draw type
+/// [out] triangle: the triangle
+/// [in] index: the index of the triangle to return
+/// [out] index: the next index of the triangle to return
+bool NextMeshTriangle(Mesh* mesh, Triangle& triangle, size_t& index)
+{
+	assert(index <= mesh->GetIndicesNumber());
+
+	bool ret = false;
+	if (index < mesh->GetIndicesNumber()) {
+		if (mesh->GetDrawMode() == GL_TRIANGLES)
+		{
+			assert(index <= mesh->GetIndicesNumber() - 3);
+			triangle.a = mesh->GetVertices().at(index++).position;
+			triangle.b = mesh->GetVertices().at(index++).position;
+			triangle.c = mesh->GetVertices().at(index++).position;
+			ret = true;
+		}
+	}
+
+	return ret;
 }
 
 void ModuleScene::CheckToDestroy()
