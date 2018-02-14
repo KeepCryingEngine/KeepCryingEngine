@@ -89,129 +89,129 @@ void ModuleUI::DrawMainMenu()
 	ImVec2 buttonSize = { 120.0f, 20.0f };
 
 	ImGui_ImplSdlGL3_NewFrame(App->window->window);
+	ImGuizmo::BeginFrame();
+
+	CallWindows();
+	CallEntityCreation();
+
+	if(ImGui::BeginMainMenuBar())
 	{
-		CallWindows();
-		CallEntityCreation();
-
-		if(ImGui::BeginMainMenuBar())
+		if(ImGui::BeginMenu("Windows"))
 		{
-			if(ImGui::BeginMenu("Windows"))
+			if (ImGui::Selectable("Hierarchy"))
 			{
-				if (ImGui::Selectable("Hierarchy"))
-				{
-					hierarchyWindow ^= 1;
-				}
+				hierarchyWindow ^= 1;
+			}
 
-				if(ImGui::BeginMenu("Control Panel"))
+			if(ImGui::BeginMenu("Control Panel"))
+			{
+				if(ImGui::Selectable("Camera"))
 				{
-					if(ImGui::Selectable("Camera"))
-					{
-						cameraWindow ^= 1;
-					}
-					if(ImGui::Selectable("Movement"))
-					{
-						speedWindow ^= 1;
-					}
-					if(ImGui::Selectable("Space Partitioning"))
-					{
-						spacePartitioningWindow ^= 1;
-					}
-					if(ImGui::Selectable("Guizmo"))
-					{
-						imGuizmoWindow ^= 1;
-					}
-					ImGui::EndMenu();
+					cameraWindow ^= 1;
+				}
+				if(ImGui::Selectable("Movement"))
+				{
+					speedWindow ^= 1;
+				}
+				if(ImGui::Selectable("Space Partitioning"))
+				{
+					spacePartitioningWindow ^= 1;
+				}
+				if(ImGui::Selectable("Guizmo"))
+				{
+					imGuizmoWindow ^= 1;
 				}
 				ImGui::EndMenu();
 			}
-
-			static GLfloat color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-			if(ImGui::BeginMenu("Parameters"))
-			{
-				ImGui::Checkbox(" Frustum Culling", &frustumCulling);
-				ImGui::Checkbox(" Wireframe Mode", &wireframeEnabled);
-				ImGui::Checkbox(" Textures", &textureEnabled);
-				ImGui::Checkbox(" Depth Test", &depthEnabled);
-				ImGui::Checkbox(" Cull Face", &cullEnabled);
-				ImGui::Checkbox(" Color Material", &colormaterialEnabled);
-				ImGui::Checkbox(" Antialiasing", &antialiasingEnabled);				
-				ImGui::Checkbox(" Fog", &fogEnabled);
-				ImGui::Checkbox(" Debug Mode", &debugMode);
-
-				if(ImGui::BeginMenu("Fog parameters"))
-				{
-					ImGui::SliderFloat(" Density", &fogDensity, 0.0f, 1.0f);
-					ImGui::ColorPicker3(" Color", color);
-					ImGui::EndMenu();
-				}
-
-				//FOG Parameters
-				glFogf(GL_FOG_DENSITY, fogDensity);
-				glFogfv(GL_FOG_COLOR, color);
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Light"))
-			{
-				ImGui::Checkbox(" Lightning", &lightningEnabled);
-				if (ImGui::ColorPicker3(" Ambient Light", App->renderer->globalAmbient))
-				{
-					if (!wireframeEnabled)
-					{
-						glLightModelfv(GL_LIGHT_MODEL_AMBIENT, App->renderer->globalAmbient);
-					}				
-				}
-				ImGui::EndMenu();
-			}
-
-			SetAllParameters();
-
-			static int shaderMode = 0;
-			if(ImGui::BeginMenu("Shader Editor"))
-			{
-				ImGui::Combo("Shaders", &shaderMode, "None\0Fragment\0Vertex");
-				if(ImGui::Button("Edit", buttonSize))
-				{
-					SetTextOnEditor(shaderMode);
-					shaderEditorWindow ^= 1;
-				}
-				ImGui::EndMenu();
-			}
-
-			if(ImGui::BeginMenu("Personalization"))
-			{
-				if(ImGui::BeginMenu("Themes"))
-				{
-					if(ImGui::Selectable("Default Theme"))
-					{
-						ImGui::StyleColorsClassic();
-					}
-					if(ImGui::Selectable("Dark Theme"))
-					{
-						ImGui::StyleColorsDark();
-					}
-					if(ImGui::Selectable("Light Theme"))
-					{
-						ImGui::StyleColorsLight();
-					}
-					ImGui::EndMenu();
-				}
-				if(ImGui::BeginMenu("Background Color"))
-				{
-					ImGui::DragFloat3("##backgroundcolor", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
-					ImGui::EndMenu();
-				}			
-				ImGui::EndMenu();
-			}
-
-			if(ImGui::BeginMenu("About"))
-			{
-				DrawAboutMenu();
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndMainMenuBar();
+			ImGui::EndMenu();
 		}
+
+		static GLfloat color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		if(ImGui::BeginMenu("Parameters"))
+		{
+			ImGui::Checkbox(" Frustum Culling", &frustumCulling);
+			ImGui::Checkbox(" Wireframe Mode", &wireframeEnabled);
+			ImGui::Checkbox(" Textures", &textureEnabled);
+			ImGui::Checkbox(" Depth Test", &depthEnabled);
+			ImGui::Checkbox(" Cull Face", &cullEnabled);
+			ImGui::Checkbox(" Color Material", &colormaterialEnabled);
+			ImGui::Checkbox(" Antialiasing", &antialiasingEnabled);				
+			ImGui::Checkbox(" Fog", &fogEnabled);
+			ImGui::Checkbox(" Debug Mode", &debugMode);
+
+			if(ImGui::BeginMenu("Fog parameters"))
+			{
+				ImGui::SliderFloat(" Density", &fogDensity, 0.0f, 1.0f);
+				ImGui::ColorPicker3(" Color", color);
+				ImGui::EndMenu();
+			}
+
+			//FOG Parameters
+			glFogf(GL_FOG_DENSITY, fogDensity);
+			glFogfv(GL_FOG_COLOR, color);
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Light"))
+		{
+			ImGui::Checkbox(" Lightning", &lightningEnabled);
+			if (ImGui::ColorPicker3(" Ambient Light", App->renderer->globalAmbient))
+			{
+				if (!wireframeEnabled)
+				{
+					glLightModelfv(GL_LIGHT_MODEL_AMBIENT, App->renderer->globalAmbient);
+				}				
+			}
+			ImGui::EndMenu();
+		}
+
+		SetAllParameters();
+
+		static int shaderMode = 0;
+		if(ImGui::BeginMenu("Shader Editor"))
+		{
+			ImGui::Combo("Shaders", &shaderMode, "None\0Fragment\0Vertex");
+			if(ImGui::Button("Edit", buttonSize))
+			{
+				SetTextOnEditor(shaderMode);
+				shaderEditorWindow ^= 1;
+			}
+			ImGui::EndMenu();
+		}
+
+		if(ImGui::BeginMenu("Personalization"))
+		{
+			if(ImGui::BeginMenu("Themes"))
+			{
+				if(ImGui::Selectable("Default Theme"))
+				{
+					ImGui::StyleColorsClassic();
+				}
+				if(ImGui::Selectable("Dark Theme"))
+				{
+					ImGui::StyleColorsDark();
+				}
+				if(ImGui::Selectable("Light Theme"))
+				{
+					ImGui::StyleColorsLight();
+				}
+				ImGui::EndMenu();
+			}
+			if(ImGui::BeginMenu("Background Color"))
+			{
+				ImGui::DragFloat3("##backgroundcolor", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
+				ImGui::EndMenu();
+			}			
+			ImGui::EndMenu();
+		}
+
+		if(ImGui::BeginMenu("About"))
+		{
+			DrawAboutMenu();
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMainMenuBar();
 	}
 }
 
@@ -468,18 +468,27 @@ void ModuleUI::DrawGuizmoWindow()
 
 		Transform* temp = (Transform*)App->scene->Get(selectedNodeID)->GetComponent(ComponentType::Transform);
 		
-		//float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-
-		float3 matrixTranslation = temp->GetWorldPosition();
-		//float3 matrixRotation = temp->GetWorldRotation();
+		float matrixTranslation[3] = { temp->GetLocalPosition().x, temp->GetLocalPosition().y, temp->GetLocalPosition().z };
+		float matrixRotation[3] = { temp->GetEulerLocalRotation().x, temp->GetEulerLocalRotation().y, temp->GetEulerLocalRotation().z};
+		float matrixScale[3] = { temp->GetLocalScale().x, temp->GetLocalScale().y, temp->GetLocalScale().z};
 		
-		//ImGuizmo::DecomposeMatrixToComponents(temp->GetModelMatrix(), matrixTranslation, matrixRotation, matrixScale);
+		//ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
 
-		ImGui::InputFloat3("Tr", matrixTranslation.ptr(), 3);
-		//ImGui::InputFloat3("Rt", matrixRotation, 3);
-		//ImGui::InputFloat3("Sc", matrixScale, 3);
+		if(ImGui::DragFloat3("Position", matrixTranslation, 0.1f))
+		{
+			temp->SetLocalPosition((float3)matrixTranslation);
+		}
+		if(ImGui::DragFloat3("Rotation", matrixRotation, 0.1f))
+		{
 
-		//ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
+		}
+		if(ImGui::DragFloat3("Scale", matrixScale, 0.1f))
+		{
+			temp->SetLocalScale((float3)matrixScale);
+		}
+
+		float* resultantMatrix = nullptr; //TODO - This needs to be the matrix of the object
+		ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, resultantMatrix);
 
 		//if(mCurrentGizmoOperation != ImGuizmo::SCALE)
 		//{
@@ -509,8 +518,7 @@ void ModuleUI::DrawGuizmoWindow()
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
-		//ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
-		ImGuizmo::Manipulate(App->camera->camera->GetViewMatrix(), App->camera->camera->GetProyectionMatrix(), mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL);
+		ImGuizmo::Manipulate(App->camera->camera->GetViewMatrix().ptr(), App->camera->camera->GetProyectionMatrix().ptr(), mCurrentGizmoOperation, mCurrentGizmoMode, resultantMatrix, NULL, useSnap ? &snap[0] : NULL);
 	
 
 	ImGui::End();
