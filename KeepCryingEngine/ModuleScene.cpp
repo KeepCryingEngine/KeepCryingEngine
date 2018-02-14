@@ -289,29 +289,6 @@ void ModuleScene::SetSpacePartitioningStructure(int spacePartitioningStructure)
 	spaceStructure = spacePartitioningStructure;
 }
 
-bool ModuleScene::RayCast(const float3& origin, const float3& direction, float maxDistance, RayCastHit& rayCastHit) const
-{
-	InitializeRayCastHit(rayCastHit);
-	LineSegment lineSegment = BuildLineSegmentForRayCast(origin, direction, maxDistance);
-
-	bool hit = false;
-	stack<GameObject*> gameObjects;
-	while(!gameObjects.empty())
-	{
-		GameObject* currentGameObject = gameObjects.top();
-		gameObjects.pop();
-
-		for (GameObject * child : currentGameObject->GetChildren())
-		{
-			gameObjects.push(child);
-		}
-
-		hit = RayCastGameObject(currentGameObject, lineSegment, rayCastHit) || hit;
-	}
-
-	return hit;
-}
-
 LineSegment ModuleScene::BuildLineSegmentForRayCast(const math::float3 & origin, const math::float3 & direction, float maxDistance) const
 {
 	LineSegment lineSegment;
@@ -367,6 +344,29 @@ void ModuleScene::InitializeRayCastHit(RayCastHit & rayCastHit) const
 	rayCastHit.point = float3::zero;
 	rayCastHit.distance = INFINITY;
 	rayCastHit.normalizedDistance = INFINITY;
+}
+
+bool ModuleScene::RayCast(const float3& origin, const float3& direction, float maxDistance, RayCastHit& rayCastHit) const
+{
+	InitializeRayCastHit(rayCastHit);
+	LineSegment lineSegment = BuildLineSegmentForRayCast(origin, direction, maxDistance);
+
+	bool hit = false;
+	stack<GameObject*> gameObjects;
+	while (!gameObjects.empty())
+	{
+		GameObject* currentGameObject = gameObjects.top();
+		gameObjects.pop();
+
+		for (GameObject * child : currentGameObject->GetChildren())
+		{
+			gameObjects.push(child);
+		}
+
+		hit = RayCastGameObject(currentGameObject, lineSegment, rayCastHit) || hit;
+	}
+
+	return hit;
 }
 
 bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment & lineSegment, RayCastHit& rayCastHit) const
