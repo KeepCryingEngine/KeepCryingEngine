@@ -67,6 +67,11 @@ const Quat & Transform::GetLocalRotation() const
 	return localRotation;
 }
 
+const float3 & Transform::GetEulerLocalRotation() const
+{
+	return eulerLocalRotation;
+}
+
 const float3 & Transform::GetLocalScale() const
 {
 	return localScale;

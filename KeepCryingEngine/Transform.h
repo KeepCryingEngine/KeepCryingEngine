@@ -19,6 +19,7 @@ public:
 
 	const float3& GetLocalPosition() const;
 	const Quat& GetLocalRotation() const;
+	const float3& GetEulerLocalRotation() const;
 	const float3& GetLocalScale() const;
 
 	void SetLocalPosition(const float3& position);
