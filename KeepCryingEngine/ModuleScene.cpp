@@ -306,23 +306,8 @@ LineSegment ModuleScene::BuildLineSegmentForRayCast(const math::float3 & origin,
 
 LineSegment ModuleScene::ProjectLineSegmentToGameObjectsLocalSpace(const LineSegment & worldSpaceLineSegment, const GameObject& gameObject) const
 {
-	float4x4 worldSpaceLineSegmentMatrix = float4x4::Translate(worldSpaceLineSegment.a);
-
-	float4x4 gameObjectWorldMatrixWithoutTranslation = gameObject.GetTransform()->GetModelMatrix();
-	gameObjectWorldMatrixWithoutTranslation.SetTranslatePart(float3::zero);
-
-	float3 lineSegmentOriginInWorldSpace = worldSpaceLineSegment.a - gameObject.GetTransform()->GetWorldPosition();
-	float4x4 worldSpaceTranslationMatrix = float4x4::Translate(lineSegmentOriginInWorldSpace);
-
-	//float4x4 worldToLocal = worldSpaceLineSegmentMatrix.Inverted().Mul(gameObjectWorldMatrixWithoutTranslation).Mul(worldSpaceTranslationMatrix);
-	//float4x4 worldToLocal = localSpaceTranslationMatrix.Mul(gameObjectWorldMatrixWithoutTranslation).Mul(worldSpaceLineSegmentMatrix.Inverted());
-
 	LineSegment gameObjectSpaceLineSegment(worldSpaceLineSegment);
-	gameObjectSpaceLineSegment.Transform(worldSpaceLineSegmentMatrix.Inverted());
-	gameObjectSpaceLineSegment.Transform(gameObjectWorldMatrixWithoutTranslation);
-	gameObjectSpaceLineSegment.Transform(worldSpaceTranslationMatrix);
-
-	//gameObjectSpaceLineSegment.Transform(worldToLocal);
+	gameObjectSpaceLineSegment.Transform(gameObject.GetTransform()->GetModelMatrix().Inverted());
 	return gameObjectSpaceLineSegment;
 }
 
