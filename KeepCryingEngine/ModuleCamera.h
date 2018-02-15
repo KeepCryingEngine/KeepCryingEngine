@@ -33,6 +33,8 @@ public:
 
 	Camera* GetEnabledCamera() const;
 
+	const LineSegment & GetLastRay()const;
+
 private:
 	void Rotation(float deltaTimeS);
 	void Movement(float shiftDeltaMultiplier);
@@ -48,6 +50,8 @@ private:
 	void MovementKeyBoard(float shiftDeltaMultiplier);
 	void RotateKeyboard(float deltaTimeS);
 
+	void ScenePick();
+
 public:
 	Camera* camera = nullptr;
 
@@ -59,6 +63,8 @@ private:
 	float movementZoomSpeed = 3.0f;
 
 	float zoomAmount = 10.0f;
+
+	LineSegment lastRay;
 
 	Camera* enabledCamera = nullptr;
 

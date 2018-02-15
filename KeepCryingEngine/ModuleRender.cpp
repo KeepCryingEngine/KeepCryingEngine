@@ -10,6 +10,7 @@
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleShader.h"
+#include "ModuleUI.h"
 #include "Camera.h"
 #include "GameObject.h"
 #include "Transform.h"
@@ -109,6 +110,11 @@ update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 
 	DrawGeometry();
 	drawBuffer.clear();
+
+	if(App->ui->GetDebugMode())
+	{
+		DrawLastRay();
+	}
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -322,4 +328,21 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	glDisableVertexAttribArray(3);
 
 	glUseProgram(0);
+}
+
+void ModuleRender::DrawLastRay()
+{
+	LineSegment ray = App->camera->GetLastRay();
+
+	float lineWidth;
+
+	glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+
+	glLineWidth(200);
+	glBegin(GL_LINES);
+	glVertex3f(ray.a.x,ray.a.y,ray.a.z);
+	glVertex3f(ray.b.x,ray.b.y,ray.b.z);
+	glEnd();
+
+	glLineWidth(lineWidth);
 }

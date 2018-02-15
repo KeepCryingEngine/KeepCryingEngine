@@ -78,6 +78,16 @@ bool ModuleUI::GetDebugMode() const
 	return debugMode;
 }
 
+ClickMode ModuleUI::GetClickMode() const
+{
+	return clickMode;
+}
+
+void ModuleUI::SetSelectedNodeID(unsigned long long id)
+{
+	selectedNodeID = id;
+}
+
 bool ModuleUI::CleanUp()
 {
 	ImGui_ImplSdlGL3_Shutdown();

@@ -7,6 +7,12 @@
 #include "Module.h"
 #include "GameObject.h"
 
+enum class ClickMode
+{
+	Drag,
+	Pick
+};
+
 class ModuleUI : public Module
 {
 public:
@@ -21,6 +27,8 @@ public:
 
 	bool GetFrustumCulling()const;
 	bool GetDebugMode()const;
+	ClickMode GetClickMode() const;
+	void SetSelectedNodeID(unsigned long long id);
 
 private:
 	void SetUpTextEditor();
@@ -72,6 +80,9 @@ private:
 	bool inspectorWindow = false;
 	bool generateGameObjectWindow = true;
 	bool spacePartitioningWindow = true;
+
+	//Editor click
+	ClickMode clickMode = ClickMode::Pick;
 
 	//Probably there's a better way of doing this thing...
 	float movementSpeed = 10.0f;
