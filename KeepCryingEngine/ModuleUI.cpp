@@ -389,6 +389,16 @@ void ModuleUI::SetTextOnEditor(int shaderMode)
 	t.close();
 }
 
+void ModuleUI::OpenInspectorWindow()
+{
+	inspectorWindow = true;
+}
+
+void ModuleUI::CloseInspectorWindow()
+{
+	inspectorWindow = false;
+}
+
 void ModuleUI::CallEntityCreation()
 {
 	if(addEmptyGameObject)

@@ -29,10 +29,13 @@ public:
 	bool GetDebugMode()const;
 	ClickMode GetClickMode() const;
 	void SetSelectedNodeID(unsigned long long id);
+	void OpenInspectorWindow();
+	void CloseInspectorWindow();
 
 private:
 	void SetUpTextEditor();
 	void SetTextOnEditor(int shaderMode);
+
 	void CallWindows();
 	void SetAllParameters();
 	void DrawMainMenu();
