@@ -43,15 +43,6 @@ update_status ModuleScene::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 {
-	if (App->input->GetKeyPressed(SDL_SCANCODE_SPACE))
-	{
-		RayCastHit rch;
-		bool hit = RayCast(float3(0, 0, -10), float3(0, 0, 1), 20, rch);
-		hit = hit;
-		GameObject * sphere = AddSphere(*root);
-		sphere->GetTransform()->SetWorldPosition(rch.point);
-	}
-
 	if(!App->ui->GetFrustumCulling())
 	{
 		// All visible
@@ -445,9 +436,9 @@ void BuildRayCastHit(RayCastHit& rayCastHit, GameObject* gameObject, float3 poin
 	const float4x4& gameObjectModelMatrix = gameObject->GetTransform()->GetModelMatrix();
 	rayCastHit.gameObject = gameObject;
 	rayCastHit.normalizedDistance = normalizedDistance;
-	rayCastHit.point = gameObjectModelMatrix.Transform(point.ToPos4()).xyz().Normalized();
+	rayCastHit.point = gameObjectModelMatrix.TransformPos(point);
 	rayCastHit.distance = localGameObjectSpaceLineSegment.a.Distance(point);
-	rayCastHit.normal = gameObjectModelMatrix.Transform(triangle.NormalCCW().ToDir4()).xyz().Normalized();
+	rayCastHit.normal = gameObjectModelMatrix.TransformDir(triangle.NormalCCW());
 }
 
 bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
