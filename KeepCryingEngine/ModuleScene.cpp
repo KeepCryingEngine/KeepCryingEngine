@@ -417,15 +417,20 @@ std::vector<RayCastHit> ModuleScene::RayCastAll(const float3 & origin, const flo
 bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
 {
 	bool hit = false;
-	MeshFilter* meshFilter = (MeshFilter*)gameObject->GetComponent(ComponentType::MeshFilter);
-	if (meshFilter)
+
+	if (worldSpaceLineSegment.Intersects(gameObject->GetAABB()))
 	{
-		Mesh* mesh = meshFilter->GetMesh();
-		if (mesh)
+		MeshFilter* meshFilter = (MeshFilter*)gameObject->GetComponent(ComponentType::MeshFilter);
+		if (meshFilter)
 		{
-			hit = RayCastMesh(gameObject, mesh, worldSpaceLineSegment, rayCastHit);
+			Mesh* mesh = meshFilter->GetMesh();
+			if (mesh)
+			{
+				hit = RayCastMesh(gameObject, mesh, worldSpaceLineSegment, rayCastHit);
+			}
 		}
 	}
+	
 	return hit;
 }
 
