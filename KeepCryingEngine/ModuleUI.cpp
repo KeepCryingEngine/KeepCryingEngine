@@ -453,18 +453,38 @@ void ModuleUI::CallGuizmo()
 	static bool useSnap = false;
 	static float snap[3] = { 1.f, 1.f, 1.f };
 
-	if(ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+	if (ImGui::RadioButton("Drag", clickMode == ClickMode::Drag))
+	{
+		clickMode = ClickMode::Drag;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::RadioButton("Pick", clickMode == ClickMode::Pick))
+	{
+		clickMode = ClickMode::Pick;
+	}
+
+	ImGui::Separator();
+
+	if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+	{
 		mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+	}
 
 	ImGui::SameLine();
 
-	if(ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
+	if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
+	{
 		mCurrentGizmoOperation = ImGuizmo::ROTATE;
+	}
 
 	ImGui::SameLine();
 
-	if(ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
+	if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
+	{
 		mCurrentGizmoOperation = ImGuizmo::SCALE;
+	}
 
 	Transform* temp = (Transform*)App->scene->Get(selectedNodeID)->GetComponent(ComponentType::Transform);
 		
