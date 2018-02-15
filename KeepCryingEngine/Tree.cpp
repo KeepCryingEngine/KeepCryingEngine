@@ -91,6 +91,14 @@ void Tree::Intersect(vector<GameObject*>& gameObjects, const Frustum& frustum) c
 	}
 }
 
+void Tree::Intersect(vector<GameObject*>& gameObjects, const LineSegment& lineSegment) const
+{
+	if(root)
+	{
+		root->Intersect(gameObjects, lineSegment);
+	}
+}
+
 void Tree::Print() const
 {
 	if(root != nullptr)

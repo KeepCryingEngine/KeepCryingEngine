@@ -22,6 +22,8 @@ public:
 
 	void Intersect(std::vector<GameObject*>& gameObjects, const Frustum& frustum) const;
 
+	void Intersect(std::vector<GameObject*>& gameObjects, const LineSegment& lineSegment) const;
+
 	void Print() const;
 
 	void Draw() const;

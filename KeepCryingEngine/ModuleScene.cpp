@@ -356,7 +356,19 @@ bool ModuleScene::RayCast(const float3& origin, const float3& direction, float m
 	LineSegment lineSegment = BuildLineSegmentForRayCast(origin, direction, maxDistance);
 
 	bool hit = false;
-	stack<GameObject*> gameObjects;
+
+	vector<GameObject*> gameObjects;
+	kTGameObjects.Intersect(gameObjects, lineSegment);
+
+	for(GameObject* gameObject : gameObjects)
+	{
+		bool currentGameObjectHit = RayCastGameObject(gameObject, lineSegment, rayCastHit);
+		hit = hit || currentGameObjectHit;
+	}
+
+	return hit;
+
+	/* stack<GameObject*> gameObjects;
 	gameObjects.push(root);
 	while (!gameObjects.empty())
 	{
@@ -370,7 +382,7 @@ bool ModuleScene::RayCast(const float3& origin, const float3& direction, float m
 
 		bool currentGameObjectHit = RayCastGameObject(currentGameObject, lineSegment, rayCastHit);
 		hit = hit || currentGameObjectHit;
-	}
+	} */
 
 	return hit;
 }
@@ -378,16 +390,30 @@ bool ModuleScene::RayCast(const float3& origin, const float3& direction, float m
 std::vector<RayCastHit> ModuleScene::RayCastAll(const float3 & origin, const float3 & direction, float maxDistance) const
 {
 	vector<RayCastHit> rayCastHits;
+
 	RayCastHit rayCastHit;
 	InitializeRayCastHit(rayCastHit);
 
 	LineSegment worldSpaceLineSegment = BuildLineSegmentForRayCast(origin, direction, maxDistance);
 
-	stack<GameObject*> gameObjects;
+	vector<GameObject*> gameObjects;
+	kTGameObjects.Intersect(gameObjects, worldSpaceLineSegment);
+
+	for(GameObject* gameObject : gameObjects)
+	{
+		bool hit = RayCastGameObject(gameObject, worldSpaceLineSegment, rayCastHit);
+
+		if(hit)
+		{
+			rayCastHits.push_back(rayCastHit);
+			InitializeRayCastHit(rayCastHit);
+		}
+	}
+
+	/* stack<GameObject*> gameObjects;
 	gameObjects.push(root);
 
-
-	while (!gameObjects.empty())
+	while(!gameObjects.empty())
 	{
 		GameObject* currentGameObject = gameObjects.top();
 		gameObjects.pop();
@@ -403,7 +429,7 @@ std::vector<RayCastHit> ModuleScene::RayCastAll(const float3 & origin, const flo
 			rayCastHits.push_back(rayCastHit);
 			InitializeRayCastHit(rayCastHit);
 		}
-	}
+	} */
 
 	auto sortRayCastFunction = [](const RayCastHit& a, const RayCastHit& b) -> bool { return a.normalizedDistance < b.normalizedDistance; };
 	sort(rayCastHits.begin(), rayCastHits.end(), sortRayCastFunction);

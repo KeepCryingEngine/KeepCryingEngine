@@ -123,6 +123,28 @@ void TreeNode::Intersect(vector<GameObject*>& gameObjects, const Frustum& frustu
 	}
 }
 
+void TreeNode::Intersect(vector<GameObject*>& gameObjects, const LineSegment& lineSegment) const
+{
+	if(aabb.Intersects(lineSegment))
+	{
+		for(GameObject* candidate : content)
+		{
+			if(candidate->GetAABB().Intersects(lineSegment))
+			{
+				gameObjects.push_back(candidate);
+			}
+		}
+
+		if(!IsLeaf())
+		{
+			for(size_t i = 0; i < GetChildrenAmount(); ++i)
+			{
+				children[i]->Intersect(gameObjects, lineSegment);
+			}
+		}
+	}
+}
+
 void TreeNode::Print(uint level) const
 {
 	string indentSpace = "";
