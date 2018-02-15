@@ -19,6 +19,7 @@ public:
 
 	const float3& GetLocalPosition() const;
 	const Quat& GetLocalRotation() const;
+	const float3& GetEulerLocalRotation() const;
 	const float3& GetLocalScale() const;
 
 	void SetLocalPosition(const float3& position);
@@ -34,6 +35,8 @@ public:
 	void SetWorldScale(const float3& scale);
 
 	const float4x4& GetModelMatrix() const;
+
+	void GuizmoSetModelMatrix(const float4x4& modelMatrix, const float3& position, const float3& rotation, const float3& scale);
 
 	void Recalculate();
 

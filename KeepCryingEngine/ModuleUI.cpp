@@ -1,5 +1,6 @@
 #include "ModuleUI.h"
 
+#include <ImGuizmo.h>
 #include <imgui.h>
 #include <imgui_impl_sdl_gl3.h>
 #include <GL/glew.h>
@@ -13,6 +14,7 @@
 #include "ModuleScene.h"
 #include "GameObject.h"
 #include "Camera.h"
+#include "Transform.h"
 
 ModuleUI::ModuleUI()
 { }
@@ -97,125 +99,124 @@ void ModuleUI::DrawMainMenu()
 	ImVec2 buttonSize = { 120.0f, 20.0f };
 
 	ImGui_ImplSdlGL3_NewFrame(App->window->window);
+	ImGuizmo::BeginFrame();
+
+	CallWindows();
+	CallEntityCreation();
+
+	if(ImGui::BeginMainMenuBar())
 	{
-		CallWindows();
-		CallEntityCreation();
-
-		if(ImGui::BeginMainMenuBar())
+		if(ImGui::BeginMenu("Windows"))
 		{
-			if(ImGui::BeginMenu("Windows"))
+			if (ImGui::Selectable("Hierarchy"))
 			{
-				if (ImGui::Selectable("Hierarchy"))
-				{
-					hierarchyWindow ^= 1;
-				}
+				hierarchyWindow ^= 1;
+			}
 
-				if(ImGui::BeginMenu("Control Panel"))
+			if(ImGui::BeginMenu("Control Panel"))
+			{
+				if(ImGui::Selectable("Camera"))
 				{
-					if(ImGui::Selectable("Camera"))
-					{
-						cameraWindow ^= 1;
-					}
-					if(ImGui::Selectable("Movement"))
-					{
-						speedWindow ^= 1;
-					}
-					if(ImGui::Selectable("Space Partitioning"))
-					{
-						spacePartitioningWindow ^= 1;
-					}
-					ImGui::EndMenu();
+					cameraWindow ^= 1;
+				}
+				if(ImGui::Selectable("Movement"))
+				{
+					speedWindow ^= 1;
+				}
+				if(ImGui::Selectable("Space Partitioning"))
+				{
+					spacePartitioningWindow ^= 1;
 				}
 				ImGui::EndMenu();
 			}
-
-			static GLfloat color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-			if(ImGui::BeginMenu("Parameters"))
-			{
-				ImGui::Checkbox(" Frustum Culling", &frustumCulling);
-				ImGui::Checkbox(" Wireframe Mode", &wireframeEnabled);
-				ImGui::Checkbox(" Textures", &textureEnabled);
-				ImGui::Checkbox(" Depth Test", &depthEnabled);
-				ImGui::Checkbox(" Cull Face", &cullEnabled);
-				ImGui::Checkbox(" Color Material", &colormaterialEnabled);
-				ImGui::Checkbox(" Antialiasing", &antialiasingEnabled);				
-				ImGui::Checkbox(" Fog", &fogEnabled);
-				ImGui::Checkbox(" Debug Mode", &debugMode);
-
-				if(ImGui::BeginMenu("Fog parameters"))
-				{
-					ImGui::SliderFloat(" Density", &fogDensity, 0.0f, 1.0f);
-					ImGui::ColorPicker3(" Color", color);
-					ImGui::EndMenu();
-				}
-
-				//FOG Parameters
-				glFogf(GL_FOG_DENSITY, fogDensity);
-				glFogfv(GL_FOG_COLOR, color);
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Light"))
-			{
-				ImGui::Checkbox(" Lightning", &lightningEnabled);
-				if (ImGui::ColorPicker3(" Ambient Light", App->renderer->globalAmbient))
-				{
-					if (!wireframeEnabled)
-					{
-						glLightModelfv(GL_LIGHT_MODEL_AMBIENT, App->renderer->globalAmbient);
-					}				
-				}
-				ImGui::EndMenu();
-			}
-
-			SetAllParameters();
-
-			static int shaderMode = 0;
-			if(ImGui::BeginMenu("Shader Editor"))
-			{
-				ImGui::Combo("Shaders", &shaderMode, "None\0Fragment\0Vertex");
-				if(ImGui::Button("Edit", buttonSize))
-				{
-					SetTextOnEditor(shaderMode);
-					shaderEditorWindow ^= 1;
-				}
-				ImGui::EndMenu();
-			}
-
-			if(ImGui::BeginMenu("Personalization"))
-			{
-				if(ImGui::BeginMenu("Themes"))
-				{
-					if(ImGui::Selectable("Default Theme"))
-					{
-						ImGui::StyleColorsClassic();
-					}
-					if(ImGui::Selectable("Dark Theme"))
-					{
-						ImGui::StyleColorsDark();
-					}
-					if(ImGui::Selectable("Light Theme"))
-					{
-						ImGui::StyleColorsLight();
-					}
-					ImGui::EndMenu();
-				}
-				if(ImGui::BeginMenu("Background Color"))
-				{
-					ImGui::DragFloat3("##backgroundcolor", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
-					ImGui::EndMenu();
-				}			
-				ImGui::EndMenu();
-			}
-
-			if(ImGui::BeginMenu("About"))
-			{
-				DrawAboutMenu();
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndMainMenuBar();
+			ImGui::EndMenu();
 		}
+		static GLfloat color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		if(ImGui::BeginMenu("Parameters"))
+		{
+			ImGui::Checkbox(" Frustum Culling", &frustumCulling);
+			ImGui::Checkbox(" Wireframe Mode", &wireframeEnabled);
+			ImGui::Checkbox(" Textures", &textureEnabled);
+			ImGui::Checkbox(" Depth Test", &depthEnabled);
+			ImGui::Checkbox(" Cull Face", &cullEnabled);
+			ImGui::Checkbox(" Color Material", &colormaterialEnabled);
+			ImGui::Checkbox(" Antialiasing", &antialiasingEnabled);				
+			ImGui::Checkbox(" Fog", &fogEnabled);
+			ImGui::Checkbox(" Debug Mode", &debugMode);
+
+			if(ImGui::BeginMenu("Fog parameters"))
+			{
+				ImGui::SliderFloat(" Density", &fogDensity, 0.0f, 1.0f);
+				ImGui::ColorPicker3(" Color", color);
+				ImGui::EndMenu();
+			}
+
+			//FOG Parameters
+			glFogf(GL_FOG_DENSITY, fogDensity);
+			glFogfv(GL_FOG_COLOR, color);
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Light"))
+		{
+			ImGui::Checkbox(" Lightning", &lightningEnabled);
+			if (ImGui::ColorPicker3(" Ambient Light", App->renderer->globalAmbient))
+			{
+				if (!wireframeEnabled)
+				{
+					glLightModelfv(GL_LIGHT_MODEL_AMBIENT, App->renderer->globalAmbient);
+				}				
+			}
+			ImGui::EndMenu();
+		}
+
+		SetAllParameters();
+
+		static int shaderMode = 0;
+		if(ImGui::BeginMenu("Shader Editor"))
+		{
+			ImGui::Combo("Shaders", &shaderMode, "None\0Fragment\0Vertex");
+			if(ImGui::Button("Edit", buttonSize))
+			{
+				SetTextOnEditor(shaderMode);
+				shaderEditorWindow ^= 1;
+			}
+			ImGui::EndMenu();
+		}
+
+		if(ImGui::BeginMenu("Personalization"))
+		{
+			if(ImGui::BeginMenu("Themes"))
+			{
+				if(ImGui::Selectable("Default Theme"))
+				{
+					ImGui::StyleColorsClassic();
+				}
+				if(ImGui::Selectable("Dark Theme"))
+				{
+					ImGui::StyleColorsDark();
+				}
+				if(ImGui::Selectable("Light Theme"))
+				{
+					ImGui::StyleColorsLight();
+				}
+				ImGui::EndMenu();
+			}
+			if(ImGui::BeginMenu("Background Color"))
+			{
+				ImGui::DragFloat3("##backgroundcolor", clearColor, 0.01f, 0.0f, 1.0f, "%.2f");
+				ImGui::EndMenu();
+			}			
+			ImGui::EndMenu();
+		}
+
+		if(ImGui::BeginMenu("About"))
+		{
+			DrawAboutMenu();
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMainMenuBar();
 	}
 }
 
@@ -444,6 +445,81 @@ void ModuleUI::CallWindows()
 	}
 }
 
+void ModuleUI::CallGuizmo()
+{
+	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+	static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+
+	static bool useSnap = false;
+	static float snap[3] = { 1.f, 1.f, 1.f };
+
+	if (ImGui::RadioButton("Drag", clickMode == ClickMode::Drag))
+	{
+		clickMode = ClickMode::Drag;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::RadioButton("Pick", clickMode == ClickMode::Pick))
+	{
+		clickMode = ClickMode::Pick;
+	}
+
+	ImGui::Separator();
+
+	if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+	{
+		mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
+	{
+		mCurrentGizmoOperation = ImGuizmo::ROTATE;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
+	{
+		mCurrentGizmoOperation = ImGuizmo::SCALE;
+	}
+
+	Transform* temp = (Transform*)App->scene->Get(selectedNodeID)->GetComponent(ComponentType::Transform);
+		
+	float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+
+	//Xavo: Do not delete this or I'll haunt your dreams -----------------------
+	//if(mCurrentGizmoOperation != ImGuizmo::SCALE)
+	//{
+	//	if(ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
+	//		mCurrentGizmoMode = ImGuizmo::LOCAL;
+	//	ImGui::SameLine();
+	//	if(ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
+	//		mCurrentGizmoMode = ImGuizmo::WORLD;
+	//}
+	//ImGui::Checkbox("", &useSnap);
+	//--------------------------------------------------------------------------
+
+	ImGuiIO& io = ImGui::GetIO();
+	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
+	float4x4 matrixTransposed = temp->GetModelMatrix().Transposed();
+	float* objectMatrix = (float*)matrixTransposed.ptr();
+
+	if (selectedNodeID != 0)
+	{
+		ImGuizmo::Manipulate(App->camera->camera->GetViewMatrix().ptr(), App->camera->camera->GetProyectionMatrix().ptr(), mCurrentGizmoOperation, mCurrentGizmoMode, objectMatrix, nullptr, useSnap ? &snap[0] : NULL);
+				
+		if(ImGuizmo::IsUsing())
+		{
+			ImGuizmo::DecomposeMatrixToComponents(objectMatrix, matrixTranslation, matrixRotation, matrixScale);
+			temp->GuizmoSetModelMatrix(matrixTransposed.Transposed(), (float3)matrixTranslation, (float3)matrixRotation, (float3)matrixScale);
+		}	
+	}
+}
+
 void ModuleUI::DrawCameraWindow()
 {
 	ImGui::Begin("Camera Controls", &cameraWindow, ImGuiWindowFlags_MenuBar);
@@ -527,6 +603,10 @@ void ModuleUI::DrawShaderWindow()
 void ModuleUI::DrawHierarchyWindow()
 {
 	ImGui::Begin("Game Object Hierarchy", &hierarchyWindow);
+
+	CallGuizmo();
+
+	ImGui::Separator();
 
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_DefaultOpen;
 

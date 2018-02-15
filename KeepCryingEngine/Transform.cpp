@@ -67,6 +67,11 @@ const Quat & Transform::GetLocalRotation() const
 	return localRotation;
 }
 
+const float3 & Transform::GetEulerLocalRotation() const
+{
+	return eulerLocalRotation;
+}
+
 const float3 & Transform::GetLocalScale() const
 {
 	return localScale;
@@ -155,6 +160,22 @@ const float4x4 & Transform::GetModelMatrix() const
 {
 	RecalculateIfNecessary();
 	return modelMatrix;
+}
+
+void Transform::GuizmoSetModelMatrix(const float4x4 & setmodelMatrix, const float3& position, const float3& rotation, const float3& scale)
+{
+	if(!gameObject->IsStatic())
+	{
+		modelMatrix = setmodelMatrix;
+
+		SetLocalPosition(position);
+
+		eulerLocalRotation = rotation;
+		float3 radAngles = DegToRad(rotation);
+		SetLocalRotation(Quat::FromEulerXYZ(radAngles.x, radAngles.y, radAngles.z));
+
+		SetLocalScale(scale);
+	}
 }
 
 void Transform::Recalculate()

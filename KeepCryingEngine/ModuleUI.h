@@ -47,6 +47,7 @@ private:
 
 	void PrintChildrenOnHierarchy(std::vector<GameObject*> children);
 
+	void CallGuizmo();
 	void CallEntityCreation();
 
 private:

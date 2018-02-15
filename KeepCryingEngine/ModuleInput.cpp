@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <imgui.h>
 #include <imgui_impl_sdl_gl3.h>
+#include <ImGuizmo.h>
 
 #include "Application.h"
 #include "ModuleCamera.h"
@@ -84,6 +85,7 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 	// Button up and Motion events are not ignored
 
 	bool mouseHoveringAnyWindow = ImGui::IsMouseHoveringAnyWindow();
+	bool mouseHoveringAnyGuizmo = ImGuizmo::IsOver();
 
 	while(SDL_PollEvent(&event) != 0)
 	{
@@ -121,7 +123,7 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 				break;
 
 			case SDL_MOUSEBUTTONDOWN:
-				if(!mouseHoveringAnyWindow)
+				if(!mouseHoveringAnyWindow && !mouseHoveringAnyGuizmo)
 				{
 					mouse_buttons[event.button.button - 1] = KeyState::KEY_DOWN;
 				}

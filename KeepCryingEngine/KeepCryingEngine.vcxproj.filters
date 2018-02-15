@@ -33,6 +33,12 @@
     <ClCompile Include="Log.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
     <ClCompile Include="ModuleCamera.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -95,6 +101,7 @@
       <Filter>Trees</Filter>
     </ClCompile>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <ClCompile Include="Tree.cpp">
       <Filter>Trees</Filter>
     </ClCompile>
@@ -106,6 +113,13 @@
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Entities</Filter>
+>>>>>>> Develop
+=======
+    <ClCompile Include="external\ImGuizmo\ImSequencer.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="external\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Utils</Filter>
 >>>>>>> Develop
     </ClCompile>
   </ItemGroup>
@@ -145,8 +159,14 @@
     <ClInclude Include="json_serializer.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Components</Filter>
+    </ClInclude>
     <ClInclude Include="MemLeaks.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="ModuleCamera.h">
       <Filter>Modules</Filter>
@@ -220,6 +240,7 @@
       <Filter>Trees</Filter>
     </ClInclude>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <ClInclude Include="Tree.h">
       <Filter>Trees</Filter>
     </ClInclude>
@@ -231,6 +252,13 @@
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Entities</Filter>
+>>>>>>> Develop
+=======
+    <ClInclude Include="external\ImGuizmo\ImSequencer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="external\ImGuizmo\ImGuizmo.h">
+      <Filter>Utils</Filter>
 >>>>>>> Develop
     </ClInclude>
   </ItemGroup>
