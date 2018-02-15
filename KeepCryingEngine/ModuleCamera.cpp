@@ -4,6 +4,8 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleRender.h"
+#include "ModuleScene.h"
+#include "ModuleUI.h"
 
 const float ModuleCamera::SHIFT_MULTIPLIER = 10.0f;
 const float ModuleCamera::WHEEL_FORCE = 10.0f;
@@ -162,7 +164,19 @@ void ModuleCamera::MovementMouse(float shiftDeltaMultiplier)
 	}
 	else if(leftPressed)
 	{
-		MovementMouseDrag(shiftDeltaMultiplier);
+		switch(App->ui->GetClickMode())
+		{
+			case ClickMode::Drag:
+			{
+				MovementMouseDrag(shiftDeltaMultiplier);
+			}
+			break;
+			case ClickMode::Pick:
+			{
+				ScenePick();
+			}
+			break;
+		}
 	}
 }
 
@@ -346,6 +360,24 @@ void ModuleCamera::RotateKeyboard(float deltaTimeS)
 	// frustum.front = rotation.Mul(frustum.front);
 }
 
+void ModuleCamera::ScenePick()
+{
+	float2 mousePos = App->input->GetMousePosition();
+	float normalizedX = ((mousePos.x/ App->configuration.screenWidth)*2) - 1 ;
+	float normalizedY =((mousePos.y / App->configuration.screenHeight)*-2)+1;
+
+	LineSegment picking = camera->GetFrustum().UnProjectLineSegment(normalizedX, normalizedY);
+	lastRay = picking;
+
+	RayCastHit hit;
+
+	if(App->scene->RayCast(picking.a, picking.Dir(), camera->GetFarPlane(), hit))
+	{
+		LOG_DEBUG(hit.gameObject->GetName().c_str());
+		App->ui->SetSelectedNodeID(hit.gameObject->GetId());
+	}
+}
+
 void ModuleCamera::EnableCamera(Camera* camera)
 {
 	if(enabledCamera != nullptr)
@@ -364,4 +396,9 @@ void ModuleCamera::EnableCamera(Camera* camera)
 Camera* ModuleCamera::GetEnabledCamera() const
 {
 	return enabledCamera;
+}
+
+const LineSegment & ModuleCamera::GetLastRay() const
+{
+	return lastRay;
 }
