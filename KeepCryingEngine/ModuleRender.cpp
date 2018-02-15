@@ -6,6 +6,7 @@
 #include <vector>
 #include <DevIL.h>
 
+#include "ModuleEntity.h"
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
@@ -115,6 +116,8 @@ update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 	{
 		DrawLastRay();
 	}
+
+	App->entity->LoadMesh("Assets/BakerHouse.fbx");
 
 	return update_status::UPDATE_CONTINUE;
 }

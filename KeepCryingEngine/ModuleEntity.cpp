@@ -46,7 +46,18 @@ Mesh * ModuleEntity::GetSphere()
 
 Mesh * ModuleEntity::LoadMesh(const char * path) const
 {
-	const aiScene * scene = aiImportFile(path,aiProcess_Triangulate);
+	const aiScene * scene = aiImportFile(path, aiProcess_Triangulate);
+	
+	glBegin(GL_TRIANGLES);
+	for(int i = 0; i < scene->mNumMeshes; i++)
+	{
+		for(int j = 0; j < scene->mMeshes[i]->mNumVertices; j++)
+		{
+			glVertex3f(scene->mMeshes[i]->mVertices[j].x, scene->mMeshes[i]->mVertices[j].y, scene->mMeshes[i]->mVertices[j].z);
+		}
+	}
+	glEnd();
+
 	return nullptr;
 }
 
