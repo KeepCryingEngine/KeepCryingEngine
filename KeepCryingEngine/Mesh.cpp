@@ -49,6 +49,18 @@ void Mesh::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& i
 	GenerateBuffers(vertices, indices);
 	CalculateAABBForMesh(vertices);
 	this->drawMode = drawMode;
+	this->vertices = vertices;
+	this->indices = indices;
+}
+
+const std::vector<Vertex>& Mesh::GetVertices() const
+{
+	return vertices;
+}
+
+const std::vector<GLushort>& Mesh::GetIndices() const
+{
+	return indices;
 }
 
 void Mesh::GenerateBuffers(const vector<Vertex> vertices, const vector<GLushort> indices)

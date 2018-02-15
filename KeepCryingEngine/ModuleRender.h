@@ -54,6 +54,8 @@ private:
 	void DrawGeometry();
 	void Draw(const DrawInfo& drawInfo);
 
+	void DrawLastRay();
+
 public:
 	GLfloat globalAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };	
 

@@ -1,9 +1,12 @@
 #include "ModuleScene.h"
 
 #include <queue>
+#include <stack>
 #include <SDL_scancode.h>
+#include <LineSegment.h>
 
 #include "MeshFilter.h"
+#include "Mesh.h"
 #include "MeshRenderer.h"
 #include "GameObject.h"
 #include "Application.h"
@@ -283,6 +286,21 @@ void ModuleScene::SetSpacePartitioningStructure(int spacePartitioningStructure)
 	spaceStructure = spacePartitioningStructure;
 }
 
+LineSegment ModuleScene::BuildLineSegmentForRayCast(const math::float3 & origin, const math::float3 & direction, float maxDistance) const
+{
+	LineSegment lineSegment;
+	lineSegment.a = origin;
+	lineSegment.b = origin + direction.Normalized() * maxDistance;
+	return lineSegment;
+}
+
+LineSegment ModuleScene::ProjectLineSegmentToGameObjectsLocalSpace(const LineSegment & worldSpaceLineSegment, const GameObject& gameObject) const
+{
+	LineSegment gameObjectSpaceLineSegment(worldSpaceLineSegment);
+	gameObjectSpaceLineSegment.Transform(gameObject.GetTransform()->GetModelMatrix().Inverted());
+	return gameObjectSpaceLineSegment;
+}
+
 void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const
 {
 	// Iterative
@@ -321,6 +339,154 @@ void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDel
 	}
 
 	*/
+}
+
+void ModuleScene::InitializeRayCastHit(RayCastHit & rayCastHit) const 
+{
+	rayCastHit.gameObject = nullptr;
+	rayCastHit.normal = float3::zero;
+	rayCastHit.point = float3::zero;
+	rayCastHit.distance = INFINITY;
+	rayCastHit.normalizedDistance = INFINITY;
+}
+
+bool ModuleScene::RayCast(const float3& origin, const float3& direction, float maxDistance, RayCastHit& rayCastHit) const
+{
+	InitializeRayCastHit(rayCastHit);
+	LineSegment lineSegment = BuildLineSegmentForRayCast(origin, direction, maxDistance);
+
+	bool hit = false;
+	stack<GameObject*> gameObjects;
+	gameObjects.push(root);
+	while (!gameObjects.empty())
+	{
+		GameObject* currentGameObject = gameObjects.top();
+		gameObjects.pop();
+
+		for (GameObject * child : currentGameObject->GetChildren())
+		{
+			gameObjects.push(child);
+		}
+
+		bool currentGameObjectHit = RayCastGameObject(currentGameObject, lineSegment, rayCastHit);
+		hit = hit || currentGameObjectHit;
+	}
+
+	return hit;
+}
+
+std::vector<RayCastHit> ModuleScene::RayCastAll(const float3 & origin, const float3 & direction, float maxDistance) const
+{
+	vector<RayCastHit> rayCastHits;
+	RayCastHit rayCastHit;
+	InitializeRayCastHit(rayCastHit);
+
+	LineSegment worldSpaceLineSegment = BuildLineSegmentForRayCast(origin, direction, maxDistance);
+
+	stack<GameObject*> gameObjects;
+	gameObjects.push(root);
+
+
+	while (!gameObjects.empty())
+	{
+		GameObject* currentGameObject = gameObjects.top();
+		gameObjects.pop();
+
+		for (GameObject * child : currentGameObject->GetChildren())
+		{
+			gameObjects.push(child);
+		}
+		
+		bool hit = RayCastGameObject(currentGameObject, worldSpaceLineSegment, rayCastHit);
+		if (hit)
+		{
+			rayCastHits.push_back(rayCastHit);
+			InitializeRayCastHit(rayCastHit);
+		}
+	}
+
+	auto sortRayCastFunction = [](const RayCastHit& a, const RayCastHit& b) -> bool { return a.normalizedDistance < b.normalizedDistance; };
+	sort(rayCastHits.begin(), rayCastHits.end(), sortRayCastFunction);
+
+	return rayCastHits;
+}
+
+bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
+{
+	bool hit = false;
+
+	if (worldSpaceLineSegment.Intersects(gameObject->GetAABB()))
+	{
+		MeshFilter* meshFilter = (MeshFilter*)gameObject->GetComponent(ComponentType::MeshFilter);
+		if (meshFilter)
+		{
+			Mesh* mesh = meshFilter->GetMesh();
+			if (mesh)
+			{
+				hit = RayCastMesh(gameObject, mesh, worldSpaceLineSegment, rayCastHit);
+			}
+		}
+	}
+	
+	return hit;
+}
+
+bool NextMeshTriangle(Mesh* mesh, Triangle& triangle, size_t& index);
+
+void BuildRayCastHit(RayCastHit& rayCastHit, GameObject* gameObject, float3 point, float normalizedDistance, const LineSegment& localGameObjectSpaceLineSegment, const Triangle& triangle)
+{
+	const float4x4& gameObjectModelMatrix = gameObject->GetTransform()->GetModelMatrix();
+	rayCastHit.gameObject = gameObject;
+	rayCastHit.normalizedDistance = normalizedDistance;
+	rayCastHit.point = gameObjectModelMatrix.TransformPos(point);
+	rayCastHit.distance = localGameObjectSpaceLineSegment.a.Distance(point);
+	rayCastHit.normal = gameObjectModelMatrix.TransformDir(triangle.NormalCCW());
+}
+
+bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
+{
+	bool hit = false;
+	LineSegment localGameObjectSpaceLineSegment = ProjectLineSegmentToGameObjectsLocalSpace(worldSpaceLineSegment, *gameObject);
+	Triangle triangle;
+	size_t index = 0;
+	while (NextMeshTriangle(mesh, triangle, index))
+	{
+		float3 point;
+		float normalizedDistance;
+		if (localGameObjectSpaceLineSegment.Intersects(triangle, &normalizedDistance, &point))
+		{
+			if (normalizedDistance < rayCastHit.normalizedDistance)
+			{
+				BuildRayCastHit(rayCastHit, gameObject, point, normalizedDistance, localGameObjectSpaceLineSegment, triangle);
+				hit = true;
+			}
+		}
+	}
+
+	return hit;
+}
+
+/// Loads the next triangle adapting triangles to mesh draw type
+/// [out] triangle: the triangle
+/// [in] index: the index of the triangle to return
+/// [out] index: the next index of the triangle to return
+bool NextMeshTriangle(Mesh* mesh, Triangle& triangle, size_t& index)
+{
+	assert(index <= mesh->GetIndicesNumber());
+
+	bool ret = false;
+	if (index < mesh->GetIndicesNumber()) {
+		if (mesh->GetDrawMode() == GL_TRIANGLES)
+		{
+			assert(index <= mesh->GetIndicesNumber() - 3);
+			triangle.a = mesh->GetVertices().at(mesh->GetIndices().at(index++)).position;
+			triangle.b = mesh->GetVertices().at(mesh->GetIndices().at(index++)).position;
+			triangle.c = mesh->GetVertices().at(mesh->GetIndices().at(index++)).position;
+			ret = true;
+		}
+	}
+
+	return ret;
 }
 
 void ModuleScene::CheckToDestroy()
