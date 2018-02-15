@@ -48,6 +48,8 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 		RayCastHit rch;
 		bool hit = RayCast(float3(0, 0, -10), float3(0, 0, 1), 20, rch);
 		hit = hit;
+		GameObject * sphere = AddSphere(*root);
+		sphere->GetTransform()->SetWorldPosition(rch.point);
 	}
 
 	if(!App->ui->GetFrustumCulling())
@@ -438,6 +440,16 @@ bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment &
 
 bool NextMeshTriangle(Mesh* mesh, Triangle& triangle, size_t& index);
 
+void BuildRayCastHit(RayCastHit& rayCastHit, GameObject* gameObject, float3 point, float normalizedDistance, const LineSegment& localGameObjectSpaceLineSegment, const Triangle& triangle)
+{
+	const float4x4& gameObjectModelMatrix = gameObject->GetTransform()->GetModelMatrix();
+	rayCastHit.gameObject = gameObject;
+	rayCastHit.normalizedDistance = normalizedDistance;
+	rayCastHit.point = gameObjectModelMatrix.Transform(point.ToPos4()).xyz().Normalized();
+	rayCastHit.distance = localGameObjectSpaceLineSegment.a.Distance(point);
+	rayCastHit.normal = gameObjectModelMatrix.Transform(triangle.NormalCCW().ToDir4()).xyz().Normalized();
+}
+
 bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
 {
 	bool hit = false;
@@ -452,12 +464,7 @@ bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSeg
 		{
 			if (normalizedDistance < rayCastHit.normalizedDistance)
 			{
-				//TODO transform point and normal to world space
-				rayCastHit.gameObject = gameObject;
-				rayCastHit.normalizedDistance = normalizedDistance;
-				rayCastHit.point = point;
-				rayCastHit.distance = worldSpaceLineSegment.a.Distance(point);
-				rayCastHit.normal = triangle.NormalCCW();
+				BuildRayCastHit(rayCastHit, gameObject, point, normalizedDistance, localGameObjectSpaceLineSegment, triangle);
 				hit = true;
 			}
 		}

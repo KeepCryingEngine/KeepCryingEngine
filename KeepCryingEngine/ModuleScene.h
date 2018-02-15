@@ -68,7 +68,6 @@ private:
 	LineSegment ProjectLineSegmentToGameObjectsLocalSpace(const LineSegment& worldSpaceLineSegment, const GameObject& gameObject) const;
 	bool RayCastGameObject(GameObject* gameObject, const LineSegment& lineSegment, RayCastHit& rayCastHit) const;
 	bool RayCastMesh(GameObject* gameObject, Mesh* mesh, const LineSegment& lineSegment, RayCastHit& rayCastHit) const;
-	
 
 	void CheckToDestroy();
 
