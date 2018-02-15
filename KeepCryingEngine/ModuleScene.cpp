@@ -156,6 +156,7 @@ bool ModuleScene::CleanUp()
 	qTGameObjects.Clear();
 	oTGameObjects.Clear();
 	kTGameObjects.Clear();
+	dGameobjects.clear();
 
 	return true;
 }
@@ -272,6 +273,7 @@ void ModuleScene::AddStatic(GameObject* gameObject)
 	qTGameObjects.Insert(gameObject);
 	oTGameObjects.Insert(gameObject);
 	kTGameObjects.Insert(gameObject);
+	dGameobjects.erase(find(dGameobjects.begin(),dGameobjects.end(),gameObject));
 }
 
 void ModuleScene::RemoveStatic(GameObject* gameObject)
@@ -279,6 +281,7 @@ void ModuleScene::RemoveStatic(GameObject* gameObject)
 	qTGameObjects.Remove(gameObject);
 	oTGameObjects.Remove(gameObject);
 	kTGameObjects.Remove(gameObject);
+	dGameobjects.push_back(gameObject);
 }
 
 void ModuleScene::SetSpacePartitioningStructure(int spacePartitioningStructure)
@@ -352,38 +355,14 @@ void ModuleScene::InitializeRayCastHit(RayCastHit & rayCastHit) const
 
 bool ModuleScene::RayCast(const float3& origin, const float3& direction, float maxDistance, RayCastHit& rayCastHit) const
 {
-	InitializeRayCastHit(rayCastHit);
-	LineSegment lineSegment = BuildLineSegmentForRayCast(origin, direction, maxDistance);
-
 	bool hit = false;
 
-	vector<GameObject*> gameObjects;
-	kTGameObjects.Intersect(gameObjects, lineSegment);
-
-	for(GameObject* gameObject : gameObjects)
+	vector<RayCastHit> hitVector= RayCastAll(origin,direction,maxDistance);
+	if(!hitVector.empty())
 	{
-		bool currentGameObjectHit = RayCastGameObject(gameObject, lineSegment, rayCastHit);
-		hit = hit || currentGameObjectHit;
+		rayCastHit = hitVector[0];
+		hit = true;
 	}
-
-	return hit;
-
-	/* stack<GameObject*> gameObjects;
-	gameObjects.push(root);
-	while (!gameObjects.empty())
-	{
-		GameObject* currentGameObject = gameObjects.top();
-		gameObjects.pop();
-
-		for (GameObject * child : currentGameObject->GetChildren())
-		{
-			gameObjects.push(child);
-		}
-
-		bool currentGameObjectHit = RayCastGameObject(currentGameObject, lineSegment, rayCastHit);
-		hit = hit || currentGameObjectHit;
-	} */
-
 	return hit;
 }
 
@@ -398,6 +377,14 @@ std::vector<RayCastHit> ModuleScene::RayCastAll(const float3 & origin, const flo
 
 	vector<GameObject*> gameObjects;
 	kTGameObjects.Intersect(gameObjects, worldSpaceLineSegment);
+
+	for(GameObject* g : dGameobjects)
+	{
+		if(worldSpaceLineSegment.Intersects(g->GetAABB()))
+		{
+			gameObjects.push_back(g);
+		}
+	}
 
 	for(GameObject* gameObject : gameObjects)
 	{
@@ -435,6 +422,11 @@ std::vector<RayCastHit> ModuleScene::RayCastAll(const float3 & origin, const flo
 	sort(rayCastHits.begin(), rayCastHits.end(), sortRayCastFunction);
 
 	return rayCastHits;
+}
+
+void ModuleScene::AddToDinamicGameobjectList(GameObject* gameobject)
+{
+	dGameobjects.push_back(gameobject);
 }
 
 bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
