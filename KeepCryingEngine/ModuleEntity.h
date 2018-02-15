@@ -19,6 +19,7 @@ public:
 	Mesh* GetSphere();
 
 private:
+	Mesh * LoadMesh(const char* path) const;
 	void SetUpCube();
 	void SetUpSphere();
 	void GetCubeMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, GLenum& drawMode) const;

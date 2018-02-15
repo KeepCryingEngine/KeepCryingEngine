@@ -4,7 +4,12 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include <assimp/scene.h>
+
 #include "Globals.h"
+
+#include <assimp/cimport.h>
+#include <assimp/postprocess.h>
 
 using namespace std;
 
@@ -18,6 +23,7 @@ bool ModuleEntity::Init()
 {
 	SetUpCube();
 	SetUpSphere();
+	LoadMesh("Assets/BakerHouse.fbx");
 	return true;
 }
 
@@ -36,6 +42,12 @@ Mesh * ModuleEntity::GetCube()
 Mesh * ModuleEntity::GetSphere()
 {
 	return sphere;
+}
+
+Mesh * ModuleEntity::LoadMesh(const char * path) const
+{
+	const aiScene * scene = aiImportFile(path,aiProcess_Triangulate);
+	return nullptr;
 }
 
 void ModuleEntity::SetUpCube()
