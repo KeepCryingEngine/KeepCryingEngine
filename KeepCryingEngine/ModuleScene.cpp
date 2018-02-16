@@ -265,6 +265,16 @@ void ModuleScene::Generate(int count, float staticPercentage, float minX, float 
 
 void ModuleScene::Destroy(GameObject& gameObject)
 {
+	if(gameObject.IsStatic())
+	{
+		qTGameObjects.Remove(&gameObject);
+		oTGameObjects.Remove(&gameObject);
+		kTGameObjects.Remove(&gameObject);
+	}
+	else
+	{
+		dGameobjects.erase(find(dGameobjects.begin(), dGameobjects.end(), &gameObject));
+	}
 	toDestroy.push_back(&gameObject);
 }
 
