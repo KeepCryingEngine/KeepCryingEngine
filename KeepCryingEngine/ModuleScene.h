@@ -60,6 +60,7 @@ public:
 	void SetSpacePartitioningStructure(int spacePartitioningStructure);
 	bool RayCast(const float3& origin, const float3& direction, float maxDistance, RayCastHit& rayCastHit) const;
 	std::vector<RayCastHit> RayCastAll(const float3& origin, const float3& direction, float maxDistance) const;
+	void AddToDinamicGameobjectList(GameObject* gameobject);
 
 
 private:
@@ -108,6 +109,10 @@ private:
 	// KDTree stuff
 
 	KDtree kTGameObjects;
+
+	//Dinamic objects
+
+	std::vector<GameObject*> dGameobjects;
 };
 
 #endif // !_MODULESCENE_H_

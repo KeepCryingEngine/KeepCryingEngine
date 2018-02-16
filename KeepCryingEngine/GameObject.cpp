@@ -16,6 +16,7 @@ GameObject::GameObject(const string& name) : name(name)
 {
 	id = App->scene->GetNewGameObjectId();
 	transform = (Transform*)AddComponent(ComponentType::Transform, true);
+	App->scene->AddToDinamicGameobjectList(this);
 
 	aabb.SetNegativeInfinity();
 }

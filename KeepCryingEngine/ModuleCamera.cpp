@@ -373,8 +373,13 @@ void ModuleCamera::ScenePick()
 
 	if(App->scene->RayCast(picking.a, picking.Dir(), camera->GetFarPlane(), hit))
 	{
-		LOG_DEBUG(hit.gameObject->GetName().c_str());
+		App->ui->OpenInspectorWindow();
 		App->ui->SetSelectedNodeID(hit.gameObject->GetId());
+	}
+	else
+	{
+		App->ui->CloseInspectorWindow();
+		App->ui->SetSelectedNodeID(0);
 	}
 }
 
