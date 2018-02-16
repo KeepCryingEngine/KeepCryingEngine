@@ -1,6 +1,5 @@
 #include "ModuleEntity.h"
 
-#include <vector>
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -23,7 +22,7 @@ bool ModuleEntity::Init()
 {
 	SetUpCube();
 	SetUpSphere();
-	LoadMesh("Assets/BakerHouse.fbx");
+	//LoadMesh("Assets/BakerHouse.fbx");
 	return true;
 }
 
@@ -44,21 +43,42 @@ Mesh * ModuleEntity::GetSphere()
 	return sphere;
 }
 
-Mesh * ModuleEntity::LoadMesh(const char * path) const
+Mesh * ModuleEntity::LoadMesh(const char * path)
 {
 	const aiScene * scene = aiImportFile(path, aiProcess_Triangulate);
-	
-	glBegin(GL_TRIANGLES);
-	for(int i = 0; i < scene->mNumMeshes; i++)
-	{
-		for(int j = 0; j < scene->mMeshes[i]->mNumVertices; j++)
-		{
-			glVertex3f(scene->mMeshes[i]->mVertices[j].x, scene->mMeshes[i]->mVertices[j].y, scene->mMeshes[i]->mVertices[j].z);
-		}
-	}
-	glEnd();
 
-	return nullptr;
+	Mesh* idMesh = new Mesh();
+	
+	vector<Vertex> vertices;
+	vector<GLushort> indices;
+
+	/*for(int i = 0; i < scene->mRootNode->mNumChildren; i++)
+	{
+		for(int j = 0; j < scene->mRootNode->mChildren[i]->mNumMeshes; j++)
+		{*/
+			unsigned int  tempIdMesh = 1;//scene->mRootNode->mChildren[i]->mMeshes[j];
+			//Position
+			for(int k = 0; k < scene->mMeshes[tempIdMesh]->mNumVertices; k++)
+			{
+				Vertex vertex;
+				vertex.position = float3(scene->mMeshes[tempIdMesh]->mVertices[k].x, scene->mMeshes[tempIdMesh]->mVertices[k].y, scene->mMeshes[tempIdMesh]->mVertices[k].z);
+				vertex.normal = float3(scene->mMeshes[tempIdMesh]->mNormals[k].x, scene->mMeshes[tempIdMesh]->mNormals[k].y, scene->mMeshes[tempIdMesh]->mNormals[k].z);
+				vertex.color = float4 (100,100,100,255);
+				vertex.uv = float2(scene->mMeshes[tempIdMesh]->mTextureCoords[0][k].x, scene->mMeshes[tempIdMesh]->mTextureCoords[0][k].y);
+				vertices.push_back(vertex);
+			}
+			for(int k = 0; k < scene->mMeshes[tempIdMesh]->mNumFaces; k++)
+			{
+				for(int m = 0; m < scene->mMeshes[tempIdMesh]->mFaces[k].mNumIndices; m++)
+				{
+					indices.push_back(scene->mMeshes[tempIdMesh]->mFaces[k].mIndices[m]);
+				}
+			}
+		//}
+	//}
+	idMesh->SetMeshData(vertices,indices,GL_TRIANGLES);
+	meshes.push_back(idMesh);
+	return idMesh;
 }
 
 void ModuleEntity::SetUpCube()
@@ -74,13 +94,14 @@ void ModuleEntity::SetUpCube()
 
 void ModuleEntity::SetUpSphere()
 {
-	vector<Vertex> vertices;
+	/*vector<Vertex> vertices;
 	vector<GLushort> indices;
 	GLenum drawMode;
 	GetSphereMeshData(vertices, indices, drawMode);
 
 	sphere = new Mesh();
-	sphere->SetMeshData(vertices, indices, drawMode);
+	sphere->SetMeshData(vertices, indices, drawMode);*/
+	sphere = LoadMesh("Assets/BakerHouse.fbx");
 }
 
 void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& indices, GLenum& drawMode) const

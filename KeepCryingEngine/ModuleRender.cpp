@@ -117,8 +117,6 @@ update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 		DrawLastRay();
 	}
 
-	App->entity->LoadMesh("Assets/BakerHouse.fbx");
-
 	return update_status::UPDATE_CONTINUE;
 }
 

@@ -3,8 +3,7 @@
 
 #include "Module.h"
 #include "Mesh.h"
-
-class Mesh;
+#include <vector>
 
 class ModuleEntity : public Module
 {
@@ -17,7 +16,7 @@ public:
 
 	Mesh* GetCube();
 	Mesh* GetSphere();
-	Mesh * LoadMesh(const char* path) const;
+	Mesh * LoadMesh(const char* path);
 private:
 	
 	void SetUpCube();
@@ -31,6 +30,7 @@ private:
 private:
 	Mesh* cube;
 	Mesh* sphere;
+	std::vector<Mesh*> meshes;
 };
 
 #endif // !_MODULEENTITY_H_
