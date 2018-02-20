@@ -19,6 +19,7 @@ Material::Material()
 
 Material::~Material()
 {
+	App->texture->UnloadTexture(texture);
 }
 
 void Material::DrawUI()
@@ -61,6 +62,8 @@ void Material::SetTexture(const char* path)
 	Texture * texture = App->texture->LoadTexture(path);
 	if(texture)
 	{
+		App->texture->UnloadTexture(this->texture);
+
 		this->texture = texture;
 	}
 }
