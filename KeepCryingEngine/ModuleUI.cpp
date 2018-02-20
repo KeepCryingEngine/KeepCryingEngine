@@ -8,6 +8,7 @@
 #include <fstream>
 
 #include "Application.h"
+#include "ModuleEntity.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
@@ -88,6 +89,11 @@ void ModuleUI::SetSelectedNodeID(unsigned long long id)
 	selectedNodeID = id;
 }
 
+unsigned long long ModuleUI::GetSelectedNode() const
+{
+	return selectedNodeID;
+}
+
 bool ModuleUI::CleanUp()
 {
 	ImGui_ImplSdlGL3_Shutdown();
@@ -126,6 +132,10 @@ void ModuleUI::DrawMainMenu()
 				if(ImGui::Selectable("Space Partitioning"))
 				{
 					spacePartitioningWindow ^= 1;
+				}
+				if(ImGui::Button("Charge"))
+				{
+					App->entity->LoadMesh("Assets/BakerHouse.fbx");
 				}
 				ImGui::EndMenu();
 			}

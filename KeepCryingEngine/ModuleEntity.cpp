@@ -9,6 +9,13 @@
 
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
+#include "Application.h"
+#include "ModuleUI.h"
+#include "ModuleScene.h"
+#include "GameObject.h"
+#include "MeshFilter.h"
+#include "MeshRenderer.h"
+#include "Material.h"
 
 using namespace std;
 
@@ -43,20 +50,28 @@ Mesh * ModuleEntity::GetSphere()
 	return sphere;
 }
 
-Mesh * ModuleEntity::LoadMesh(const char * path)
+void ModuleEntity::LoadMesh(const char * path)
 {
 	const aiScene * scene = aiImportFile(path, aiProcess_Triangulate);
 
-	Mesh* idMesh = new Mesh();
-	
-	vector<Vertex> vertices;
-	vector<GLushort> indices;
+	GameObject* root = App->scene->Get(App->ui->GetSelectedNode());
 
-	/*for(int i = 0; i < scene->mRootNode->mNumChildren; i++)
-	{
+	GameObject* currentGameobject = App->scene->AddEmpty(*root);
+	for(int i = 0; i < scene->mRootNode->mNumChildren; i++)
+	{		
+		if(scene->mRootNode->mChildren[i]->mNumChildren > 0)
+		{
+			LoadMeshRecursive(scene,scene->mRootNode->mChildren[i],root);
+		}
+
 		for(int j = 0; j < scene->mRootNode->mChildren[i]->mNumMeshes; j++)
-		{*/
-			unsigned int  tempIdMesh = 1;//scene->mRootNode->mChildren[i]->mMeshes[j];
+		{
+			Mesh* idMesh = new Mesh();
+
+			GameObject* currentGameobjectMesh = App->scene->AddEmpty(*currentGameobject);
+			vector<Vertex> vertices;
+			vector<GLushort> indices;
+			unsigned int  tempIdMesh = scene->mRootNode->mChildren[i]->mMeshes[j];
 			//Position
 			for(int k = 0; k < scene->mMeshes[tempIdMesh]->mNumVertices; k++)
 			{
@@ -74,11 +89,12 @@ Mesh * ModuleEntity::LoadMesh(const char * path)
 					indices.push_back(scene->mMeshes[tempIdMesh]->mFaces[k].mIndices[m]);
 				}
 			}
-		//}
-	//}
-	idMesh->SetMeshData(vertices,indices,GL_TRIANGLES);
-	meshes.push_back(idMesh);
-	return idMesh;
+			idMesh->SetMeshData(vertices, indices, GL_TRIANGLES);
+			meshes.push_back(idMesh);
+			currentGameobjectMesh->AddComponent(ComponentType::MeshRenderer);
+			((MeshFilter*)currentGameobjectMesh->GetComponent(ComponentType::MeshFilter))->SetMesh(idMesh);
+		}
+	}
 }
 
 void ModuleEntity::SetUpCube()
@@ -94,14 +110,13 @@ void ModuleEntity::SetUpCube()
 
 void ModuleEntity::SetUpSphere()
 {
-	/*vector<Vertex> vertices;
+	vector<Vertex> vertices;
 	vector<GLushort> indices;
 	GLenum drawMode;
 	GetSphereMeshData(vertices, indices, drawMode);
 
 	sphere = new Mesh();
-	sphere->SetMeshData(vertices, indices, drawMode);*/
-	sphere = LoadMesh("Assets/BakerHouse.fbx");
+	sphere->SetMeshData(vertices, indices, drawMode);
 }
 
 void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& indices, GLenum& drawMode) const
@@ -337,5 +352,48 @@ void ModuleEntity::FillVerticesData(vector<Vertex>& vertices, const float3 * pos
 		vertices[i].normal = normals[i];
 		vertices[i].color = colors[i];
 		vertices[i].uv = uvs[i];
+	}
+}
+
+void ModuleEntity::LoadMeshRecursive(const aiScene* scene,aiNode * currentChild, GameObject* father)
+{
+	GameObject* currentGameobject = App->scene->AddEmpty(*father);
+	for(int i = 0; i < currentChild->mNumChildren; i++)
+	{
+		if(currentChild->mChildren[i]->mNumChildren > 0)
+		{
+			LoadMeshRecursive(scene,currentChild->mChildren[i],father);
+		}
+
+		for(int j = 0; j < currentChild->mChildren[i]->mNumMeshes; j++)
+		{
+
+			Mesh* idMesh = new Mesh();
+			GameObject* currentGameobjectMesh = App->scene->AddEmpty(*currentGameobject);
+			vector<Vertex> vertices;
+			vector<GLushort> indices;
+			unsigned int  tempIdMesh = currentChild->mChildren[i]->mMeshes[j];
+			//Position
+			for(int k = 0; k < scene->mMeshes[tempIdMesh]->mNumVertices; k++)
+			{
+				Vertex vertex;
+				vertex.position = float3(scene->mMeshes[tempIdMesh]->mVertices[k].x, scene->mMeshes[tempIdMesh]->mVertices[k].y, scene->mMeshes[tempIdMesh]->mVertices[k].z);
+				vertex.normal = float3(scene->mMeshes[tempIdMesh]->mNormals[k].x, scene->mMeshes[tempIdMesh]->mNormals[k].y, scene->mMeshes[tempIdMesh]->mNormals[k].z);
+				vertex.color = float4(100, 100, 100, 255);
+				vertex.uv = float2(scene->mMeshes[tempIdMesh]->mTextureCoords[0][k].x, scene->mMeshes[tempIdMesh]->mTextureCoords[0][k].y);
+				vertices.push_back(vertex);
+			}
+			for(int k = 0; k < scene->mMeshes[tempIdMesh]->mNumFaces; k++)
+			{
+				for(int m = 0; m < scene->mMeshes[tempIdMesh]->mFaces[k].mNumIndices; m++)
+				{
+					indices.push_back(scene->mMeshes[tempIdMesh]->mFaces[k].mIndices[m]);
+				}
+			}
+			idMesh->SetMeshData(vertices, indices, GL_TRIANGLES);
+			meshes.push_back(idMesh);
+			currentGameobjectMesh->AddComponent(ComponentType::MeshRenderer);
+			((MeshFilter*)currentGameobjectMesh->GetComponent(ComponentType::MeshFilter))->SetMesh(idMesh);
+		}
 	}
 }

@@ -29,6 +29,7 @@ public:
 	bool GetDebugMode()const;
 	ClickMode GetClickMode() const;
 	void SetSelectedNodeID(unsigned long long id);
+	unsigned long long GetSelectedNode()const;
 	void OpenInspectorWindow();
 	void CloseInspectorWindow();
 

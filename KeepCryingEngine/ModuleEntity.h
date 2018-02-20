@@ -5,6 +5,10 @@
 #include "Mesh.h"
 #include <vector>
 
+struct aiNode;
+struct aiScene;
+class GameObject;
+
 class ModuleEntity : public Module
 {
 public:
@@ -16,7 +20,7 @@ public:
 
 	Mesh* GetCube();
 	Mesh* GetSphere();
-	Mesh * LoadMesh(const char* path);
+	void LoadMesh(const char* path);
 private:
 	
 	void SetUpCube();
@@ -25,6 +29,8 @@ private:
 	void GetSphereMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, GLenum& drawMode) const;
 
 	void FillVerticesData(std::vector<Vertex>& vertices, const float3 * positions, const float3* normals, const float4 * colors, const float2 * uvs) const;
+
+	void LoadMeshRecursive(const aiScene* scene,aiNode * currentChild,GameObject* father);
 
 
 private:
