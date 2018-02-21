@@ -23,13 +23,6 @@ bool ModuleTexture::Start()
 	return true;
 }
 
-bool ModuleTexture::CleanUp()
-{
-	RELEASE(checkerTexture);
-
-	return true;
-}
-
 void ModuleTexture::SetUpCheckerTexture()
 {
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
@@ -70,8 +63,6 @@ void ModuleTexture::SetUpCheckerTexture()
 	textureConfiguration.anisotropicFilter = true;
 
 	checkerTexture = new Texture(checkerTextureId, textureConfiguration);
-
-	RegisterTexture("CHECKER_TEXTURE", checkerTexture);
 }
 
 Texture * ModuleTexture::GetChachedTexure(const string & texturePath) const
@@ -141,6 +132,7 @@ Texture * ModuleTexture::LoadTextureDevil(const string & texturePath, const Text
 		ILenum error = ilGetError();
 		LOG_DEBUG("Image load failed - IL reports error: %u - %s", error, iluErrorString(error));
 	}
+
 	return texture;
 }
 
@@ -229,8 +221,10 @@ void ModuleTexture::UnloadTexture(Texture * texture)
 	}
 }
 
-Texture * ModuleTexture::GetCheckerTexture() const
+Texture * ModuleTexture::GetCheckerTexture()
 {
+	RegisterTexture("CHECKER_TEXTURE", checkerTexture);
+
 	return checkerTexture;
 }
 

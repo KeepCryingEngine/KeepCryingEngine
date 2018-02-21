@@ -16,14 +16,13 @@ public:
 	virtual ~ModuleTexture();
 
 	bool Start() override;
-	bool CleanUp() override;
 
 	Texture* LoadTexture(const std::string& texturePath, const TextureConfiguration& textureConfiguration);
 	Texture* LoadTexture(const std::string& texturePath);
 
 	void UnloadTexture(Texture* texture);
 
-	Texture* GetCheckerTexture() const;
+	Texture* GetCheckerTexture();
 
 	uint GetTextureCount() const;
 
