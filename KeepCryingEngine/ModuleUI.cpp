@@ -15,6 +15,9 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "Transform.h"
+#include "ModuleTexture.h"
+
+using namespace std;
 
 ModuleUI::ModuleUI()
 { }
@@ -453,6 +456,10 @@ void ModuleUI::CallWindows()
 	{
 		DrawSpacePartitioningWindow();
 	}
+	if(loadedTexturesInfoWindow)
+	{
+		DrawLoadedTexturesInfoWindow();
+	}
 }
 
 void ModuleUI::CallGuizmo()
@@ -765,6 +772,26 @@ void ModuleUI::DrawSpacePartitioningWindow()
 	{
 		App->scene->SetSpacePartitioningStructure(spacePartitioningWindowStructure);
 	}
+
+	ImGui::End();
+}
+
+void ModuleUI::DrawLoadedTexturesInfoWindow()
+{
+	ImGui::Begin("Loaded Textures Information", &loadedTexturesInfoWindow, ImGuiWindowFlags_MenuBar);
+
+	ImGui::Text("Texture count: %u", App->texture->GetTextureCount());
+	ImGui::Text("Texture total size (bytes): %u", App->texture->GetTextureTotalSize());
+	ImGui::Text("Loaded textures:");
+
+	ImGui::Indent();
+
+	for(string texturePath : App->texture->GetTexturePaths())
+	{
+		ImGui::Text("%s", texturePath.c_str());
+	}
+
+	ImGui::Unindent();
 
 	ImGui::End();
 }
