@@ -30,6 +30,8 @@ public:
 
 	const std::set<std::string>& GetTexturePaths() const;
 
+	void SubscribeToTexture(Texture* texture);
+
 private:
 	void SetUpCheckerTexture();
 

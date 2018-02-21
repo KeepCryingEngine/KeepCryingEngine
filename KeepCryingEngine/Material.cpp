@@ -17,6 +17,14 @@ Material::Material()
 	programId = App->shader->GetShaderId(ShaderType::Default);
 }
 
+Material::Material(const Material & mat)
+{
+	shaderType = mat.shaderType;
+	programId = mat.programId;
+	texture = mat.texture;
+	App->texture->SubscribeToTexture(texture);
+}
+
 Material::~Material()
 {
 	App->texture->UnloadTexture(texture);

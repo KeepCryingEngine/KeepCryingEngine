@@ -242,3 +242,14 @@ const set<string>& ModuleTexture::GetTexturePaths() const
 {
 	return texturePaths;
 }
+
+void ModuleTexture::SubscribeToTexture(Texture * texture)
+{
+	assert(texture);
+
+	map<Texture*, uint>::iterator textureUsageIt = textureUses.find(texture);
+	assert(textureUsageIt != textureUses.end());
+
+	uint &usageCounter = textureUsageIt->second;
+	usageCounter += 1;
+}

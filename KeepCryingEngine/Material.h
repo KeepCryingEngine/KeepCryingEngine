@@ -10,6 +10,7 @@ class Material
 {
 public:
 	Material();
+	Material(const Material& mat);
 	virtual ~Material();
 
 	void DrawUI();
