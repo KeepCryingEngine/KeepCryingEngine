@@ -48,6 +48,7 @@ private:
 	void DrawInspectorWindow();
 	void DrawGenerateGameObjectWindow();
 	void DrawSpacePartitioningWindow();
+	void DrawLoadedTexturesInfoWindow();
 
 	void PrintChildrenOnHierarchy(std::vector<GameObject*> children);
 
@@ -84,6 +85,7 @@ private:
 	bool inspectorWindow = false;
 	bool generateGameObjectWindow = true;
 	bool spacePartitioningWindow = true;
+	bool loadedTexturesInfoWindow = true;
 
 	//Editor click
 	ClickMode clickMode = ClickMode::Pick;

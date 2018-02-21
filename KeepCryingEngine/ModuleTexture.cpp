@@ -1,6 +1,11 @@
 #include "ModuleTexture.h"
 
 #include <DevIL.h>
+#include <string>
+
+#include <assert.h>
+
+using namespace std;
 
 const uint ModuleTexture::CHECKERS_HEIGHT = 128;
 const uint ModuleTexture::CHECKERS_WIDTH = 128;
@@ -14,13 +19,6 @@ ModuleTexture::~ModuleTexture()
 bool ModuleTexture::Start()
 {
 	SetUpCheckerTexture();
-
-	return true;
-}
-
-bool ModuleTexture::CleanUp()
-{
-	RELEASE(checkerTexture);
 
 	return true;
 }
@@ -67,7 +65,20 @@ void ModuleTexture::SetUpCheckerTexture()
 	checkerTexture = new Texture(checkerTextureId, textureConfiguration);
 }
 
-Texture * ModuleTexture::LoadTexture(const char * texturePath, const TextureConfiguration & textureConfiguration) const
+Texture * ModuleTexture::GetChachedTexure(const string & texturePath) const
+{
+	Texture * texture = nullptr;
+	map<string, Texture*>::const_iterator textureIt = loadedTextures.find(texturePath);
+
+	if(textureIt != loadedTextures.end())
+	{
+		texture = textureIt->second;
+	}
+
+	return texture;
+}
+
+Texture * ModuleTexture::LoadTextureDevil(const string & texturePath, const TextureConfiguration& textureConfiguration) const
 {
 	Texture * texture = nullptr;
 
@@ -75,21 +86,21 @@ Texture * ModuleTexture::LoadTexture(const char * texturePath, const TextureConf
 	ilGenImages(1, &imageId);
 	ilBindImage(imageId);
 
-	if (ilLoadImage(texturePath))
+	if(ilLoadImage(texturePath.c_str()))
 	{
 		ILinfo imageInfo;
 
 		iluGetImageInfo(&imageInfo);
 
 		// If the image is flipped (i.e. upside-down and mirrored, flip it the right way up!)
-		if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+		if(imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
 		{
 			iluFlipImage();
 		}
 
 		// Convert the image into a suitable format to work with
 		// NOTE: If your image contains alpha channel you can replace IL_RGB with IL_RGBA
-		if (!ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE))
+		if(!ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE))
 		{
 			ILenum error = ilGetError();
 			LOG_DEBUG("Image conversion failed - IL reports error: %u - %s", error, iluErrorString(error));
@@ -113,6 +124,8 @@ Texture * ModuleTexture::LoadTexture(const char * texturePath, const TextureConf
 		ilDeleteImages(1, &imageId); // Because we have already copied image data into texture data we can release memory used by image.
 
 		texture = new Texture(textureId, textureConfiguration);
+
+		texture->SetSize(imageInfo.SizeOfData);
 	}
 	else // If we failed to open the image file in the first place...
 	{
@@ -123,12 +136,109 @@ Texture * ModuleTexture::LoadTexture(const char * texturePath, const TextureConf
 	return texture;
 }
 
-Texture * ModuleTexture::LoadTexture(const char* texturePath) const
+void ModuleTexture::RegisterTexture(const string & texturePath, Texture * texture)
+{
+	assert(texture);
+
+	map<string, Texture*>::iterator textureIt = loadedTextures.find(texturePath);
+	if(textureIt != loadedTextures.end())
+	{
+		textureUses[texture] += 1;
+	}
+	else
+	{
+		loadedTextures[texturePath] = texture;
+		textureUses[texture] = 1;
+
+		totalSize += texture->GetSize();
+
+		texturePaths.insert(texturePath);
+	}
+}
+
+bool ModuleTexture::UnregisterTexture(Texture * texture)
+{
+	assert(texture);
+
+	map<Texture*, uint>::iterator textureUsageIt = textureUses.find(texture);
+	assert(textureUsageIt != textureUses.end());
+
+	uint &usageCounter = textureUsageIt->second;
+	usageCounter -= 1;
+
+	bool toDelete = usageCounter == 0;
+	if(toDelete)
+	{
+		textureUses.erase(textureUsageIt);
+
+		map<string, Texture*>::iterator textureIt = loadedTextures.begin();
+
+		while(textureIt != loadedTextures.end() && textureIt->second != texture)
+		{
+			++textureIt;
+		}
+
+		assert(textureIt != loadedTextures.end());
+
+		texturePaths.erase(textureIt->first);
+
+		loadedTextures.erase(textureIt);
+
+		totalSize -= texture->GetSize();
+	}
+	return toDelete;
+}
+
+Texture * ModuleTexture::LoadTexture(const string& texturePath, const TextureConfiguration & textureConfiguration)
+{
+	Texture * texture = GetChachedTexure(texturePath);
+
+	if(texture == nullptr)
+	{
+		texture = LoadTextureDevil(texturePath, textureConfiguration);
+	}
+	
+	if(texture != nullptr)
+	{
+		RegisterTexture(texturePath, texture);
+	}
+
+	return texture;
+}
+
+Texture * ModuleTexture::LoadTexture(const string& texturePath)
 {
 	return LoadTexture(texturePath, loadingTextureConfiguration);
 }
 
-Texture * ModuleTexture::GetCheckerTexture() const
+void ModuleTexture::UnloadTexture(Texture * texture)
 {
+	bool toDelete = UnregisterTexture(texture);
+
+	if(toDelete)
+	{
+		delete texture;
+	}
+}
+
+Texture * ModuleTexture::GetCheckerTexture()
+{
+	RegisterTexture("CHECKER_TEXTURE", checkerTexture);
+
 	return checkerTexture;
+}
+
+uint ModuleTexture::GetTextureCount() const
+{
+	return loadedTextures.size();
+}
+
+uint ModuleTexture::GetTextureTotalSize() const
+{
+	return totalSize;
+}
+
+const set<string>& ModuleTexture::GetTexturePaths() const
+{
+	return texturePaths;
 }
