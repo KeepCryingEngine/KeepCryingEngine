@@ -138,7 +138,7 @@ void ModuleUI::DrawMainMenu()
 				}
 				if(ImGui::Button("Charge"))
 				{
-					App->entity->LoadMesh("Assets/BakerHouse.fbx");
+					App->entity->LoadMesh("Assets/","BakerHouse.fbx");
 				}
 				ImGui::EndMenu();
 			}

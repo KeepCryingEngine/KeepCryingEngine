@@ -21,7 +21,8 @@ MeshRenderer::MeshRenderer() : Component(ComponentType::MeshRenderer)
 
 MeshRenderer::~MeshRenderer()
 {
-	delete material;
+	//delete material;
+	RELEASE(material);
 }
 
 void MeshRenderer::DrawUI()

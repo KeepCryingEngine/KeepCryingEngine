@@ -16,8 +16,6 @@ public:
 
 	GLuint GetProgramId() const;
 	Texture* GetTexture() const;
-
-private:
 	void SetTexture(const char* path);
 
 private:
