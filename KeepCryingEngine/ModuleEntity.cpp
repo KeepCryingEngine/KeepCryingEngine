@@ -55,6 +55,11 @@ void ModuleEntity::LoadMesh(const string& path,const string& name)
 {
 	const aiScene * scene = aiImportFile((path + name).c_str(), aiProcess_Triangulate);
 
+	if (scene == nullptr)
+	{
+		return;
+	}
+
 	vector<Material*> tempMaterials;
 	vector<Mesh*> tempMeshes;
 	tempMaterials.reserve(scene->mNumMaterials);
