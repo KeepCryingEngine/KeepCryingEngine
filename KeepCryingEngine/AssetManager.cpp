@@ -54,9 +54,9 @@ void AssetManager<T>::Unload(T * asset)
 }
 
 template<typename T>
-std::map<std::string, T*>::iterator AssetManager<T>::FindAssetIterator(T * asset) const
+typename map<string, T*>::iterator FindAssetIterator(T * asset)
 {
-	map<string, T*>::iterator assetIt = assets.begin();
+	typename map<string, T*>::iterator assetIt = assets.begin();
 	while (assetIt != assets.end() && (*assetIt)->second != asset)
 	{
 		++assetIt;

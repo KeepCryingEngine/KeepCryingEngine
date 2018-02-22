@@ -11,18 +11,12 @@ public:
 	AssetManager();
 	virtual ~AssetManager();
 
-	template <typename T>
 	T* Load(const std::string& path);
 
-	template <typename T>
 	void Unload(T* asset);
 
 	template <typename T>
-	virtual T* DoLoad(const std::string& path) = 0;
-
-private:
-	template <typename T>
-	std::map<std::string, T*>::iterator FindAssetIterator(T* asset) const;
+	T* DoLoad(const std::string& path) = 0;
 
 private:
 	std::map<std::string, T*> assets;
