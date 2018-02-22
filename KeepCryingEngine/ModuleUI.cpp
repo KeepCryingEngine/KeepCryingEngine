@@ -136,12 +136,24 @@ void ModuleUI::DrawMainMenu()
 				{
 					spacePartitioningWindow ^= 1;
 				}
-				if(ImGui::Button("Charge"))
-				{
-					App->entity->LoadMesh("Assets/","BakerHouse.fbx");
-				}
 				ImGui::EndMenu();
 			}
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Load"))
+		{
+			ImGui::LabelText("##LoadMeshLabel", "Mesh");
+			static char pathToMesh[180] = {};
+			ImGui::InputText("##PathToMesh", pathToMesh, sizeof(pathToMesh)); ImGui::SameLine();
+			if (ImGui::Button("Add mesh"))
+			{
+				string pathAndName(pathToMesh);
+				std::size_t found = pathAndName.find_last_of("/\\");				
+				App->entity->LoadMesh(pathAndName.substr(0, found) + "/", pathAndName.substr(found + 1));
+			}
+
+			ImGui::Separator();
 			ImGui::EndMenu();
 		}
 		static GLfloat color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
