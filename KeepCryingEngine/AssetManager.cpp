@@ -15,13 +15,13 @@ AssetManager<T>::~AssetManager()
 }
 
 template <typename T>
-T* AssetManager<T>::Load(const string& path)
+T* AssetManager<T>::GetAsset(const string& path)
 {
-	T* asset = null;
-	map<string, T*>::iterator assetIt = assets.find(path);
+	T* asset = nullptr;
+	typename map<string, T*>::iterator assetIt = assets.find(path);
 	if (assetIt != assets.end())
 	{
-		asset = *assetIt;
+		asset = assetIt->second;
 		(*assetUsage[asset]) += 1;
 	}
 	else
@@ -54,9 +54,9 @@ void AssetManager<T>::Unload(T * asset)
 }
 
 template<typename T>
-typename map<string, T*>::iterator FindAssetIterator(T * asset)
+typename map<string, T*>::const_iterator AssetManager<T>::FindAssetIterator(T * asset) const
 {
-	typename map<string, T*>::iterator assetIt = assets.begin();
+	typename map<string, T*>::const_iterator assetIt = assets.begin();
 	while (assetIt != assets.end() && (*assetIt)->second != asset)
 	{
 		++assetIt;
