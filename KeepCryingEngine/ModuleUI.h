@@ -29,6 +29,7 @@ public:
 	bool GetDebugMode()const;
 	ClickMode GetClickMode() const;
 	void SetSelectedNodeID(unsigned long long id);
+	unsigned long long GetSelectedNode()const;
 	void OpenInspectorWindow();
 	void CloseInspectorWindow();
 
@@ -47,6 +48,7 @@ private:
 	void DrawInspectorWindow();
 	void DrawGenerateGameObjectWindow();
 	void DrawSpacePartitioningWindow();
+	void DrawLoadedTexturesInfoWindow();
 
 	void PrintChildrenOnHierarchy(std::vector<GameObject*> children);
 
@@ -83,6 +85,7 @@ private:
 	bool inspectorWindow = false;
 	bool generateGameObjectWindow = true;
 	bool spacePartitioningWindow = true;
+	bool loadedTexturesInfoWindow = true;
 
 	//Editor click
 	ClickMode clickMode = ClickMode::Pick;

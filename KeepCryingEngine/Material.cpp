@@ -17,8 +17,17 @@ Material::Material()
 	programId = App->shader->GetShaderId(ShaderType::Default);
 }
 
+Material::Material(const Material & mat)
+{
+	shaderType = mat.shaderType;
+	programId = mat.programId;
+	texture = mat.texture;
+	App->texture->SubscribeToTexture(texture);
+}
+
 Material::~Material()
 {
+	App->texture->UnloadTexture(texture);
 }
 
 void Material::DrawUI()
@@ -61,6 +70,8 @@ void Material::SetTexture(const char* path)
 	Texture * texture = App->texture->LoadTexture(path);
 	if(texture)
 	{
+		App->texture->UnloadTexture(this->texture);
+
 		this->texture = texture;
 	}
 }

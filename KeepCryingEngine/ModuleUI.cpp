@@ -8,6 +8,7 @@
 #include <fstream>
 
 #include "Application.h"
+#include "ModuleEntity.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
@@ -15,6 +16,9 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "Transform.h"
+#include "ModuleTexture.h"
+
+using namespace std;
 
 ModuleUI::ModuleUI()
 { }
@@ -88,6 +92,11 @@ void ModuleUI::SetSelectedNodeID(unsigned long long id)
 	selectedNodeID = id;
 }
 
+unsigned long long ModuleUI::GetSelectedNode() const
+{
+	return selectedNodeID;
+}
+
 bool ModuleUI::CleanUp()
 {
 	ImGui_ImplSdlGL3_Shutdown();
@@ -129,6 +138,22 @@ void ModuleUI::DrawMainMenu()
 				}
 				ImGui::EndMenu();
 			}
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Load"))
+		{
+			ImGui::LabelText("##LoadMeshLabel", "Mesh");
+			static char pathToMesh[180] = {};
+			ImGui::InputText("##PathToMesh", pathToMesh, sizeof(pathToMesh)); ImGui::SameLine();
+			if (ImGui::Button("Add mesh"))
+			{
+				string pathAndName(pathToMesh);
+				std::size_t found = pathAndName.find_last_of("/\\");				
+				App->entity->LoadMesh(pathAndName.substr(0, found) + "/", pathAndName.substr(found + 1));
+			}
+
+			ImGui::Separator();
 			ImGui::EndMenu();
 		}
 		static GLfloat color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -453,6 +478,10 @@ void ModuleUI::CallWindows()
 	{
 		DrawSpacePartitioningWindow();
 	}
+	if(loadedTexturesInfoWindow)
+	{
+		DrawLoadedTexturesInfoWindow();
+	}
 }
 
 void ModuleUI::CallGuizmo()
@@ -765,6 +794,26 @@ void ModuleUI::DrawSpacePartitioningWindow()
 	{
 		App->scene->SetSpacePartitioningStructure(spacePartitioningWindowStructure);
 	}
+
+	ImGui::End();
+}
+
+void ModuleUI::DrawLoadedTexturesInfoWindow()
+{
+	ImGui::Begin("Loaded Textures Information", &loadedTexturesInfoWindow, ImGuiWindowFlags_MenuBar);
+
+	ImGui::Text("Texture count: %u", App->texture->GetTextureCount());
+	ImGui::Text("Texture total size (bytes): %u", App->texture->GetTextureTotalSize());
+	ImGui::Text("Loaded textures:");
+
+	ImGui::Indent();
+
+	for(string texturePath : App->texture->GetTexturePaths())
+	{
+		ImGui::Text("%s", texturePath.c_str());
+	}
+
+	ImGui::Unindent();
 
 	ImGui::End();
 }

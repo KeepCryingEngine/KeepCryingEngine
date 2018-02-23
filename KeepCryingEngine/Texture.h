@@ -3,6 +3,8 @@
 
 #include <GL/glew.h>
 
+#include "Globals.h"
+
 struct TextureConfiguration {
 	GLenum textureType = GL_TEXTURE_2D;
 	GLint wrapModeS = GL_CLAMP;
@@ -41,11 +43,16 @@ public:
 	bool GetAnisotropicFilter() const;
 	void SetAnisotropicFilter(bool anisotropicFilter);
 
+	uint GetSize() const;
+	void SetSize(uint size);
+
 	const TextureConfiguration& GetTextureConfiguration() const;
 	void SetTextureConfiguration(const TextureConfiguration& textureConfiguration);
 
 private:
 	GLuint textureId;
+
+	uint size = 0;
 
 	TextureConfiguration textureConfiguration;
 };

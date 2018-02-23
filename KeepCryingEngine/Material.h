@@ -10,14 +10,13 @@ class Material
 {
 public:
 	Material();
+	Material(const Material& mat);
 	virtual ~Material();
 
 	void DrawUI();
 
 	GLuint GetProgramId() const;
 	Texture* GetTexture() const;
-
-private:
 	void SetTexture(const char* path);
 
 private:

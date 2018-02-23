@@ -112,6 +112,16 @@ void Texture::SetAnisotropicFilter(bool anisotropicFilter)
 	}
 }
 
+uint Texture::GetSize() const
+{
+	return size;
+}
+
+void Texture::SetSize(uint size)
+{
+	this->size = size;
+}
+
 const TextureConfiguration & Texture::GetTextureConfiguration() const
 {
 	return textureConfiguration;
