@@ -500,13 +500,13 @@ bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSeg
 /// [out] index: the next index of the triangle to return
 bool NextMeshTriangle(Mesh* mesh, Triangle& triangle, size_t& index)
 {
-	assert(index <= mesh->GetIndicesNumber());
+	assert(index <= (size_t)mesh->GetIndicesNumber());
 
 	bool ret = false;
-	if (index < mesh->GetIndicesNumber()) {
+	if (index < (size_t)mesh->GetIndicesNumber()) {
 		if (mesh->GetDrawMode() == GL_TRIANGLES)
 		{
-			assert(index <= mesh->GetIndicesNumber() - 3);
+			assert(index <= (size_t)(mesh->GetIndicesNumber() - 3));
 			triangle.a = mesh->GetVertices().at(mesh->GetIndices().at(index++)).position;
 			triangle.b = mesh->GetVertices().at(mesh->GetIndices().at(index++)).position;
 			triangle.c = mesh->GetVertices().at(mesh->GetIndices().at(index++)).position;

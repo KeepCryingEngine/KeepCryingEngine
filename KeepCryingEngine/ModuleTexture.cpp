@@ -7,9 +7,6 @@
 
 using namespace std;
 
-const uint ModuleTexture::CHECKERS_HEIGHT = 128;
-const uint ModuleTexture::CHECKERS_WIDTH = 128;
-
 ModuleTexture::ModuleTexture()
 { }
 
@@ -25,6 +22,9 @@ bool ModuleTexture::Start()
 
 void ModuleTexture::SetUpCheckerTexture()
 {
+	const uint CHECKERS_HEIGHT = 128;
+	const uint CHECKERS_WIDTH = 128;
+
 	GLubyte checkImage[CHECKERS_HEIGHT][CHECKERS_WIDTH][4];
 	
 	//Fill texture data
@@ -63,19 +63,12 @@ void ModuleTexture::SetUpCheckerTexture()
 	textureConfiguration.anisotropicFilter = true;
 
 	checkerTexture = new Texture(checkerTextureId, textureConfiguration);
-}
+	checkerTexture->SetSize(sizeof(checkImage));
 
-Texture * ModuleTexture::GetChachedTexure(const string & texturePath) const
-{
-	Texture * texture = nullptr;
-	map<string, Texture*>::const_iterator textureIt = loadedTextures.find(texturePath);
-
-	if(textureIt != loadedTextures.end())
-	{
-		texture = textureIt->second;
-	}
-
-	return texture;
+	const string checkerTexturePath = "CHECKER_TEXTURE";
+	Register(checkerTexturePath, checkerTexture);
+	texturePaths.insert(checkerTexturePath);
+	totalSize += checkerTexture->GetSize();
 }
 
 Texture * ModuleTexture::LoadTextureDevil(const string & texturePath, const TextureConfiguration& textureConfiguration) const
@@ -136,120 +129,41 @@ Texture * ModuleTexture::LoadTextureDevil(const string & texturePath, const Text
 	return texture;
 }
 
-void ModuleTexture::RegisterTexture(const string & texturePath, Texture * texture)
+Texture * ModuleTexture::GetCheckerTexture()
 {
-	assert(texture);
-
-	map<string, Texture*>::iterator textureIt = loadedTextures.find(texturePath);
-	if(textureIt != loadedTextures.end())
-	{
-		textureUses[texture] += 1;
-	}
-	else
-	{
-		loadedTextures[texturePath] = texture;
-		textureUses[texture] = 1;
-
-		totalSize += texture->GetSize();
-
-		texturePaths.insert(texturePath);
-	}
+	Subscribe(checkerTexture);
+	return checkerTexture;
 }
 
-bool ModuleTexture::UnregisterTexture(Texture * texture)
+uint ModuleTexture::TotalTextureSize() const
 {
-	assert(texture);
-
-	map<Texture*, uint>::iterator textureUsageIt = textureUses.find(texture);
-	assert(textureUsageIt != textureUses.end());
-
-	uint &usageCounter = textureUsageIt->second;
-	usageCounter -= 1;
-
-	bool toDelete = usageCounter == 0;
-	if(toDelete)
-	{
-		textureUses.erase(textureUsageIt);
-
-		map<string, Texture*>::iterator textureIt = loadedTextures.begin();
-
-		while(textureIt != loadedTextures.end() && textureIt->second != texture)
-		{
-			++textureIt;
-		}
-
-		assert(textureIt != loadedTextures.end());
-
-		texturePaths.erase(textureIt->first);
-
-		loadedTextures.erase(textureIt);
-
-		totalSize -= texture->GetSize();
-	}
-	return toDelete;
+	return totalSize;
 }
 
-Texture * ModuleTexture::LoadTexture(const string& texturePath, const TextureConfiguration & textureConfiguration)
+const set<string>& ModuleTexture::TexturePaths() const
 {
-	Texture * texture = GetChachedTexure(texturePath);
+	return texturePaths;
+}
 
-	if(texture == nullptr)
-	{
-		texture = LoadTextureDevil(texturePath, textureConfiguration);
-	}
+Texture * ModuleTexture::Load(const std::string & path)
+{
+	Texture * texture = LoadTextureDevil(path, loadingTextureConfiguration);
 	
-	if(texture != nullptr)
+	if (texture)
 	{
-		RegisterTexture(texturePath, texture);
+		texturePaths.insert(path);
+		totalSize += texture->GetSize();
 	}
 
 	return texture;
 }
 
-Texture * ModuleTexture::LoadTexture(const string& texturePath)
+void ModuleTexture::Unload(Texture * texture)
 {
-	return LoadTexture(texturePath, loadingTextureConfiguration);
-}
+	totalSize -= texture->GetSize();
+	
+	const string& path = GetPath(texture);
+	texturePaths.erase(path);
 
-void ModuleTexture::UnloadTexture(Texture * texture)
-{
-	bool toDelete = UnregisterTexture(texture);
-
-	if(toDelete)
-	{
-		delete texture;
-	}
-}
-
-Texture * ModuleTexture::GetCheckerTexture()
-{
-	RegisterTexture("CHECKER_TEXTURE", checkerTexture);
-
-	return checkerTexture;
-}
-
-uint ModuleTexture::GetTextureCount() const
-{
-	return loadedTextures.size();
-}
-
-uint ModuleTexture::GetTextureTotalSize() const
-{
-	return totalSize;
-}
-
-const set<string>& ModuleTexture::GetTexturePaths() const
-{
-	return texturePaths;
-}
-
-void ModuleTexture::SubscribeToTexture(Texture * texture)
-{
-	assert(texture);
-
-	map<Texture*, uint>::iterator textureUsageIt = textureUses.find(texture);
-	assert(textureUsageIt != textureUses.end());
-
-	uint &usageCounter = textureUsageIt->second;
-	usageCounter += 1;
+	delete texture;
 }

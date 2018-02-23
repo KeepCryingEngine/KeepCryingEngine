@@ -22,12 +22,12 @@ Material::Material(const Material & mat)
 	shaderType = mat.shaderType;
 	programId = mat.programId;
 	texture = mat.texture;
-	App->texture->SubscribeToTexture(texture);
+	App->texture->Subscribe(texture);
 }
 
 Material::~Material()
 {
-	App->texture->UnloadTexture(texture);
+	App->texture->Release(texture);
 }
 
 void Material::DrawUI()
@@ -67,10 +67,10 @@ Texture* Material::GetTexture() const
 
 void Material::SetTexture(const char* path)
 {
-	Texture * texture = App->texture->LoadTexture(path);
+	Texture * texture = App->texture->GetAsset(path);
 	if(texture)
 	{
-		App->texture->UnloadTexture(this->texture);
+		App->texture->Release(this->texture);
 
 		this->texture = texture;
 	}

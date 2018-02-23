@@ -4,25 +4,32 @@
 #include <map>
 #include <string>
 
+#include "Module.h"
+
 template <typename T>
-class AssetManager
+class AssetManager : public Module
 {
 public:
 	AssetManager();
 	virtual ~AssetManager();
 
 	T* GetAsset(const std::string& path);
+	void Subscribe(T* asset);
+	void Release(T* asset);
+	size_t Size() const;
+	const std::string& GetPath(T* asset) const;
 
-	void Unload(T* asset);
+protected:
+	void Register(const std::string& path, T* asset);
+	virtual T * Load(const std::string& path) = 0;
+	virtual void Unload(T* asset) = 0;
 
-	template <typename T>
-	T* DoLoad(const std::string& path) = 0;
 private:
-	typename std::map<std::string, T*>::const_iterator FindAssetIterator(T * asset) const;
+	typename std::map<std::string, T*>::const_iterator FindAssetIteratorByReference(T * asset) const;
 
 private:
 	std::map<std::string, T*> assets;
-	std::map<T*, int> assetUsage;
+	std::map<T*,unsigned int> assetUsage;
 };
 
 #endif

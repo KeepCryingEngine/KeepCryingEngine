@@ -802,13 +802,13 @@ void ModuleUI::DrawLoadedTexturesInfoWindow()
 {
 	ImGui::Begin("Loaded Textures Information", &loadedTexturesInfoWindow, ImGuiWindowFlags_MenuBar);
 
-	ImGui::Text("Texture count: %u", App->texture->GetTextureCount());
-	ImGui::Text("Texture total size (bytes): %u", App->texture->GetTextureTotalSize());
+	ImGui::Text("Texture count: %u", App->texture->Size());
+	ImGui::Text("Texture total size (bytes): %u", App->texture->TotalTextureSize());
 	ImGui::Text("Loaded textures:");
 
 	ImGui::Indent();
 
-	for(string texturePath : App->texture->GetTexturePaths())
+	for(string texturePath : App->texture->TexturePaths())
 	{
 		ImGui::Text("%s", texturePath.c_str());
 	}

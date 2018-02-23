@@ -22,13 +22,14 @@ T* AssetManager<T>::GetAsset(const string& path)
 	if (assetIt != assets.end())
 	{
 		asset = assetIt->second;
-		(*assetUsage[asset]) += 1;
+		assetUsage[asset] += 1;
 	}
 	else
 	{
-		asset = DoLoad(path);
+		asset = Load(path);
 		if (asset)
 		{
+			assets[path] = asset;
 			assetUsage[asset] = 1;
 		}
 	}
@@ -37,27 +38,71 @@ T* AssetManager<T>::GetAsset(const string& path)
 }
 
 template<typename T>
-void AssetManager<T>::Unload(T * asset)
+void AssetManager<T>::Subscribe(T * asset)
 {
-	map<T*, int>::iterator usageIt = assetUsage.find(asset);
-	assert(usageIt != usageIt.end());
+	assert(asset);
+	map<T*, unsigned int>::iterator usageIt = assetUsage.find(asset);
+	assert(usageIt != assetUsage.end());
+	unsigned int &assetUsageCounter = usageIt->second;
+	assetUsageCounter += 1;
+}
+
+template<typename T>
+void AssetManager<T>::Release(T * asset)
+{
+	assert(asset);
+
+	map<T*,unsigned int>::iterator usageIt = assetUsage.find(asset);
+	assert(usageIt != assetUsage.end());
 	
-	(*usageIt)->second -= 1;
+	unsigned int &assetUsageCounter = usageIt->second;
+
+	assetUsageCounter  -= 1;
 	
-	if ((*usageIt)->second == 0)
+	if (assetUsageCounter == 0)
 	{
 		assetUsage.erase(usageIt);
-		map<string, T*>::iterator assetIt = FindAssetIterator(asset);
-		assert(assetIt != assets.end());
+		map<string, T*>::const_iterator assetIt = FindAssetIteratorByReference(asset);
+		assert(assetIt != assets.cend());
+
+		Unload(asset);
 		assets.erase(assetIt);
 	}
 }
 
 template<typename T>
-typename map<string, T*>::const_iterator AssetManager<T>::FindAssetIterator(T * asset) const
+size_t AssetManager<T>::Size() const
 {
-	typename map<string, T*>::const_iterator assetIt = assets.begin();
-	while (assetIt != assets.end() && (*assetIt)->second != asset)
+	return assets.size();
+}
+
+template<typename T>
+const string & AssetManager<T>::GetPath(T * asset) const
+{
+	assert(asset);
+	map<string, T*>::const_iterator assetIt = FindAssetIteratorByReference(asset);
+	assert(assetIt != assets.cend());
+
+	return assetIt->first;
+}
+
+template<typename T>
+void AssetManager<T>::Register(const std::string & path, T * asset)
+{
+	assert(asset);
+	assert(assets.find(path) == assets.end());
+	assert(assetUsage.find(asset) == assetUsage.end());
+
+	assets[path] = asset;
+	assetUsage[asset] = 1;
+}
+
+template<typename T>
+typename map<string, T*>::const_iterator AssetManager<T>::FindAssetIteratorByReference(T * asset) const
+{
+	assert(asset);
+	typename map<string, T*>::const_iterator assetIt = assets.cbegin();
+	while (assetIt != assets.cend() && assetIt->second != asset)
 	{
 		++assetIt;
 	}
