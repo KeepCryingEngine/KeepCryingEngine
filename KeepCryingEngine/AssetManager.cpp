@@ -22,15 +22,14 @@ T* AssetManager<T>::GetAsset(const string& path)
 	if (assetIt != assets.end())
 	{
 		asset = assetIt->second;
-		assetUsage[asset] += 1;
+		Subscribe(assert);
 	}
 	else
 	{
 		asset = Load(path);
 		if (asset)
 		{
-			assets[path] = asset;
-			assetUsage[asset] = 1;
+			Register(path, asset);
 		}
 	}
 
