@@ -22,7 +22,7 @@ T* AssetManager<T>::GetAsset(const string& path)
 	if (assetIt != assets.end())
 	{
 		asset = assetIt->second;
-		Subscribe(assert);
+		Subscribe(asset);
 	}
 	else
 	{
