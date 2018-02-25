@@ -6,10 +6,10 @@
 #include <GL/glew.h>
 #include <string>
 
-#include "Module.h"
+#include "AssetManager.cpp"
 #include "Texture.h"
 
-class ModuleTexture : public Module
+class ModuleTexture : public AssetManager<Texture>
 {
 public:
 	ModuleTexture();
@@ -17,44 +17,24 @@ public:
 
 	bool Start() override;
 
-	Texture* LoadTexture(const std::string& texturePath, const TextureConfiguration& textureConfiguration);
-	Texture* LoadTexture(const std::string& texturePath);
-
-	void UnloadTexture(Texture* texture);
-
 	Texture* GetCheckerTexture();
+	uint TotalTextureSize() const;
 
-	uint GetTextureCount() const;
+	const std::set<std::string>& TexturePaths() const;
 
-	uint GetTextureTotalSize() const;
-
-	const std::set<std::string>& GetTexturePaths() const;
-
-	void SubscribeToTexture(Texture* texture);
+protected:
+	Texture * Load(const std::string& path) override;
+	void Unload(Texture* texture) override;
 
 private:
 	void SetUpCheckerTexture();
-
-	Texture* GetChachedTexure(const std::string & texturePath) const;
 	Texture* LoadTextureDevil(const std::string & texturePath, const TextureConfiguration& textureConfiguration) const;
-	void RegisterTexture(const std::string& texturePath, Texture* texture);
 	
-	bool UnregisterTexture(Texture* texture);
-
 private:
 	TextureConfiguration loadingTextureConfiguration;
-
 	Texture* checkerTexture = nullptr;
-
-	std::map<std::string, Texture*> loadedTextures;
-	std::map<Texture*, uint> textureUses;
-
 	uint totalSize = 0;
-
 	std::set<std::string> texturePaths;
-
-	static const uint CHECKERS_HEIGHT;
-	static const uint CHECKERS_WIDTH;
 };
 
 #endif // !_MODULETEXTURE_H_

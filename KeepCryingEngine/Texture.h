@@ -19,7 +19,7 @@ class Texture
 {
 public:
 	Texture(GLuint textureId);
-	Texture(GLuint textureId, const TextureConfiguration& textureConfiguration);
+	Texture(GLuint textureId, const TextureConfiguration& textureConfiguration, uint size);
 
 	virtual ~Texture();
 
@@ -44,7 +44,6 @@ public:
 	void SetAnisotropicFilter(bool anisotropicFilter);
 
 	uint GetSize() const;
-	void SetSize(uint size);
 
 	const TextureConfiguration& GetTextureConfiguration() const;
 	void SetTextureConfiguration(const TextureConfiguration& textureConfiguration);

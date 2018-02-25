@@ -65,7 +65,7 @@ void ModuleEntity::LoadMesh(const string& path,const string& name)
 	tempMaterials.reserve(scene->mNumMaterials);
 	tempMeshes.reserve(scene->mNumMeshes);
 
-	for(int i = 0; i< scene->mNumMaterials ; i++)
+	for(unsigned int i = 0; i < scene->mNumMaterials ; i++)
 	{
 		Material* mat = new Material();
 		aiString texturePath;
@@ -75,13 +75,13 @@ void ModuleEntity::LoadMesh(const string& path,const string& name)
 		tempMaterials.push_back(mat);
 	}
 
-	for(int i = 0; i< scene->mNumMeshes; i++)
+	for(unsigned int i = 0; i< scene->mNumMeshes; i++)
 	{
 		Mesh* mesh = new Mesh();
 		vector<Vertex> vertices;
 		vector<GLushort> indices;
 
-		for(int k = 0; k < scene->mMeshes[i]->mNumVertices; k++)
+		for(unsigned int k = 0; k < scene->mMeshes[i]->mNumVertices; k++)
 		{
 			Vertex vertex;
 			vertex.position = float3(scene->mMeshes[i]->mVertices[k].x, scene->mMeshes[i]->mVertices[k].y, scene->mMeshes[i]->mVertices[k].z);
@@ -90,9 +90,9 @@ void ModuleEntity::LoadMesh(const string& path,const string& name)
 			vertex.uv = float2(scene->mMeshes[i]->mTextureCoords[0][k].x, scene->mMeshes[i]->mTextureCoords[0][k].y);
 			vertices.push_back(vertex);
 		}
-		for(int k = 0; k < scene->mMeshes[i]->mNumFaces; k++)
+		for(unsigned int k = 0; k < scene->mMeshes[i]->mNumFaces; k++)
 		{
-			for(int m = 0; m < scene->mMeshes[i]->mFaces[k].mNumIndices; m++)
+			for(unsigned int m = 0; m < scene->mMeshes[i]->mFaces[k].mNumIndices; m++)
 			{
 				indices.push_back(scene->mMeshes[i]->mFaces[k].mIndices[m]);
 			}
@@ -388,14 +388,14 @@ void ModuleEntity::FillVerticesData(vector<Vertex>& vertices, const float3 * pos
 void ModuleEntity::LoadMeshRecursive(const aiScene* scene,aiNode * currentChild, GameObject* father ,const vector<Material*>& tempMaterials, const vector<Mesh*>& tempMeshes)
 {
 	GameObject* currentGameobject = App->scene->AddEmpty(*father,currentChild->mName.C_Str());
-	for(int i = 0; i < currentChild->mNumChildren; i++)
+	for(unsigned int i = 0; i < currentChild->mNumChildren; i++)
 	{
 		if(currentChild->mChildren[i]->mNumChildren > 0)
 		{
 			LoadMeshRecursive(scene,currentChild->mChildren[i],father,tempMaterials,tempMeshes);
 		}
 
-		for(int j = 0; j < currentChild->mChildren[i]->mNumMeshes; j++)
+		for(unsigned int j = 0; j < currentChild->mChildren[i]->mNumMeshes; j++)
 		{
 			GameObject* currentGameobjectMesh = App->scene->AddEmpty(*currentGameobject, currentChild->mChildren[i]->mName.C_Str());
 

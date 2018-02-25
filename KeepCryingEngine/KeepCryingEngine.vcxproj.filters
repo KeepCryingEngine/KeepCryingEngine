@@ -108,6 +108,7 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="AssetManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -235,6 +236,7 @@
     <ClInclude Include="Material.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
