@@ -14,13 +14,14 @@ public:
 	virtual ~AssetManager();
 
 	T* GetAsset(const std::string& path);
+	void Subscribe(T* asset);
+
 	void Release(T* asset);
 
 	size_t Size() const;
 	const std::string& GetPath(T* asset) const;
 
 protected:
-	void Subscribe(T* asset);
 	void Register(const std::string& path, T* asset);
 	virtual T * Load(const std::string& path) = 0;
 	virtual void Unload(T* asset) = 0;
