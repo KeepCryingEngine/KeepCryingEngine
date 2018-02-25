@@ -62,8 +62,7 @@ void ModuleTexture::SetUpCheckerTexture()
 	textureConfiguration.wrapModeT = GL_CLAMP;
 	textureConfiguration.anisotropicFilter = true;
 
-	checkerTexture = new Texture(checkerTextureId, textureConfiguration);
-	checkerTexture->SetSize(sizeof(checkImage));
+	checkerTexture = new Texture(checkerTextureId, textureConfiguration, sizeof(checkImage));
 
 	const string checkerTexturePath = "CHECKER_TEXTURE";
 	Register(checkerTexturePath, checkerTexture);
@@ -116,9 +115,7 @@ Texture * ModuleTexture::LoadTextureDevil(const string & texturePath, const Text
 
 		ilDeleteImages(1, &imageId); // Because we have already copied image data into texture data we can release memory used by image.
 
-		texture = new Texture(textureId, textureConfiguration);
-
-		texture->SetSize(imageInfo.SizeOfData);
+		texture = new Texture(textureId, textureConfiguration, imageInfo.SizeOfData);
 	}
 	else // If we failed to open the image file in the first place...
 	{

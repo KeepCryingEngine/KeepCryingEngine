@@ -9,8 +9,9 @@ Texture::Texture(GLuint textureId) :
 	SetTextureConfiguration(textureConfiguration);
 }
 
-Texture::Texture(GLuint textureId, const TextureConfiguration & textureConfiguration) :
-	textureId(textureId)
+Texture::Texture(GLuint textureId, const TextureConfiguration & textureConfiguration, uint size) :
+	textureId(textureId),
+	size(size)
 {
 	SetTextureConfiguration(textureConfiguration);
 }
@@ -116,11 +117,6 @@ void Texture::SetAnisotropicFilter(bool anisotropicFilter)
 uint Texture::GetSize() const
 {
 	return size;
-}
-
-void Texture::SetSize(uint size)
-{
-	this->size = size;
 }
 
 const TextureConfiguration & Texture::GetTextureConfiguration() const
