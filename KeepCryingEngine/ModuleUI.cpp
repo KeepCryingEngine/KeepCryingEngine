@@ -552,7 +552,7 @@ void ModuleUI::CallGuizmo()
 		ImGuizmo::Manipulate(App->camera->camera->GetViewMatrix().ptr(), App->camera->camera->GetProyectionMatrix().ptr(), mCurrentGizmoOperation, mCurrentGizmoMode, objectMatrix, nullptr, useSnap ? &snap[0] : NULL);
 				
 		if(ImGuizmo::IsUsing())
-		{
+		{ 
 			ImGuizmo::DecomposeMatrixToComponents(objectMatrix, matrixTranslation, matrixRotation, matrixScale);
 			temp->GuizmoSetModelMatrix(matrixTransposed.Transposed(), (float3)matrixTranslation, (float3)matrixRotation, (float3)matrixScale);
 		}	

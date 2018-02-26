@@ -17,6 +17,7 @@
 #include "MeshFilter.h"
 #include "MeshRenderer.h"
 #include "Material.h"
+#include "Transform.h"
 
 using namespace std;
 
@@ -81,11 +82,16 @@ void ModuleEntity::LoadMesh(const string& path,const string& name)
 		vector<Vertex> vertices;
 		vector<GLushort> indices;
 
+		bool addNormals = scene->mMeshes[i]->mNormals != nullptr;
+
 		for(unsigned int k = 0; k < scene->mMeshes[i]->mNumVertices; k++)
 		{
 			Vertex vertex;
 			vertex.position = float3(scene->mMeshes[i]->mVertices[k].x, scene->mMeshes[i]->mVertices[k].y, scene->mMeshes[i]->mVertices[k].z);
-			vertex.normal = float3(scene->mMeshes[i]->mNormals[k].x, scene->mMeshes[i]->mNormals[k].y, scene->mMeshes[i]->mNormals[k].z);
+			if(addNormals)
+			{
+				vertex.normal = float3(scene->mMeshes[i]->mNormals[k].x, scene->mMeshes[i]->mNormals[k].y, scene->mMeshes[i]->mNormals[k].z);
+			}
 			vertex.color = float4(100, 100, 100, 255);
 			vertex.uv = float2(scene->mMeshes[i]->mTextureCoords[0][k].x, scene->mMeshes[i]->mTextureCoords[0][k].y);
 			vertices.push_back(vertex);
@@ -388,23 +394,36 @@ void ModuleEntity::FillVerticesData(vector<Vertex>& vertices, const float3 * pos
 void ModuleEntity::LoadMeshRecursive(const aiScene* scene,aiNode * currentChild, GameObject* father ,const vector<Material*>& tempMaterials, const vector<Mesh*>& tempMeshes)
 {
 	GameObject* currentGameobject = App->scene->AddEmpty(*father,currentChild->mName.C_Str());
+
+	aiVector3D rotation, scale, position;
+	currentChild->mTransformation.Decompose(scale, rotation, position);
+
+	Quat rotationQuat = Quat::FromEulerXYZ(rotation.x, rotation.y, rotation.z);
+	currentGameobject->GetTransform()->SetLocalPosition(float3(position.x, position.y, position.z));
+	currentGameobject->GetTransform()->SetLocalScale(float3(scale.x, scale.y, scale.z));
+	currentGameobject->GetTransform()->SetLocalRotation(rotationQuat);
+
 	for(unsigned int i = 0; i < currentChild->mNumChildren; i++)
 	{
-		if(currentChild->mChildren[i]->mNumChildren > 0)
+		aiNode* child = currentChild->mChildren[i];
+		if(child->mNumChildren > 0)
 		{
-			LoadMeshRecursive(scene,currentChild->mChildren[i],father,tempMaterials,tempMeshes);
+			LoadMeshRecursive(scene, child, currentGameobject,tempMaterials,tempMeshes);
 		}
 
-		for(unsigned int j = 0; j < currentChild->mChildren[i]->mNumMeshes; j++)
+		for(unsigned int j = 0; j < child->mNumMeshes; j++)
 		{
-			GameObject* currentGameobjectMesh = App->scene->AddEmpty(*currentGameobject, currentChild->mChildren[i]->mName.C_Str());
+			GameObject* currentGameobjectMesh = App->scene->AddEmpty(*currentGameobject, child->mName.C_Str());
 
 			unsigned int  meshIndex = scene->mRootNode->mChildren[i]->mMeshes[j];
 
 			currentGameobjectMesh->AddComponent(ComponentType::MeshRenderer);
-			((MeshFilter*)currentGameobjectMesh->GetComponent(ComponentType::MeshFilter))->SetMesh(tempMeshes[meshIndex]);
+			MeshFilter * meshFilter = ((MeshFilter*)currentGameobjectMesh->GetComponent(ComponentType::MeshFilter));
+			meshFilter->SetMesh(tempMeshes[meshIndex]);
 			int matIndex = scene->mMeshes[meshIndex]->mMaterialIndex;
-			((MeshRenderer*)currentGameobjectMesh->GetComponent(ComponentType::MeshRenderer))->SetMaterial(*new Material(*tempMaterials[matIndex]));
+			MeshRenderer* meshRenderer = ((MeshRenderer*)currentGameobjectMesh->GetComponent(ComponentType::MeshRenderer));
+			Material * material = new Material(*tempMaterials[matIndex]);
+			meshRenderer->SetMaterial(*material);
 		}
 	}
 }

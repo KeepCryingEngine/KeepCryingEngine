@@ -15,6 +15,7 @@
 #include "Camera.h"
 #include "ModuleCamera.h"
 #include "ModuleUI.h"
+#include <ImGuizmo.h>
 
 using namespace std;
 
@@ -40,6 +41,8 @@ update_status ModuleScene::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 {
+	DrawHierarchy(Get(App->ui->GetSelectedNode()));
+
 	if(!App->ui->GetFrustumCulling())
 	{
 		// All visible
@@ -579,5 +582,37 @@ void ModuleScene::SetVisibilityRecursive(GameObject* gameObject) const
 	for(GameObject* child : gameObject->GetChildren())
 	{
 		SetVisibilityRecursive(child);
+	}
+}
+
+void ModuleScene::DrawHierarchy(GameObject* gameObject) const
+{
+	const float3& position = gameObject->GetTransform()->GetWorldPosition();
+
+	float3 parentPosition;
+
+	float4x4 matrixTransposedParent = gameObject->GetTransform()->GetModelMatrix().Transposed();
+	float* objectMatrixParent = (float*)matrixTransposedParent.ptr();
+	ImGuizmo::DecomposeMatrixToComponents(objectMatrixParent, parentPosition.ptr(), float3().ptr(), float3().ptr());
+
+	for(GameObject* child : gameObject->GetChildren())
+	{
+		float3 childPosition;
+
+		float4x4 matrixTransposed = child->GetTransform()->GetModelMatrix().Transposed();
+		float* objectMatrix = (float*)matrixTransposed.ptr();
+		ImGuizmo::DecomposeMatrixToComponents(objectMatrix, childPosition.ptr(), float3().ptr(), float3().ptr());
+
+
+		glColor3f(1.0f, 1.0f, 0.0f);
+
+		glBegin(GL_LINES);
+
+		glVertex3f(parentPosition.x, parentPosition.y, parentPosition.z);
+		glVertex3f(childPosition.x, childPosition.y, childPosition.z);
+
+		glEnd();
+
+		DrawHierarchy(child);
 	}
 }

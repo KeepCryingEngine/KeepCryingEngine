@@ -82,6 +82,8 @@ private:
 
 	void SetVisibilityRecursive(GameObject* gameObject) const;
 
+	void DrawHierarchy(GameObject* gameObject) const;
+
 private:
 	GameObject* root = nullptr;
 
