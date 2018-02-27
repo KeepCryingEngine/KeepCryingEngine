@@ -18,6 +18,8 @@
 #include "Transform.h"
 #include "ModuleTexture.h"
 #include "ModuleAnim.h"
+#include "Animator.h"
+#include "MeshRenderer.h"
 
 using namespace std;
 
@@ -535,7 +537,7 @@ void ModuleUI::CallGuizmo()
 	{
 		mCurrentGizmoOperation = ImGuizmo::SCALE;
 	}
-	
+
 	//Xavo: Do not delete this or I'll haunt your dreams -----------------------
 	//if(mCurrentGizmoOperation != ImGuizmo::SCALE)
 	//{
@@ -733,15 +735,15 @@ void ModuleUI::DrawInspectorWindow()
 			static int selectedComponent = 0;
 			if(ImGui::Selectable("MeshRenderer"))
 			{
-				temp->AddComponent(ComponentType::MeshRenderer);
+				temp->AddComponent<MeshRenderer>();
 			}
 			if(ImGui::Selectable("Camera"))
 			{
-				temp->AddComponent(ComponentType::Camera);
+				temp->AddComponent<Camera>();
 			}
 			if(ImGui::Selectable("Animator"))
 			{
-				temp->AddComponent(ComponentType::Animator);
+				temp->AddComponent<Animator>();
 			}
 			ImGui::EndMenu();
 		}

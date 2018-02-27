@@ -417,13 +417,10 @@ void ModuleEntity::LoadMeshRecursive(const aiScene* scene,aiNode * currentChild,
 
 			unsigned int  meshIndex = scene->mRootNode->mChildren[i]->mMeshes[j];
 
-			currentGameobjectMesh->AddComponent(ComponentType::MeshRenderer);
-			MeshFilter * meshFilter = ((MeshFilter*)currentGameobjectMesh->GetComponent(ComponentType::MeshFilter));
-			meshFilter->SetMesh(tempMeshes[meshIndex]);
+			currentGameobjectMesh->AddComponent<MeshRenderer>();
+			currentGameobjectMesh->GetComponent<MeshFilter>()->SetMesh(tempMeshes[meshIndex]);
 			int matIndex = scene->mMeshes[meshIndex]->mMaterialIndex;
-			MeshRenderer* meshRenderer = ((MeshRenderer*)currentGameobjectMesh->GetComponent(ComponentType::MeshRenderer));
-			Material * material = new Material(*tempMaterials[matIndex]);
-			meshRenderer->SetMaterial(*material);
+			currentGameobjectMesh->GetComponent<MeshRenderer>()->SetMaterial(*new Material(*tempMaterials[matIndex]));
 		}
 	}
 }

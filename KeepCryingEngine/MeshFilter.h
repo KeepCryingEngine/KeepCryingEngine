@@ -14,11 +14,15 @@ enum class MeshMode
 class MeshFilter : public Component
 {
 public:
+	static const ComponentType TYPE = ComponentType::MeshFilter;
+
 	MeshFilter();
 	~MeshFilter();
 
 	void DrawUI() override;
 	std::vector<ComponentType> GetProhibitedComponents() const override;
+	std::vector<ComponentType> GetNeededComponents() const override;
+
 
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 

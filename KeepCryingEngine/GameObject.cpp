@@ -15,7 +15,7 @@ using namespace std;
 GameObject::GameObject(const string& name) : name(name)
 {
 	id = App->scene->GetNewGameObjectId();
-	transform = (Transform*)AddComponent(ComponentType::Transform, true);
+	transform = AddComponent<Transform>();
 	App->scene->AddToDinamicGameobjectList(this);
 
 	aabb.SetNegativeInfinity();
@@ -83,15 +83,12 @@ GameObject* GameObject::GetSelfOrChild(unsigned long long int gameObjectId) cons
 	return GetChild(gameObjectId);
 }
 
-void GameObject::DeleteChildFromList(GameObject & childToRemove)
+void GameObject::DeleteChild(GameObject & childToRemove)
 {
-	if(this->children.size() > 0)
+	vector<GameObject*>::iterator childParentIterator = find(this->children.begin(), this->children.end(), &childToRemove);
+	if(childParentIterator != this->children.end())
 	{
-		vector<GameObject*>::iterator childParentIterator = find(this->children.begin(), this->children.end(), &childToRemove);
-		if(childParentIterator != this->children.end())
-		{
-			this->children.erase(childParentIterator);
-		}
+		this->children.erase(childParentIterator);
 	}
 }
 
@@ -224,20 +221,76 @@ void GameObject::SetVisible(bool visible)
 	this->visible = visible;
 }
 
-Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
+Component* GameObject::GetComponent(ComponentType type) const
+{
+	for (Component* component : components)
+	{
+		if (component->type == type)
+		{
+			return component;
+		}
+	}
+
+	for (Component* component : toStart)
+	{
+		if (component->type == type)
+		{
+			return component;
+		}
+	}
+
+	return nullptr;
+}
+
+std::vector<Component*> GameObject::GetComponents(ComponentType type) const
+{
+	std::vector<Component*> ret;
+
+	for (Component* component : components)
+	{
+		if (component->type == type)
+		{
+			ret.push_back(component);
+		}
+	}
+
+	for (Component* component : toStart)
+	{
+		if (component->type == type)
+		{
+			ret.push_back(component);
+		}
+	}
+
+	return ret;
+}
+
+std::vector<Component*> GameObject::GetComponentsInChildren(ComponentType type) const
+{
+	vector<Component*> components;
+	for (GameObject* child : children)
+	{
+		vector<Component*> childComponents = child->GetComponents(type);
+		components.insert(components.end(),childComponents.begin(), childComponents.end());
+	}
+	return components;
+}
+
+Component* GameObject::AddComponent(ComponentType type)
 {
 	Component* component = ComponentFabric::CreateComponent(type);
 	assert(component);
 
-	if(forceAddition || CanAttach(*component))
+	if(CanAttach(*component))
 	{
 		AddInternalComponent(component);
 
-		if(type == ComponentType::MeshRenderer)
+		for (ComponentType neededComponent : component->GetNeededComponents())
 		{
-			Component* mat = ComponentFabric::CreateComponent(ComponentType::MeshFilter);
-			assert(mat);
-			AddInternalComponent(mat);
+			if (GetComponent(neededComponent) == nullptr)
+			{
+				AddComponent(neededComponent);
+			}
 		}
 	}
 	else
@@ -250,7 +303,7 @@ Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
 
 void GameObject::RemoveComponent(Component * component)
 {
-	if(component->type == ComponentType::MeshRenderer)
+	/*if(component->type == ComponentType::MeshRenderer)
 	{
 		Component* mat = GetComponent(ComponentType::MeshFilter);
 		assert(mat);
@@ -259,7 +312,7 @@ void GameObject::RemoveComponent(Component * component)
 		{
 			toDestroy.push_back(mat);
 		}
-	}
+	}*/
 
 	vector<Component*>::iterator it = find(components.begin(), components.end(), component);
 	if (it != components.end()) 
@@ -268,83 +321,9 @@ void GameObject::RemoveComponent(Component * component)
 	}
 }
 
-Component* GameObject::GetComponent(ComponentType type) const
-{
-	for(Component* component : toStart)
-	{
-		if(component->type == type)
-		{
-			return component;
-		}
-	}
-
-	for(Component* component : components)
-	{
-		if(component->type == type)
-		{
-			return component;
-		}
-	}
-
-	return nullptr;
-}
-
 const std::vector<Component*>& GameObject::GetComponents() const
 {
 	return components;
-}
-
-std::vector<Component*> GameObject::GetComponents(ComponentType type)
-{
-	std::vector<Component*> ret;
-
-	for(Component* component : toStart)
-	{
-		if(component->type == type)
-		{
-			ret.push_back(component);
-		}
-	}
-
-	for (Component* component : components)
-	{
-		if (component->type == type)
-		{
-			ret.push_back(component);
-		}
-	}
-
-	return ret;
-}
-
-std::vector<Component*> GameObject::GetComponentsInChildren(ComponentType type)
-{
-	vector<Component*> components;
-	for (GameObject* child : children)
-	{
-		vector<Component*> childComponents = child->GetComponents(type);
-		components.insert(components.end(),childComponents.begin(), childComponents.end());
-	}
-	return components;
-}
-
-void GameObject::GetComponents(ComponentType type, std::vector<Component*>& ret)
-{
-	for(Component* component : toStart)
-	{
-		if(component->type == type)
-		{
-			ret.push_back(component);
-		}
-	}
-
-	for (Component* component : components)
-	{
-		if (component->type == type)
-		{
-			ret.push_back(component);
-		}
-	}
 }
 
 Transform * GameObject::GetTransform() const
@@ -437,14 +416,6 @@ void GameObject::AddInternalComponent(Component * component)
 
 bool GameObject::CanAttach(const Component& component) const
 {
-	for(ComponentType componentType : component.GetNeededComponents())
-	{
-		if(GetComponent(componentType) == nullptr)
-		{
-			return false;
-		}
-	}
-
 	for(ComponentType componentType : component.GetProhibitedComponents())
 	{
 		if(GetComponent(componentType) != nullptr)

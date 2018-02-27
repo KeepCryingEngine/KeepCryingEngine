@@ -6,6 +6,8 @@
 class Animator : public Component
 {
 public:
+	static const ComponentType TYPE = ComponentType::Animator;
+
 	Animator();
 	virtual ~Animator();
 
