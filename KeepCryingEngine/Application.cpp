@@ -12,6 +12,7 @@
 #include "ModuleScene.h"
 #include "ModuleTexture.h"
 #include "ModuleEntity.h"
+#include "ModuleAnim.h"
 
 using namespace std;
 using nlohmann::json;
@@ -21,6 +22,7 @@ Application::Application()
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(ui = new ModuleUI());
+	modules.push_back(anim = new ModuleAnim());
 	modules.push_back(scene = new ModuleScene());
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(camera = new ModuleCamera());
