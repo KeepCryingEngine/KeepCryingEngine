@@ -112,6 +112,7 @@
     <ClCompile Include="ModuleAnim.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="Animator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -243,6 +244,7 @@
     <ClInclude Include="ModuleAnim.h">
       <Filter>Modules</Filter>
     </ClInclude>
+    <ClInclude Include="Animator.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">

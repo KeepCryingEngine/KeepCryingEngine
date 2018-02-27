@@ -11,7 +11,8 @@ enum class ComponentType
 	Transform,
 	Camera,
 	MeshFilter,
-	MeshRenderer
+	MeshRenderer,
+	Animator
 };
 
 class Component

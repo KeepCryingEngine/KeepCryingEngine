@@ -739,6 +739,10 @@ void ModuleUI::DrawInspectorWindow()
 			{
 				temp->AddComponent(ComponentType::Camera);
 			}
+			if(ImGui::Selectable("Animator"))
+			{
+				temp->AddComponent(ComponentType::Animator);
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::PushStyleColor(0, ImVec4(0.9f, 0.3f, 0.3f, 1.0f));

@@ -3,6 +3,7 @@
 
 #include <assimp\anim.h>
 #include <map>
+#include <list>
 #include <vector>
 
 #include "Module.h"
@@ -25,7 +26,7 @@ struct Anim
 
 struct AnimInstance
 {
-	Anim* anim;
+	Anim* anim = nullptr;
 	unsigned time = 0;
 	bool loop = true;
 	AnimInstance* next = nullptr;
@@ -34,16 +35,15 @@ struct AnimInstance
 };
 
 typedef unsigned AnimInstanceId;
-typedef std::map<aiString, Anim*> AnimMap;
+typedef std::map<std::string, Anim*> AnimMap;
 typedef std::vector<AnimInstance*> InstanceList;
-typedef std::vector<AnimInstanceId> HoleList;
-
+typedef std::list<AnimInstanceId> HoleList;
 
 class ModuleAnim : public Module
 {
 public:
 	ModuleAnim();
-	~ModuleAnim();
+	virtual ~ModuleAnim();
 
 	bool CleanUp() override;
 	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
@@ -55,7 +55,10 @@ public:
 
 	bool GetTransform(AnimInstanceId id, const char* channel, aiVector3D& position, aiQuaternion& rotation)const;
 
+private:
+	aiVector3D Lerp(const aiVector3D& first, const aiVector3D& second, float lambda) const;
 
+	aiQuaternion Lerp(const aiQuaternion& first, const aiQuaternion& second, float lambda) const;
 
 private:
 	AnimMap animations;
@@ -63,6 +66,4 @@ private:
 	HoleList holes;
 };
 
-
 #endif // !_MODULEANIM_H_
-

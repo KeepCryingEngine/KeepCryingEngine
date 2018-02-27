@@ -2,6 +2,7 @@
 
 #include <queue>
 #include <stack>
+#include <ImGuizmo.h>
 #include <SDL_scancode.h>
 #include <LineSegment.h>
 
@@ -15,7 +16,7 @@
 #include "Camera.h"
 #include "ModuleCamera.h"
 #include "ModuleUI.h"
-#include <ImGuizmo.h>
+#include "Animator.h"
 
 using namespace std;
 
@@ -603,8 +604,13 @@ void ModuleScene::DrawHierarchy(GameObject* gameObject) const
 		float* objectMatrix = (float*)matrixTransposed.ptr();
 		ImGuizmo::DecomposeMatrixToComponents(objectMatrix, childPosition.ptr(), float3().ptr(), float3().ptr());
 
+		float lineWidth;
 
-		glColor3f(1.0f, 1.0f, 0.0f);
+		glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+
+		glLineWidth(3.0f);
+
+		glColor3f(255.0f, 255.0f, 0.0f);
 
 		glBegin(GL_LINES);
 
@@ -612,6 +618,8 @@ void ModuleScene::DrawHierarchy(GameObject* gameObject) const
 		glVertex3f(childPosition.x, childPosition.y, childPosition.z);
 
 		glEnd();
+
+		glLineWidth(lineWidth);
 
 		DrawHierarchy(child);
 	}

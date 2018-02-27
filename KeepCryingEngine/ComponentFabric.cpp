@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "MeshFilter.h"
 #include "MeshRenderer.h"
+#include "Animator.h"
 
 Component * ComponentFabric::CreateComponent(ComponentType type)
 {
@@ -29,6 +30,9 @@ Component * ComponentFabric::CreateComponent(ComponentType type)
 			break;
 		case ComponentType::MeshRenderer:
 			component = new MeshRenderer();
+			break;
+		case ComponentType::Animator:
+			component = new Animator();
 			break;
 	}
 	assert(component);
