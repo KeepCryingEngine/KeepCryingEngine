@@ -36,16 +36,24 @@ public:
 
 	void SetStatic(bool value);
 
-
 	void SetParent(GameObject& newParent);
 
-	Component* AddComponent(ComponentType type, bool forceAddition = false);
+	template <typename T>
+	T* AddComponent(bool forceAddition = false);
+
 	void RemoveComponent(Component* component);
-	Component* GetComponent(ComponentType type) const;
+
+	template <typename T>
+	T* GetComponent() const;
+
 	const std::vector<Component*>& GetComponents() const;
-	std::vector<Component*> GetComponents(ComponentType type);
-	std::vector<Component*> GetComponentsInChildren(ComponentType type);
-	void GetComponents(ComponentType type, std::vector<Component*>& components);
+
+	template <typename T>
+	std::vector<T*> GetComponents() const;
+
+	template <typename T>
+	std::vector<T*> GetComponentsInChildren() const;
+
 	Transform* GetTransform() const;
 
 	void DrawUI();
@@ -66,6 +74,12 @@ public:
 	void SetVisible(bool visible);
 
 private:
+	Component * AddComponent(ComponentType type, bool forceAddition = false);
+
+	Component* GetComponent(ComponentType type) const;
+	std::vector<Component*> GetComponents(ComponentType type) const;
+	std::vector<Component*> GetComponentsInChildren(ComponentType type) const;
+
 	void CheckToStart();
 	void CheckToDestroy();
 
@@ -92,5 +106,29 @@ private:
 
 	bool visible = false;
 };
+
+template<typename T>
+inline T * GameObject::AddComponent(bool forceAddition)
+{
+	return (T*)AddComponent(T::TYPE);
+}
+
+template<typename T>
+inline T * GameObject::GetComponent() const
+{
+	return (T*)GetComponent(T::TYPE);
+}
+
+template <typename T>
+std::vector<T*> GameObject::GetComponents() const
+{
+	return (std::vector<T*>)GetComponents(T::TYPE);
+}
+
+template<typename T>
+inline std::vector<T*> GameObject::GetComponentsInChildren() const
+{
+	return (std::vector<T*>)GetComponentsInChildren(T::TYPE);
+}
 
 #endif

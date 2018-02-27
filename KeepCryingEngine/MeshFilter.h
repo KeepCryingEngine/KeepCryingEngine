@@ -14,6 +14,8 @@ enum class MeshMode
 class MeshFilter : public Component
 {
 public:
+	static const ComponentType TYPE = ComponentType::MeshFilter;
+
 	MeshFilter();
 	~MeshFilter();
 

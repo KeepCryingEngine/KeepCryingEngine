@@ -9,6 +9,8 @@ class Mesh;
 class MeshRenderer : public Component
 {
 public:
+	static const ComponentType TYPE = ComponentType::MeshRenderer;
+
 	MeshRenderer();
 	~MeshRenderer() override;
 

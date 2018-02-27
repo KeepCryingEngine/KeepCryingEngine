@@ -10,6 +10,8 @@
 class Transform : public Component
 {
 public:
+	static const ComponentType TYPE = ComponentType::Transform;
+
 	Transform();
 	virtual ~Transform();
 

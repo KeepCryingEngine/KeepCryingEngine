@@ -224,6 +224,61 @@ void GameObject::SetVisible(bool visible)
 	this->visible = visible;
 }
 
+Component* GameObject::GetComponent(ComponentType type) const
+{
+	for (Component* component : components)
+	{
+		if (component->type == type)
+		{
+			return component;
+		}
+	}
+
+	for (Component* component : toStart)
+	{
+		if (component->type == type)
+		{
+			return component;
+		}
+	}
+
+	return nullptr;
+}
+
+std::vector<Component*> GameObject::GetComponents(ComponentType type) const
+{
+	std::vector<Component*> ret;
+
+	for (Component* component : components)
+	{
+		if (component->type == type)
+		{
+			ret.push_back(component);
+		}
+	}
+
+	for (Component* component : toStart)
+	{
+		if (component->type == type)
+		{
+			ret.push_back(component);
+		}
+	}
+
+	return ret;
+}
+
+std::vector<Component*> GameObject::GetComponentsInChildren(ComponentType type) const
+{
+	vector<Component*> components;
+	for (GameObject* child : children)
+	{
+		vector<Component*> childComponents = child->GetComponents(type);
+		components.insert(components.end(),childComponents.begin(), childComponents.end());
+	}
+	return components;
+}
+
 Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
 {
 	Component* component = ComponentFabric::CreateComponent(type);
@@ -250,7 +305,7 @@ Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
 
 void GameObject::RemoveComponent(Component * component)
 {
-	if(component->type == ComponentType::MeshRenderer)
+	/*if(component->type == ComponentType::MeshRenderer)
 	{
 		Component* mat = GetComponent(ComponentType::MeshFilter);
 		assert(mat);
@@ -259,7 +314,7 @@ void GameObject::RemoveComponent(Component * component)
 		{
 			toDestroy.push_back(mat);
 		}
-	}
+	}*/
 
 	vector<Component*>::iterator it = find(components.begin(), components.end(), component);
 	if (it != components.end()) 
@@ -268,83 +323,9 @@ void GameObject::RemoveComponent(Component * component)
 	}
 }
 
-Component* GameObject::GetComponent(ComponentType type) const
-{
-	for(Component* component : toStart)
-	{
-		if(component->type == type)
-		{
-			return component;
-		}
-	}
-
-	for(Component* component : components)
-	{
-		if(component->type == type)
-		{
-			return component;
-		}
-	}
-
-	return nullptr;
-}
-
 const std::vector<Component*>& GameObject::GetComponents() const
 {
 	return components;
-}
-
-std::vector<Component*> GameObject::GetComponents(ComponentType type)
-{
-	std::vector<Component*> ret;
-
-	for(Component* component : toStart)
-	{
-		if(component->type == type)
-		{
-			ret.push_back(component);
-		}
-	}
-
-	for (Component* component : components)
-	{
-		if (component->type == type)
-		{
-			ret.push_back(component);
-		}
-	}
-
-	return ret;
-}
-
-std::vector<Component*> GameObject::GetComponentsInChildren(ComponentType type)
-{
-	vector<Component*> components;
-	for (GameObject* child : children)
-	{
-		vector<Component*> childComponents = child->GetComponents(type);
-		components.insert(components.end(),childComponents.begin(), childComponents.end());
-	}
-	return components;
-}
-
-void GameObject::GetComponents(ComponentType type, std::vector<Component*>& ret)
-{
-	for(Component* component : toStart)
-	{
-		if(component->type == type)
-		{
-			ret.push_back(component);
-		}
-	}
-
-	for (Component* component : components)
-	{
-		if (component->type == type)
-		{
-			ret.push_back(component);
-		}
-	}
 }
 
 Transform * GameObject::GetTransform() const

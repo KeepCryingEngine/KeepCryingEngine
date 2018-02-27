@@ -194,7 +194,7 @@ GameObject* ModuleScene::AddCube(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Cube");
 
-	gameObject->AddComponent(ComponentType::MeshRenderer);
+	gameObject->AddComponent<MeshRenderer>();
 
 	return gameObject;
 }
@@ -203,8 +203,8 @@ GameObject* ModuleScene::AddSphere(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Sphere");
 
-	gameObject->AddComponent(ComponentType::MeshRenderer);
-	MeshFilter* temp= ((MeshFilter*)gameObject->GetComponent(ComponentType::MeshFilter));
+	gameObject->AddComponent<MeshRenderer>();
+	MeshFilter* temp= gameObject->GetComponent<MeshFilter>();
 	assert(temp);
 	temp->SetMeshMode(MeshMode::SPHERE);
 
@@ -215,7 +215,7 @@ GameObject* ModuleScene::AddCamera(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Camera");
 
-	gameObject->AddComponent(ComponentType::Camera, true);
+	gameObject->AddComponent<Camera>(true);
 
 	return gameObject;
 }
@@ -445,7 +445,7 @@ bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment &
 
 	if (worldSpaceLineSegment.Intersects(gameObject->GetAABB()))
 	{
-		MeshFilter* meshFilter = (MeshFilter*)gameObject->GetComponent(ComponentType::MeshFilter);
+		MeshFilter* meshFilter = gameObject->GetComponent<MeshFilter>();
 		if (meshFilter)
 		{
 			Mesh* mesh = meshFilter->GetMesh();

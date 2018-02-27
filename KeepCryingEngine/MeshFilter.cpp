@@ -40,7 +40,7 @@ void MeshFilter::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	if (mesh)
 	{
-		MeshRenderer* meshRenderer = (MeshRenderer*)gameObject->GetComponent(ComponentType::MeshRenderer);
+		MeshRenderer* meshRenderer = gameObject->GetComponent<MeshRenderer>();
 		if (meshRenderer)
 		{
 			meshRenderer->Render(*mesh);

@@ -15,6 +15,8 @@ struct camVertex
 class Camera : public Component
 {
 public:
+	static const ComponentType TYPE = ComponentType::Camera;
+
 	Camera();
 	virtual ~Camera();
 

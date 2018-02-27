@@ -18,6 +18,8 @@
 #include "Transform.h"
 #include "ModuleTexture.h"
 
+#include "MeshRenderer.h"
+
 using namespace std;
 
 ModuleUI::ModuleUI()
@@ -525,7 +527,7 @@ void ModuleUI::CallGuizmo()
 		mCurrentGizmoOperation = ImGuizmo::SCALE;
 	}
 
-	Transform* temp = (Transform*)App->scene->Get(selectedNodeID)->GetComponent(ComponentType::Transform);
+	Transform* temp = (Transform*)App->scene->Get(selectedNodeID)->GetTransform();
 		
 	float matrixTranslation[3], matrixRotation[3], matrixScale[3];
 
@@ -725,11 +727,11 @@ void ModuleUI::DrawInspectorWindow()
 			static int selectedComponent = 0;
 			if(ImGui::Selectable("MeshRenderer"))
 			{
-				temp->AddComponent(ComponentType::MeshRenderer);
+				temp->AddComponent<MeshRenderer>();
 			}
 			if(ImGui::Selectable("Camera"))
 			{
-				temp->AddComponent(ComponentType::Camera);
+				temp->AddComponent<Camera>();
 			}
 			ImGui::EndMenu();
 		}
