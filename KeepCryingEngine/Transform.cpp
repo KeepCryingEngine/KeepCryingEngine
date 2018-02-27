@@ -1,19 +1,25 @@
 #include "Transform.h"
 
 #include <MathGeoLib.h>
+#include <ImGuizmo.h>
 
 #include "GameObject.h"
 
 using namespace std;
 
 Transform::Transform() : 
-	Component(ComponentType::Transform), 
-	localPosition(float3::zero), 
+	Component(ComponentType::Transform),
+	localPosition(float3::zero),
 	localRotation(Quat::identity),
+	eulerLocalRotation(float3::zero),
 	localScale(float3::one),
-	dirty(true),
-	eulerLocalRotation(RadToDeg(localRotation.ToEulerXYZ()))
-{ }
+	worldPosition(float3::zero),
+	worldRotation(Quat::identity),
+	worldScale(float3::one),
+	modelMatrix(float4x4::identity),
+	dirty(true)
+{ 
+}
 
 Transform::~Transform()
 { }
@@ -23,6 +29,11 @@ void Transform::DrawUI()
 	if(!gameObject->IsStatic()){
 		if(ImGui::CollapsingHeader("Transform"))
 		{
+			if (ImGui::Button("Reset"))
+			{
+				SetLocalTRS(float3::zero,Quat::identity,float3::one);
+			}
+
 			//Position
 			float3 localPosition = this->localPosition;
 			if(ImGui::DragFloat3(" Position", localPosition.ptr(), 0.1f))
@@ -57,6 +68,11 @@ vector<ComponentType> Transform::GetProhibitedComponents() const
 	return { ComponentType::Transform };
 }
 
+float4x4 Transform::GetLocalMatrix() const
+{
+	return float4x4::FromTRS(localPosition, localRotation, localScale);
+}
+
 const float3 & Transform::GetLocalPosition() const
 {
 	return localPosition;
@@ -77,6 +93,16 @@ const float3 & Transform::GetLocalScale() const
 	return localScale;
 }
 
+/*void Transform::SetLocalMatrix(const float4x4 & localMatrix)
+{
+	if (!gameObject->IsStatic())
+	{
+		SetDirty();
+		localMatrix.Decompose(localPosition, localRotation, localScale);
+		localRotation.Normalize();
+	}
+}*/
+
 void Transform::SetLocalPosition(const float3 & position)
 {
 	if(!gameObject->IsStatic())
@@ -92,6 +118,7 @@ void Transform::SetLocalRotation(const Quat & rotation)
 	{
 		SetDirty();
 		localRotation = rotation;
+		localRotation.Normalize();
 	}
 }
 
@@ -102,6 +129,13 @@ void Transform::SetLocalScale(const float3 & scale)
 		SetDirty();
 		localScale = scale;
 	}
+}
+
+void Transform::SetLocalTRS(const float3 & translation, const Quat & rotation, const float3 & scale)
+{
+	SetLocalPosition(translation);
+	SetLocalRotation(rotation);
+	SetLocalScale(scale);
 }
 
 const float3 & Transform::GetWorldPosition() const
@@ -121,6 +155,21 @@ const float3 & Transform::GetWorldScale() const
 	RecalculateIfNecessary();
 	return worldScale;
 }
+
+/*void Transform::SetModelMatrix(const float4x4 & matrix)
+{
+	if (!gameObject->IsStatic())
+	{
+		float3 position, scale;
+		Quat rotation;
+		matrix.Decompose(position, rotation, scale);
+		
+		modelMatrix = matrix;
+		SetWorldPosition(position);
+		SetWorldRotation(rotation);
+		SetWorldScale(scale);
+	}
+}*/
 
 /*
 	Set local variables instead of world ones
@@ -142,7 +191,9 @@ void Transform::SetWorldRotation(const Quat & rotation)
 	{
 		SetDirty();
 		Quat worldRotationDelta = rotation.Mul(worldRotation.Inverted());
+		worldRotationDelta.Normalize();
 		worldRotation = localRotation.Mul(worldRotationDelta);
+		worldRotation.Normalize();
 	}
 }
 
@@ -154,6 +205,13 @@ void Transform::SetWorldScale(const float3 & scale)
 		float3 worldScaleDelta = scale - worldScale;
 		localScale = localScale + worldScaleDelta;
 	}
+}
+
+void Transform::SetWorldTRS(const float3 & translation, const Quat & rotation, const float3 & scale)
+{
+	SetWorldPosition(translation);
+	SetWorldRotation(rotation);
+	SetWorldScale(scale);
 }
 
 const float4x4 & Transform::GetModelMatrix() const
@@ -173,6 +231,7 @@ void Transform::GuizmoSetModelMatrix(const float4x4 & setmodelMatrix, const floa
 		eulerLocalRotation = rotation;
 		float3 radAngles = DegToRad(rotation);
 		SetLocalRotation(Quat::FromEulerXYZ(radAngles.x, radAngles.y, radAngles.z));
+		eulerLocalRotation = rotation;
 
 		SetLocalScale(scale);
 	}
@@ -193,11 +252,6 @@ void Transform::SetDirty() const
 			child->GetTransform()->SetDirty();
 		}
 	}
-}
-
-float4x4 Transform::GetLocalMatrix() const
-{
-	return float4x4::FromTRS(localPosition, localRotation, localScale);
 }
 
 const float4x4& Transform::GetParentMatrix() const
@@ -225,11 +279,14 @@ void Transform::RecalculateIfNecessary() const
 		worldScale = CalculateWorldScale();
 		worldRotation = CalculateWorldRotation();
 		
-		//modelMatrix.Decompose(worldPosition, worldRotation, worldScale);
+		/*modelMatrix.Decompose(worldPosition, worldRotation, worldScale);
+		worldRotation.Normalize();
+		eulerLocalRotation = RadToDeg(localRotation.ToEulerXYZ());*/
 
-		/*worldPosition = modelMatrix.TranslatePart();
-		worldRotation = modelMatrix.RotatePart().ToQuat();
-		worldScale = modelMatrix.GetScale();*/
+		/*float3 eulerWorldRotation;
+		ImGuizmo::DecomposeMatrixToComponents(modelMatrix.Transposed().ptr(), worldPosition.ptr(), eulerWorldRotation.ptr(), worldScale.ptr());
+		eulerWorldRotation = DegToRad(eulerWorldRotation);
+		worldRotation = Quat::FromEulerXYZ(eulerWorldRotation.x, eulerWorldRotation.y, eulerWorldRotation.z);*/
 
 		dirty = false;
 	}
@@ -249,7 +306,7 @@ float3 Transform::CalculateWorldPosition() const
 	if (parent)
 	{
 		Transform* parentTransform = parent->GetTransform();
-		float3 calculatedWorldPosition = parentTransform->GetModelMatrix().Mul(float4(localPosition, 0)).xyz();
+		float3 calculatedWorldPosition = parentTransform->GetModelMatrix().Mul(localPosition.ToPos4()).xyz();
 		worldPosition = &calculatedWorldPosition;
 	}
 	return *worldPosition;

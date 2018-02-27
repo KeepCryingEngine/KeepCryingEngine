@@ -524,11 +524,7 @@ void ModuleUI::CallGuizmo()
 	{
 		mCurrentGizmoOperation = ImGuizmo::SCALE;
 	}
-
-	Transform* temp = (Transform*)App->scene->Get(selectedNodeID)->GetComponent(ComponentType::Transform);
-		
-	float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-
+	
 	//Xavo: Do not delete this or I'll haunt your dreams -----------------------
 	//if(mCurrentGizmoOperation != ImGuizmo::SCALE)
 	//{
@@ -544,17 +540,27 @@ void ModuleUI::CallGuizmo()
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
-	float4x4 matrixTransposed = temp->GetModelMatrix().Transposed();
-	float* objectMatrix = (float*)matrixTransposed.ptr();
-
 	if (selectedNodeID != 0)
 	{
-		ImGuizmo::Manipulate(App->camera->camera->GetViewMatrix().ptr(), App->camera->camera->GetProyectionMatrix().ptr(), mCurrentGizmoOperation, mCurrentGizmoMode, objectMatrix, nullptr, useSnap ? &snap[0] : NULL);
+		Transform* transform = (Transform*)App->scene->Get(selectedNodeID)->GetTransform();
+		float4x4 modelMatrix = transform->GetModelMatrix().Transposed();
+		float4x4 viewMatrix = App->camera->camera->GetViewMatrix();
+		float4x4 projectionMatrix = App->camera->camera->GetProyectionMatrix();
+
+		ImGuizmo::Manipulate(viewMatrix.ptr(), projectionMatrix.ptr(), mCurrentGizmoOperation, mCurrentGizmoMode, modelMatrix.ptr(), nullptr, useSnap ? &snap[0] : NULL);
 				
 		if(ImGuizmo::IsUsing())
 		{ 
-			ImGuizmo::DecomposeMatrixToComponents(objectMatrix, matrixTranslation, matrixRotation, matrixScale);
-			temp->GuizmoSetModelMatrix(matrixTransposed.Transposed(), (float3)matrixTranslation, (float3)matrixRotation, (float3)matrixScale);
+			//transform->SetModelMatrix(modelMatrix.Transposed());
+			
+			float3 translation, eulerRotation, scale;
+			ImGuizmo::DecomposeMatrixToComponents(modelMatrix.ptr(), translation.ptr(), eulerRotation.ptr(), scale.ptr());
+			/*eulerRotation = DegToRad(eulerRotation);
+			Quat rotation = Quat::FromEulerXYZ(eulerRotation.x,eulerRotation.y,eulerRotation.z);
+
+			transform->SetWorldTRS(translation, rotation, scale);*/
+
+			transform->GuizmoSetModelMatrix(modelMatrix.Transposed(), translation, eulerRotation, scale);
 		}	
 	}
 }
