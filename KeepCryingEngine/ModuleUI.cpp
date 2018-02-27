@@ -551,16 +551,7 @@ void ModuleUI::CallGuizmo()
 				
 		if(ImGuizmo::IsUsing())
 		{ 
-			//transform->SetLocalMatrix(modelMatrix.Transposed());
-			
-			float3 translation, eulerRotation, scale;
-			ImGuizmo::DecomposeMatrixToComponents(modelMatrix.ptr(), translation.ptr(), eulerRotation.ptr(), scale.ptr());
-			eulerRotation = DegToRad(eulerRotation);
-			Quat rotation = Quat::FromEulerXYZ(eulerRotation.x,eulerRotation.y,eulerRotation.z);
-
-			transform->SetWorldTRS(translation, rotation, scale);
-
-			//transform->GuizmoSetModelMatrix(modelMatrix.Transposed(), translation, eulerRotation, scale);
+			transform->SetModelMatrix(modelMatrix.Transposed());
 		}	
 	}
 }

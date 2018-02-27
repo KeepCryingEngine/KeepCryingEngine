@@ -23,7 +23,7 @@ public:
 	const float3& GetEulerLocalRotation() const;
 	const float3& GetLocalScale() const;
 
-	void SetLocalMatrix(const float4x4& localMatrix);
+	void SetLocalModelMatrix(const float4x4& localMatrix);
 	void SetLocalPosition(const float3& position);
 	void SetLocalRotation(const Quat& rotation);
 	void SetLocalScale(const float3& scale);
@@ -41,7 +41,7 @@ public:
 	void SetWorldTRS(const float3& translation, const Quat& rotation, const float3& scale);
 
 
-	void GuizmoSetModelMatrix(const float4x4& modelMatrix, const float3& position, const float3& rotation, const float3& scale);
+	//void GuizmoSetModelMatrix(const float4x4& modelMatrix, const float3& position, const float3& rotation, const float3& scale);
 
 	void Recalculate();
 
