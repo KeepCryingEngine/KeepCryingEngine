@@ -549,7 +549,7 @@ void ModuleScene::DestroyAndRelease(GameObject* &gameObject) const
 
 	if(gameObject->GetParent() != nullptr)
 	{
-		gameObject->GetParent()->DeleteChildFromList(*gameObject);
+		gameObject->GetParent()->DeleteChild(*gameObject);
 	}
 
 	for(GameObject* gameObjectChild : childrenToDelete)
