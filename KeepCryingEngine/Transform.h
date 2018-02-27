@@ -23,7 +23,7 @@ public:
 	const float3& GetEulerLocalRotation() const;
 	const float3& GetLocalScale() const;
 
-	//void SetLocalMatrix(const float4x4& localMatrix);
+	void SetLocalMatrix(const float4x4& localMatrix);
 	void SetLocalPosition(const float3& position);
 	void SetLocalRotation(const Quat& rotation);
 	void SetLocalScale(const float3& scale);
@@ -34,7 +34,7 @@ public:
 	const Quat& GetWorldRotation() const;
 	const float3& GetWorldScale() const;
 
-	//void SetModelMatrix(const float4x4& matrix);
+	void SetModelMatrix(const float4x4& matrix);
 	void SetWorldPosition(const float3& position);
 	void SetWorldRotation(const Quat& rotation);
 	void SetWorldScale(const float3& scale);
@@ -46,6 +46,8 @@ public:
 	void Recalculate();
 
 private:
+	void Decompose(const float4x4& matrix, float3& position, Quat& rotation, float3& scale) const;
+
 	// Const method that modify mutable data
 	void SetDirty() const; 
 	const float4x4& GetParentMatrix() const;
@@ -55,6 +57,9 @@ private:
 	Quat CalculateWorldRotation() const;
 	float3 CalculateWorldScale() const;
 
+	float4x4 ParentModelMatrix() const;
+	Quat ParentWorldRotation() const;
+	float3 ParentWorldScale() const;
 private:
 	float3 localPosition;
 	Quat localRotation;

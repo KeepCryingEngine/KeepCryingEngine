@@ -59,6 +59,34 @@ void Transform::DrawUI()
 				}
 				SetLocalScale(localScale);
 			}
+
+			//DEBUG WORLD SETTERS
+			ImGui::DragFloat3(" Current World Position", float3(worldPosition).ptr(), 0);
+			static float3 newWorldPosition = float3::zero;
+			ImGui::DragFloat3(" New World Position", newWorldPosition.ptr(), 0.1f);
+			if (ImGui::Button("Set World Position"))
+			{
+				SetWorldPosition(newWorldPosition);
+			}
+
+
+			ImGui::DragFloat3(" Current World Rotation", RadToDeg(worldRotation.ToEulerXYZ()).ptr(), 0);
+			static float3 newWorldRotation = float3::zero;
+			ImGui::DragFloat3(" New World Rotation", newWorldRotation.ptr(), 0.1f);
+			if (ImGui::Button("Set World Rotation"))
+			{
+				float3 radAngles = DegToRad(newWorldRotation);
+				SetWorldRotation(Quat::FromEulerXYZ(radAngles.x, radAngles.y, radAngles.z));
+			}
+
+			ImGui::DragFloat3(" Current World Scale", float3(worldScale).ptr(), 0);
+			static float3 newWorldScale = float3::one;
+			ImGui::DragFloat3(" New World Scale", newWorldScale.ptr(), 0.1f);
+			if (ImGui::Button("Set World Scale"))
+			{
+				SetWorldScale(newWorldScale);
+			}
+
 		}
 	}
 }
@@ -70,6 +98,7 @@ vector<ComponentType> Transform::GetProhibitedComponents() const
 
 float4x4 Transform::GetLocalMatrix() const
 {
+	assert(localRotation.IsNormalized());
 	return float4x4::FromTRS(localPosition, localRotation, localScale);
 }
 
@@ -80,6 +109,7 @@ const float3 & Transform::GetLocalPosition() const
 
 const Quat & Transform::GetLocalRotation() const
 {
+	assert(localRotation.IsNormalized());
 	return localRotation;
 }
 
@@ -93,15 +123,14 @@ const float3 & Transform::GetLocalScale() const
 	return localScale;
 }
 
-/*void Transform::SetLocalMatrix(const float4x4 & localMatrix)
+void Transform::SetLocalMatrix(const float4x4 & localMatrix)
 {
 	if (!gameObject->IsStatic())
 	{
 		SetDirty();
-		localMatrix.Decompose(localPosition, localRotation, localScale);
-		localRotation.Normalize();
+		Decompose(localMatrix,localPosition, localRotation, localScale);
 	}
-}*/
+}
 
 void Transform::SetLocalPosition(const float3 & position)
 {
@@ -156,20 +185,19 @@ const float3 & Transform::GetWorldScale() const
 	return worldScale;
 }
 
-/*void Transform::SetModelMatrix(const float4x4 & matrix)
+void Transform::SetModelMatrix(const float4x4 & matrix)
 {
 	if (!gameObject->IsStatic())
 	{
 		float3 position, scale;
 		Quat rotation;
-		matrix.Decompose(position, rotation, scale);
-		
-		modelMatrix = matrix;
+		Decompose(matrix, position, rotation, scale);
+
 		SetWorldPosition(position);
 		SetWorldRotation(rotation);
 		SetWorldScale(scale);
 	}
-}*/
+}
 
 /*
 	Set local variables instead of world ones
@@ -190,10 +218,12 @@ void Transform::SetWorldRotation(const Quat & rotation)
 	if(!gameObject->IsStatic())
 	{
 		SetDirty();
-		Quat worldRotationDelta = rotation.Mul(worldRotation.Inverted());
+		/*Quat worldRotationDelta = rotation.Normalized().Mul(worldRotation);
 		worldRotationDelta.Normalize();
-		worldRotation = localRotation.Mul(worldRotationDelta);
-		worldRotation.Normalize();
+		localRotation = localRotation.Mul(worldRotationDelta);
+		localRotation.Normalize();*/
+
+		localRotation = rotation.Mul(ParentWorldRotation().Inverted());
 	}
 }
 
@@ -202,8 +232,7 @@ void Transform::SetWorldScale(const float3 & scale)
 	if(!gameObject->IsStatic())
 	{
 		SetDirty();
-		float3 worldScaleDelta = scale - worldScale;
-		localScale = localScale + worldScaleDelta;
+		localScale = scale.Div(ParentWorldScale());
 	}
 }
 
@@ -242,6 +271,18 @@ void Transform::Recalculate()
 	SetDirty();
 }
 
+void Transform::Decompose(const float4x4 & matrix, float3 & position, Quat & rotation, float3 & scale) const
+{
+	//matrix.Decompose(position, rotation, scale);
+
+	float3 eulerRotation;
+	ImGuizmo::DecomposeMatrixToComponents(modelMatrix.ptr(), position.ptr(), eulerRotation.ptr(), scale.ptr());
+	eulerRotation = DegToRad(eulerRotation);
+	rotation = Quat::FromEulerXYZ(eulerRotation.x, eulerRotation.y, eulerRotation.z);
+
+	rotation.Normalize();
+}
+
 void Transform::SetDirty() const
 {
 	if (!dirty)
@@ -278,7 +319,8 @@ void Transform::RecalculateIfNecessary() const
 		worldPosition = CalculateWorldPosition();
 		worldScale = CalculateWorldScale();
 		worldRotation = CalculateWorldRotation();
-		
+		eulerLocalRotation = RadToDeg(localRotation.ToEulerXYZ());
+
 		/*modelMatrix.Decompose(worldPosition, worldRotation, worldScale);
 		worldRotation.Normalize();
 		eulerLocalRotation = RadToDeg(localRotation.ToEulerXYZ());*/
@@ -294,46 +336,56 @@ void Transform::RecalculateIfNecessary() const
 
 float4x4 Transform::CalculateModelMatrix() const
 {
-	float4x4 localMatrix = GetLocalMatrix();
-	const float4x4& parentMatrix = GetParentMatrix();
-	return parentMatrix * localMatrix;
+	return GetParentMatrix().Mul(GetLocalMatrix());
 }
 
 float3 Transform::CalculateWorldPosition() const
 {
-	const float3* worldPosition = &localPosition;
-	GameObject* parent = gameObject->GetParent();
-	if (parent)
-	{
-		Transform* parentTransform = parent->GetTransform();
-		float3 calculatedWorldPosition = parentTransform->GetModelMatrix().Mul(localPosition.ToPos4()).xyz();
-		worldPosition = &calculatedWorldPosition;
-	}
-	return *worldPosition;
+	return ParentModelMatrix().Mul(localPosition.ToPos4()).xyz();
 }
 
 Quat Transform::CalculateWorldRotation() const
 {
-	const Quat* worldRotation = &localRotation;
-	GameObject* parent = gameObject->GetParent();
-	if (parent)
-	{
-		Transform* parentTransform = parent->GetTransform();
-		Quat calculatedWorldRotation = parentTransform->GetWorldRotation().Mul(localRotation);
-		worldRotation = &calculatedWorldRotation;
-	}
-	return *worldRotation;
+	return ParentWorldRotation().Mul(localRotation);
 }
 
 float3 Transform::CalculateWorldScale() const
 {
-	const float3* worldScale = &localScale;
+	return ParentWorldScale().Mul(localScale);
+}
+
+float4x4 Transform::ParentModelMatrix() const
+{
+	const float4x4* parentModelMatrix = &float4x4::identity;
 	GameObject* parent = gameObject->GetParent();
 	if (parent)
 	{
 		Transform* parentTransform = parent->GetTransform();
-		float3 calculatedWorldScale = parentTransform->GetWorldScale() + localScale;
-		worldScale = &calculatedWorldScale;
+		parentModelMatrix = &parentTransform->GetModelMatrix();
 	}
-	return *worldScale;
+	return *parentModelMatrix;
+}
+
+Quat Transform::ParentWorldRotation() const
+{
+	const Quat* parentWorldRotation = &Quat::identity;
+	GameObject* parent = gameObject->GetParent();
+	if (parent)
+	{
+		Transform* parentTransform = parent->GetTransform();
+		parentWorldRotation = &parentTransform->GetWorldRotation();
+	}
+	return parentWorldRotation->Normalized();
+}
+
+float3 Transform::ParentWorldScale() const
+{
+	const float3* parentWorldScale = &float3::one;
+	GameObject* parent = gameObject->GetParent();
+	if (parent)
+	{
+		Transform* parentTransform = parent->GetTransform();
+		parentWorldScale = &parentTransform->GetWorldScale();
+	}
+	return *parentWorldScale;
 }
