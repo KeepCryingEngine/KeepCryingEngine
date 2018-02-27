@@ -21,6 +21,8 @@ public:
 
 	void DrawUI() override;
 	std::vector<ComponentType> GetProhibitedComponents() const override;
+	std::vector<ComponentType> GetNeededComponents() const override;
+
 
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 

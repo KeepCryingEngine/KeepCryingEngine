@@ -33,7 +33,12 @@ void MeshFilter::DrawUI()
 
 std::vector<ComponentType> MeshFilter::GetProhibitedComponents() const
 {
-	return { ComponentType::MeshFilter };
+	return { MeshFilter::TYPE };
+}
+
+std::vector<ComponentType> MeshFilter::GetNeededComponents() const
+{
+	return { MeshRenderer::TYPE };
 }
 
 void MeshFilter::RealUpdate(float deltaTimeS, float realDeltaTimeS)

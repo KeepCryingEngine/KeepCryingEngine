@@ -16,6 +16,7 @@ public:
 
 	void DrawUI() override;
 	std::vector<ComponentType> GetProhibitedComponents() const override;
+	std::vector<ComponentType> GetNeededComponents() const override;
 
 	void Render(Mesh& mesh);
 

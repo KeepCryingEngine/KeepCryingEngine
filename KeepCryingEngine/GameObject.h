@@ -39,7 +39,7 @@ public:
 	void SetParent(GameObject& newParent);
 
 	template <typename T>
-	T* AddComponent(bool forceAddition = false);
+	T* AddComponent();
 
 	void RemoveComponent(Component* component);
 
@@ -74,7 +74,7 @@ public:
 	void SetVisible(bool visible);
 
 private:
-	Component * AddComponent(ComponentType type, bool forceAddition = false);
+	Component * AddComponent(ComponentType type);
 
 	Component* GetComponent(ComponentType type) const;
 	std::vector<Component*> GetComponents(ComponentType type) const;
@@ -108,7 +108,7 @@ private:
 };
 
 template<typename T>
-inline T * GameObject::AddComponent(bool forceAddition)
+inline T * GameObject::AddComponent()
 {
 	return (T*)AddComponent(T::TYPE);
 }

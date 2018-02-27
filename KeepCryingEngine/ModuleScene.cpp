@@ -215,7 +215,7 @@ GameObject* ModuleScene::AddCamera(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Camera");
 
-	gameObject->AddComponent<Camera>(true);
+	gameObject->AddComponent<Camera>();
 
 	return gameObject;
 }

@@ -15,7 +15,7 @@ using namespace std;
 GameObject::GameObject(const string& name) : name(name)
 {
 	id = App->scene->GetNewGameObjectId();
-	transform = (Transform*)AddComponent(ComponentType::Transform, true);
+	transform = AddComponent<Transform>();
 	App->scene->AddToDinamicGameobjectList(this);
 
 	aabb.SetNegativeInfinity();
@@ -276,20 +276,21 @@ std::vector<Component*> GameObject::GetComponentsInChildren(ComponentType type) 
 	return components;
 }
 
-Component* GameObject::AddComponent(ComponentType type, bool forceAddition)
+Component* GameObject::AddComponent(ComponentType type)
 {
 	Component* component = ComponentFabric::CreateComponent(type);
 	assert(component);
 
-	if(forceAddition || CanAttach(*component))
+	if(CanAttach(*component))
 	{
 		AddInternalComponent(component);
 
-		if(type == ComponentType::MeshRenderer)
+		for (ComponentType neededComponent : component->GetNeededComponents())
 		{
-			Component* mat = ComponentFabric::CreateComponent(ComponentType::MeshFilter);
-			assert(mat);
-			AddInternalComponent(mat);
+			if (GetComponent(neededComponent) == nullptr)
+			{
+				AddComponent(neededComponent);
+			}
 		}
 	}
 	else
@@ -415,14 +416,6 @@ void GameObject::AddInternalComponent(Component * component)
 
 bool GameObject::CanAttach(const Component& component) const
 {
-	for(ComponentType componentType : component.GetNeededComponents())
-	{
-		if(GetComponent(componentType) == nullptr)
-		{
-			return false;
-		}
-	}
-
 	for(ComponentType componentType : component.GetProhibitedComponents())
 	{
 		if(GetComponent(componentType) != nullptr)

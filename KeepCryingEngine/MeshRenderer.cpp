@@ -44,7 +44,12 @@ void MeshRenderer::DrawUI()
 
 std::vector<ComponentType> MeshRenderer::GetProhibitedComponents() const
 {
-	return { ComponentType::MeshRenderer };
+	return { MeshRenderer::TYPE };
+}
+
+std::vector<ComponentType> MeshRenderer::GetNeededComponents() const
+{
+	return { MeshFilter::TYPE };
 }
 
 void MeshRenderer::Render(Mesh& mesh)
