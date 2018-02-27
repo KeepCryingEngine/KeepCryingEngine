@@ -17,6 +17,7 @@
 #include "Camera.h"
 #include "Transform.h"
 #include "ModuleTexture.h"
+#include "ModuleAnim.h"
 
 using namespace std;
 
@@ -151,6 +152,16 @@ void ModuleUI::DrawMainMenu()
 				string pathAndName(pathToMesh);
 				std::size_t found = pathAndName.find_last_of("/\\");				
 				App->entity->LoadMesh(pathAndName.substr(0, found) + "/", pathAndName.substr(found + 1));
+			}
+
+			ImGui::LabelText("##LoadAnimLabel", "Animation");
+			static char pathToAnim[180] = {};
+			ImGui::InputText("##PathToAnim", pathToAnim, sizeof(pathToAnim)); ImGui::SameLine();
+			if(ImGui::Button("Add Animation"))
+			{
+				string pathAndName(pathToAnim);
+				std::size_t found = pathAndName.find_last_of("/\\");
+				App->anim->Load(pathAndName.substr(0, found) + "/", pathAndName.substr(found + 1));
 			}
 
 			ImGui::Separator();

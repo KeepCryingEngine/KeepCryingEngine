@@ -12,14 +12,14 @@ struct NodeAnim
 	aiString name;
 	aiVector3D* positions = nullptr;
 	aiQuaternion* rotations = nullptr;
-	unsigned num_positions = 0;
-	unsigned num_rotations = 0;
+	unsigned numPositions = 0;
+	unsigned numRotations = 0;
 };
 
 struct Anim
 {
 	unsigned duration = 0;
-	unsigned num_chanels = 0;
+	unsigned numChanels = 0;
 	NodeAnim* chanels = nullptr;
 };
 
@@ -33,7 +33,7 @@ struct AnimInstance
 	unsigned blend_time = 0;
 };
 
-typedef int AnimInstanceId;
+typedef unsigned AnimInstanceId;
 typedef std::map<aiString, Anim*> AnimMap;
 typedef std::vector<AnimInstance*> InstanceList;
 typedef std::vector<AnimInstanceId> HoleList;
@@ -48,7 +48,7 @@ public:
 	bool CleanUp() override;
 	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
 
-	void Load(const char* name, const char* file);
+	void Load(const std::string& path, const std::string& name);
 	AnimInstanceId Play(const char* name);
 	void Stop(AnimInstanceId id);
 	void BlendTo(AnimInstanceId id, const char* name, unsigned blend_time);
