@@ -15,8 +15,7 @@ typedef unsigned MusicId;
 enum class SoundType
 {
 	SFX,
-	MUSIC,
-	NONE
+	MUSIC
 };
 
 struct AudioId
@@ -37,7 +36,7 @@ public:
 
 	AudioId* Load(const std::string& path, const std::string& name, const std::string& extension);
 	HSTREAM GetSFX(MusicId id)const;
-	HCHANNEL GetMusic(MusicId id) const;
+	HSAMPLE GetMusic(MusicId id) const;
 
 	void EnableListener(AudioListener* listener);
 
@@ -46,9 +45,9 @@ public:
 private:
 	static MusicId sfxActualIndex;
 	static MusicId musicActualIndex;
-	std::vector<HSTREAM> sfx;
+	std::map<MusicId,HSTREAM> sfx;
 	std::list<MusicId> sfxHoles;
-	std::vector<HCHANNEL> music;
+	std::map<MusicId, HSAMPLE> music;
 	std::list<MusicId> musicHoles;
 	std::map<std::string, AudioId> soundCache;
 

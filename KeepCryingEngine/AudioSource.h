@@ -33,7 +33,7 @@ public:
 
 	void DrawUI() override;
 
-	void SetMusic(AudioId audioInfo);
+	void SetMusic(AudioId* audioInfo);
 	void SetMode(AudioMode newMode);
 	void SetPitch(float value);
 	void SetPan(float value);
@@ -41,7 +41,7 @@ public:
 	void SetRollOffFactor(float value);
 	void SetDoplerFactor(float value);
 
-	AudioId GetMusic() const;
+	AudioId* GetMusic() const;
 	AudioMode GetMode() const;
 	float GetPitch() const;
 	float GetPan() const;
@@ -49,8 +49,8 @@ public:
 	float GetRollOffFactor() const;
 	float GetDoplerFactor() const;
 private:
-	SourceStates state;
-	AudioId audioInfo;
+	SourceStates state = SourceStates::STOPPED;
+	AudioId* audioInfo = nullptr;
 	AudioMode mode;
 	float pitch;
 	float pan;

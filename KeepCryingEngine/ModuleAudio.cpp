@@ -5,8 +5,8 @@
 
 const int ModuleAudio::DEVICE = -1; // Default Sounddevice
 const int ModuleAudio::FRECUENCY = 44100;
-MusicId ModuleAudio::sfxActualIndex = 0;
-MusicId ModuleAudio::musicActualIndex = 0;
+MusicId ModuleAudio::sfxActualIndex = 1;
+MusicId ModuleAudio::musicActualIndex = 1;
 
 using namespace std;
 
@@ -20,7 +20,6 @@ ModuleAudio::~ModuleAudio()
 bool ModuleAudio::Init()
 {
 	BASS_Init(DEVICE, FRECUENCY, BASS_DEVICE_3D, 0, NULL);
-	
 	return true;
 }
 
@@ -44,7 +43,13 @@ AudioId* ModuleAudio::Load(const string & path, const string & name, const strin
 	AudioId* newAudioId = new AudioId();
 	if(extension == "ogg")
 	{
-		HSTREAM streamHandle = BASS_StreamCreateFile(FALSE, "your_file.mp3", 0, 0, 0);
+		HSTREAM streamHandle = BASS_StreamCreateFile(FALSE, (path + name + "." + extension).c_str(), 0, 0, BASS_SAMPLE_3D);
+		if(streamHandle == 0)
+		{
+			int a = BASS_ErrorGetCode();
+			LOG_DEBUG("Error loading ogg file");
+			assert(false);
+		}
 		MusicId newId;
 		if(sfxHoles.size() > 0)
 		{
@@ -62,7 +67,13 @@ AudioId* ModuleAudio::Load(const string & path, const string & name, const strin
 	}
 	else if(extension == "wav")
 	{
-		HCHANNEL streamHandle = BASS_SampleLoad(TRUE, (path + name +"."+extension).c_str(),0 , 0, 0, 0);
+		HSAMPLE streamHandle = BASS_SampleLoad(FALSE, (path + name +"."+extension).c_str(),0 ,0 ,5,BASS_SAMPLE_3D|| BASS_SAMPLE_OVER_VOL);
+		if(streamHandle == 0)
+		{
+			int a = BASS_ErrorGetCode();
+			LOG_DEBUG("Error loading wav file");
+			assert(false);
+		}
 		MusicId newId;
 		if(musicHoles.size() > 0)
 		{
@@ -88,12 +99,12 @@ AudioId* ModuleAudio::Load(const string & path, const string & name, const strin
 
 HSTREAM ModuleAudio::GetSFX(MusicId id) const
 {
-	return sfx[id];
+	return sfx.at(id);
 }
 
 HCHANNEL ModuleAudio::GetMusic(MusicId id) const
 {
-	return music[id];
+	return music.at(id);
 }
 
 void ModuleAudio::EnableListener(AudioListener* listener)

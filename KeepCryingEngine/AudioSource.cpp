@@ -13,8 +13,6 @@ using namespace std;
 
 AudioSource::AudioSource():Component(AudioSource::TYPE)
 {
-	audioInfo.type = SoundType::NONE;
-	audioInfo.id = 0;
 }
 
 AudioSource::~AudioSource()
@@ -25,22 +23,24 @@ void AudioSource::Awake()
 
 void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
+	if(audioInfo == nullptr)
+	{
+		return;
+	}
+
 	unsigned long id = 0;
-	switch(audioInfo.type)
+	switch(audioInfo->type)
 	{
 		case SoundType::MUSIC:
 		{
-			id = BASS_SampleGetChannel(App->audio->GetMusic(audioInfo.id),FALSE);
+			id = BASS_SampleGetChannel(App->audio->GetMusic(audioInfo->id),FALSE);
+			int a = BASS_ErrorGetCode();
+			int esperate=0;
 		}
 		break;
 		case SoundType::SFX:
 		{
-			id = App->audio->GetSFX(audioInfo.id);
-		}
-		break;
-		case SoundType::NONE:
-		{
-			return;
+			id = App->audio->GetSFX(audioInfo->id);
 		}
 		break;
 		default:
@@ -48,7 +48,7 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 			break;
 	}
 
-	if(id = 0)
+	if(id == 0)
 	{
 		return;
 	}
@@ -120,9 +120,6 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 			}
 		}
 			break;
-		default:
-			assert(false);
-			break;
 	}
 }
 
@@ -139,7 +136,7 @@ void AudioSource::DrawUI()
 			size_t found = pathAndName.find_last_of("/\\");
 			size_t found2 = pathAndName.rfind(".");
 			//App->audio->Load(pathAndName.substr(0, found) + "/", pathAndName.substr(0, found2-found), pathAndName.substr(found2+1) );
-			App->audio->Load("Assets/sfx/", "oggSound", "ogg");
+			audioInfo = App->audio->Load("Assets/sfx/", "wavSound", "wav");
 		}
 
 		if(ImGui::Button("Play"))
@@ -164,7 +161,7 @@ void AudioSource::DrawUI()
 	}
 }
 
-void AudioSource::SetMusic(AudioId audioInfo)
+void AudioSource::SetMusic(AudioId* audioInfo)
 {
 	this->audioInfo = audioInfo;
 }
@@ -199,7 +196,7 @@ void AudioSource::SetDoplerFactor(float value)
 	doplerFactor = value;
 }
 
-AudioId AudioSource::GetMusic() const
+AudioId* AudioSource::GetMusic() const
 {
 	return audioInfo;
 }
