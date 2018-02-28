@@ -16,6 +16,8 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "Transform.h"
+#include "AudioSource.h"
+#include "AudioListener.h"
 #include "ModuleTexture.h"
 #include "ModuleAnim.h"
 #include "Animator.h"
@@ -736,6 +738,18 @@ void ModuleUI::DrawInspectorWindow()
 			if(ImGui::Selectable("Animator"))
 			{
 				temp->AddComponent<Animator>();
+			}
+			if(ImGui::BeginMenu("Audio"))
+			{
+				if(ImGui::Selectable("Audio Source"))
+				{
+					temp->AddComponent<AudioSource>();
+				}
+				if(ImGui::Selectable("Audio Listener"))
+				{
+					temp->AddComponent<AudioListener>();
+				}
+				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
 		}

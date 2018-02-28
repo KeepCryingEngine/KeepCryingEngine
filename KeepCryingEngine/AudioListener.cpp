@@ -44,4 +44,20 @@ void AudioListener::SetEnable(bool enable)
 }
 
 void AudioListener::DrawUI()
-{}
+{
+	if(ImGui::CollapsingHeader("Audio Listener"))
+	{
+		if(ImGui::Checkbox("Active", &enabled))
+		{
+			if(gameObject->IsEnabled())
+			{
+				wasEnabled = enabled;
+				App->audio->EnableListener(enabled ? this : nullptr);
+			}
+			else
+			{
+				enabled = false;
+			}
+		}
+	}
+}

@@ -1,6 +1,7 @@
 #include "AudioSource.h"
 
 #include <bass.h>
+#include <imgui.h>
 
 #include "Globals.h"
 #include "Application.h"
@@ -8,10 +9,13 @@
 #include "GameObject.h"
 #include "Transform.h"
 
-
+using namespace std;
 
 AudioSource::AudioSource():Component(AudioSource::TYPE)
-{}
+{
+	audioInfo.type = SoundType::NONE;
+	audioInfo.id = 0;
+}
 
 AudioSource::~AudioSource()
 {}
@@ -26,12 +30,17 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	{
 		case SoundType::MUSIC:
 		{
-			id= BASS_SampleGetChannel(App->audio->GetMusic(audioInfo.id),FALSE);
+			id = BASS_SampleGetChannel(App->audio->GetMusic(audioInfo.id),FALSE);
 		}
 		break;
 		case SoundType::SFX:
 		{
 			id = App->audio->GetSFX(audioInfo.id);
+		}
+		break;
+		case SoundType::NONE:
+		{
+			return;
 		}
 		break;
 		default:
@@ -118,7 +127,42 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 }
 
 void AudioSource::DrawUI()
-{}
+{
+	if(ImGui::CollapsingHeader("Audio Source"))
+	{
+		static char pathToAudio[180] = "";
+
+		ImGui::InputText("##PathToAudio", pathToAudio, sizeof(pathToAudio)); ImGui::SameLine();
+		if(ImGui::Button("Load audio"))
+		{
+			string pathAndName(pathToAudio);
+			size_t found = pathAndName.find_last_of("/\\");
+			size_t found2 = pathAndName.rfind(".");
+			//App->audio->Load(pathAndName.substr(0, found) + "/", pathAndName.substr(0, found2-found), pathAndName.substr(found2+1) );
+			App->audio->Load("Assets/sfx/", "oggSound", "ogg");
+		}
+
+		if(ImGui::Button("Play"))
+		{			
+			if(state == SourceStates::PAUSED)
+			{
+				state = SourceStates::WAITING_TO_UNPAUSE;
+			}
+			else
+			{
+				state = SourceStates::WAITING_TO_PLAY;
+			}
+		}
+		if(ImGui::Button("Pause"))
+		{
+			state = SourceStates::WAITING_TO_PAUSE;
+		}
+		if(ImGui::Button("Stop"))
+		{
+			state = SourceStates::WAITING_TO_STOP;
+		}
+	}
+}
 
 void AudioSource::SetMusic(AudioId audioInfo)
 {

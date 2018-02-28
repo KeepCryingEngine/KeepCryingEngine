@@ -15,7 +15,8 @@ typedef unsigned MusicId;
 enum class SoundType
 {
 	SFX,
-	MUSIC
+	MUSIC,
+	NONE
 };
 
 struct AudioId
