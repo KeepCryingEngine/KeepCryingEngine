@@ -17,6 +17,7 @@ bool ModuleAnim::CleanUp()
 	holes.clear();
 	instances.clear();
 	animations.clear();
+
 	return true;
 }
 
@@ -26,7 +27,7 @@ update_status ModuleAnim::Update(float deltaTimeS, float realDeltaTimeS)
 
 	for(size_t i = 0; i < instances.size(); ++i)
 	{
-		AnimInstance* animInstance = instances[i];
+		AnimInstance*& animInstance = instances[i];
 
 		if(animInstance == nullptr)
 		{
@@ -49,6 +50,23 @@ update_status ModuleAnim::Update(float deltaTimeS, float realDeltaTimeS)
 				{
 					animInstance->time = anim->duration;
 				}
+			}
+		}
+
+		// Blend
+
+		AnimInstance* nextAnimInstance = animInstance->next;
+
+		if(nextAnimInstance)
+		{
+			animInstance->blend_time += time;
+
+			if(animInstance->blend_time >= animInstance->blend_duration)
+			{
+				// Blend end
+
+				RELEASE(animInstance);
+				instances[i] = nextAnimInstance;
 			}
 		}
 	}
@@ -153,12 +171,69 @@ void ModuleAnim::Stop(AnimInstanceId id)
 }
 
 void ModuleAnim::BlendTo(AnimInstanceId id, const char * name, unsigned blend_time)
-{}
+{
+	AnimInstance* animInstance = instances[id];
+
+	if(animInstance == nullptr)
+	{
+		return;
+	}
+
+	animInstance->blend_duration = blend_time;
+
+	AnimInstance*& nextAnimInstance = animInstance->next;
+
+	RELEASE(nextAnimInstance);
+
+	Anim* nextAnim = nullptr;
+
+	AnimMap::iterator animationIt = animations.find(name);
+
+	if(animationIt != animations.end())
+	{
+		nextAnim = animationIt->second;
+	}
+
+	nextAnimInstance = new AnimInstance();
+
+	nextAnimInstance->anim = nextAnim;
+	// ...
+}
 
 bool ModuleAnim::GetTransform(AnimInstanceId id, const char * channel, aiVector3D & position, aiQuaternion & rotation) const
 {
+	if(instances[id] != nullptr)
+	{
+		return GetTransform(instances[id], channel, position, rotation);
+	}
+
+	return false;
+}
+
+float ModuleAnim::GetPercent(AnimInstanceId id) const
+{
+	float percent = 0.0f;
+
 	AnimInstance* animInstance = instances[id];
-	
+
+	if(animInstance)
+	{
+		Anim* anim = animInstance->anim;
+
+		if(anim)
+		{
+			uint currentTime = animInstance->time;
+			uint totalTime = anim->duration;
+
+			percent = (float)currentTime / (float)totalTime;
+		}
+	}
+
+	return percent;
+}
+
+bool ModuleAnim::GetTransform(AnimInstance* animInstance, const char * channel, aiVector3D & position, aiQuaternion & rotation) const
+{
 	if(animInstance == nullptr)
 	{
 		return false;
@@ -205,29 +280,24 @@ bool ModuleAnim::GetTransform(AnimInstanceId id, const char * channel, aiVector3
 	position = Lerp(position, positionNext, posLambda);
 	rotation = Lerp(rotation, rotationNext, rotLambda);
 
-	return true;
-}
+	// Blend
 
-float ModuleAnim::GetPercent(AnimInstanceId id) const
-{
-	float percent = 0.0f;
+	AnimInstance* nextAnimInstance = animInstance->next;
 
-	AnimInstance* animInstance = instances[id];
-
-	if(animInstance)
+	if(nextAnimInstance)
 	{
-		Anim* anim = animInstance->anim;
+		float blendLambda = float(animInstance->blend_time) / float(animInstance->blend_duration);
 
-		if(anim)
-		{
-			uint currentTime = animInstance->time;
-			uint totalTime = anim->duration;
+		aiVector3D positionNextAnim;
+		aiQuaternion rotationNextAnim;
 
-			percent = (float)currentTime / (float)totalTime;
-		}
+		GetTransform(nextAnimInstance, channel, positionNextAnim, rotationNextAnim);
+
+		position = Lerp(position, positionNextAnim, blendLambda);
+		rotation = Lerp(rotation, rotationNextAnim, blendLambda);
 	}
 
-	return percent;
+	return true;
 }
 
 aiVector3D ModuleAnim::Lerp(const aiVector3D & first, const aiVector3D & second, float lambda) const

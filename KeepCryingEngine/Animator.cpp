@@ -100,14 +100,16 @@ void Animator::LoadAnimInstance(const char * path)
 
 void Animator::PlayAnimInstance(const char* name)
 {
+	currentAnimationName = name;
+
 	if(HasValidAnimationInstance())
 	{
-		currentAnimationName = "";
-		App->anim->Stop(animInstanceId);
+		App->anim->BlendTo(animInstanceId, name, 1000);
 	}
-
-	currentAnimationName = name;
-	animInstanceId = App->anim->Play(name);
+	else
+	{
+		animInstanceId = App->anim->Play(name);
+	}
 }
 
 bool Animator::HasValidAnimationInstance() const
