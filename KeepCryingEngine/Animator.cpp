@@ -8,7 +8,7 @@
 using namespace std;
 
 Animator::Animator() : 
-	Component(ComponentType::Animator)
+	Component(Animator::TYPE)
 { }
 
 Animator::~Animator()
@@ -67,14 +67,14 @@ void Animator::DrawUI()
 	}
 }
 
-vector<ComponentType> Animator::GetNeededComponents() const
+vector<Component::Type> Animator::GetNeededComponents() const
 {
-	return { ComponentType::Transform };
+	return { Transform::TYPE };
 }
 
-vector<ComponentType> Animator::GetProhibitedComponents() const
+vector<Component::Type> Animator::GetProhibitedComponents() const
 {
-	return { ComponentType::Animator };
+	return { Animator::TYPE };
 }
 
 unsigned int Animator::GetAnimInstanceId() const

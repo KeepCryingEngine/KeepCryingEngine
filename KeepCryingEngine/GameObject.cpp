@@ -29,7 +29,27 @@ GameObject* GameObject::GetParent() const
 	return parent;
 }
 
-size_t GameObject::GetChildCount() const
+void GameObject::SetParent(GameObject& newParent)
+{
+	if (parent != nullptr)
+	{
+		parent->RemoveChild(*this);
+	}
+
+	parent = &newParent;
+	newParent.children.push_back(this);
+}
+
+void GameObject::RemoveChild(GameObject& child)
+{
+	vector<GameObject*>::iterator childParentIterator = find(children.begin(), children.end(), &child);
+	assert(childParentIterator != children.end());
+	children.erase(childParentIterator);
+	child.parent = nullptr;
+}
+
+
+size_t GameObject::ChildCount() const
 {
 	return children.size();
 }
@@ -46,41 +66,26 @@ const std::vector<GameObject*>& GameObject::GetChildren() const
 	return children;
 }
 
-GameObject* GameObject::GetChild(unsigned long long int gameObjectId) const
+GameObject* GameObject::GetById(unsigned long long int gameObjectId) const
 {
-	// Check 1st level children first
-
-	for(GameObject* child : children)
-	{
-		if(child->GetId() == gameObjectId)
-		{
-			return child;
-		}
-	}
-
-	// Recursion
-
-	for(GameObject* child : children)
-	{
-		GameObject* childRecursive = child->GetChild(gameObjectId);
-		
-		if(childRecursive != nullptr)
-		{
-			return childRecursive;
-		}
-	}
-
-	return nullptr;
-}
-
-GameObject* GameObject::GetSelfOrChild(unsigned long long int gameObjectId) const
-{
+	GameObject* gameObject = nullptr;
 	if(id == gameObjectId)
 	{
-		return (GameObject*)this;
+		gameObject = (GameObject*)this;
 	}
+	else
+	{
+		for (GameObject* child : children)
+		{
+			gameObject = child->GetById(gameObjectId);
 
-	return GetChild(gameObjectId);
+			if (gameObject != nullptr)
+			{
+				break;
+			}
+		}
+	}
+	return gameObject;
 }
 
 void GameObject::DeleteChild(GameObject & childToRemove)
@@ -146,27 +151,6 @@ void GameObject::SetStatic(bool value)
 	}
 }
 
-/* void GameObject::AddChild(GameObject& newChild)
-{
-	newChild.SetParent(*this);
-} */
-
-void GameObject::SetParent(GameObject& newParent)
-{
-	if(parent != nullptr)
-	{
-		vector<GameObject*>::iterator childParentIterator = find(parent->children.begin(), parent->children.end(), this);
-		assert(childParentIterator != parent->children.end());
-		parent->children.erase(childParentIterator);
-	}
-	
-	parent = &newParent;
-	newParent.children.push_back(this);
-
-	if(transform)
-		transform->Recalculate();
-}
-
 void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
 {
 	CheckToStart();
@@ -221,7 +205,7 @@ void GameObject::SetVisible(bool visible)
 	this->visible = visible;
 }
 
-Component* GameObject::GetComponent(ComponentType type) const
+Component* GameObject::GetComponent(Component::Type type) const
 {
 	for (Component* component : components)
 	{
@@ -242,7 +226,7 @@ Component* GameObject::GetComponent(ComponentType type) const
 	return nullptr;
 }
 
-std::vector<Component*> GameObject::GetComponents(ComponentType type) const
+std::vector<Component*> GameObject::GetComponents(Component::Type type) const
 {
 	std::vector<Component*> ret;
 
@@ -265,7 +249,7 @@ std::vector<Component*> GameObject::GetComponents(ComponentType type) const
 	return ret;
 }
 
-std::vector<Component*> GameObject::GetComponentsInChildren(ComponentType type) const
+std::vector<Component*> GameObject::GetComponentsInChildren(Component::Type type) const
 {
 	vector<Component*> components;
 	for (GameObject* child : children)
@@ -276,7 +260,7 @@ std::vector<Component*> GameObject::GetComponentsInChildren(ComponentType type) 
 	return components;
 }
 
-Component* GameObject::AddComponent(ComponentType type)
+Component* GameObject::AddComponent(Component::Type type)
 {
 	Component* component = ComponentFabric::CreateComponent(type);
 	assert(component);
@@ -285,7 +269,7 @@ Component* GameObject::AddComponent(ComponentType type)
 	{
 		AddInternalComponent(component);
 
-		for (ComponentType neededComponent : component->GetNeededComponents())
+		for (Component::Type neededComponent : component->GetNeededComponents())
 		{
 			if (GetComponent(neededComponent) == nullptr)
 			{
@@ -416,7 +400,7 @@ void GameObject::AddInternalComponent(Component * component)
 
 bool GameObject::CanAttach(const Component& component) const
 {
-	for(ComponentType componentType : component.GetProhibitedComponents())
+	for(Component::Type componentType : component.GetProhibitedComponents())
 	{
 		if(GetComponent(componentType) != nullptr)
 		{

@@ -836,7 +836,7 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 		}
-		if(child->GetChildCount() == 0)
+		if(child->ChildCount() == 0)
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Bullet;
 		}
@@ -901,7 +901,7 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 
 		if(opened)
 		{
-			if(child->GetChildCount() > 0)
+			if(child->ChildCount() > 0)
 			{
 				PrintChildrenOnHierarchy(child->GetChildren());
 			}

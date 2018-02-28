@@ -8,7 +8,7 @@
 using namespace std;
 
 Transform::Transform() : 
-	Component(ComponentType::Transform),
+	Component(Transform::TYPE),
 	localPosition(float3::zero),
 	localRotation(Quat::identity),
 	eulerLocalRotation(float3::zero),
@@ -91,9 +91,9 @@ void Transform::DrawUI()
 	}
 }
 
-vector<ComponentType> Transform::GetProhibitedComponents() const
+vector<Component::Type> Transform::GetProhibitedComponents() const
 {
-	return { ComponentType::Transform };
+	return { Transform::TYPE };
 }
 
 float4x4 Transform::GetLocalMatrix() const
@@ -203,8 +203,10 @@ void Transform::SetWorldPosition(const float3 & position)
 	if(!gameObject->IsStatic())
 	{
 		SetDirty();
-		float3 worldPositionDelta = position - worldPosition;
-		localPosition = localPosition + worldPositionDelta;
+
+		localPosition = position - ParentWorldPosition();
+		/*float3 worldPositionDelta = position - worldPosition;
+		localPosition = localPosition + worldPositionDelta;*/
 	}
 }
 
@@ -239,23 +241,6 @@ const float4x4 & Transform::GetModelMatrix() const
 	return modelMatrix;
 }
 
-/*void Transform::GuizmoSetModelMatrix(const float4x4 & setmodelMatrix, const float3& position, const float3& rotation, const float3& scale)
-{
-	if(!gameObject->IsStatic())
-	{
-		modelMatrix = setmodelMatrix;
-
-		SetLocalPosition(position);
-
-		eulerLocalRotation = rotation;
-		float3 radAngles = DegToRad(rotation);
-		SetLocalRotation(Quat::FromEulerXYZ(radAngles.x, radAngles.y, radAngles.z));
-		eulerLocalRotation = rotation;
-
-		SetLocalScale(scale);
-	}
-}*/
-
 void Transform::Recalculate()
 {
 	SetDirty();
@@ -282,6 +267,7 @@ void Transform::SetDirty() const
 	if (!dirty)
 	{
 		dirty = true;
+
 		for (GameObject* child : gameObject->GetChildren())
 		{
 			child->GetTransform()->SetDirty();
@@ -315,6 +301,10 @@ void Transform::RecalculateIfNecessary() const
 		worldRotation = CalculateWorldRotation();
 		eulerLocalRotation = RadToDeg(localRotation.ToEulerXYZ());
 
+		right = worldRotation.Mul(float3::unitX).Normalized();
+		up = worldRotation.Mul(float3::unitY).Normalized();
+		forward = worldRotation.Mul(float3::unitZ).Normalized();
+
 		dirty = false;
 	}
 }
@@ -331,7 +321,7 @@ float3 Transform::CalculateWorldPosition() const
 
 Quat Transform::CalculateWorldRotation() const
 {
-	return ParentWorldRotation().Mul(localRotation);
+	return ParentWorldRotation().Mul(localRotation).Normalized();
 }
 
 float3 Transform::CalculateWorldScale() const
@@ -349,6 +339,18 @@ float4x4 Transform::ParentModelMatrix() const
 		parentModelMatrix = &parentTransform->GetModelMatrix();
 	}
 	return *parentModelMatrix;
+}
+
+float3 Transform::ParentWorldPosition() const
+{
+	const float3* parentWorldPosition = &float3::zero;
+	GameObject* parent = gameObject->GetParent();
+	if (parent)
+	{
+		Transform* parentTransform = parent->GetTransform();
+		parentWorldPosition = &parentTransform->GetWorldPosition();
+	}
+	return *parentWorldPosition;
 }
 
 Quat Transform::ParentWorldRotation() const
@@ -373,4 +375,22 @@ float3 Transform::ParentWorldScale() const
 		parentWorldScale = &parentTransform->GetWorldScale();
 	}
 	return *parentWorldScale;
+}
+
+const float3 & Transform::Up() const
+{
+	RecalculateIfNecessary();
+	return up;
+}
+
+const float3 & Transform::Forward() const
+{
+	RecalculateIfNecessary();
+	return forward;
+}
+
+const float3 & Transform::Right() const
+{
+	RecalculateIfNecessary();
+	return right;
 }

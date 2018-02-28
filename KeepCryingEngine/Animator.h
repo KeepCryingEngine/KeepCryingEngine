@@ -8,7 +8,7 @@
 class Animator : public Component
 {
 public:
-	static const ComponentType TYPE = ComponentType::Animator;
+	static const Component::Type TYPE = Component::Type::Animator;
 
 	Animator();
 	virtual ~Animator();
@@ -17,8 +17,8 @@ public:
 
 	void DrawUI() override;
 
-	virtual std::vector<ComponentType> GetNeededComponents() const override;
-	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
+	virtual std::vector<Component::Type> GetNeededComponents() const override;
+	virtual std::vector<Component::Type> GetProhibitedComponents() const override;
 
 	unsigned int GetAnimInstanceId() const;
 	

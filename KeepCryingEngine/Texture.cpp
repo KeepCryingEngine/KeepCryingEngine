@@ -18,7 +18,7 @@ Texture::Texture(GLuint textureId, const TextureConfiguration & textureConfigura
 
 Texture::~Texture()
 {
-	//TODO unload texture
+	glDeleteTextures(1, &textureId);
 }
 
 GLuint Texture::GetId() const

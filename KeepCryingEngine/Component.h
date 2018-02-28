@@ -6,19 +6,19 @@
 
 class GameObject;
 
-enum class ComponentType
-{
-	Transform,
-	Camera,
-	MeshFilter,
-	MeshRenderer,
-	Animator
-};
-
 class Component
 {
 public:
-	Component(ComponentType type) : enabled(true), wasEnabled(true), type(type)
+	enum class Type
+	{
+		Transform,
+		Camera,
+		MeshFilter,
+		MeshRenderer,
+		Animator
+	};
+
+	Component(Component::Type type) : enabled(true), wasEnabled(true), type(type)
 	{}
 	virtual ~Component() {}
 
@@ -43,13 +43,13 @@ public:
 	
 	virtual void DrawUI(){};
 
-	virtual std::vector<ComponentType> GetNeededComponents() const { return { }; }
-	virtual std::vector<ComponentType> GetProhibitedComponents() const { return { }; }
+	virtual std::vector<Component::Type> GetNeededComponents() const { return { }; }
+	virtual std::vector<Component::Type> GetProhibitedComponents() const { return { }; }
 
 public:
 	bool enabled;
 	bool wasEnabled;
-	ComponentType type;
+	Component::Type type;
 	GameObject* gameObject = nullptr;
 };
 

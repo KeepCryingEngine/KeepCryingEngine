@@ -15,7 +15,7 @@ struct camVertex
 class Camera : public Component
 {
 public:
-	static const ComponentType TYPE = ComponentType::Camera;
+	static const Component::Type TYPE = Component::Type::Camera;
 
 	Camera();
 	virtual ~Camera();
@@ -62,8 +62,8 @@ public:
 
 	void DrawUI() override;
 
-	virtual std::vector<ComponentType> GetNeededComponents() const override;
-	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
+	virtual std::vector<Component::Type> GetNeededComponents() const override;
+	virtual std::vector<Component::Type> GetProhibitedComponents() const override;
 
 	static bool Intersects(const Frustum& frustum, const AABB& aabb);
 
