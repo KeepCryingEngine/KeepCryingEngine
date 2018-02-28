@@ -12,6 +12,8 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
+	glDeleteBuffers(1, &indicesBufferId);
+	glDeleteBuffers(1, &vertexBufferId);
 }
 
 const AABB & Mesh::GetAABB() const
