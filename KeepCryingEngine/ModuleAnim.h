@@ -61,6 +61,8 @@ public:
 private:
 	bool GetTransform(AnimInstance* animInstance, const char* channel, aiVector3D& position, aiQuaternion& rotation) const;
 
+	AnimInstance* FindNextBlendingAnimInstance(AnimInstance* animInstance) const;
+
 	aiVector3D Lerp(const aiVector3D& first, const aiVector3D& second, float lambda) const;
 
 	aiQuaternion Lerp(const aiQuaternion& first, const aiQuaternion& second, float lambda) const;
