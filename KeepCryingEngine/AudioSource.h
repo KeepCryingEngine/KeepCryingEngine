@@ -10,6 +10,17 @@ enum class AudioMode
 	MONO
 };
 
+enum class SourceStates
+{
+	PLAYING,
+	WAITING_TO_PLAY,
+	WAITING_TO_STOP,
+	WAITING_TO_PAUSE,
+	WAITING_TO_UNPAUSE,
+	STOPPED,
+	PAUSED
+};
+
 class AudioSource: public Component
 {
 public:
@@ -21,7 +32,7 @@ public:
 
 	void DrawUI() override;
 
-	void SetMusic(MusicId id);
+	void SetMusic(AudioId audioInfo);
 	void SetMode(AudioMode newMode);
 	void SetPitch(float value);
 	void SetPan(float value);
@@ -29,7 +40,7 @@ public:
 	void SetRollOffFactor(float value);
 	void SetDoplerFactor(float value);
 
-	MusicId GetMusic() const;
+	AudioId GetMusic() const;
 	AudioMode GetMode() const;
 	float GetPitch() const;
 	float GetPan() const;
@@ -37,7 +48,8 @@ public:
 	float GetRollOffFactor() const;
 	float GetDoplerFactor() const;
 private:
-	MusicId id;
+	SourceStates state;
+	AudioId audioInfo;
 	AudioMode mode;
 	float pitch;
 	float pan;
@@ -45,6 +57,8 @@ private:
 	float rollOffFactor;
 	float doplerFactor;
 
+	float fadeIn;
+	float fadeOut;
 };
 
 #endif // !_AUDIOSOURCE_H_
