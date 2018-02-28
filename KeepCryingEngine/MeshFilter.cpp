@@ -8,7 +8,7 @@
 #include "Mesh.h"
 #include "Transform.h"
 
-MeshFilter::MeshFilter() : Component(ComponentType::MeshFilter)
+MeshFilter::MeshFilter() : Component(MeshFilter::TYPE)
 {
 	SetMesh(App->entity->GetCube());
 }
@@ -31,12 +31,12 @@ void MeshFilter::DrawUI()
 	}
 }
 
-std::vector<ComponentType> MeshFilter::GetProhibitedComponents() const
+std::vector<Component::Type> MeshFilter::GetProhibitedComponents() const
 {
 	return { MeshFilter::TYPE };
 }
 
-std::vector<ComponentType> MeshFilter::GetNeededComponents() const
+std::vector<Component::Type> MeshFilter::GetNeededComponents() const
 {
 	return { MeshRenderer::TYPE };
 }

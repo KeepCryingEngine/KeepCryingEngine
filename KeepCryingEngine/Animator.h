@@ -1,12 +1,14 @@
 #ifndef _ANIMATOR_H_
 #define _ANIMATOR_H_
 
+#include <set>
+
 #include "Component.h"
 
 class Animator : public Component
 {
 public:
-	static const ComponentType TYPE = ComponentType::Animator;
+	static const Component::Type TYPE = Component::Type::Animator;
 
 	Animator();
 	virtual ~Animator();
@@ -15,12 +17,12 @@ public:
 
 	void DrawUI() override;
 
-	virtual std::vector<ComponentType> GetNeededComponents() const override;
-	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
+	virtual std::vector<Component::Type> GetNeededComponents() const override;
+	virtual std::vector<Component::Type> GetProhibitedComponents() const override;
 
 	unsigned int GetAnimInstanceId() const;
 	
-	void SetAnimInstance(const char* path);
+	void LoadAnimInstance(const char* path);
 	void PlayAnimInstance(const char* name);
 
 	bool HasValidAnimationInstance() const;
@@ -30,6 +32,8 @@ private:
 
 private:
 	unsigned int animInstanceId = -1;
+	std::string currentAnimationName;
+	std::set<std::string> animationNames;
 };
 
 #endif

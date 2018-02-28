@@ -10,7 +10,7 @@
 
 
 
-AudioSource::AudioSource():Component(ComponentType::AudioSource)
+AudioSource::AudioSource():Component(AudioSource::TYPE)
 {}
 
 AudioSource::~AudioSource()
@@ -56,7 +56,7 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 
 			BASS_ChannelSet3DPosition(id,
 				(BASS_3DVECTOR*)&body->GetWorldPosition(), // position
-				(BASS_3DVECTOR*)&body->GetFront(), // front
+				(BASS_3DVECTOR*)&body->Forward(), // front
 				nullptr); // velocity
 		}
 			break;

@@ -3,13 +3,13 @@
 
 const int ModuleAudio::DEVICE = -1; // Default Sounddevice
 const int ModuleAudio::FRECUENCY = 44100;
+MusicId ModuleAudio::sfxActualIndex = 0;
+MusicId ModuleAudio::musicActualIndex = 0;
 
 using namespace std;
 
 ModuleAudio::ModuleAudio()
 {
-	sfxActualIndex = 0;
-	musicActualIndex = 0;
 }
 
 ModuleAudio::~ModuleAudio()

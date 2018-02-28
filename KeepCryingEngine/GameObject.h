@@ -17,14 +17,17 @@ public:
 	virtual ~GameObject();
 
 	GameObject* GetParent() const;
+	void SetParent(GameObject& newParent);
 
-	size_t GetChildCount() const;
+
+	size_t ChildCount() const;
 
 	GameObject* GetChild(size_t index) const;
+	void RemoveChild(GameObject& child);
+
 	const std::vector<GameObject*>& GetChildren() const;
 
-	GameObject* GetChild(unsigned long long int gameObjectId) const;
-	GameObject* GetSelfOrChild(unsigned long long int gameObjectId) const;
+	GameObject* GetById(unsigned long long int gameObjectId) const;
 	void DeleteChild(GameObject& childToRemove);
 
 	const std::string& GetName() const;
@@ -36,7 +39,6 @@ public:
 
 	void SetStatic(bool value);
 
-	void SetParent(GameObject& newParent);
 
 	template <typename T>
 	T* AddComponent();
@@ -74,11 +76,11 @@ public:
 	void SetVisible(bool visible);
 
 private:
-	Component * AddComponent(ComponentType type);
+	Component * AddComponent(Component::Type type);
 
-	Component* GetComponent(ComponentType type) const;
-	std::vector<Component*> GetComponents(ComponentType type) const;
-	std::vector<Component*> GetComponentsInChildren(ComponentType type) const;
+	Component* GetComponent(Component::Type type) const;
+	std::vector<Component*> GetComponents(Component::Type type) const;
+	std::vector<Component*> GetComponentsInChildren(Component::Type type) const;
 
 	void CheckToStart();
 	void CheckToDestroy();

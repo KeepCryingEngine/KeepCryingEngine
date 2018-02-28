@@ -6,6 +6,7 @@
 class AudioListener : public Component
 {
 public:
+	static const Component::Type TYPE = Component::Type::AudioListener;
 	AudioListener();
 	~AudioListener();
 

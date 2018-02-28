@@ -9,14 +9,14 @@ class Mesh;
 class MeshRenderer : public Component
 {
 public:
-	static const ComponentType TYPE = ComponentType::MeshRenderer;
+	static const Component::Type TYPE = Component::Type::MeshRenderer;
 
 	MeshRenderer();
 	~MeshRenderer() override;
 
 	void DrawUI() override;
-	std::vector<ComponentType> GetProhibitedComponents() const override;
-	std::vector<ComponentType> GetNeededComponents() const override;
+	std::vector<Component::Type> GetProhibitedComponents() const override;
+	std::vector<Component::Type> GetNeededComponents() const override;
 
 	void Render(Mesh& mesh);
 

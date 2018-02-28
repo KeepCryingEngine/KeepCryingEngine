@@ -24,6 +24,7 @@ enum class SourceStates
 class AudioSource: public Component
 {
 public:
+	static const Component::Type TYPE = Component::Type::AudioSource;
 	AudioSource();
 	~AudioSource();
 

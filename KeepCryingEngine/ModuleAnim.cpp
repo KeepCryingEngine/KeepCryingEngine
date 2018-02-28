@@ -7,16 +7,17 @@
 using namespace std;
 
 ModuleAnim::ModuleAnim()
-{}
+{ }
 
 ModuleAnim::~ModuleAnim()
-{}
+{ }
 
 bool ModuleAnim::CleanUp()
 {
 	holes.clear();
 	instances.clear();
 	animations.clear();
+
 	return true;
 }
 
@@ -26,7 +27,7 @@ update_status ModuleAnim::Update(float deltaTimeS, float realDeltaTimeS)
 
 	for(size_t i = 0; i < instances.size(); ++i)
 	{
-		AnimInstance* animInstance = instances[i];
+		AnimInstance*& animInstance = instances[i];
 
 		if(animInstance == nullptr)
 		{
@@ -51,13 +52,32 @@ update_status ModuleAnim::Update(float deltaTimeS, float realDeltaTimeS)
 				}
 			}
 		}
+
+		// Blend
+
+		AnimInstance* nextAnimInstance = animInstance->next;
+
+		if(nextAnimInstance)
+		{
+			animInstance->blend_time += time;
+
+			if(animInstance->blend_time >= animInstance->blend_duration)
+			{
+				// Blend end
+
+				RELEASE(animInstance);
+				instances[i] = nextAnimInstance;
+			}
+		}
 	}
 
 	return update_status::UPDATE_CONTINUE;
 }
 
-void ModuleAnim::Load(const string& path, const string& name)
+set<string> ModuleAnim::Load(const string& path, const string& name)
 {
+	set<string> animationNames;
+
 	const aiScene* scene = aiImportFile((path + name).c_str(), aiProcess_Triangulate);
 
 	if(scene != nullptr)
@@ -65,6 +85,9 @@ void ModuleAnim::Load(const string& path, const string& name)
 		for(uint i = 0; i < scene->mNumAnimations; i++)
 		{
 			aiAnimation* currentAnim = scene->mAnimations[i];
+
+			animationNames.insert(currentAnim->mName.C_Str());
+
 			Anim* newAnim = new Anim();
 			newAnim->duration = (uint)(1000 * currentAnim->mDuration / currentAnim->mTicksPerSecond);
 			newAnim->numChanels = currentAnim->mNumChannels;
@@ -94,6 +117,8 @@ void ModuleAnim::Load(const string& path, const string& name)
 			animations[currentAnim->mName.C_Str()] = newAnim;
 		}
 	}
+
+	return animationNames;
 }
 
 AnimInstanceId ModuleAnim::Play(const char* name)
@@ -124,7 +149,14 @@ AnimInstanceId ModuleAnim::Play(const char* name)
 	animInstance->anim = anim;
 	// ...
 
-	instances.push_back(animInstance);
+	if(animInstanceId < instances.size())
+	{
+		instances[animInstanceId] = animInstance;
+	}
+	else
+	{
+		instances.push_back(animInstance);
+	}
 
 	return animInstanceId;
 }
@@ -139,12 +171,69 @@ void ModuleAnim::Stop(AnimInstanceId id)
 }
 
 void ModuleAnim::BlendTo(AnimInstanceId id, const char * name, unsigned blend_time)
-{}
+{
+	AnimInstance* animInstance = instances[id];
+
+	if(animInstance == nullptr)
+	{
+		return;
+	}
+
+	animInstance->blend_duration = blend_time;
+
+	AnimInstance*& nextAnimInstance = animInstance->next;
+
+	RELEASE(nextAnimInstance);
+
+	Anim* nextAnim = nullptr;
+
+	AnimMap::iterator animationIt = animations.find(name);
+
+	if(animationIt != animations.end())
+	{
+		nextAnim = animationIt->second;
+	}
+
+	nextAnimInstance = new AnimInstance();
+
+	nextAnimInstance->anim = nextAnim;
+	// ...
+}
 
 bool ModuleAnim::GetTransform(AnimInstanceId id, const char * channel, aiVector3D & position, aiQuaternion & rotation) const
 {
+	if(instances[id] != nullptr)
+	{
+		return GetTransform(instances[id], channel, position, rotation);
+	}
+
+	return false;
+}
+
+float ModuleAnim::GetPercent(AnimInstanceId id) const
+{
+	float percent = 0.0f;
+
 	AnimInstance* animInstance = instances[id];
-	
+
+	if(animInstance)
+	{
+		Anim* anim = animInstance->anim;
+
+		if(anim)
+		{
+			uint currentTime = animInstance->time;
+			uint totalTime = anim->duration;
+
+			percent = (float)currentTime / (float)totalTime;
+		}
+	}
+
+	return percent;
+}
+
+bool ModuleAnim::GetTransform(AnimInstance* animInstance, const char * channel, aiVector3D & position, aiQuaternion & rotation) const
+{
 	if(animInstance == nullptr)
 	{
 		return false;
@@ -182,7 +271,31 @@ bool ModuleAnim::GetTransform(AnimInstanceId id, const char * channel, aiVector3
 	position = node->positions[posIndex];
 	rotation = node->rotations[rotIndex];
 
-	// ...
+	uint posIndexNext = (posIndex + 1) % node->numPositions;
+	uint rotIndexNext = (rotIndex + 1) % node->numRotations;
+
+	const aiVector3D& positionNext = node->positions[posIndexNext];
+	const aiQuaternion& rotationNext = node->rotations[rotIndexNext];
+
+	position = Lerp(position, positionNext, posLambda);
+	rotation = Lerp(rotation, rotationNext, rotLambda);
+
+	// Blend
+
+	AnimInstance* nextAnimInstance = animInstance->next;
+
+	if(nextAnimInstance)
+	{
+		float blendLambda = float(animInstance->blend_time) / float(animInstance->blend_duration);
+
+		aiVector3D positionNextAnim;
+		aiQuaternion rotationNextAnim;
+
+		GetTransform(nextAnimInstance, channel, positionNextAnim, rotationNextAnim);
+
+		position = Lerp(position, positionNextAnim, blendLambda);
+		rotation = Lerp(rotation, rotationNextAnim, blendLambda);
+	}
 
 	return true;
 }

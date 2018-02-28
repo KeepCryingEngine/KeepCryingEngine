@@ -4,7 +4,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 
-AudioListener::AudioListener():Component(ComponentType::AudioListener)
+AudioListener::AudioListener():Component(AudioListener::TYPE)
 {}
 
 AudioListener::~AudioListener()
@@ -22,9 +22,9 @@ void AudioListener::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 
 		nullptr, // speed
 
-		(BASS_3DVECTOR*) &body->GetFront(), // front
+		(BASS_3DVECTOR*) &body->Forward(), // front
 
-		(BASS_3DVECTOR*) &body->GetUp()); // up}
+		(BASS_3DVECTOR*) &body->Up()); // up}
 }
 
 void AudioListener::DrawUI()

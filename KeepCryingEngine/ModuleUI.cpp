@@ -147,7 +147,10 @@ void ModuleUI::DrawMainMenu()
 		if (ImGui::BeginMenu("Load"))
 		{
 			ImGui::LabelText("##LoadMeshLabel", "Mesh");
-			static char pathToMesh[180] = {};
+			
+			// TMP
+			static char pathToMesh[180] = "Assets/ArmyPilot/ArmyPilot.dae";
+			
 			ImGui::InputText("##PathToMesh", pathToMesh, sizeof(pathToMesh)); ImGui::SameLine();
 			if (ImGui::Button("Add mesh"))
 			{
@@ -156,17 +159,6 @@ void ModuleUI::DrawMainMenu()
 				App->entity->LoadMesh(pathAndName.substr(0, found) + "/", pathAndName.substr(found + 1));
 			}
 
-			ImGui::LabelText("##LoadAnimLabel", "Animation");
-			static char pathToAnim[180] = {};
-			ImGui::InputText("##PathToAnim", pathToAnim, sizeof(pathToAnim)); ImGui::SameLine();
-			if(ImGui::Button("Add Animation"))
-			{
-				string pathAndName(pathToAnim);
-				std::size_t found = pathAndName.find_last_of("/\\");
-				App->anim->Load(pathAndName.substr(0, found) + "/", pathAndName.substr(found + 1));
-			}
-
-			ImGui::Separator();
 			ImGui::EndMenu();
 		}
 		static GLfloat color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -844,7 +836,7 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Selected;
 		}
-		if(child->GetChildCount() == 0)
+		if(child->ChildCount() == 0)
 		{
 			nodeFlags |= ImGuiTreeNodeFlags_Bullet;
 		}
@@ -909,7 +901,7 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 
 		if(opened)
 		{
-			if(child->GetChildCount() > 0)
+			if(child->ChildCount() > 0)
 			{
 				PrintChildrenOnHierarchy(child->GetChildren());
 			}

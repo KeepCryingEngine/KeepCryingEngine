@@ -2,6 +2,7 @@
 #define _MODULEANIM_H_
 
 #include <assimp\anim.h>
+#include <set>
 #include <map>
 #include <list>
 #include <vector>
@@ -48,14 +49,18 @@ public:
 	bool CleanUp() override;
 	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
 
-	void Load(const std::string& path, const std::string& name);
+	std::set<std::string> Load(const std::string& path, const std::string& name);
 	AnimInstanceId Play(const char* name);
 	void Stop(AnimInstanceId id);
 	void BlendTo(AnimInstanceId id, const char* name, unsigned blend_time);
 
-	bool GetTransform(AnimInstanceId id, const char* channel, aiVector3D& position, aiQuaternion& rotation)const;
+	bool GetTransform(AnimInstanceId id, const char* channel, aiVector3D& position, aiQuaternion& rotation) const;
+
+	float GetPercent(AnimInstanceId id) const;
 
 private:
+	bool GetTransform(AnimInstance* animInstance, const char* channel, aiVector3D& position, aiQuaternion& rotation) const;
+
 	aiVector3D Lerp(const aiVector3D& first, const aiVector3D& second, float lambda) const;
 
 	aiQuaternion Lerp(const aiQuaternion& first, const aiQuaternion& second, float lambda) const;

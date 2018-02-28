@@ -6,7 +6,7 @@
 class ComponentFabric
 {
 public:
-	static Component* CreateComponent(ComponentType type);
+	static Component* CreateComponent(Component::Type type);
 
 private:
 	ComponentFabric();

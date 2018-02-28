@@ -8,7 +8,7 @@
 using namespace std;
 
 Animator::Animator() : 
-	Component(ComponentType::Animator)
+	Component(Animator::TYPE)
 { }
 
 Animator::~Animator()
@@ -29,33 +29,52 @@ void Animator::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Animator"))
 	{
-		static char animatorSetAnimInstanceBuffer[252] = { };
-		ImGui::InputText("##setAnimation", animatorSetAnimInstanceBuffer, 252); ImGui::SameLine();
-		if(ImGui::Button("Set Animation"))
+		static char animatorLoadBuffer[252] = { };
+		ImGui::InputText("##loadAnimation", animatorLoadBuffer, 252); ImGui::SameLine();
+		if(ImGui::Button("Load"))
 		{
 			string s = "Assets/";
-			s += animatorSetAnimInstanceBuffer;
+			s += animatorLoadBuffer;
 
-			SetAnimInstance(s.c_str());
+			LoadAnimInstance(s.c_str());
 		}
 
-		static char animatorPlayAnimInstanceBuffer[252] = {};
-		ImGui::InputText("##playAnimation", animatorPlayAnimInstanceBuffer, 252); ImGui::SameLine();
-		if(ImGui::Button("Play Animation"))
+		for(string animationName : animationNames)
 		{
-			PlayAnimInstance(animatorPlayAnimInstanceBuffer);
+			ImGui::Text(animationName.c_str());
+			
+			ImGui::SameLine();
+
+			ImGui::PushID(animationName.c_str());
+
+			if(ImGui::Button("Play"))
+			{
+				PlayAnimInstance(animationName.c_str());
+			}
+			
+			ImGui::PopID();
+
+			if(animationName == currentAnimationName)
+			{
+				if(HasValidAnimationInstance())
+				{
+					ImGui::SameLine();
+
+					ImGui::ProgressBar(App->anim->GetPercent(animInstanceId));
+				}
+			}
 		}
 	}
 }
 
-vector<ComponentType> Animator::GetNeededComponents() const
+vector<Component::Type> Animator::GetNeededComponents() const
 {
-	return { ComponentType::Transform };
+	return { Transform::TYPE };
 }
 
-vector<ComponentType> Animator::GetProhibitedComponents() const
+vector<Component::Type> Animator::GetProhibitedComponents() const
 {
-	return { ComponentType::Animator };
+	return { Animator::TYPE };
 }
 
 unsigned int Animator::GetAnimInstanceId() const
@@ -63,7 +82,7 @@ unsigned int Animator::GetAnimInstanceId() const
 	return animInstanceId;
 }
 
-void Animator::SetAnimInstance(const char * path)
+void Animator::LoadAnimInstance(const char * path)
 {
 	string tmpPath = path;
 
@@ -74,18 +93,23 @@ void Animator::SetAnimInstance(const char * path)
 		string basePath = tmpPath.substr(0, splitIndex + 1);
 		string fileName = tmpPath.substr(splitIndex + 1, tmpPath.size());
 
-		App->anim->Load(basePath, fileName);
+		set<string> newAnimationNames = App->anim->Load(basePath, fileName);
+		animationNames.insert(newAnimationNames.begin(), newAnimationNames.end());
 	}
 }
 
 void Animator::PlayAnimInstance(const char* name)
 {
+	currentAnimationName = name;
+
 	if(HasValidAnimationInstance())
 	{
-		App->anim->Stop(animInstanceId);
+		App->anim->BlendTo(animInstanceId, name, 1000);
 	}
-
-	animInstanceId = App->anim->Play(name);
+	else
+	{
+		animInstanceId = App->anim->Play(name);
+	}
 }
 
 bool Animator::HasValidAnimationInstance() const
