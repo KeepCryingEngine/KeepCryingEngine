@@ -56,8 +56,10 @@ update_status ModuleAnim::Update(float deltaTimeS, float realDeltaTimeS)
 	return update_status::UPDATE_CONTINUE;
 }
 
-void ModuleAnim::Load(const string& path, const string& name)
+set<string> ModuleAnim::Load(const string& path, const string& name)
 {
+	set<string> animationNames;
+
 	const aiScene* scene = aiImportFile((path + name).c_str(), aiProcess_Triangulate);
 
 	if(scene != nullptr)
@@ -65,6 +67,9 @@ void ModuleAnim::Load(const string& path, const string& name)
 		for(uint i = 0; i < scene->mNumAnimations; i++)
 		{
 			aiAnimation* currentAnim = scene->mAnimations[i];
+
+			animationNames.insert(currentAnim->mName.C_Str());
+
 			Anim* newAnim = new Anim();
 			newAnim->duration = (uint)(1000 * currentAnim->mDuration / currentAnim->mTicksPerSecond);
 			newAnim->numChanels = currentAnim->mNumChannels;
@@ -94,6 +99,8 @@ void ModuleAnim::Load(const string& path, const string& name)
 			animations[currentAnim->mName.C_Str()] = newAnim;
 		}
 	}
+
+	return animationNames;
 }
 
 AnimInstanceId ModuleAnim::Play(const char* name)
@@ -124,7 +131,14 @@ AnimInstanceId ModuleAnim::Play(const char* name)
 	animInstance->anim = anim;
 	// ...
 
-	instances.push_back(animInstance);
+	if(animInstanceId < instances.size())
+	{
+		instances[animInstanceId] = animInstance;
+	}
+	else
+	{
+		instances.push_back(animInstance);
+	}
 
 	return animInstanceId;
 }

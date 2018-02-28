@@ -1,6 +1,8 @@
 #ifndef _ANIMATOR_H_
 #define _ANIMATOR_H_
 
+#include <set>
+
 #include "Component.h"
 
 class Animator : public Component
@@ -20,7 +22,7 @@ public:
 
 	unsigned int GetAnimInstanceId() const;
 	
-	void SetAnimInstance(const char* path);
+	void LoadAnimInstance(const char* path);
 	void PlayAnimInstance(const char* name);
 
 	bool HasValidAnimationInstance() const;
@@ -30,6 +32,7 @@ private:
 
 private:
 	unsigned int animInstanceId = -1;
+	std::set<std::string> animationNames;
 };
 
 #endif

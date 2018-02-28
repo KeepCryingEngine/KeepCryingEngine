@@ -29,21 +29,26 @@ void Animator::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Animator"))
 	{
-		static char animatorSetAnimInstanceBuffer[252] = { };
-		ImGui::InputText("##setAnimation", animatorSetAnimInstanceBuffer, 252); ImGui::SameLine();
-		if(ImGui::Button("Set Animation"))
+		static char animatorLoadBuffer[252] = { };
+		ImGui::InputText("##loadAnimation", animatorLoadBuffer, 252); ImGui::SameLine();
+		if(ImGui::Button("Load"))
 		{
 			string s = "Assets/";
-			s += animatorSetAnimInstanceBuffer;
+			s += animatorLoadBuffer;
 
-			SetAnimInstance(s.c_str());
+			LoadAnimInstance(s.c_str());
 		}
 
-		static char animatorPlayAnimInstanceBuffer[252] = {};
-		ImGui::InputText("##playAnimation", animatorPlayAnimInstanceBuffer, 252); ImGui::SameLine();
-		if(ImGui::Button("Play Animation"))
+		for(string animationName : animationNames)
 		{
-			PlayAnimInstance(animatorPlayAnimInstanceBuffer);
+			const char* currentAnimationName = animationName.c_str();
+
+			ImGui::Text(currentAnimationName); ImGui::SameLine();
+			
+			if(ImGui::Button("Play"))
+			{
+				PlayAnimInstance(currentAnimationName);
+			}
 		}
 	}
 }
@@ -63,7 +68,7 @@ unsigned int Animator::GetAnimInstanceId() const
 	return animInstanceId;
 }
 
-void Animator::SetAnimInstance(const char * path)
+void Animator::LoadAnimInstance(const char * path)
 {
 	string tmpPath = path;
 
@@ -74,7 +79,8 @@ void Animator::SetAnimInstance(const char * path)
 		string basePath = tmpPath.substr(0, splitIndex + 1);
 		string fileName = tmpPath.substr(splitIndex + 1, tmpPath.size());
 
-		App->anim->Load(basePath, fileName);
+		set<string> newAnimationNames = App->anim->Load(basePath, fileName);
+		animationNames.insert(newAnimationNames.begin(), newAnimationNames.end());
 	}
 }
 

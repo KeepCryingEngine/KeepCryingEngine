@@ -2,6 +2,7 @@
 #define _MODULEANIM_H_
 
 #include <assimp\anim.h>
+#include <set>
 #include <map>
 #include <list>
 #include <vector>
@@ -48,7 +49,7 @@ public:
 	bool CleanUp() override;
 	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
 
-	void Load(const std::string& path, const std::string& name);
+	std::set<std::string> Load(const std::string& path, const std::string& name);
 	AnimInstanceId Play(const char* name);
 	void Stop(AnimInstanceId id);
 	void BlendTo(AnimInstanceId id, const char* name, unsigned blend_time);
