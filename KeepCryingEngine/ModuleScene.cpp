@@ -177,13 +177,13 @@ GameObject* ModuleScene::GetRoot() const
 
 GameObject* ModuleScene::Get(unsigned long long int gameObjectId) const
 {
-	GameObject* toReturn = root->GetSelfOrChild(gameObjectId);
-	if(toReturn == nullptr)
+	GameObject* gameObject = root->GetSelfOrChildById(gameObjectId);
+	if(gameObject == nullptr)
 	{
 		return root;
 	}
 
-	return toReturn;
+	return gameObject;
 }
 
 GameObject* ModuleScene::AddEmpty(GameObject& parent, const char* name)

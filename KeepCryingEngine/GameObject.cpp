@@ -29,7 +29,27 @@ GameObject* GameObject::GetParent() const
 	return parent;
 }
 
-size_t GameObject::GetChildCount() const
+void GameObject::SetParent(GameObject& newParent)
+{
+	if (parent != nullptr)
+	{
+		parent->RemoveChild(*this);
+	}
+
+	parent = &newParent;
+	newParent.children.push_back(this);
+}
+
+void GameObject::RemoveChild(GameObject& child)
+{
+	vector<GameObject*>::iterator childParentIterator = find(children.begin(), children.end(), &child);
+	assert(childParentIterator != children.end());
+	children.erase(childParentIterator);
+	child.parent = nullptr;
+}
+
+
+size_t GameObject::ChildCount() const
 {
 	return children.size();
 }
@@ -46,7 +66,7 @@ const std::vector<GameObject*>& GameObject::GetChildren() const
 	return children;
 }
 
-GameObject* GameObject::GetChild(unsigned long long int gameObjectId) const
+GameObject* GameObject::GetChildById(unsigned long long int gameObjectId) const
 {
 	// Check 1st level children first
 
@@ -62,7 +82,7 @@ GameObject* GameObject::GetChild(unsigned long long int gameObjectId) const
 
 	for(GameObject* child : children)
 	{
-		GameObject* childRecursive = child->GetChild(gameObjectId);
+		GameObject* childRecursive = child->GetChildById(gameObjectId);
 		
 		if(childRecursive != nullptr)
 		{
@@ -73,14 +93,14 @@ GameObject* GameObject::GetChild(unsigned long long int gameObjectId) const
 	return nullptr;
 }
 
-GameObject* GameObject::GetSelfOrChild(unsigned long long int gameObjectId) const
+GameObject* GameObject::GetSelfOrChildById(unsigned long long int gameObjectId) const
 {
 	if(id == gameObjectId)
 	{
 		return (GameObject*)this;
 	}
 
-	return GetChild(gameObjectId);
+	return GetChildById(gameObjectId);
 }
 
 void GameObject::DeleteChild(GameObject & childToRemove)
@@ -144,27 +164,6 @@ void GameObject::SetStatic(bool value)
 			g->SetStatic(value);
 		}
 	}
-}
-
-/* void GameObject::AddChild(GameObject& newChild)
-{
-	newChild.SetParent(*this);
-} */
-
-void GameObject::SetParent(GameObject& newParent)
-{
-	if(parent != nullptr)
-	{
-		vector<GameObject*>::iterator childParentIterator = find(parent->children.begin(), parent->children.end(), this);
-		assert(childParentIterator != parent->children.end());
-		parent->children.erase(childParentIterator);
-	}
-	
-	parent = &newParent;
-	newParent.children.push_back(this);
-
-	if(transform)
-		transform->Recalculate();
 }
 
 void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
