@@ -66,41 +66,26 @@ const std::vector<GameObject*>& GameObject::GetChildren() const
 	return children;
 }
 
-GameObject* GameObject::GetChildById(unsigned long long int gameObjectId) const
+GameObject* GameObject::GetById(unsigned long long int gameObjectId) const
 {
-	// Check 1st level children first
-
-	for(GameObject* child : children)
-	{
-		if(child->GetId() == gameObjectId)
-		{
-			return child;
-		}
-	}
-
-	// Recursion
-
-	for(GameObject* child : children)
-	{
-		GameObject* childRecursive = child->GetChildById(gameObjectId);
-		
-		if(childRecursive != nullptr)
-		{
-			return childRecursive;
-		}
-	}
-
-	return nullptr;
-}
-
-GameObject* GameObject::GetSelfOrChildById(unsigned long long int gameObjectId) const
-{
+	GameObject* gameObject = nullptr;
 	if(id == gameObjectId)
 	{
-		return (GameObject*)this;
+		gameObject = (GameObject*)this;
 	}
+	else
+	{
+		for (GameObject* child : children)
+		{
+			gameObject = child->GetById(gameObjectId);
 
-	return GetChildById(gameObjectId);
+			if (gameObject != nullptr)
+			{
+				break;
+			}
+		}
+	}
+	return gameObject;
 }
 
 void GameObject::DeleteChild(GameObject & childToRemove)

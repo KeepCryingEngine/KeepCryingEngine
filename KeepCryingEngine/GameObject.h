@@ -27,8 +27,7 @@ public:
 
 	const std::vector<GameObject*>& GetChildren() const;
 
-	GameObject* GetChildById(unsigned long long int gameObjectId) const;
-	GameObject* GetSelfOrChildById(unsigned long long int gameObjectId) const;
+	GameObject* GetById(unsigned long long int gameObjectId) const;
 	void DeleteChild(GameObject& childToRemove);
 
 	const std::string& GetName() const;

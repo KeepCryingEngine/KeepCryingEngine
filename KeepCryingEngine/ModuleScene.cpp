@@ -177,7 +177,7 @@ GameObject* ModuleScene::GetRoot() const
 
 GameObject* ModuleScene::Get(unsigned long long int gameObjectId) const
 {
-	GameObject* gameObject = root->GetSelfOrChildById(gameObjectId);
+	GameObject* gameObject = root->GetById(gameObjectId);
 	if(gameObject == nullptr)
 	{
 		return root;
