@@ -13,6 +13,7 @@
 #include "ModuleTexture.h"
 #include "ModuleEntity.h"
 #include "ModuleAnim.h"
+#include "ModuleAudio.h"
 
 using namespace std;
 using nlohmann::json;
@@ -29,6 +30,7 @@ Application::Application()
 	modules.push_back(shader = new ModuleShader());
 	modules.push_back(texture = new ModuleTexture());
 	modules.push_back(entity = new ModuleEntity());//After Renderer, it needs access to buffer on init
+	modules.push_back(audio = new ModuleAudio());
 }
 
 Application::~Application()

@@ -44,6 +44,10 @@ public:
 
 	void Recalculate();
 
+	const float3& Up() const;
+	const float3& Forward() const;
+	const float3& Right() const;
+
 private:
 	void Decompose(const float4x4& matrix, float3& position, Quat& rotation, float3& scale) const;
 
@@ -60,10 +64,6 @@ private:
 	float3 ParentWorldPosition() const;
 	Quat ParentWorldRotation() const;
 	float3 ParentWorldScale() const;
-
-	const float3& Up() const;
-	const float3& Forward() const;
-	const float3& Right() const;
 
 private:
 	float3 localPosition;

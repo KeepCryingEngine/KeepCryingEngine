@@ -15,7 +15,9 @@ public:
 		Camera,
 		MeshFilter,
 		MeshRenderer,
-		Animator
+		Animator,
+		AudioListener,
+		AudioSource
 	};
 
 	Component(Component::Type type) : enabled(true), wasEnabled(true), type(type)
