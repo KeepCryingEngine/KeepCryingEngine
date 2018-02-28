@@ -8,30 +8,30 @@
 #include "MeshRenderer.h"
 #include "Animator.h"
 
-Component * ComponentFabric::CreateComponent(ComponentType type)
+Component * ComponentFabric::CreateComponent(Component::Type type)
 {
 	Component* component = nullptr;
 	switch (type)
 	{
-		case ComponentType::Transform:
+		case Component::Type::Transform:
 			component = new Transform();
 			break;
-		/*case ComponentType::Material:
+		/*case Component::Type::Material:
 			component = new Material();
 			break;*/
-		/*case ComponentType::Mesh:
+		/*case Component::Type::Mesh:
 			component = new Mesh();
 			break;*/
-		case ComponentType::Camera:
+		case Component::Type::Camera:
 			component = new Camera();
 			break;
-		case ComponentType::MeshFilter:
+		case Component::Type::MeshFilter:
 			component = new MeshFilter();
 			break;
-		case ComponentType::MeshRenderer:
+		case Component::Type::MeshRenderer:
 			component = new MeshRenderer();
 			break;
-		case ComponentType::Animator:
+		case Component::Type::Animator:
 			component = new Animator();
 			break;
 	}

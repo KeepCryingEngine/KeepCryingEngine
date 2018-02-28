@@ -77,11 +77,11 @@ public:
 	void SetVisible(bool visible);
 
 private:
-	Component * AddComponent(ComponentType type);
+	Component * AddComponent(Component::Type type);
 
-	Component* GetComponent(ComponentType type) const;
-	std::vector<Component*> GetComponents(ComponentType type) const;
-	std::vector<Component*> GetComponentsInChildren(ComponentType type) const;
+	Component* GetComponent(Component::Type type) const;
+	std::vector<Component*> GetComponents(Component::Type type) const;
+	std::vector<Component*> GetComponentsInChildren(Component::Type type) const;
 
 	void CheckToStart();
 	void CheckToDestroy();

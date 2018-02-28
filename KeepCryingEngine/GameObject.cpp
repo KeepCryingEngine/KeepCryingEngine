@@ -220,7 +220,7 @@ void GameObject::SetVisible(bool visible)
 	this->visible = visible;
 }
 
-Component* GameObject::GetComponent(ComponentType type) const
+Component* GameObject::GetComponent(Component::Type type) const
 {
 	for (Component* component : components)
 	{
@@ -241,7 +241,7 @@ Component* GameObject::GetComponent(ComponentType type) const
 	return nullptr;
 }
 
-std::vector<Component*> GameObject::GetComponents(ComponentType type) const
+std::vector<Component*> GameObject::GetComponents(Component::Type type) const
 {
 	std::vector<Component*> ret;
 
@@ -264,7 +264,7 @@ std::vector<Component*> GameObject::GetComponents(ComponentType type) const
 	return ret;
 }
 
-std::vector<Component*> GameObject::GetComponentsInChildren(ComponentType type) const
+std::vector<Component*> GameObject::GetComponentsInChildren(Component::Type type) const
 {
 	vector<Component*> components;
 	for (GameObject* child : children)
@@ -275,7 +275,7 @@ std::vector<Component*> GameObject::GetComponentsInChildren(ComponentType type) 
 	return components;
 }
 
-Component* GameObject::AddComponent(ComponentType type)
+Component* GameObject::AddComponent(Component::Type type)
 {
 	Component* component = ComponentFabric::CreateComponent(type);
 	assert(component);
@@ -284,7 +284,7 @@ Component* GameObject::AddComponent(ComponentType type)
 	{
 		AddInternalComponent(component);
 
-		for (ComponentType neededComponent : component->GetNeededComponents())
+		for (Component::Type neededComponent : component->GetNeededComponents())
 		{
 			if (GetComponent(neededComponent) == nullptr)
 			{
@@ -415,7 +415,7 @@ void GameObject::AddInternalComponent(Component * component)
 
 bool GameObject::CanAttach(const Component& component) const
 {
-	for(ComponentType componentType : component.GetProhibitedComponents())
+	for(Component::Type componentType : component.GetProhibitedComponents())
 	{
 		if(GetComponent(componentType) != nullptr)
 		{

@@ -10,14 +10,14 @@
 class Transform : public Component
 {
 public:
-	static const ComponentType TYPE = ComponentType::Transform;
+	static const Component::Type TYPE = Component::Type::Transform;
 
 	Transform();
 	virtual ~Transform();
 
 	void DrawUI() override;
 
-	virtual std::vector<ComponentType> GetProhibitedComponents() const override;
+	virtual std::vector<Component::Type> GetProhibitedComponents() const override;
 
 	float4x4 GetLocalMatrix() const;
 	const float3& GetLocalPosition() const;

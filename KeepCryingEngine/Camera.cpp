@@ -8,7 +8,7 @@
 
 using namespace std;
 
-Camera::Camera() : Component(ComponentType::Camera)
+Camera::Camera() : Component(Camera::TYPE)
 {
 	SetUpFrustum(float3::zero, Quat::identity);
 }
@@ -257,14 +257,14 @@ void Camera::DrawUI()
 	}
 }
 
-std::vector<ComponentType> Camera::GetNeededComponents() const
+std::vector<Component::Type> Camera::GetNeededComponents() const
 {
-	return { ComponentType::Transform };
+	return { Transform::TYPE };
 }
 
-std::vector<ComponentType> Camera::GetProhibitedComponents() const
+std::vector<Component::Type> Camera::GetProhibitedComponents() const
 {
-	return { ComponentType::Camera };
+	return { Camera::TYPE };
 }
 
 bool Camera::Intersects(const Frustum& frustum, const AABB& aabb)

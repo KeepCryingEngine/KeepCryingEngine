@@ -13,7 +13,7 @@
 #include "ModuleUI.h"
 #include "Camera.h"
 
-MeshRenderer::MeshRenderer() : Component(ComponentType::MeshRenderer)
+MeshRenderer::MeshRenderer() : Component(MeshRenderer::TYPE)
 {
 	material = new Material();
 }
@@ -42,12 +42,12 @@ void MeshRenderer::DrawUI()
 	}
 }
 
-std::vector<ComponentType> MeshRenderer::GetProhibitedComponents() const
+std::vector<Component::Type> MeshRenderer::GetProhibitedComponents() const
 {
 	return { MeshRenderer::TYPE };
 }
 
-std::vector<ComponentType> MeshRenderer::GetNeededComponents() const
+std::vector<Component::Type> MeshRenderer::GetNeededComponents() const
 {
 	return { MeshFilter::TYPE };
 }

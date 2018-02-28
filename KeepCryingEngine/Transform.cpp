@@ -8,7 +8,7 @@
 using namespace std;
 
 Transform::Transform() : 
-	Component(ComponentType::Transform),
+	Component(Transform::TYPE),
 	localPosition(float3::zero),
 	localRotation(Quat::identity),
 	eulerLocalRotation(float3::zero),
@@ -91,9 +91,9 @@ void Transform::DrawUI()
 	}
 }
 
-vector<ComponentType> Transform::GetProhibitedComponents() const
+vector<Component::Type> Transform::GetProhibitedComponents() const
 {
-	return { ComponentType::Transform };
+	return { Transform::TYPE };
 }
 
 float4x4 Transform::GetLocalMatrix() const
