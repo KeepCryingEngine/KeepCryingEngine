@@ -7,10 +7,10 @@
 using namespace std;
 
 ModuleAnim::ModuleAnim()
-{}
+{ }
 
 ModuleAnim::~ModuleAnim()
-{}
+{ }
 
 bool ModuleAnim::CleanUp()
 {
@@ -196,7 +196,14 @@ bool ModuleAnim::GetTransform(AnimInstanceId id, const char * channel, aiVector3
 	position = node->positions[posIndex];
 	rotation = node->rotations[rotIndex];
 
-	// ...
+	uint posIndexNext = (posIndex + 1) % node->numPositions;
+	uint rotIndexNext = (rotIndex + 1) % node->numRotations;
+
+	const aiVector3D& positionNext = node->positions[posIndexNext];
+	const aiQuaternion& rotationNext = node->rotations[rotIndexNext];
+
+	position = Lerp(position, positionNext, posLambda);
+	rotation = Lerp(rotation, rotationNext, rotLambda);
 
 	return true;
 }
