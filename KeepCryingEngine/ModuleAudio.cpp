@@ -1,6 +1,8 @@
 #include "ModuleAudio.h"
 #include <algorithm>
 
+#include "AudioListener.h"
+
 const int ModuleAudio::DEVICE = -1; // Default Sounddevice
 const int ModuleAudio::FRECUENCY = 44100;
 MusicId ModuleAudio::sfxActualIndex = 0;
@@ -92,4 +94,24 @@ HSTREAM ModuleAudio::GetSFX(MusicId id) const
 HCHANNEL ModuleAudio::GetMusic(MusicId id) const
 {
 	return music[id];
+}
+
+void ModuleAudio::EnableListener(AudioListener* listener)
+{
+	if(activeListener != nullptr)
+	{
+		activeListener->enabled = false;
+	}
+
+	if(listener != nullptr)
+	{
+		listener->enabled = true;
+	}
+
+	activeListener = listener;
+}
+
+AudioListener * ModuleAudio::GetActiveListener() const
+{
+	return activeListener;
 }

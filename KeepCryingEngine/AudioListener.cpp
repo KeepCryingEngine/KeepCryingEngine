@@ -3,6 +3,8 @@
 
 #include "GameObject.h"
 #include "Transform.h"
+#include "Application.h"
+#include "ModuleAudio.h"
 
 AudioListener::AudioListener():Component(AudioListener::TYPE)
 {}
@@ -25,6 +27,20 @@ void AudioListener::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		(BASS_3DVECTOR*) &body->Forward(), // front
 
 		(BASS_3DVECTOR*) &body->Up()); // up}
+}
+
+void AudioListener::SetEnable(bool enable)
+{
+	if(enable)
+	{
+		enabled = wasEnabled;
+	}
+	else
+	{
+		enabled = enable;
+	}
+
+	App->audio->EnableListener(enabled ? this : nullptr);
 }
 
 void AudioListener::DrawUI()

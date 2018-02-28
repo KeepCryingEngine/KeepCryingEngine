@@ -13,6 +13,8 @@ public:
 	void Awake()override;
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
+	void SetEnable(bool enable)override;
+
 	void DrawUI() override;
 };
 

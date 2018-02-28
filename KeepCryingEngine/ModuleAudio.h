@@ -8,6 +8,8 @@
 
 #include "Module.h"
 
+class AudioListener;
+
 typedef unsigned MusicId;
 
 enum class SoundType
@@ -36,6 +38,10 @@ public:
 	HSTREAM GetSFX(MusicId id)const;
 	HCHANNEL GetMusic(MusicId id) const;
 
+	void EnableListener(AudioListener* listener);
+
+	AudioListener* GetActiveListener()const;
+
 private:
 	static MusicId sfxActualIndex;
 	static MusicId musicActualIndex;
@@ -45,6 +51,7 @@ private:
 	std::list<MusicId> musicHoles;
 	std::map<std::string, AudioId> soundCache;
 
+	AudioListener* activeListener = nullptr;
 
 	static const int DEVICE;
 	static const int FRECUENCY;
