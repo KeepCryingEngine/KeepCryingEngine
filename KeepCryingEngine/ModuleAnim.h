@@ -56,6 +56,8 @@ public:
 
 	bool GetTransform(AnimInstanceId id, const char* channel, aiVector3D& position, aiQuaternion& rotation)const;
 
+	float GetPercent(AnimInstanceId id) const;
+
 private:
 	aiVector3D Lerp(const aiVector3D& first, const aiVector3D& second, float lambda) const;
 

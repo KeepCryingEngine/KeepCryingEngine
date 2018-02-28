@@ -32,6 +32,7 @@ private:
 
 private:
 	unsigned int animInstanceId = -1;
+	std::string currentAnimationName;
 	std::set<std::string> animationNames;
 };
 

@@ -7,10 +7,10 @@
 using namespace std;
 
 ModuleAnim::ModuleAnim()
-{}
+{ }
 
 ModuleAnim::~ModuleAnim()
-{}
+{ }
 
 bool ModuleAnim::CleanUp()
 {
@@ -196,9 +196,38 @@ bool ModuleAnim::GetTransform(AnimInstanceId id, const char * channel, aiVector3
 	position = node->positions[posIndex];
 	rotation = node->rotations[rotIndex];
 
-	// ...
+	uint posIndexNext = (posIndex + 1) % node->numPositions;
+	uint rotIndexNext = (rotIndex + 1) % node->numRotations;
+
+	const aiVector3D& positionNext = node->positions[posIndexNext];
+	const aiQuaternion& rotationNext = node->rotations[rotIndexNext];
+
+	position = Lerp(position, positionNext, posLambda);
+	rotation = Lerp(rotation, rotationNext, rotLambda);
 
 	return true;
+}
+
+float ModuleAnim::GetPercent(AnimInstanceId id) const
+{
+	float percent = 0.0f;
+
+	AnimInstance* animInstance = instances[id];
+
+	if(animInstance)
+	{
+		Anim* anim = animInstance->anim;
+
+		if(anim)
+		{
+			uint currentTime = animInstance->time;
+			uint totalTime = anim->duration;
+
+			percent = (float)currentTime / (float)totalTime;
+		}
+	}
+
+	return percent;
 }
 
 aiVector3D ModuleAnim::Lerp(const aiVector3D & first, const aiVector3D & second, float lambda) const
