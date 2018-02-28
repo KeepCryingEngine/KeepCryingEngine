@@ -42,9 +42,6 @@ public:
 	void SetWorldScale(const float3& scale);
 	void SetWorldTRS(const float3& translation, const Quat& rotation, const float3& scale);
 
-
-	//void GuizmoSetModelMatrix(const float4x4& modelMatrix, const float3& position, const float3& rotation, const float3& scale);
-
 	void Recalculate();
 
 private:
@@ -60,8 +57,14 @@ private:
 	float3 CalculateWorldScale() const;
 
 	float4x4 ParentModelMatrix() const;
+	float3 ParentWorldPosition() const;
 	Quat ParentWorldRotation() const;
 	float3 ParentWorldScale() const;
+
+	const float3& Up() const;
+	const float3& Forward() const;
+	const float3& Right() const;
+
 private:
 	float3 localPosition;
 	Quat localRotation;
@@ -69,10 +72,14 @@ private:
 
 	mutable bool dirty;
 	mutable float4x4 modelMatrix;
-	mutable float3 worldPosition = { 0.0f, 0.0f, 0.0f };
+	mutable float3 worldPosition;
 	mutable Quat worldRotation;
 	mutable float3 worldScale;
 	mutable float3 eulerLocalRotation;
+
+	mutable float3 up;
+	mutable float3 forward;
+	mutable float3 right;
 
 };
 
