@@ -201,6 +201,28 @@ bool ModuleAnim::GetTransform(AnimInstanceId id, const char * channel, aiVector3
 	return true;
 }
 
+float ModuleAnim::GetPercent(AnimInstanceId id) const
+{
+	float percent = 0.0f;
+
+	AnimInstance* animInstance = instances[id];
+
+	if(animInstance)
+	{
+		Anim* anim = animInstance->anim;
+
+		if(anim)
+		{
+			uint currentTime = animInstance->time;
+			uint totalTime = anim->duration;
+
+			percent = (float)currentTime / (float)totalTime;
+		}
+	}
+
+	return percent;
+}
+
 aiVector3D ModuleAnim::Lerp(const aiVector3D & first, const aiVector3D & second, float lambda) const
 {
 	return (1.0f - lambda) * first + lambda * second;

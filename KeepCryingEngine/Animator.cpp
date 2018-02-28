@@ -41,13 +41,27 @@ void Animator::DrawUI()
 
 		for(string animationName : animationNames)
 		{
-			const char* currentAnimationName = animationName.c_str();
-
-			ImGui::Text(currentAnimationName); ImGui::SameLine();
+			ImGui::Text(animationName.c_str());
 			
+			ImGui::SameLine();
+
+			ImGui::PushID(animationName.c_str());
+
 			if(ImGui::Button("Play"))
 			{
-				PlayAnimInstance(currentAnimationName);
+				PlayAnimInstance(animationName.c_str());
+			}
+			
+			ImGui::PopID();
+
+			if(animationName == currentAnimationName)
+			{
+				if(HasValidAnimationInstance())
+				{
+					ImGui::SameLine();
+
+					ImGui::ProgressBar(App->anim->GetPercent(animInstanceId));
+				}
 			}
 		}
 	}
@@ -88,9 +102,11 @@ void Animator::PlayAnimInstance(const char* name)
 {
 	if(HasValidAnimationInstance())
 	{
+		currentAnimationName = "";
 		App->anim->Stop(animInstanceId);
 	}
 
+	currentAnimationName = name;
 	animInstanceId = App->anim->Play(name);
 }
 
