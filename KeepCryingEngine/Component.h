@@ -12,7 +12,9 @@ enum class ComponentType
 	Camera,
 	MeshFilter,
 	MeshRenderer,
-	Animator
+	Animator,
+	AudioListener,
+	AudioSource
 };
 
 class Component

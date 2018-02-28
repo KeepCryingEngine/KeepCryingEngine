@@ -110,6 +110,7 @@
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleAnim.h" />
+    <ClInclude Include="ModuleAudio.h" />
     <ClInclude Include="ModuleCamera.h" />
     <ClInclude Include="ModuleEntity.h" />
     <ClInclude Include="ModuleInput.h" />
@@ -152,6 +153,7 @@
     <ClCompile Include="MeshFilter.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="ModuleAnim.cpp" />
+    <ClCompile Include="ModuleAudio.cpp" />
     <ClCompile Include="ModuleCamera.cpp" />
     <ClCompile Include="ModuleEntity.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
