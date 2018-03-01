@@ -19,14 +19,12 @@ void AudioListener::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	Transform* body = gameObject->GetTransform();
 	BASS_Set3DPosition(
-
-		(BASS_3DVECTOR*)  &body->GetWorldPosition(), // position
-
+		(BASS_3DVECTOR*)&body->GetWorldPosition(), // position
 		nullptr, // speed
+		(BASS_3DVECTOR*)&body->Forward(), // front
+		(BASS_3DVECTOR*)&body->Up()); // up}
 
-		(BASS_3DVECTOR*) &body->Forward(), // front
-
-		(BASS_3DVECTOR*) &body->Up()); // up}
+	BASS_Apply3D();
 }
 
 void AudioListener::SetEnable(bool enable)

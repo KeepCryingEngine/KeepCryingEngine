@@ -46,7 +46,6 @@ AudioId* ModuleAudio::Load(const string & path, const string & name, const strin
 		HSTREAM streamHandle = BASS_StreamCreateFile(FALSE, (path + name + "." + extension).c_str(), 0, 0, BASS_SAMPLE_3D);
 		if(streamHandle == 0)
 		{
-			int a = BASS_ErrorGetCode();
 			LOG_DEBUG("Error loading ogg file");
 			assert(false);
 		}
@@ -67,10 +66,9 @@ AudioId* ModuleAudio::Load(const string & path, const string & name, const strin
 	}
 	else if(extension == "wav")
 	{
-		HSAMPLE streamHandle = BASS_SampleLoad(FALSE, (path + name +"."+extension).c_str(),0 ,0 ,5,BASS_SAMPLE_3D|| BASS_SAMPLE_OVER_VOL);
+		HSAMPLE streamHandle = BASS_SampleLoad(FALSE, (path + name +"."+extension).c_str(),0 ,0 ,5, BASS_SAMPLE_MONO|BASS_SAMPLE_3D| BASS_SAMPLE_OVER_VOL);
 		if(streamHandle == 0)
 		{
-			int a = BASS_ErrorGetCode();
 			LOG_DEBUG("Error loading wav file");
 			assert(false);
 		}

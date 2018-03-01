@@ -34,10 +34,7 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		{
 			case SoundType::MUSIC:
 			{
-				HSAMPLE temp = App->audio->GetMusic(audioInfo->id);
-				id = BASS_SampleGetChannel(temp, FALSE);
-				int a = BASS_ErrorGetCode();
-				int esperate = 0;
+				id = BASS_SampleGetChannel(App->audio->GetMusic(audioInfo->id), FALSE);
 			}
 			break;
 			case SoundType::SFX:
@@ -61,16 +58,18 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	{
 		case SourceStates::PLAYING:
 		{
-			BASS_ChannelSet3DAttributes(id, BASS_3DMODE_NORMAL, 0, maxDistance, -1, -1, -1);
+			BASS_ChannelSet3DAttributes(id, BASS_3DMODE_RELATIVE, 0, maxDistance, -1, -1, -1);
 
 			// Update 3D position
 
 			Transform* body = gameObject->GetTransform();
-
+	
 			BASS_ChannelSet3DPosition(id,
 				(BASS_3DVECTOR*)&body->GetWorldPosition(), // position
 				(BASS_3DVECTOR*)&body->Forward(), // front
 				nullptr); // velocity
+
+			BASS_Apply3D();
 		}
 			break;
 		case SourceStates::WAITING_TO_PLAY:

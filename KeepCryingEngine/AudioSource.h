@@ -52,11 +52,11 @@ private:
 	SourceStates state = SourceStates::STOPPED;
 	AudioId* audioInfo = nullptr;
 	AudioMode mode;
-	float pitch;
-	float pan;
-	float maxDistance;
-	float rollOffFactor;
-	float doplerFactor;
+	float pitch = 100;
+	float pan = 0;
+	float maxDistance = 10;
+	float rollOffFactor = 1;
+	float doplerFactor = 1;
 
 	float fadeIn;
 	float fadeOut;
