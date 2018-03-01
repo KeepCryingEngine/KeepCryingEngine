@@ -60,6 +60,9 @@ private:
 
 	float fadeIn;
 	float fadeOut;
+
+	unsigned long id = 0;
+	bool reloadId = false;
 };
 
 #endif // !_AUDIOSOURCE_H_

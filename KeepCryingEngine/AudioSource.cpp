@@ -28,24 +28,28 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		return;
 	}
 
-	unsigned long id = 0;
-	switch(audioInfo->type)
+	if(reloadId)
 	{
-		case SoundType::MUSIC:
+		switch(audioInfo->type)
 		{
-			id = BASS_SampleGetChannel(App->audio->GetMusic(audioInfo->id),FALSE);
-			int a = BASS_ErrorGetCode();
-			int esperate=0;
-		}
-		break;
-		case SoundType::SFX:
-		{
-			id = App->audio->GetSFX(audioInfo->id);
-		}
-		break;
-		default:
-			assert(false);
+			case SoundType::MUSIC:
+			{
+				HSAMPLE temp = App->audio->GetMusic(audioInfo->id);
+				id = BASS_SampleGetChannel(temp, FALSE);
+				int a = BASS_ErrorGetCode();
+				int esperate = 0;
+			}
 			break;
+			case SoundType::SFX:
+			{
+				id = App->audio->GetSFX(audioInfo->id);
+			}
+			break;
+			default:
+				assert(false);
+				break;
+		}
+		reloadId = false;
 	}
 
 	if(id == 0)
@@ -137,6 +141,7 @@ void AudioSource::DrawUI()
 			size_t found2 = pathAndName.rfind(".");
 			//App->audio->Load(pathAndName.substr(0, found) + "/", pathAndName.substr(0, found2-found), pathAndName.substr(found2+1) );
 			audioInfo = App->audio->Load("Assets/sfx/", "wavSound", "wav");
+			reloadId = true;
 		}
 
 		if(ImGui::Button("Play"))
@@ -148,6 +153,7 @@ void AudioSource::DrawUI()
 			else
 			{
 				state = SourceStates::WAITING_TO_PLAY;
+				reloadId = true;
 			}
 		}
 		if(ImGui::Button("Pause"))
