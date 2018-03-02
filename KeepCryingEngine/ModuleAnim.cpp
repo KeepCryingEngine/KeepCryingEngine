@@ -74,11 +74,11 @@ update_status ModuleAnim::Update(float deltaTimeS, float realDeltaTimeS)
 	return update_status::UPDATE_CONTINUE;
 }
 
-set<string> ModuleAnim::Load(const string& path, const string& name)
+set<string> ModuleAnim::Load(const std::experimental::filesystem::path& path)
 {
 	set<string> animationNames;
 
-	const aiScene* scene = aiImportFile((path + name).c_str(), aiProcess_Triangulate);
+	const aiScene* scene = aiImportFile(path.string().c_str(), aiProcess_Triangulate);
 
 	if(scene != nullptr)
 	{

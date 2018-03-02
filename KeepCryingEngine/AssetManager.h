@@ -3,6 +3,8 @@
 
 #include <map>
 #include <string>
+#include <experimental/filesystem>
+
 
 #include "Module.h"
 
@@ -13,7 +15,7 @@ public:
 	AssetManager();
 	virtual ~AssetManager();
 
-	T* GetAsset(const std::string& path);
+	T* GetAsset(const std::experimental::filesystem::path& path);
 	void Subscribe(T* asset);
 
 	void Release(T* asset);
@@ -22,8 +24,8 @@ public:
 	const std::string& GetPath(T* asset) const;
 
 protected:
-	void Register(const std::string& path, T* asset);
-	virtual T * Load(const std::string& path) = 0;
+	void Register(const std::experimental::filesystem::path& path, T* asset);
+	virtual T * Load(const std::experimental::filesystem::path& path) = 0;
 	virtual void Unload(T* asset) = 0;
 
 private:

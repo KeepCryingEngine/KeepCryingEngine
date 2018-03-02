@@ -36,7 +36,8 @@ void Animator::DrawUI()
 			string s = "Assets/";
 			s += animatorLoadBuffer;
 
-			LoadAnimInstance(s.c_str());
+			std::experimental::filesystem::path path(s);
+			LoadAnimInstance(path);
 		}
 
 		for(string animationName : animationNames)
@@ -82,20 +83,10 @@ unsigned int Animator::GetAnimInstanceId() const
 	return animInstanceId;
 }
 
-void Animator::LoadAnimInstance(const char * path)
+void Animator::LoadAnimInstance(const std::experimental::filesystem::path& path)
 {
-	string tmpPath = path;
-
-	size_t splitIndex = tmpPath.find_last_of("/");
-
-	if(splitIndex != string::npos)
-	{
-		string basePath = tmpPath.substr(0, splitIndex + 1);
-		string fileName = tmpPath.substr(splitIndex + 1, tmpPath.size());
-
-		set<string> newAnimationNames = App->anim->Load(basePath, fileName);
-		animationNames.insert(newAnimationNames.begin(), newAnimationNames.end());
-	}
+	set<string> newAnimationNames = App->anim->Load(path);
+	animationNames.insert(newAnimationNames.begin(), newAnimationNames.end());
 }
 
 void Animator::PlayAnimInstance(const char* name)

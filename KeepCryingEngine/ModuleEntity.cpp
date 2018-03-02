@@ -52,28 +52,33 @@ Mesh * ModuleEntity::GetSphere()
 	return sphere;
 }
 
-void ModuleEntity::LoadMesh(const string& path,const string& name)
+void ModuleEntity::LoadMesh(const std::experimental::filesystem::path& path)
 {
-	const aiScene * scene = aiImportFile((path + name).c_str(), aiProcess_Triangulate);
+	const aiScene * scene = aiImportFile(path.string().c_str(), aiProcess_Triangulate);
 
 	if (scene == nullptr)
 	{
 		return;
 	}
 
-	vector<Material*> tempMaterials;
-	vector<Mesh*> tempMeshes;
-	tempMaterials.reserve(scene->mNumMaterials);
-	tempMeshes.reserve(scene->mNumMeshes);
+	vector<Material*> createdMaterials;
+	vector<Mesh*> createdMeshes;
+	createdMaterials.reserve(scene->mNumMaterials);
+	createdMeshes.reserve(scene->mNumMeshes);
 
+	std::experimental::filesystem::path baseTexturePath = path.parent_path();
 	for(unsigned int i = 0; i < scene->mNumMaterials ; i++)
 	{
+		aiString relativeTexturePath;
+		scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE,0,&relativeTexturePath);
+		std::experimental::filesystem::path texturePath(baseTexturePath);
+		texturePath.append(relativeTexturePath.C_Str());
+
 		Material* mat = new Material();
-		aiString texturePath;
-		scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE,0,&texturePath);
-		mat->SetTexture( (path + texturePath.C_Str()).c_str());
+		mat->SetTexture(texturePath);
+
 		materials.push_back(mat);
-		tempMaterials.push_back(mat);
+		createdMaterials.push_back(mat);
 	}
 
 	for(unsigned int i = 0; i< scene->mNumMeshes; i++)
@@ -105,11 +110,11 @@ void ModuleEntity::LoadMesh(const string& path,const string& name)
 		}
 		mesh->SetMeshData(vertices, indices, GL_TRIANGLES);
 		meshes.push_back(mesh);
-		tempMeshes.push_back(mesh);
+		createdMeshes.push_back(mesh);
 	}
 
 	GameObject* root = App->scene->Get(App->ui->GetSelectedNode());
-	LoadMeshRecursive(scene, scene->mRootNode, root, tempMaterials, tempMeshes);
+	LoadMeshRecursive(scene, scene->mRootNode, root, createdMaterials, createdMeshes);
 
 	/*GameObject* currentGameobject = App->scene->AddEmpty(*root);
 	for(int i = 0; i < scene->mRootNode->mNumChildren; i++)

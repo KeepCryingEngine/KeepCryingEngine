@@ -70,7 +70,7 @@ void ModuleTexture::SetUpCheckerTexture()
 	totalSize += checkerTexture->GetSize();
 }
 
-Texture * ModuleTexture::LoadTextureDevil(const string & texturePath, const TextureConfiguration& textureConfiguration) const
+Texture * ModuleTexture::LoadTextureDevil(const std::experimental::filesystem::path& path, const TextureConfiguration& textureConfiguration) const
 {
 	Texture * texture = nullptr;
 
@@ -78,7 +78,7 @@ Texture * ModuleTexture::LoadTextureDevil(const string & texturePath, const Text
 	ilGenImages(1, &imageId);
 	ilBindImage(imageId);
 
-	if(ilLoadImage(texturePath.c_str()))
+	if(ilLoadImage(path.string().c_str()))
 	{
 		ILinfo imageInfo;
 
@@ -142,13 +142,13 @@ const set<string>& ModuleTexture::TexturePaths() const
 	return texturePaths;
 }
 
-Texture * ModuleTexture::Load(const std::string & path)
+Texture * ModuleTexture::Load(const std::experimental::filesystem::path& path)
 {
 	Texture * texture = LoadTextureDevil(path, loadingTextureConfiguration);
 	
 	if (texture)
 	{
-		texturePaths.insert(path);
+		texturePaths.insert(path.string());
 		totalSize += texture->GetSize();
 	}
 

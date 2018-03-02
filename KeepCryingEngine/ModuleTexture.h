@@ -5,6 +5,7 @@
 #include <map>
 #include <GL/glew.h>
 #include <string>
+#include <experimental/filesystem>
 
 #include "AssetManager.cpp"
 #include "Texture.h"
@@ -23,12 +24,12 @@ public:
 	const std::set<std::string>& TexturePaths() const;
 
 protected:
-	Texture * Load(const std::string& path) override;
+	Texture * Load(const std::experimental::filesystem::path& path) override;
 	void Unload(Texture* texture) override;
 
 private:
 	void SetUpCheckerTexture();
-	Texture* LoadTextureDevil(const std::string & texturePath, const TextureConfiguration& textureConfiguration) const;
+	Texture* LoadTextureDevil(const std::experimental::filesystem::path& path, const TextureConfiguration& textureConfiguration) const;
 	
 private:
 	TextureConfiguration loadingTextureConfiguration;

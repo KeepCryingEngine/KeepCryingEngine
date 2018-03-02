@@ -1,9 +1,11 @@
 #ifndef _MODULEENTITY_H_
 #define _MODULEENTITY_H_
 
+#include <vector>
+#include <experimental/filesystem>
+
 #include "Module.h"
 #include "Mesh.h"
-#include <vector>
 
 struct aiNode;
 struct aiScene;
@@ -22,7 +24,7 @@ public:
 
 	Mesh* GetCube();
 	Mesh* GetSphere();
-	void LoadMesh(const std::string& path, const std::string& name);
+	void LoadMesh(const std::experimental::filesystem::path& path);
 private:
 	
 	void SetUpCube();

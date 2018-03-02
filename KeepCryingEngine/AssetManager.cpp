@@ -15,10 +15,10 @@ AssetManager<T>::~AssetManager()
 }
 
 template <typename T>
-T* AssetManager<T>::GetAsset(const string& path)
+T* AssetManager<T>::GetAsset(const std::experimental::filesystem::path& path)
 {
 	T* asset = nullptr;
-	typename map<string, T*>::iterator assetIt = assets.find(path);
+	typename map<string, T*>::iterator assetIt = assets.find(path.string());
 	if (assetIt != assets.end())
 	{
 		asset = assetIt->second;
@@ -86,13 +86,13 @@ const string & AssetManager<T>::GetPath(T * asset) const
 }
 
 template<typename T>
-void AssetManager<T>::Register(const std::string & path, T * asset)
+void AssetManager<T>::Register(const std::experimental::filesystem::path& path, T * asset)
 {
 	assert(asset);
-	assert(assets.find(path) == assets.end());
+	assert(assets.find(path.string()) == assets.end());
 	assert(assetUsage.find(asset) == assetUsage.end());
 
-	assets[path] = asset;
+	assets[path.string()] = asset;
 	assetUsage[asset] = 1;
 }
 
