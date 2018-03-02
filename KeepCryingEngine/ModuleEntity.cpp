@@ -31,7 +31,6 @@ bool ModuleEntity::Init()
 {
 	SetUpCube();
 	SetUpSphere();
-	//LoadMesh("Assets/BakerHouse.fbx");
 	return true;
 }
 
@@ -56,86 +55,83 @@ void ModuleEntity::LoadMesh(const std::experimental::filesystem::path& path)
 {
 	const aiScene * scene = aiImportFile(path.string().c_str(), aiProcess_Triangulate);
 
-	if (scene == nullptr)
+	if (scene != nullptr)
 	{
-		return;
-	}
+		vector<Material*> createdMaterials;
+		vector<Mesh*> createdMeshes;
 
-	vector<Material*> createdMaterials;
-	vector<Mesh*> createdMeshes;
+		ExtractMaterialsFromScene(createdMaterials, scene, path);
+		ExtractMeshesFromScene(createdMeshes, scene);
+
+		materials.insert(materials.end(), createdMaterials.begin(), createdMaterials.end());
+		meshes.insert(meshes.end(), createdMeshes.begin(), createdMeshes.end());
+
+		GameObject* root = App->scene->Get(App->ui->GetSelectedNode());
+		LoadMeshRecursive(scene, scene->mRootNode, root, createdMaterials, createdMeshes);
+	}
+}
+
+void ModuleEntity::ExtractMaterialsFromScene(std::vector<Material *> &createdMaterials, const aiScene * scene, const std::experimental::filesystem::path & path) const
+{
 	createdMaterials.reserve(scene->mNumMaterials);
-	createdMeshes.reserve(scene->mNumMeshes);
 
 	std::experimental::filesystem::path baseTexturePath = path.parent_path();
-	for(unsigned int i = 0; i < scene->mNumMaterials ; i++)
+	for (unsigned int i = 0; i < scene->mNumMaterials; i++)
 	{
 		aiString relativeTexturePath;
-		scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE,0,&relativeTexturePath);
+		scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &relativeTexturePath);
 		std::experimental::filesystem::path texturePath(baseTexturePath);
 		texturePath.append(relativeTexturePath.C_Str());
 
 		Material* mat = new Material();
 		mat->SetTexture(texturePath);
 
-		materials.push_back(mat);
 		createdMaterials.push_back(mat);
 	}
+}
 
-	for(unsigned int i = 0; i< scene->mNumMeshes; i++)
+void ModuleEntity::ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, const aiScene * scene) const
+{
+	createdMeshes.reserve(scene->mNumMeshes);
+	for (unsigned int meshIndex = 0; meshIndex< scene->mNumMeshes; meshIndex++)
 	{
-		Mesh* mesh = new Mesh();
+		aiMesh* aiMesh = scene->mMeshes[meshIndex];
+
 		vector<Vertex> vertices;
 		vector<GLushort> indices;
 
-		bool addNormals = scene->mMeshes[i]->mNormals != nullptr;
+		ExtractVerticesAndIndicesFromScene(scene, *aiMesh, vertices, indices);
 
-		for(unsigned int k = 0; k < scene->mMeshes[i]->mNumVertices; k++)
-		{
-			Vertex vertex;
-			vertex.position = float3(scene->mMeshes[i]->mVertices[k].x, scene->mMeshes[i]->mVertices[k].y, scene->mMeshes[i]->mVertices[k].z);
-			if(addNormals)
-			{
-				vertex.normal = float3(scene->mMeshes[i]->mNormals[k].x, scene->mMeshes[i]->mNormals[k].y, scene->mMeshes[i]->mNormals[k].z);
-			}
-			vertex.color = float4(100, 100, 100, 255);
-			vertex.uv = float2(scene->mMeshes[i]->mTextureCoords[0][k].x, scene->mMeshes[i]->mTextureCoords[0][k].y);
-			vertices.push_back(vertex);
-		}
-		for(unsigned int k = 0; k < scene->mMeshes[i]->mNumFaces; k++)
-		{
-			for(unsigned int m = 0; m < scene->mMeshes[i]->mFaces[k].mNumIndices; m++)
-			{
-				indices.push_back(scene->mMeshes[i]->mFaces[k].mIndices[m]);
-			}
-		}
+		Mesh* mesh = new Mesh();
 		mesh->SetMeshData(vertices, indices, GL_TRIANGLES);
-		meshes.push_back(mesh);
+
 		createdMeshes.push_back(mesh);
 	}
+}
 
-	GameObject* root = App->scene->Get(App->ui->GetSelectedNode());
-	LoadMeshRecursive(scene, scene->mRootNode, root, createdMaterials, createdMeshes);
+void ModuleEntity::ExtractVerticesAndIndicesFromScene(const aiScene * scene, aiMesh& mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices) const
+{
+	bool addNormals = mesh.mNormals != nullptr;
 
-	/*GameObject* currentGameobject = App->scene->AddEmpty(*root);
-	for(int i = 0; i < scene->mRootNode->mNumChildren; i++)
-	{		
-		if(scene->mRootNode->mChildren[i]->mNumChildren > 0)
+	for (unsigned int k = 0; k < mesh.mNumVertices; k++)
+	{
+		Vertex vertex;
+		vertex.position = float3(mesh.mVertices[k].x, mesh.mVertices[k].y, mesh.mVertices[k].z);
+		if (addNormals)
 		{
-			LoadMeshRecursive(scene,scene->mRootNode->mChildren[i],root,tempMaterials,tempMeshes);
+			vertex.normal = float3(mesh.mNormals[k].x, mesh.mNormals[k].y, mesh.mNormals[k].z);
 		}
-
-		for(int j = 0; j < scene->mRootNode->mChildren[i]->mNumMeshes; j++)
+		vertex.color = float4(100, 100, 100, 255);
+		vertex.uv = float2(mesh.mTextureCoords[0][k].x, mesh.mTextureCoords[0][k].y);
+		vertices.push_back(vertex);
+	}
+	for (unsigned int k = 0; k < mesh.mNumFaces; k++)
+	{
+		for (unsigned int m = 0; m < mesh.mFaces[k].mNumIndices; m++)
 		{
-			GameObject* currentGameobjectMesh = App->scene->AddEmpty(*currentGameobject);
-
-			unsigned int  meshIndex = scene->mRootNode->mChildren[i]->mMeshes[j];
-			
-			currentGameobjectMesh->AddComponent(ComponentType::MeshRenderer);
-			((MeshFilter*)currentGameobjectMesh->GetComponent(ComponentType::MeshFilter))->SetMesh(tempMeshes[meshIndex]);
-			int matIndex = scene->mMeshes[meshIndex]->mMaterialIndex;
-			((MeshRenderer*)currentGameobjectMesh->GetComponent(ComponentType::MeshRenderer))->SetMaterial(*tempMaterials[matIndex]);
+			indices.push_back(mesh.mFaces[k].mIndices[m]);
 		}
-	}*/
+	}
 }
 
 void ModuleEntity::SetUpCube()
