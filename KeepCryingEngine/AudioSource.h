@@ -25,10 +25,17 @@ public:
 	void Awake() override;
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS)override;
 
+	void UpdateChannelForAudio();
+
 	void DrawUI() override;
 
-	void SetMusic(AudioId* audioInfo);
-	void SetMode(SoundProperty newMode);
+	void OnStopButtonPressed();
+
+	void OnPauseButtonPressed();
+
+	void OnPlayButtonPressed();
+
+	void SetMusic(AudioClip* audioInfo);
 	void SetVolume(float value);
 	void SetPitch(float value);
 	void SetPan(float value);
@@ -37,8 +44,7 @@ public:
 	void SetDoplerFactor(float value);
 	void SetLoop(bool value);
 
-	AudioId* GetMusic() const;
-	SoundProperty GetMode() const;
+	AudioClip* GetMusic() const;
 	float GetVolume() const;
 	float GetPitch() const;
 	float GetPan() const;
@@ -48,12 +54,13 @@ public:
 	bool GetLoop();
 
 private:
-	void Load(const std::experimental::filesystem::path& path);
+	void OnLoadButtonPressed(const std::experimental::filesystem::path& path);
 
 private:
 	SourceStates state = SourceStates::STOPPED;
-	AudioId* audioInfo = nullptr;
-	SoundProperty mode = SoundProperty::MONO;
+	AudioClip* audioClip = nullptr;
+	
+
 	float volume = 1;
 	float pitch = 100;
 	float pan = 0;
@@ -62,8 +69,10 @@ private:
 	float doplerFactor = 1;
 	bool loop = false;
 
-	unsigned long id = 0;
-	bool reloadId = false;
+	DWORD id = 0;
+
+	ChannelType loadingChannelType = ChannelType::Mono;
+	AudioType loadingAudioType = AudioType::SFX;
 };
 
 #endif // !_AUDIOSOURCE_H_

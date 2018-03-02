@@ -127,6 +127,7 @@
     <ClCompile Include="ReverbZone.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="AudioClip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -273,6 +274,7 @@
     <ClInclude Include="ReverbZone.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="AudioClip.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">

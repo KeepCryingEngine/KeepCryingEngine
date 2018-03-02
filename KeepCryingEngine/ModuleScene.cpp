@@ -17,6 +17,7 @@
 #include "ModuleCamera.h"
 #include "ModuleUI.h"
 #include "Animator.h"
+#include "AudioSource.h"
 
 using namespace std;
 
@@ -29,7 +30,6 @@ ModuleScene::~ModuleScene()
 bool ModuleScene::Init()
 {
 	root = new GameObject("Root");
-
 	return true;
 }
 
@@ -42,6 +42,11 @@ update_status ModuleScene::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 {
+	if (App->input->GetKey(SDL_SCANCODE_1) == KeyState::KEY_DOWN)
+	{
+		AddCube(*root)->AddComponent<AudioSource>();
+	}
+
 	DrawHierarchy(Get(App->ui->GetSelectedNode()));
 
 	if(!App->ui->GetFrustumCulling())

@@ -8,6 +8,7 @@
 #include "ModuleAudio.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "AudioClip.h"
 
 using namespace std;
 
@@ -23,36 +24,16 @@ void AudioSource::Awake()
 
 void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-	if(audioInfo == nullptr)
+	if(audioClip == nullptr)
 	{
 		return;
-	}
-
-	if(reloadId)
-	{
-		switch(audioInfo->type)
-		{
-			case SoundType::MUSIC:
-			{
-				id = BASS_SampleGetChannel(App->audio->GetMusic(audioInfo->id,mode), FALSE);
-			}
-			break;
-			case SoundType::SFX:
-			{
-				id = App->audio->GetSFX(audioInfo->id,mode);
-			}
-			break;
-			default:
-				assert(false);
-				break;
-		}
-		reloadId = false;
 	}
 
 	if(id == 0)
 	{
 		return;
 	}
+
 	//Set audio properties
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, volume);
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_PAN,pan);
@@ -148,104 +129,115 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	}
 }
 
+void AudioSource::UpdateChannelForAudio()
+{
+	switch (audioClip->type)
+	{
+	case AudioType::Music:
+	{
+		id = BASS_SampleGetChannel(audioClip->musicSample, FALSE);
+	}
+	break;
+	case AudioType::SFX:
+	{
+		id = audioClip->sfxStream;
+	}
+	break;
+	default:
+		assert(false);
+		break;
+	}
+}
+
 void AudioSource::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Audio Source"))
 	{
 		static char pathToAudio[180] = "Assets/sfx/oggSound.ogg";
 
-		ImGui::InputText("##PathToAudio", pathToAudio, sizeof(pathToAudio)); ImGui::SameLine();
+		ImGui::InputText("##PathToAudio", pathToAudio, sizeof(pathToAudio)); 
+		
+		int channelType = (int)loadingChannelType;
+		if (ImGui::Combo("ChannelType", &channelType, "Mono\0Stereo"))
+		{
+			loadingChannelType = (ChannelType)channelType;
+		}
+
+		int audioType = (int)loadingAudioType;
+		if (ImGui::Combo("AudioType", &audioType, "SFX\0Music"))
+		{
+			loadingAudioType = (AudioType)audioType;
+		}
+		
 		if(ImGui::Button("Load audio"))
 		{
 			std::experimental::filesystem::path path(pathToAudio);
-			Load(path);
+			OnLoadButtonPressed(path);
 		}
 
-		static bool isLooping = GetLoop();
-		if(ImGui::Checkbox(" Frustum Culling", &isLooping))
-		{
-			SetLoop(isLooping);
-		}
 
-		int audioMode = (int)mode;
-		if(ImGui::Combo("Mode", &audioMode, "Stereo\0Mono"))
-		{
-			mode = (SoundProperty)audioMode;
-		}
-
-		static float volume = GetVolume();
-		if(ImGui::DragFloat("Volume", &volume,0.05f,0.0f,1.0f))
-		{
-			SetVolume(volume);
-		}
-
-		static float pitch = GetPitch();
-		if(ImGui::DragFloat("Pitch", &pitch,1.0f,0.0f,255.0f))
-		{
-			SetPitch(pitch);
-		}
-
-		static float pan = GetPan();
-		if(ImGui::DragFloat("Pan", &pan,0.05f,-1.0f,1.0f))
-		{
-			SetPan(pan);
-		}
-
-		static float maxDistance = GetMaxDistance();
-		if(ImGui::DragFloat("Max Distance", &maxDistance,1.0f,1.0f,10000.0f))
-		{
-			SetMaxDistance(maxDistance);
-		}
-
-		static float rollOff = GetRollOffFactor();
-		if(ImGui::DragFloat("RollOff factor", &rollOff,0.1f,0.0f,10.0f))
-		{
-			SetRollOffFactor(rollOff);
-		}
-
-		static float dopler = GetDoplerFactor();
-		if(ImGui::DragFloat("Dopler factor", &dopler,0.1f,0.0f,10.0f))
-		{
-			SetDoplerFactor(dopler);
-		}
+		ImGui::Checkbox(" Loop", &loop);
+		ImGui::DragFloat("Volume", &volume, 0.05f, 0.0f, 1.0f);
+		ImGui::DragFloat("Pitch", &pitch, 1.0f, 0.0f, 255.0f);
+		ImGui::DragFloat("Pan", &pan, 0.05f, -1.0f, 1.0f);
+		ImGui::DragFloat("Max Distance", &maxDistance, 1.0f, 1.0f, 10000.0f);
+		ImGui::DragFloat("RollOff factor", &rollOffFactor, 0.1f, 0.0f, 10.0f);
+		ImGui::DragFloat("Dopler factor", &doplerFactor, 0.1f, 0.0f, 10.0f);
+		
 
 		if(ImGui::Button("Play"))
 		{			
-			if(state == SourceStates::PAUSED)
-			{
-				state = SourceStates::WAITING_TO_UNPAUSE;
-			}
-			else if(state != SourceStates::PLAYING)
-			{
-				state = SourceStates::WAITING_TO_PLAY;
-				reloadId = true;
-			}
-		}ImGui::SameLine();
+			OnPlayButtonPressed();
+		} 
+		
+		ImGui::SameLine();
+
 		if(ImGui::Button("Pause"))
 		{
-			if(state != SourceStates::PAUSED)
-			{
-				state = SourceStates::WAITING_TO_PAUSE;
-			}
-		}ImGui::SameLine();
+			OnPauseButtonPressed();
+		}
+		
+		ImGui::SameLine();
+
 		if(ImGui::Button("Stop"))
 		{
-			if(state != SourceStates::STOPPED)
-			{
-				state = SourceStates::WAITING_TO_STOP;
-			}
+			OnStopButtonPressed();
 		}
 	}
 }
 
-void AudioSource::SetMusic(AudioId* audioInfo)
+void AudioSource::OnStopButtonPressed()
 {
-	this->audioInfo = audioInfo;
+	if (state != SourceStates::STOPPED)
+	{
+		state = SourceStates::WAITING_TO_STOP;
+	}
 }
 
-void AudioSource::SetMode(SoundProperty newMode)
+void AudioSource::OnPauseButtonPressed()
 {
-	mode = newMode;
+	if (state != SourceStates::PAUSED)
+	{
+		state = SourceStates::WAITING_TO_PAUSE;
+	}
+}
+
+void AudioSource::OnPlayButtonPressed()
+{
+	if (state == SourceStates::PAUSED)
+	{
+		state = SourceStates::WAITING_TO_UNPAUSE;
+	}
+	else if (state != SourceStates::PLAYING)
+	{
+		state = SourceStates::WAITING_TO_PLAY;
+		UpdateChannelForAudio();
+	}
+}
+
+void AudioSource::SetMusic(AudioClip* audioInfo)
+{
+	this->audioClip = audioInfo;
 }
 
 void AudioSource::SetVolume(float value)
@@ -283,14 +275,9 @@ void AudioSource::SetLoop(bool value)
 	loop = value;
 }
 
-AudioId* AudioSource::GetMusic() const
+AudioClip* AudioSource::GetMusic() const
 {
-	return audioInfo;
-}
-
-SoundProperty AudioSource::GetMode() const
-{
-	return mode;
+	return audioClip;
 }
 
 float AudioSource::GetVolume() const
@@ -328,20 +315,16 @@ bool AudioSource::GetLoop()
 	return loop;
 }
 
-void AudioSource::Load(const std::experimental::filesystem::path & path)
+void AudioSource::OnLoadButtonPressed(const std::experimental::filesystem::path & path)
 {
-
-	AudioId* temp = App->audio->Load(path);
-	if(temp == nullptr)
+	AudioClip* audioClip = App->audio->Load(path, loadingAudioType ,loadingChannelType);
+	if(audioClip != nullptr)
 	{
-		LOG_DEBUG("Error on audio load");
-		assert(false);
-		return;
-	}
-	BASS_ChannelStop(id);
-	state = SourceStates::STOPPED;
+		BASS_ChannelStop(id);
+		state = SourceStates::STOPPED;
 
-	audioInfo = temp;
-	reloadId = true;
+		this->audioClip = audioClip;
+		UpdateChannelForAudio();
+	}
 }
 

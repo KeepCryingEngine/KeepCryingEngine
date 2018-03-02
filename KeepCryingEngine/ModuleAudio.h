@@ -9,26 +9,21 @@
 
 #include "Module.h"
 
+class AudioClip;
+
 class AudioListener;
 
 typedef unsigned MusicId;
 
-enum class SoundType
-{
+enum class AudioType {
 	SFX,
-	MUSIC
+	Music
 };
 
-enum class SoundProperty
+enum class ChannelType
 {
-	STEREO,
-	MONO
-};
-
-struct AudioId
-{
-	SoundType type;
-	MusicId id;
+	Mono,
+	Stereo
 };
 
 class ModuleAudio : public Module
@@ -39,36 +34,19 @@ public:
 
 	bool Init() override;
 	bool CleanUp() override;
-	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
-	AudioId* Load(const std::experimental::filesystem::path& path);
-	HSTREAM GetSFX(MusicId id, SoundProperty p)const;
-	HSAMPLE GetMusic(MusicId id, SoundProperty p) const;
+	AudioClip* Load(const std::experimental::filesystem::path& path, AudioType type, ChannelType channelType);
 
 	void EnableListener(AudioListener* listener);
 
-	AudioListener* GetActiveListener()const;
-private:
-	bool LoadOgg(const std::experimental::filesystem::path& path, AudioId& audio);
-	bool LoadWav(const std::experimental::filesystem::path& path, AudioId& audio);
+	AudioListener* GetActiveListener() const;
 
 private:
-	static MusicId sfxActualIndex;
-	static MusicId musicActualIndex;
-	//Stereo
-	std::map<MusicId,HSTREAM> stereoSfx;
-	
-	std::map<MusicId, HSAMPLE> stereoMusic;
-	
-	//Mono
-	std::map<MusicId, HSTREAM> monoSfx;
-	std::map<MusicId, HSAMPLE> monoMusic;
+	AudioClip* LoadMusic(const std::experimental::filesystem::path& path, ChannelType channelType);
+	AudioClip* LoadSFX(const std::experimental::filesystem::path& path, ChannelType channelType);
 
-	//Common
-	std::list<MusicId> musicHoles;
-	std::list<MusicId> sfxHoles;
-
-	std::map<std::string, AudioId> soundCache;
+private:
+	std::map<std::string, AudioClip*> soundCache;
 
 	AudioListener* activeListener = nullptr;
 
