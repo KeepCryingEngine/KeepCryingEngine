@@ -108,7 +108,6 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
-    <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="ModuleAnim.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -122,6 +121,9 @@
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="AudioSource.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetManager.cpp">
       <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
@@ -251,7 +253,6 @@
     <ClInclude Include="Material.h">
       <Filter>Entities</Filter>
     </ClInclude>
-    <ClInclude Include="AssetManager.h" />
     <ClInclude Include="ModuleAnim.h">
       <Filter>Modules</Filter>
     </ClInclude>
@@ -265,6 +266,9 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="AudioSource.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetManager.h">
       <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
