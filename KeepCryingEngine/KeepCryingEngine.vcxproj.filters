@@ -126,6 +126,9 @@
     <ClCompile Include="AssetManager.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="Asset.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -270,6 +273,9 @@
     </ClInclude>
     <ClInclude Include="AssetManager.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset.h">
+      <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
