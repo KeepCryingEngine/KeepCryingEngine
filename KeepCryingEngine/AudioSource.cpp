@@ -56,6 +56,7 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	//Set audio properties
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_PAN,pan);
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, volume);
+	BASS_ChannelSetAttribute(id, BASS_ATTRIB_MUSIC_SPEED, pitch);
 	BASS_Set3DFactors(0,rollOffFactor,doplerFactor);
 	BASS_Apply3D();
 
@@ -86,7 +87,7 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 			else
 			{
 				BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, 0.0f);
-				BASS_ChannelSlideAttribute(id, BASS_ATTRIB_VOL, 1.0f, DWORD(fadeIn * 1000.0f));
+				BASS_ChannelSlideAttribute(id, BASS_ATTRIB_VOL, volume, DWORD(fadeIn * 1000.0f));
 				state = SourceStates::PLAYING;
 			}
 		}
@@ -148,6 +149,60 @@ void AudioSource::DrawUI()
 			reloadId = true;
 		}
 
+		int audioMode = (int)mode;
+		if(ImGui::Combo("Mode", &audioMode, "Stereo\0Mono"))
+		{
+			mode = (SoundProperty)audioMode;
+		}
+
+		static float volume = GetVolume();
+		if(ImGui::DragFloat("Volume", &volume,0.05f,0.0f,1.0f))
+		{
+			SetVolume(volume);
+		}
+
+		static float pitch = GetPitch();
+		if(ImGui::DragFloat("Pitch", &pitch,1.0f,0.0f,255.0f))
+		{
+			SetPitch(pitch);
+		}
+
+		static float pan = GetPan();
+		if(ImGui::DragFloat("Pan", &pan,0.05f,-1.0f,1.0f))
+		{
+			SetPan(pan);
+		}
+
+		static float maxDistance = GetMaxDistance();
+		if(ImGui::DragFloat("Max Distance", &maxDistance,1.0f,0.0f,10000.0f))
+		{
+			SetMaxDistance(maxDistance);
+		}
+
+		static float rollOff = GetRollOffFactor();
+		if(ImGui::DragFloat("RollOff factor", &rollOff,0.1f,0.0f,10.0f))
+		{
+			SetRollOffFactor(rollOff);
+		}
+
+		static float dopler = GetDoplerFactor();
+		if(ImGui::DragFloat("Dopler factor", &dopler,0.1f,0.0f,10.0f))
+		{
+			SetDoplerFactor(dopler);
+		}
+
+		static float fadeIn = GetFadeIn();
+		if(ImGui::DragFloat("FadeIn", &fadeIn,0.05f,0.0f,10.0f))
+		{
+			SetFadeIn(fadeIn);
+		}
+
+		static float fadeOut = GetFadeOut();
+		if(ImGui::DragFloat("FadeOut", &fadeOut,0.05f,0.0f,10.0f))
+		{
+			SetFadeOut(fadeOut);
+		}
+
 		if(ImGui::Button("Play"))
 		{			
 			if(state == SourceStates::PAUSED)
@@ -159,11 +214,11 @@ void AudioSource::DrawUI()
 				state = SourceStates::WAITING_TO_PLAY;
 				reloadId = true;
 			}
-		}
+		}ImGui::SameLine();
 		if(ImGui::Button("Pause"))
 		{
 			state = SourceStates::WAITING_TO_PAUSE;
-		}
+		}ImGui::SameLine();
 		if(ImGui::Button("Stop"))
 		{
 			state = SourceStates::WAITING_TO_STOP;
@@ -179,6 +234,11 @@ void AudioSource::SetMusic(AudioId* audioInfo)
 void AudioSource::SetMode(SoundProperty newMode)
 {
 	mode = newMode;
+}
+
+void AudioSource::SetVolume(float value)
+{
+	volume = value;
 }
 
 void AudioSource::SetPitch(float value)
@@ -206,6 +266,16 @@ void AudioSource::SetDoplerFactor(float value)
 	doplerFactor = value;
 }
 
+void AudioSource::SetFadeIn(float value)
+{
+	fadeIn = value;
+}
+
+void AudioSource::SetFadeOut(float value)
+{
+	fadeOut = value;
+}
+
 AudioId* AudioSource::GetMusic() const
 {
 	return audioInfo;
@@ -214,6 +284,11 @@ AudioId* AudioSource::GetMusic() const
 SoundProperty AudioSource::GetMode() const
 {
 	return mode;
+}
+
+float AudioSource::GetVolume() const
+{
+	return volume;
 }
 
 float AudioSource::GetPitch() const
@@ -239,4 +314,14 @@ float AudioSource::GetRollOffFactor() const
 float AudioSource::GetDoplerFactor() const
 {
 	return doplerFactor;
+}
+
+float AudioSource::GetFadeIn() const
+{
+	return fadeIn;
+}
+
+float AudioSource::GetFadeOut() const
+{
+	return fadeOut;
 }

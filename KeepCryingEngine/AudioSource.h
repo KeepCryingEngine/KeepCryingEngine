@@ -29,19 +29,25 @@ public:
 
 	void SetMusic(AudioId* audioInfo);
 	void SetMode(SoundProperty newMode);
+	void SetVolume(float value);
 	void SetPitch(float value);
 	void SetPan(float value);
 	void SetMaxDistance(float value);
 	void SetRollOffFactor(float value);
 	void SetDoplerFactor(float value);
+	void SetFadeIn(float value);
+	void SetFadeOut(float value);
 
 	AudioId* GetMusic() const;
 	SoundProperty GetMode() const;
+	float GetVolume() const;
 	float GetPitch() const;
 	float GetPan() const;
 	float GetMaxDistance() const;
 	float GetRollOffFactor() const;
 	float GetDoplerFactor() const;
+	float GetFadeIn() const;
+	float GetFadeOut() const;
 private:
 	SourceStates state = SourceStates::STOPPED;
 	AudioId* audioInfo = nullptr;
