@@ -2,6 +2,7 @@
 #define _ANIMATOR_H_
 
 #include <set>
+#include <experimental/filesystem>
 
 #include "Component.h"
 
@@ -22,7 +23,7 @@ public:
 
 	unsigned int GetAnimInstanceId() const;
 	
-	void LoadAnimInstance(const char* path);
+	void LoadAnimInstance(const std::experimental::filesystem::path& path);
 	void PlayAnimInstance(const char* name);
 
 	bool HasValidAnimationInstance() const;

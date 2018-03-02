@@ -2,6 +2,8 @@
 #define _MATERIAL_H_
 
 #include <GL/glew.h>
+#include <experimental/filesystem>
+
 #include "ModuleShader.h"
 
 class Texture;
@@ -17,7 +19,7 @@ public:
 
 	GLuint GetProgramId() const;
 	Texture* GetTexture() const;
-	void SetTexture(const char* path);
+	void SetTexture(const std::experimental::filesystem::path&);
 
 private:
 	ShaderType shaderType = ShaderType::Default;

@@ -15,10 +15,10 @@ AssetManager<T>::~AssetManager()
 }
 
 template <typename T>
-T* AssetManager<T>::GetAsset(const string& path)
+T* AssetManager<T>::GetAsset(const std::experimental::filesystem::path& path)
 {
 	T* asset = nullptr;
-	typename map<string, T*>::iterator assetIt = assets.find(path);
+	typename map<std::experimental::filesystem::path, T*>::iterator assetIt = assets.find(path);
 	if (assetIt != assets.end())
 	{
 		asset = assetIt->second;
@@ -61,7 +61,7 @@ void AssetManager<T>::Release(T * asset)
 	if (assetUsageCounter == 0)
 	{
 		assetUsage.erase(usageIt);
-		map<string, T*>::const_iterator assetIt = FindAssetIteratorByReference(asset);
+		map<std::experimental::filesystem::path, T*>::const_iterator assetIt = FindAssetIteratorByReference(asset);
 		assert(assetIt != assets.cend());
 
 		Unload(asset);
@@ -76,17 +76,17 @@ size_t AssetManager<T>::Size() const
 }
 
 template<typename T>
-const string & AssetManager<T>::GetPath(T * asset) const
+const std::experimental::filesystem::path & AssetManager<T>::GetPath(T * asset) const
 {
 	assert(asset);
-	map<string, T*>::const_iterator assetIt = FindAssetIteratorByReference(asset);
+	map<std::experimental::filesystem::path, T*>::const_iterator assetIt = FindAssetIteratorByReference(asset);
 	assert(assetIt != assets.cend());
 
 	return assetIt->first;
 }
 
 template<typename T>
-void AssetManager<T>::Register(const std::string & path, T * asset)
+void AssetManager<T>::Register(const std::experimental::filesystem::path& path, T * asset)
 {
 	assert(asset);
 	assert(assets.find(path) == assets.end());
@@ -97,10 +97,10 @@ void AssetManager<T>::Register(const std::string & path, T * asset)
 }
 
 template<typename T>
-typename map<string, T*>::const_iterator AssetManager<T>::FindAssetIteratorByReference(T * asset) const
+typename map<std::experimental::filesystem::path, T*>::const_iterator AssetManager<T>::FindAssetIteratorByReference(T * asset) const
 {
 	assert(asset);
-	typename map<string, T*>::const_iterator assetIt = assets.cbegin();
+	typename map<std::experimental::filesystem::path, T*>::const_iterator assetIt = assets.cbegin();
 	while (assetIt != assets.cend() && assetIt->second != asset)
 	{
 		++assetIt;

@@ -6,6 +6,7 @@
 #include <map>
 #include <list>
 #include <vector>
+#include <experimental/filesystem>
 
 #include "Module.h"
 
@@ -49,7 +50,7 @@ public:
 	bool CleanUp() override;
 	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
 
-	std::set<std::string> Load(const std::string& path, const std::string& name);
+	std::set<std::string> Load(const std::experimental::filesystem::path& path);
 	AnimInstanceId Play(const char* name);
 	void Stop(AnimInstanceId id);
 	void BlendTo(AnimInstanceId id, const char* name, unsigned blend_time);
@@ -60,6 +61,8 @@ public:
 
 private:
 	bool GetTransform(AnimInstance* animInstance, const char* channel, aiVector3D& position, aiQuaternion& rotation) const;
+
+	AnimInstance* FindNextBlendingAnimInstance(AnimInstance* animInstance) const;
 
 	aiVector3D Lerp(const aiVector3D& first, const aiVector3D& second, float lambda) const;
 

@@ -156,9 +156,8 @@ void ModuleUI::DrawMainMenu()
 			ImGui::InputText("##PathToMesh", pathToMesh, sizeof(pathToMesh)); ImGui::SameLine();
 			if (ImGui::Button("Add mesh"))
 			{
-				string pathAndName(pathToMesh);
-				std::size_t found = pathAndName.find_last_of("/\\");				
-				App->entity->LoadMesh(pathAndName.substr(0, found) + "/", pathAndName.substr(found + 1));
+				std::experimental::filesystem::path path(pathToMesh);
+				App->entity->LoadMesh(path);
 			}
 
 			ImGui::EndMenu();

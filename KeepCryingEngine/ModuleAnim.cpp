@@ -7,10 +7,10 @@
 using namespace std;
 
 ModuleAnim::ModuleAnim()
-{ }
+{}
 
 ModuleAnim::~ModuleAnim()
-{ }
+{}
 
 bool ModuleAnim::CleanUp()
 {
@@ -74,11 +74,11 @@ update_status ModuleAnim::Update(float deltaTimeS, float realDeltaTimeS)
 	return update_status::UPDATE_CONTINUE;
 }
 
-set<string> ModuleAnim::Load(const string& path, const string& name)
+set<string> ModuleAnim::Load(const std::experimental::filesystem::path& path)
 {
 	set<string> animationNames;
 
-	const aiScene* scene = aiImportFile((path + name).c_str(), aiProcess_Triangulate);
+	const aiScene* scene = aiImportFile(path.string().c_str(), aiProcess_Triangulate);
 
 	if(scene != nullptr)
 	{
@@ -179,11 +179,11 @@ void ModuleAnim::BlendTo(AnimInstanceId id, const char * name, unsigned blend_ti
 		return;
 	}
 
+	animInstance = FindNextBlendingAnimInstance(animInstance);
+
+	animInstance->next = new AnimInstance();
+
 	animInstance->blend_duration = blend_time;
-
-	AnimInstance*& nextAnimInstance = animInstance->next;
-
-	RELEASE(nextAnimInstance);
 
 	Anim* nextAnim = nullptr;
 
@@ -194,9 +194,7 @@ void ModuleAnim::BlendTo(AnimInstanceId id, const char * name, unsigned blend_ti
 		nextAnim = animationIt->second;
 	}
 
-	nextAnimInstance = new AnimInstance();
-
-	nextAnimInstance->anim = nextAnim;
+	animInstance->next->anim = nextAnim;
 	// ...
 }
 
@@ -300,6 +298,16 @@ bool ModuleAnim::GetTransform(AnimInstance* animInstance, const char * channel, 
 	return true;
 }
 
+AnimInstance* ModuleAnim::FindNextBlendingAnimInstance(AnimInstance * animInstance) const
+{
+	if(animInstance != nullptr && animInstance->next != nullptr)
+	{
+		return FindNextBlendingAnimInstance(animInstance->next);
+	}
+
+	return animInstance;
+}
+
 aiVector3D ModuleAnim::Lerp(const aiVector3D & first, const aiVector3D & second, float lambda) const
 {
 	return (1.0f - lambda) * first + lambda * second;
@@ -308,7 +316,7 @@ aiVector3D ModuleAnim::Lerp(const aiVector3D & first, const aiVector3D & second,
 aiQuaternion ModuleAnim::Lerp(const aiQuaternion & first, const aiQuaternion & second, float lambda) const
 {
 	/*
-	
+
 	aiQuaternion result;
 
 	aiQuaternion::Interpolate(result, first, second, lambda);

@@ -21,7 +21,6 @@ MeshRenderer::MeshRenderer() : Component(MeshRenderer::TYPE)
 
 MeshRenderer::~MeshRenderer()
 {
-	//delete material;
 	RELEASE(material);
 }
 

@@ -65,7 +65,7 @@ Texture* Material::GetTexture() const
 	return texture;
 }
 
-void Material::SetTexture(const char* path)
+void Material::SetTexture(const std::experimental::filesystem::path& path)
 {
 	Texture * texture = App->texture->GetAsset(path);
 	if(texture)
