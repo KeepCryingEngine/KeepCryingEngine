@@ -159,7 +159,7 @@ void ModuleTexture::Unload(Texture * texture)
 {
 	totalSize -= texture->GetSize();
 	
-	const string& path = GetPath(texture);
+	const string& path = GetPath(texture).string();
 	texturePaths.erase(path);
 
 	delete texture;
