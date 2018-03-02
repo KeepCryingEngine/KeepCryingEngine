@@ -162,8 +162,13 @@
     <ClCompile Include="ModuleTime.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="AssetManager.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
     <ClCompile Include="ENGINE_UUID.cpp" />
->>>>>>> Develop
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -349,8 +354,13 @@
     <ClInclude Include="ModuleTime.h">
       <Filter>Modules</Filter>
     </ClInclude>
+    <ClInclude Include="AssetManager.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
     <ClInclude Include="ENGINE_UUID.h" />
->>>>>>> Develop
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">

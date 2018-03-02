@@ -83,6 +83,7 @@
   <ItemGroup>
     <ClInclude Include="Animator.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Asset.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="AudioClip.h" />
     <ClInclude Include="AudioListener.h" />
@@ -147,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Asset.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="AudioClip.cpp" />
     <ClCompile Include="AudioListener.cpp" />
