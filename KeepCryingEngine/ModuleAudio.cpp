@@ -25,6 +25,10 @@ bool ModuleAudio::Init()
 
 bool ModuleAudio::CleanUp()
 {
+	stereoMusic.clear();
+	stereoSfx.clear();
+	monoMusic.clear();
+	monoSfx.clear();
 	return true;
 }
 
@@ -43,49 +47,11 @@ AudioId* ModuleAudio::Load(const string & path, const string & name, const strin
 	AudioId* newAudioId = new AudioId();
 	if(extension == "ogg")
 	{
-		HSTREAM streamHandle = BASS_StreamCreateFile(FALSE, (path + name + "." + extension).c_str(), 0, 0, BASS_SAMPLE_3D);
-		if(streamHandle == 0)
-		{
-			LOG_DEBUG("Error loading ogg file");
-			assert(false);
-		}
-		MusicId newId;
-		if(sfxHoles.size() > 0)
-		{
-			newId = sfxHoles.front();
-			sfxHoles.pop_front();
-		}
-		else
-		{
-			newId = sfxActualIndex;
-			sfxActualIndex++;
-		}
-		sfx[newId] = streamHandle;
-		newAudioId->id = newId;
-		newAudioId->type = SoundType::SFX;
+		LoadOgg(path,name,extension, *newAudioId);
 	}
 	else if(extension == "wav")
 	{
-		HSAMPLE streamHandle = BASS_SampleLoad(FALSE, (path + name +"."+extension).c_str(),0 ,0 ,5, BASS_SAMPLE_MONO|BASS_SAMPLE_3D| BASS_SAMPLE_OVER_VOL);
-		if(streamHandle == 0)
-		{
-			LOG_DEBUG("Error loading wav file");
-			assert(false);
-		}
-		MusicId newId;
-		if(musicHoles.size() > 0)
-		{
-			newId = musicHoles.front();
-			musicHoles.pop_front();
-		}
-		else
-		{
-			newId = musicActualIndex;
-			musicActualIndex++;
-		}
-		music[newId] = streamHandle;
-		newAudioId->id = newId;
-		newAudioId->type = SoundType::MUSIC;
+		LoadWav(path, name, extension, *newAudioId);
 	}
 	else
 	{
@@ -95,14 +61,49 @@ AudioId* ModuleAudio::Load(const string & path, const string & name, const strin
 	return newAudioId;
 }
 
-HSTREAM ModuleAudio::GetSFX(MusicId id) const
+HSTREAM ModuleAudio::GetSFX(MusicId id, SoundProperty p) const
 {
-	return sfx.at(id);
+	HSTREAM ret = 0;
+	switch(p)
+	{
+		case SoundProperty::STEREO:
+		{
+			ret = stereoSfx.at(id);
+		}
+			break;
+		case SoundProperty::MONO:
+		{
+			ret = monoSfx.at(id);
+		}
+			break;
+		default:
+			assert(false);
+			break;
+	}
+
+	return ret;
 }
 
-HCHANNEL ModuleAudio::GetMusic(MusicId id) const
+HCHANNEL ModuleAudio::GetMusic(MusicId id, SoundProperty p) const
 {
-	return music.at(id);
+	HCHANNEL ret = 0;
+	switch(p)
+	{
+		case SoundProperty::STEREO:
+		{
+			ret = stereoMusic.at(id);
+		}
+			break;
+		case SoundProperty::MONO:
+		{
+			ret = monoMusic.at(id);
+		}
+			break;
+		default:
+			assert(false);
+			break;
+	}
+	return ret;
 }
 
 void ModuleAudio::EnableListener(AudioListener* listener)
@@ -123,4 +124,77 @@ void ModuleAudio::EnableListener(AudioListener* listener)
 AudioListener * ModuleAudio::GetActiveListener() const
 {
 	return activeListener;
+}
+
+bool ModuleAudio::LoadOgg(const std::string & path, const std::string & name, const std::string & extension, AudioId& audio)
+{
+	HSTREAM streamHandleStereo = BASS_StreamCreateFile(FALSE, (path + name + "." + extension).c_str(), 0, 0, BASS_SAMPLE_3D);
+	if(streamHandleStereo == 0)
+	{
+		LOG_DEBUG("Error loading ogg file");
+		assert(false);
+		return false;
+	}
+	MusicId newId;
+	if(sfxHoles.size() > 0)
+	{
+		newId = sfxHoles.front();
+		sfxHoles.pop_front();
+	}
+	else
+	{
+		newId = sfxActualIndex;
+		sfxActualIndex++;
+	}
+	stereoSfx[newId] = streamHandleStereo;
+	audio.id = newId;
+	audio.type = SoundType::SFX;
+
+	//Mono
+	HSTREAM streamHandleMono = BASS_StreamCreateFile(FALSE, (path + name + "." + extension).c_str(), 0, 0, BASS_SAMPLE_MONO | BASS_SAMPLE_3D);
+	if(streamHandleMono == 0)
+	{
+		LOG_DEBUG("Error loading ogg file");
+		assert(false);
+		return false;
+	}
+	monoSfx[newId] = streamHandleMono;
+	return true;
+}
+
+bool ModuleAudio::LoadWav(const std::string & path, const std::string & name, const std::string & extension, AudioId& audio)
+{
+	//Stereo
+	HSAMPLE streamHandleStereo = BASS_SampleLoad(FALSE, (path + name + "." + extension).c_str(), 0, 0, 5, BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
+	if(streamHandleStereo == 0)
+	{
+		LOG_DEBUG("Error loading wav file");
+		assert(false);
+		return false;
+	}
+	MusicId newId;
+	if(musicHoles.size() > 0)
+	{
+		newId = musicHoles.front();
+		musicHoles.pop_front();
+	}
+	else
+	{
+		newId = musicActualIndex;
+		musicActualIndex++;
+	}
+	stereoMusic[newId] = streamHandleStereo;
+	audio.id = newId;
+	audio.type = SoundType::MUSIC;
+
+	//Mono
+	HSAMPLE streamHandleMono = BASS_SampleLoad(FALSE, (path + name + "." + extension).c_str(), 0, 0, 5, BASS_SAMPLE_MONO | BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
+	if(streamHandleMono == 0)
+	{
+		LOG_DEBUG("Error loading wav file");
+		assert(false);
+		return false;
+	}
+	monoMusic[newId] = streamHandleMono;
+	return true;
 }

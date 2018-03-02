@@ -4,12 +4,6 @@
 #include "Component.h"
 #include "ModuleAudio.h"
 
-enum class AudioMode
-{
-	STEREO,
-	MONO
-};
-
 enum class SourceStates
 {
 	PLAYING,
@@ -34,7 +28,7 @@ public:
 	void DrawUI() override;
 
 	void SetMusic(AudioId* audioInfo);
-	void SetMode(AudioMode newMode);
+	void SetMode(SoundProperty newMode);
 	void SetPitch(float value);
 	void SetPan(float value);
 	void SetMaxDistance(float value);
@@ -42,7 +36,7 @@ public:
 	void SetDoplerFactor(float value);
 
 	AudioId* GetMusic() const;
-	AudioMode GetMode() const;
+	SoundProperty GetMode() const;
 	float GetPitch() const;
 	float GetPan() const;
 	float GetMaxDistance() const;
@@ -51,15 +45,16 @@ public:
 private:
 	SourceStates state = SourceStates::STOPPED;
 	AudioId* audioInfo = nullptr;
-	AudioMode mode;
+	SoundProperty mode = SoundProperty::MONO;
+	float volume = 1;
 	float pitch = 100;
 	float pan = 0;
 	float maxDistance = 10;
 	float rollOffFactor = 1;
 	float doplerFactor = 1;
 
-	float fadeIn;
-	float fadeOut;
+	float fadeIn = 0.2f;
+	float fadeOut = 0.2f;
 
 	unsigned long id = 0;
 	bool reloadId = false;

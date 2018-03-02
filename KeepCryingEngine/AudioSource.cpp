@@ -34,12 +34,12 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		{
 			case SoundType::MUSIC:
 			{
-				id = BASS_SampleGetChannel(App->audio->GetMusic(audioInfo->id), FALSE);
+				id = BASS_SampleGetChannel(App->audio->GetMusic(audioInfo->id,mode), FALSE);
 			}
 			break;
 			case SoundType::SFX:
 			{
-				id = App->audio->GetSFX(audioInfo->id);
+				id = App->audio->GetSFX(audioInfo->id,mode);
 			}
 			break;
 			default:
@@ -53,12 +53,17 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	{
 		return;
 	}
+	//Set audio properties
+	BASS_ChannelSetAttribute(id, BASS_ATTRIB_PAN,pan);
+	BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, volume);
+	BASS_Set3DFactors(0,rollOffFactor,doplerFactor);
+	BASS_Apply3D();
 
 	switch(state)
 	{
 		case SourceStates::PLAYING:
 		{
-			BASS_ChannelSet3DAttributes(id, BASS_3DMODE_RELATIVE, 0, maxDistance, -1, -1, -1);
+			BASS_ChannelSet3DAttributes(id, BASS_3DMODE_NORMAL, 0, maxDistance, -1, -1, -1);
 
 			// Update 3D position
 
@@ -171,7 +176,7 @@ void AudioSource::SetMusic(AudioId* audioInfo)
 	this->audioInfo = audioInfo;
 }
 
-void AudioSource::SetMode(AudioMode newMode)
+void AudioSource::SetMode(SoundProperty newMode)
 {
 	mode = newMode;
 }
@@ -206,7 +211,7 @@ AudioId* AudioSource::GetMusic() const
 	return audioInfo;
 }
 
-AudioMode AudioSource::GetMode() const
+SoundProperty AudioSource::GetMode() const
 {
 	return mode;
 }
