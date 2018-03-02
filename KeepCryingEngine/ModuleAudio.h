@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <list>
+#include <experimental/filesystem>
 
 #include "Module.h"
 
@@ -40,7 +41,7 @@ public:
 	bool CleanUp() override;
 	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
-	AudioId* Load(const std::string& path, const std::string& name, const std::string& extension);
+	AudioId* Load(const std::experimental::filesystem::path& path);
 	HSTREAM GetSFX(MusicId id, SoundProperty p)const;
 	HSAMPLE GetMusic(MusicId id, SoundProperty p) const;
 
@@ -48,8 +49,8 @@ public:
 
 	AudioListener* GetActiveListener()const;
 private:
-	bool LoadOgg(const std::string& path, const std::string& name, const std::string& extension, AudioId& audio);
-	bool LoadWav(const std::string& path, const std::string& name, const std::string& extension, AudioId& audio);
+	bool LoadOgg(const std::experimental::filesystem::path& path, AudioId& audio);
+	bool LoadWav(const std::experimental::filesystem::path& path, AudioId& audio);
 
 private:
 	static MusicId sfxActualIndex;

@@ -35,8 +35,7 @@ public:
 	void SetMaxDistance(float value);
 	void SetRollOffFactor(float value);
 	void SetDoplerFactor(float value);
-	void SetFadeIn(float value);
-	void SetFadeOut(float value);
+	void SetLoop(bool value);
 
 	AudioId* GetMusic() const;
 	SoundProperty GetMode() const;
@@ -46,8 +45,11 @@ public:
 	float GetMaxDistance() const;
 	float GetRollOffFactor() const;
 	float GetDoplerFactor() const;
-	float GetFadeIn() const;
-	float GetFadeOut() const;
+	bool GetLoop();
+
+private:
+	void Load(const std::experimental::filesystem::path& path);
+
 private:
 	SourceStates state = SourceStates::STOPPED;
 	AudioId* audioInfo = nullptr;
@@ -58,9 +60,7 @@ private:
 	float maxDistance = 10;
 	float rollOffFactor = 1;
 	float doplerFactor = 1;
-
-	float fadeIn = 0.2f;
-	float fadeOut = 0.2f;
+	bool loop = false;
 
 	unsigned long id = 0;
 	bool reloadId = false;

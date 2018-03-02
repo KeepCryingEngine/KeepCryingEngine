@@ -37,27 +37,34 @@ update_status ModuleAudio::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 	return update_status::UPDATE_CONTINUE;
 }
 
-AudioId* ModuleAudio::Load(const string & path, const string & name, const string & extension)
+AudioId* ModuleAudio::Load(const std::experimental::filesystem::path& path)
 {
-	if(soundCache.count(path + name + "." + extension))
+	if(soundCache.count(path.string()))
 	{
-		return &soundCache[path + name + "." + extension];
+		return &soundCache[path.string()];
 	}
 
 	AudioId* newAudioId = new AudioId();
-	if(extension == "ogg")
+	string extension = path.extension().string();
+	if(extension == ".ogg")
 	{
-		LoadOgg(path,name,extension, *newAudioId);
+		if(!LoadOgg(path, *newAudioId))
+		{
+			return nullptr;
+		}
 	}
-	else if(extension == "wav")
+	else if(extension == ".wav")
 	{
-		LoadWav(path, name, extension, *newAudioId);
+		if(!LoadWav(path, *newAudioId))
+		{
+			return nullptr;
+		}
 	}
 	else
 	{
 		return nullptr;
 	}
-	soundCache[path + name + "." + extension] = *newAudioId;
+	soundCache[path.string()] = *newAudioId;
 	return newAudioId;
 }
 
@@ -126,9 +133,9 @@ AudioListener * ModuleAudio::GetActiveListener() const
 	return activeListener;
 }
 
-bool ModuleAudio::LoadOgg(const std::string & path, const std::string & name, const std::string & extension, AudioId& audio)
+bool ModuleAudio::LoadOgg(const std::experimental::filesystem::path& path, AudioId& audio)
 {
-	HSTREAM streamHandleStereo = BASS_StreamCreateFile(FALSE, (path + name + "." + extension).c_str(), 0, 0, BASS_SAMPLE_3D);
+	HSTREAM streamHandleStereo = BASS_StreamCreateFile(FALSE, path.string().c_str(), 0, 0, BASS_SAMPLE_3D);
 	if(streamHandleStereo == 0)
 	{
 		LOG_DEBUG("Error loading ogg file");
@@ -151,7 +158,7 @@ bool ModuleAudio::LoadOgg(const std::string & path, const std::string & name, co
 	audio.type = SoundType::SFX;
 
 	//Mono
-	HSTREAM streamHandleMono = BASS_StreamCreateFile(FALSE, (path + name + "." + extension).c_str(), 0, 0, BASS_SAMPLE_MONO | BASS_SAMPLE_3D);
+	HSTREAM streamHandleMono = BASS_StreamCreateFile(FALSE, path.string().c_str(), 0, 0, BASS_SAMPLE_MONO | BASS_SAMPLE_3D);
 	if(streamHandleMono == 0)
 	{
 		LOG_DEBUG("Error loading ogg file");
@@ -162,10 +169,10 @@ bool ModuleAudio::LoadOgg(const std::string & path, const std::string & name, co
 	return true;
 }
 
-bool ModuleAudio::LoadWav(const std::string & path, const std::string & name, const std::string & extension, AudioId& audio)
+bool ModuleAudio::LoadWav(const std::experimental::filesystem::path& path, AudioId& audio)
 {
 	//Stereo
-	HSAMPLE streamHandleStereo = BASS_SampleLoad(FALSE, (path + name + "." + extension).c_str(), 0, 0, 5, BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
+	HSAMPLE streamHandleStereo = BASS_SampleLoad(FALSE, path.string().c_str(), 0, 0, 5, BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
 	if(streamHandleStereo == 0)
 	{
 		LOG_DEBUG("Error loading wav file");
@@ -188,7 +195,7 @@ bool ModuleAudio::LoadWav(const std::string & path, const std::string & name, co
 	audio.type = SoundType::MUSIC;
 
 	//Mono
-	HSAMPLE streamHandleMono = BASS_SampleLoad(FALSE, (path + name + "." + extension).c_str(), 0, 0, 5, BASS_SAMPLE_MONO | BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
+	HSAMPLE streamHandleMono = BASS_SampleLoad(FALSE, path.string().c_str(), 0, 0, 5, BASS_SAMPLE_MONO | BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
 	if(streamHandleMono == 0)
 	{
 		LOG_DEBUG("Error loading wav file");

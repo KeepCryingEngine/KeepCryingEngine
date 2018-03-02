@@ -54,16 +54,32 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		return;
 	}
 	//Set audio properties
-	BASS_ChannelSetAttribute(id, BASS_ATTRIB_PAN,pan);
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, volume);
+	BASS_ChannelSetAttribute(id, BASS_ATTRIB_PAN,pan);
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_MUSIC_SPEED, pitch);
 	BASS_Set3DFactors(0,rollOffFactor,doplerFactor);
 	BASS_Apply3D();
+
+	//LOOPcontrol
+	if(loop)
+	{
+		BASS_ChannelFlags(id, BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP);
+	}
+	else
+	{
+		BASS_ChannelFlags(id, 0, BASS_SAMPLE_LOOP);
+	}
 
 	switch(state)
 	{
 		case SourceStates::PLAYING:
 		{
+			if(BASS_ChannelIsActive(id) == BASS_ACTIVE_STOPPED && !loop)
+			{
+				state = SourceStates::WAITING_TO_STOP;
+				break;
+			}
+
 			BASS_ChannelSet3DAttributes(id, BASS_3DMODE_NORMAL, 0, maxDistance, -1, -1, -1);
 
 			// Update 3D position
@@ -82,12 +98,13 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		{
 			if(BASS_ChannelPlay(id, FALSE) == FALSE)
 			{
+				int a = BASS_ErrorGetCode();
+				int espera = 0;
 				//LOG_DEBUG("BASS_ChannelPlay() with channel [%ul] error: %s", id, BASS_GetErrorString());
 			}
 			else
 			{
 				BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, 0.0f);
-				BASS_ChannelSlideAttribute(id, BASS_ATTRIB_VOL, volume, DWORD(fadeIn * 1000.0f));
 				state = SourceStates::PLAYING;
 			}
 		}
@@ -100,7 +117,6 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 			}
 			else
 			{
-				BASS_ChannelSlideAttribute(id, BASS_ATTRIB_VOL, 0.0f, DWORD(fadeOut * 1000.0f));
 				state = SourceStates::STOPPED;
 			}
 		}
@@ -141,12 +157,14 @@ void AudioSource::DrawUI()
 		ImGui::InputText("##PathToAudio", pathToAudio, sizeof(pathToAudio)); ImGui::SameLine();
 		if(ImGui::Button("Load audio"))
 		{
-			string pathAndName(pathToAudio);
-			size_t found = pathAndName.find_last_of("/\\");
-			size_t found2 = pathAndName.rfind(".");
-			//App->audio->Load(pathAndName.substr(0, found) + "/", pathAndName.substr(0, found2-found), pathAndName.substr(found2+1) );
-			audioInfo = App->audio->Load("Assets/sfx/", "wavSound", "wav");
-			reloadId = true;
+			std::experimental::filesystem::path path(pathToAudio);
+			Load(path);
+		}
+
+		static bool isLooping = GetLoop();
+		if(ImGui::Checkbox(" Frustum Culling", &isLooping))
+		{
+			SetLoop(isLooping);
 		}
 
 		int audioMode = (int)mode;
@@ -174,7 +192,7 @@ void AudioSource::DrawUI()
 		}
 
 		static float maxDistance = GetMaxDistance();
-		if(ImGui::DragFloat("Max Distance", &maxDistance,1.0f,0.0f,10000.0f))
+		if(ImGui::DragFloat("Max Distance", &maxDistance,1.0f,1.0f,10000.0f))
 		{
 			SetMaxDistance(maxDistance);
 		}
@@ -191,25 +209,13 @@ void AudioSource::DrawUI()
 			SetDoplerFactor(dopler);
 		}
 
-		static float fadeIn = GetFadeIn();
-		if(ImGui::DragFloat("FadeIn", &fadeIn,0.05f,0.0f,10.0f))
-		{
-			SetFadeIn(fadeIn);
-		}
-
-		static float fadeOut = GetFadeOut();
-		if(ImGui::DragFloat("FadeOut", &fadeOut,0.05f,0.0f,10.0f))
-		{
-			SetFadeOut(fadeOut);
-		}
-
 		if(ImGui::Button("Play"))
 		{			
 			if(state == SourceStates::PAUSED)
 			{
 				state = SourceStates::WAITING_TO_UNPAUSE;
 			}
-			else
+			else if(state != SourceStates::PLAYING)
 			{
 				state = SourceStates::WAITING_TO_PLAY;
 				reloadId = true;
@@ -217,11 +223,17 @@ void AudioSource::DrawUI()
 		}ImGui::SameLine();
 		if(ImGui::Button("Pause"))
 		{
-			state = SourceStates::WAITING_TO_PAUSE;
+			if(state != SourceStates::PAUSED)
+			{
+				state = SourceStates::WAITING_TO_PAUSE;
+			}
 		}ImGui::SameLine();
 		if(ImGui::Button("Stop"))
 		{
-			state = SourceStates::WAITING_TO_STOP;
+			if(state != SourceStates::STOPPED)
+			{
+				state = SourceStates::WAITING_TO_STOP;
+			}
 		}
 	}
 }
@@ -266,14 +278,9 @@ void AudioSource::SetDoplerFactor(float value)
 	doplerFactor = value;
 }
 
-void AudioSource::SetFadeIn(float value)
+void AudioSource::SetLoop(bool value)
 {
-	fadeIn = value;
-}
-
-void AudioSource::SetFadeOut(float value)
-{
-	fadeOut = value;
+	loop = value;
 }
 
 AudioId* AudioSource::GetMusic() const
@@ -316,12 +323,25 @@ float AudioSource::GetDoplerFactor() const
 	return doplerFactor;
 }
 
-float AudioSource::GetFadeIn() const
+bool AudioSource::GetLoop()
 {
-	return fadeIn;
+	return loop;
 }
 
-float AudioSource::GetFadeOut() const
+void AudioSource::Load(const std::experimental::filesystem::path & path)
 {
-	return fadeOut;
+
+	AudioId* temp = App->audio->Load(path);
+	if(temp == nullptr)
+	{
+		LOG_DEBUG("Error on audio load");
+		assert(false);
+		return;
+	}
+	BASS_ChannelStop(id);
+	state = SourceStates::STOPPED;
+
+	audioInfo = temp;
+	reloadId = true;
 }
+
