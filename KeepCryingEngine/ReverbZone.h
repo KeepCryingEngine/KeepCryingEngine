@@ -1,6 +1,7 @@
 #ifndef _REVERBZONE_H_
 #define _REVERBZONE_H_
 
+#include <bass.h>
 #include <Sphere.h>
 
 #include "Component.h"
@@ -33,9 +34,8 @@ private:
 	void CheckAudioListener();
 	float CheckAudioListenerCollision(const AudioListener* audioListener) const;
 
-	void StoreEAXConfig();
-	void ApplyStoredEAXConfig();
-	void ApplyEAXConfig(float vol);
+	void StoreReverbConfig();
+	void ApplyReverbConfig(bool stored = false);
 
 private:
 	Sphere minDistanceSphere;
@@ -46,6 +46,8 @@ private:
 
 	const AudioListener* audioListener = nullptr;
 
+	/*
+
 	// EAX config
 
 	unsigned long env = -1;
@@ -53,6 +55,12 @@ private:
 
 	unsigned long storedEnv;
 	float storedDecay, storedDamp;
+
+	*/
+
+	BASS_DX8_REVERB reverbConfig;
+
+	BASS_DX8_REVERB storedReverbConfig;
 };
 
 #endif

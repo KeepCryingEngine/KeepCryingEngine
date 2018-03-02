@@ -25,9 +25,14 @@ void ReverbZone::Start()
 	SetMinDistance(5.0f);
 	SetMaxDistance(10.0f);
 
-	env = EAX_ENVIRONMENT_HANGAR;
+	reverbConfig.fHighFreqRTRatio = 0.5f;
+	reverbConfig.fInGain = -20.0f;
+	reverbConfig.fReverbMix = -30.0f;
+	reverbConfig.fReverbTime = 1500.0f;
+
+	/* env = EAX_ENVIRONMENT_HANGAR;
 	decay = 3;
-	damp = 0;
+	damp = 0; */
 }
 
 void ReverbZone::Update(float deltaTimeS, float realDeltaTimeS)
@@ -83,21 +88,18 @@ void ReverbZone::CheckAudioListener()
 
 	if(audioListener == nullptr && newActiveAudioListenerDetected)
 	{
-		StoreEAXConfig();
+		StoreReverbConfig();
 		audioListener = activeAudioListener;
 	}
 	else if(audioListener != nullptr && !newActiveAudioListenerDetected)
 	{
 		audioListener = nullptr;
+		ApplyReverbConfig(true);
 	}
 
-	if(audioListener != nullptr)
+	if(newActiveAudioListenerDetected)
 	{
-		ApplyEAXConfig(volume);
-	}
-	else
-	{
-		ApplyStoredEAXConfig();
+		ApplyReverbConfig();
 	}
 }
 
@@ -126,17 +128,34 @@ float ReverbZone::CheckAudioListenerCollision(const AudioListener* audioListener
 	return volume;
 }
 
-void ReverbZone::StoreEAXConfig()
+void ReverbZone::StoreReverbConfig()
 {
-	BASS_GetEAXParameters(&storedEnv, NULL, &storedDecay, &storedDamp);
+	BASS_FXGetParameters(BASS_FX_DX8_REVERB, &storedReverbConfig);
+
+	// BASS_GetEAXParameters(&storedEnv, NULL, &storedDecay, &storedDamp);
 }
 
-void ReverbZone::ApplyStoredEAXConfig()
+void ReverbZone::ApplyReverbConfig(bool stored)
 {
-	BASS_SetEAXParameters(storedEnv, -1, storedDecay, storedDamp);
+	if(stored)
+	{
+		LOG_DEBUG("STORED: %f, %f, %f, %f", storedReverbConfig.fHighFreqRTRatio, storedReverbConfig.fInGain, storedReverbConfig.fReverbMix, storedReverbConfig.fReverbTime);
+
+		BASS_FXSetParameters(BASS_FX_DX8_REVERB, &storedReverbConfig);
+	}
+	else
+	{
+		LOG_DEBUG("REVERB: %f, %f, %f, %f", reverbConfig.fHighFreqRTRatio, reverbConfig.fInGain, reverbConfig.fReverbMix, reverbConfig.fReverbTime);
+
+		BASS_FXSetParameters(BASS_FX_DX8_REVERB, &reverbConfig);
+	}
+
+	// BASS_SetEAXParameters(storedEnv, -1, storedDecay, storedDamp);
 }
 
-void ReverbZone::ApplyEAXConfig(float vol)
+/* void ReverbZone::ApplyEAXConfig()
 {
-	BASS_SetEAXParameters(env, vol, decay, damp);
-}
+	BASS_FXSetParameters(BASS_FX_DX8_REVERB, &reverbConfig);
+
+	// BASS_SetEAXParameters(env, vol, decay, damp);
+} */
