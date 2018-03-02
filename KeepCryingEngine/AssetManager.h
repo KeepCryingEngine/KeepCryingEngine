@@ -2,7 +2,6 @@
 #define _ASSETMANAGER_H_
 
 #include <map>
-#include <string>
 #include <experimental/filesystem>
 
 
@@ -21,7 +20,7 @@ public:
 	void Release(T* asset);
 
 	size_t Size() const;
-	const std::string& GetPath(T* asset) const;
+	const std::experimental::filesystem::path& GetPath(T* asset) const;
 
 protected:
 	void Register(const std::experimental::filesystem::path& path, T* asset);
@@ -29,10 +28,10 @@ protected:
 	virtual void Unload(T* asset) = 0;
 
 private:
-	typename std::map<std::string, T*>::const_iterator FindAssetIteratorByReference(T * asset) const;
+	typename std::map<std::experimental::filesystem::path, T*>::const_iterator FindAssetIteratorByReference(T * asset) const;
 
 private:
-	std::map<std::string, T*> assets;
+	std::map<std::experimental::filesystem::path, T*> assets;
 	std::map<T*,unsigned int> assetUsage;
 };
 
