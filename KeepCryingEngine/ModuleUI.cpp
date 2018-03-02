@@ -22,6 +22,7 @@
 #include "ModuleAnim.h"
 #include "Animator.h"
 #include "MeshRenderer.h"
+#include "ReverbZone.h"
 
 using namespace std;
 
@@ -747,6 +748,10 @@ void ModuleUI::DrawInspectorWindow()
 				if(ImGui::Selectable("Audio Listener"))
 				{
 					temp->AddComponent<AudioListener>();
+				}
+				if(ImGui::Selectable("Reverb Zone"))
+				{
+					temp->AddComponent<ReverbZone>();
 				}
 				ImGui::EndMenu();
 			}

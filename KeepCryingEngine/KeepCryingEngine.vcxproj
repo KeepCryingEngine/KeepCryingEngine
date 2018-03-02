@@ -126,6 +126,7 @@
     <ClInclude Include="OctreeNode.h" />
     <ClInclude Include="Quadtree.h" />
     <ClInclude Include="QuadtreeNode.h" />
+    <ClInclude Include="ReverbZone.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Tree.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="OctreeNode.cpp" />
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
+    <ClCompile Include="ReverbZone.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Tree.cpp" />

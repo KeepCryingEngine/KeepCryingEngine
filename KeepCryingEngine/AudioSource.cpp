@@ -152,7 +152,7 @@ void AudioSource::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Audio Source"))
 	{
-		static char pathToAudio[180] = "";
+		static char pathToAudio[180] = "Assets/sfx/oggSound.ogg";
 
 		ImGui::InputText("##PathToAudio", pathToAudio, sizeof(pathToAudio)); ImGui::SameLine();
 		if(ImGui::Button("Load audio"))
