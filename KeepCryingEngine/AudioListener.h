@@ -10,7 +10,8 @@ public:
 	AudioListener();
 	~AudioListener();
 
-	void Awake()override;
+	void Awake() override;
+	void Destroy() override;
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
 	void SetEnable(bool enable)override;

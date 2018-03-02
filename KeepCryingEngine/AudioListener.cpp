@@ -13,7 +13,17 @@ AudioListener::~AudioListener()
 {}
 
 void AudioListener::Awake()
-{}
+{
+	App->audio->EnableListener(this);
+}
+
+void AudioListener::Destroy()
+{
+	if(App->audio->GetActiveListener() == this)
+	{
+		App->audio->EnableListener(nullptr);
+	}
+}
 
 void AudioListener::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
