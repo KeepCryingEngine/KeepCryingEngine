@@ -5,6 +5,10 @@
 #include "Application.h"
 #include "ModuleAudio.h"
 #include "AudioListener.h"
+#include "ModuleScene.h"
+#include "AudioSource.h"
+
+#include <freeverb.h>
 
 using namespace std;
 
@@ -25,9 +29,9 @@ void ReverbZone::Start()
 	SetMinDistance(5.0f);
 	SetMaxDistance(10.0f);
 
-	reverbConfig.fHighFreqRTRatio = 0.5f;
-	reverbConfig.fInGain = -20.0f;
-	reverbConfig.fReverbMix = -30.0f;
+	reverbConfig.fHighFreqRTRatio = 0.001f;
+	reverbConfig.fInGain = -0.0f;
+	reverbConfig.fReverbMix = -0.0f;
 	reverbConfig.fReverbTime = 1500.0f;
 
 	/* env = EAX_ENVIRONMENT_HANGAR;
@@ -130,7 +134,7 @@ float ReverbZone::CheckAudioListenerCollision(const AudioListener* audioListener
 
 void ReverbZone::StoreReverbConfig()
 {
-	BASS_FXGetParameters(BASS_FX_DX8_REVERB, &storedReverbConfig);
+	// BASS_FXGetParameters(BASS_FX_DX8_REVERB, &storedReverbConfig);
 
 	// BASS_GetEAXParameters(&storedEnv, NULL, &storedDecay, &storedDamp);
 }
@@ -141,13 +145,55 @@ void ReverbZone::ApplyReverbConfig(bool stored)
 	{
 		LOG_DEBUG("STORED: %f, %f, %f, %f", storedReverbConfig.fHighFreqRTRatio, storedReverbConfig.fInGain, storedReverbConfig.fReverbMix, storedReverbConfig.fReverbTime);
 
-		BASS_FXSetParameters(BASS_FX_DX8_REVERB, &storedReverbConfig);
+		AudioSource* audioSource = gameObject->GetComponent<AudioSource>();
+
+		if(audioSource->id != 0)
+		{
+			BASS_FXSetParameters(audioSource->id, &storedReverbConfig);
+		}
+
+		/* for(AudioSource* audioSource : App->scene->GetRoot()->GetComponentsInChildren<AudioSource>())
+		{
+			if(audioSource->id != 0)
+			{
+				BASS_FXSetParameters(audioSource->id, &storedReverbConfig);
+			}
+		} */
 	}
 	else
 	{
 		LOG_DEBUG("REVERB: %f, %f, %f, %f", reverbConfig.fHighFreqRTRatio, reverbConfig.fInGain, reverbConfig.fReverbMix, reverbConfig.fReverbTime);
 
-		BASS_FXSetParameters(BASS_FX_DX8_REVERB, &reverbConfig);
+		AudioSource* audioSource = gameObject->GetComponent<AudioSource>();
+
+		static bool jaja = false;
+
+		if(audioSource->id != 0)
+		{
+			if(!jaja)
+			{
+				HFX hfx = BASS_ChannelSetFX(audioSource->id, BASS_FX_DX8_REVERB, 1);
+
+				jaja = true;
+
+				if(!BASS_FXSetParameters(hfx, &reverbConfig))
+				{
+					int a = BASS_ErrorGetCode();
+
+					a++;
+				}
+			}
+		}
+
+		/* for(AudioSource* audioSource : App->scene->GetRoot()->GetComponentsInChildren<AudioSource>())
+		{
+			if(audioSource->id != 0)
+			{
+				BASS_FXSetParameters(audioSource->id, &reverbConfig);
+			}
+		} */
+
+		// BASS_FXSetParameters(BASS_FX_DX8_REVERB, &reverbConfig);
 	}
 
 	// BASS_SetEAXParameters(storedEnv, -1, storedDecay, storedDamp);

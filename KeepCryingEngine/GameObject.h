@@ -130,6 +130,14 @@ std::vector<T*> GameObject::GetComponents() const
 template<typename T>
 inline std::vector<T*> GameObject::GetComponentsInChildren() const
 {
+	/* std::vector<T*> tComponents;
+
+	std::vector<Component*> components = GetComponentsInChildren(T::TYPE);
+
+	tComponents.insert(tComponents.end(), components.begin(), components.end());
+
+	return tComponents; */
+
 	return (std::vector<T*>)GetComponentsInChildren(T::TYPE);
 }
 

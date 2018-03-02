@@ -56,6 +56,10 @@ public:
 private:
 	void OnLoadButtonPressed(const std::experimental::filesystem::path& path);
 
+public:
+
+	DWORD id = 0;
+
 private:
 	SourceStates state = SourceStates::STOPPED;
 	AudioClip* audioClip = nullptr;
@@ -69,7 +73,7 @@ private:
 	float doplerFactor = 1;
 	bool loop = false;
 
-	DWORD id = 0;
+	// DWORD id = 0;
 
 	ChannelType loadingChannelType = ChannelType::Mono;
 	AudioType loadingAudioType = AudioType::SFX;
