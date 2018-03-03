@@ -3,6 +3,7 @@
 
 #include "AudioListener.h"
 #include "AudioClip.h"
+#include "AudioSource.h"
 
 const int ModuleAudio::DEVICE = -1; // Default Sounddevice
 const int ModuleAudio::FRECUENCY = 44100;
@@ -70,6 +71,29 @@ void ModuleAudio::EnableListener(AudioListener* listener)
 AudioListener * ModuleAudio::GetActiveListener() const
 {
 	return activeListener;
+}
+
+void ModuleAudio::SubscribeSource(AudioSource& source)
+{
+	//If subscribe item is not already in the list, add it
+	if(find(sceneSources.begin(),sceneSources.end(),&source) == sceneSources.end())
+	{
+		sceneSources.push_back(&source);
+	}
+}
+
+void ModuleAudio::Unsubscribe(AudioSource& source)
+{
+	vector<AudioSource*>::iterator it = find(sceneSources.begin(), sceneSources.end(), &source);
+	if( it != sceneSources.end())
+	{
+		sceneSources.erase(it);
+	}
+}
+
+const vector<AudioSource*>& ModuleAudio::GetAllAudioSources() const
+{
+	return sceneSources;
 }
 
 AudioClip * ModuleAudio::LoadMusic(const std::experimental::filesystem::path & path, ChannelType channelType)

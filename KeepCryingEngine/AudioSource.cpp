@@ -14,10 +14,13 @@ using namespace std;
 
 AudioSource::AudioSource():Component(AudioSource::TYPE)
 {
+	App->audio->SubscribeSource(*this);
 }
 
 AudioSource::~AudioSource()
-{}
+{
+	App->audio->Unsubscribe(*this);
+}
 
 void AudioSource::Awake()
 {}
