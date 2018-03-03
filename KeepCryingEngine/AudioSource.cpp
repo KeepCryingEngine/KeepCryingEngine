@@ -38,7 +38,7 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, volume);
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_PAN,pan);
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_MUSIC_SPEED, pitch);
-	BASS_Set3DFactors(0,rollOffFactor,doplerFactor);
+	BASS_Set3DFactors(1.0f,rollOffFactor,doplerFactor);
 	BASS_Apply3D();
 
 	//LOOPcontrol
@@ -61,7 +61,8 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 				break;
 			}
 
-			BASS_ChannelSet3DAttributes(id, BASS_3DMODE_NORMAL, 0, maxDistance, -1, -1, -1);
+			BASS_ChannelSet3DAttributes(id, BASS_3DMODE_NORMAL, minDistance, maxDistance, 360, 360, -1);
+			BASS_Apply3D();
 
 			// Update 3D position
 
@@ -71,6 +72,7 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 				(BASS_3DVECTOR*)&body->GetWorldPosition(), // position
 				(BASS_3DVECTOR*)&body->Forward(), // front
 				nullptr); // velocity
+
 
 			BASS_Apply3D();
 		}
@@ -180,7 +182,8 @@ void AudioSource::DrawUI()
 		ImGui::DragFloat("Volume", &volume, 0.05f, 0.0f, 1.0f);
 		ImGui::DragFloat("Pitch", &pitch, 1.0f, 0.0f, 255.0f);
 		ImGui::DragFloat("Pan", &pan, 0.05f, -1.0f, 1.0f);
-		ImGui::DragFloat("Max Distance", &maxDistance, 1.0f, 1.0f, 10000.0f);
+		ImGui::DragFloat("Min Distance", &minDistance, 0.5f, 0.0f, 10000.0f);
+		ImGui::DragFloat("Max Distance", &maxDistance, 0.5f, 1.0f, 10000.0f);
 		ImGui::DragFloat("RollOff factor", &rollOffFactor, 0.1f, 0.0f, 10.0f);
 		ImGui::DragFloat("Dopler factor", &doplerFactor, 0.1f, 0.0f, 10.0f);
 		
