@@ -67,7 +67,6 @@ private:
 	float volume = 1;
 	float originalFreq = 0;
 	float freqModifier = 0;
-	float pan = 0;
 	float minDistance = 0;
 	float maxDistance = 10;
 	float rollOffFactor = 1;

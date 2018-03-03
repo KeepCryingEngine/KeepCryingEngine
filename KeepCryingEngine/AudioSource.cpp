@@ -36,7 +36,6 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 
 	//Set audio properties
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, volume);
-	BASS_ChannelSetAttribute(id, BASS_ATTRIB_PAN,pan);
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_FREQ, originalFreq + freqModifier);
 	BASS_Set3DFactors(1.0f, rollOffFactor, doplerFactor);
 
@@ -182,7 +181,6 @@ void AudioSource::DrawUI()
 		ImGui::Checkbox(" Loop", &loop);
 		ImGui::DragFloat("Volume", &volume, 0.05f, 0.0f, 1.0f);
 		ImGui::DragFloat("Pitch", &freqModifier, 200.0f, -20000.0f, 60000.0f);
-		ImGui::DragFloat("Pan", &pan, 0.05f, -1.0f, 1.0f);
 		ImGui::DragFloat("Min Distance", &minDistance, 0.5f, 0.0f, 10000.0f);
 		ImGui::DragFloat("Max Distance", &maxDistance, 0.5f, 1.0f, 10000.0f);
 		ImGui::DragFloat("RollOff factor", &rollOffFactor, 0.1f, 0.0f, 10.0f);
@@ -254,11 +252,6 @@ void AudioSource::SetPitch(float value)
 	freqModifier = value;
 }
 
-void AudioSource::SetPan(float value)
-{
-	pan = value;
-}
-
 void AudioSource::SetMaxDistance(float value)
 {
 	maxDistance = value;
@@ -292,11 +285,6 @@ float AudioSource::GetVolume() const
 float AudioSource::GetPitch() const
 {
 	return freqModifier;
-}
-
-float AudioSource::GetPan() const
-{
-	return pan;
 }
 
 float AudioSource::GetMaxDistance() const
