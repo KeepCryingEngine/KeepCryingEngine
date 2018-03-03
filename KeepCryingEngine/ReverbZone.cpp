@@ -205,13 +205,16 @@ float ReverbZone::CheckAudioListenerCollision(const AudioListener* audioListener
 
 void ReverbZone::ApplyReverbConfig()
 {
-	AudioSource* audioSource = gameObject->GetComponent<AudioSource>();
+	vector<AudioSource*> sources= App->audio->GetAllAudioSources();
 
-	if(audioSource->id != 0)
+	for(AudioSource* audioSource: sources)
 	{
-		hfxValid = true;
-		reverbEffect = BASS_ChannelSetFX(audioSource->id, BASS_FX_DX8_I3DL2REVERB, 1);
-		BASS_FXSetParameters(reverbEffect, &reverbConfig);
+		if(audioSource->id != 0)
+		{
+			hfxValid = true;
+			reverbEffect = BASS_ChannelSetFX(audioSource->id, BASS_FX_DX8_I3DL2REVERB, 1);
+			BASS_FXSetParameters(reverbEffect, &reverbConfig);
+		}
 	}
 }
 
@@ -219,12 +222,15 @@ void ReverbZone::DeapplyReverbConfig()
 {
 	if(hfxValid)
 	{
-		AudioSource* audioSource = gameObject->GetComponent<AudioSource>();
+		vector<AudioSource*> sources = App->audio->GetAllAudioSources();
 
-		if(audioSource->id != 0)
+		for(AudioSource* audioSource : sources)
 		{
-			hfxValid = false;
-			BASS_ChannelRemoveFX(audioSource->id, reverbEffect);
+			if(audioSource->id != 0)
+			{
+				hfxValid = false;
+				BASS_ChannelRemoveFX(audioSource->id, reverbEffect);
+			}
 		}
 	}
 

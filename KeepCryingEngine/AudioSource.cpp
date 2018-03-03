@@ -137,6 +137,10 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 
 void AudioSource::UpdateChannelForAudio()
 {
+	if(audioClip == nullptr)
+	{
+		return;
+	}
 	switch (audioClip->type)
 	{
 	case AudioType::Music:
