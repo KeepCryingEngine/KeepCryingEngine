@@ -25,15 +25,9 @@ public:
 	void Awake() override;
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS)override;
 
-	void UpdateChannelForAudio();
-
 	void DrawUI() override;
 
-	void OnStopButtonPressed();
 
-	void OnPauseButtonPressed();
-
-	void OnPlayButtonPressed();
 
 	void SetMusic(AudioClip* audioInfo);
 	void SetVolume(float value);
@@ -55,6 +49,12 @@ public:
 
 private:
 	void OnLoadButtonPressed(const std::experimental::filesystem::path& path);
+	void OnStopButtonPressed();
+	void OnPauseButtonPressed();
+	void OnPlayButtonPressed();
+
+	DWORD GetChannelForAudio(const AudioClip* audioClip) const;
+
 
 public:
 

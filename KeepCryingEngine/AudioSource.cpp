@@ -41,7 +41,6 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, volume);
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_FREQ, originalFreq + freqModifier);
 	BASS_Set3DFactors(1.0f, rollOffFactor, doplerFactor);
-
 	BASS_Apply3D();
 
 	//LOOPcontrol
@@ -82,28 +81,27 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 			break;
 		case SourceStates::WAITING_TO_PLAY:
 		{
-			if(BASS_ChannelPlay(id, FALSE) == FALSE)
-			{
-				int a = BASS_ErrorGetCode();
-				int espera = 0;
-				//LOG_DEBUG("BASS_ChannelPlay() with channel [%ul] error: %s", id, BASS_GetErrorString());
-			}
-			else
+			if(BASS_ChannelPlay(id, FALSE))
 			{
 				BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, 0.0f);
 				state = SourceStates::PLAYING;
+			}
+			else
+			{
+				//LOG_DEBUG("BASS_ChannelPlay() with channel [%ul] error: %s", id, BASS_GetErrorString());
 			}
 		}
 			break;
 		case SourceStates::WAITING_TO_STOP:
 		{
-			if(BASS_ChannelStop(id) == FALSE)
+			if(BASS_ChannelStop(id))
 			{
-				//LOG("BASS_ChannelStop() with channel [%ul] error: %s", id, BASS_GetErrorString());
+				id = 0;
+				state = SourceStates::STOPPED;
 			}
 			else
 			{
-				state = SourceStates::STOPPED;
+				//LOG("BASS_ChannelStop() with channel [%ul] error: %s", id, BASS_GetErrorString());
 			}
 		}
 			break;
@@ -111,11 +109,11 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		{
 			if(BASS_ChannelPause(id) == FALSE)
 			{
-				//LOG("BASS_ChannelPause() with channel [%ul] error: %s", id, BASS_GetErrorString());
+				state = SourceStates::PAUSED;
 			}
 			else
 			{
-				state = SourceStates::PAUSED;
+				//LOG("BASS_ChannelPause() with channel [%ul] error: %s", id, BASS_GetErrorString());
 			}
 		}
 			break;
@@ -123,38 +121,14 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		{
 			if(BASS_ChannelPlay(id, FALSE) == FALSE)
 			{
-				//LOG("BASS_ChannelPlay() with channel [%ul] error: %s", id, BASS_GetErrorString());
+				state = SourceStates::PLAYING;
 			}
 			else
 			{
-				state = SourceStates::PLAYING;
+				//LOG("BASS_ChannelPlay() with channel [%ul] error: %s", id, BASS_GetErrorString());
 			}
 		}
 			break;
-	}
-}
-
-void AudioSource::UpdateChannelForAudio()
-{
-	if(audioClip == nullptr)
-	{
-		return;
-	}
-	switch (audioClip->type)
-	{
-	case AudioType::Music:
-	{
-		id = BASS_SampleGetChannel(audioClip->musicSample, FALSE);
-	}
-	break;
-	case AudioType::SFX:
-	{
-		id = audioClip->sfxStream;
-	}
-	break;
-	default:
-		assert(false);
-		break;
 	}
 }
 
@@ -240,8 +214,35 @@ void AudioSource::OnPlayButtonPressed()
 	else if (state != SourceStates::PLAYING)
 	{
 		state = SourceStates::WAITING_TO_PLAY;
-		UpdateChannelForAudio();
+		id = GetChannelForAudio(audioClip);
 	}
+}
+
+DWORD AudioSource::GetChannelForAudio(const AudioClip* audioClip) const
+{
+	DWORD channel = 0;
+
+	if (audioClip != nullptr)
+	{
+		switch (audioClip->type)
+		{
+		case AudioType::Music:
+		{
+			channel = audioClip->musicStream;
+		}
+		break;
+		case AudioType::SFX:
+		{
+			channel = BASS_SampleGetChannel(audioClip->sfxSample, FALSE);
+		}
+		break;
+		default:
+			assert(false);
+			break;
+		}
+	}
+
+	return channel;
 }
 
 void AudioSource::SetMusic(AudioClip* audioInfo)
@@ -316,14 +317,13 @@ bool AudioSource::GetLoop()
 
 void AudioSource::OnLoadButtonPressed(const std::experimental::filesystem::path & path)
 {
+	//TODO: Delete old audio clip if already loaded
 	AudioClip* audioClip = App->audio->Load(path, loadingAudioType ,loadingChannelType);
 	if(audioClip != nullptr)
 	{
 		BASS_ChannelStop(id);
-		state = SourceStates::STOPPED;
 
 		this->audioClip = audioClip;
-		UpdateChannelForAudio();
 
 		BASS_ChannelGetAttribute(id, BASS_ATTRIB_FREQ, &originalFreq);
 	}

@@ -99,31 +99,6 @@ const vector<AudioSource*>& ModuleAudio::GetAllAudioSources() const
 AudioClip * ModuleAudio::LoadMusic(const std::experimental::filesystem::path & path, ChannelType channelType)
 {
 	AudioClip* audioClip = nullptr;
-	HSAMPLE handle = 0;
-	switch (channelType)
-	{
-	case ChannelType::Mono:
-		handle = BASS_SampleLoad(FALSE, path.string().c_str(), 0, 0, 5, BASS_SAMPLE_MONO | BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
-		break;
-	case ChannelType::Stereo:
-		handle = BASS_SampleLoad(FALSE, path.string().c_str(), 0, 0, 5, BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
-		break;
-	}
-
-	if (handle != 0)
-	{
-		audioClip = new AudioClip();
-		audioClip->type = AudioType::Music;
-		audioClip->channelType = channelType;
-		audioClip->musicSample = handle;
-	}
-
-	return audioClip;
-}
-
-AudioClip * ModuleAudio::LoadSFX(const std::experimental::filesystem::path & path, ChannelType channelType)
-{
-	AudioClip* audioClip = nullptr;
 	HSTREAM handle = 0;
 	switch (channelType)
 	{
@@ -134,13 +109,38 @@ AudioClip * ModuleAudio::LoadSFX(const std::experimental::filesystem::path & pat
 		handle = BASS_StreamCreateFile(FALSE, path.string().c_str(), 0, 0, BASS_SAMPLE_3D);
 		break;
 	}
+
+	if (handle != 0)
+	{
+		audioClip = new AudioClip();
+		audioClip->type = AudioType::Music;
+		audioClip->channelType = channelType;
+		audioClip->musicStream = handle;
+	}
+
+	return audioClip;
+}
+
+AudioClip * ModuleAudio::LoadSFX(const std::experimental::filesystem::path & path, ChannelType channelType)
+{
+	AudioClip* audioClip = nullptr;
+	HSAMPLE handle = 0;
+	switch (channelType)
+	{
+	case ChannelType::Mono:
+		handle = BASS_SampleLoad(FALSE, path.string().c_str(), 0, 0, 5, BASS_SAMPLE_MONO | BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
+		break;
+	case ChannelType::Stereo:
+		handle = BASS_SampleLoad(FALSE, path.string().c_str(), 0, 0, 5, BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
+		break;
+	}
 	
 	if (handle != 0)
 	{
 		audioClip = new AudioClip();
 		audioClip->type = AudioType::SFX;
 		audioClip->channelType = channelType;
-		audioClip->sfxStream = handle;
+		audioClip->sfxSample = handle;
 	}
 
 	return audioClip;

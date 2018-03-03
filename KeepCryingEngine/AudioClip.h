@@ -14,8 +14,8 @@ public:
 	AudioType type;
 
 	union {
-		HSAMPLE musicSample = 0;
-		HSTREAM sfxStream;
+		HSTREAM musicStream = 0;
+		HSAMPLE sfxSample;
 	};
 };
 
