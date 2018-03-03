@@ -50,6 +50,8 @@ public:
 	const float3& Forward() const;
 	const float3& Right() const;
 
+	const float3& Velocity() const;
+
 private:
 	void Decompose(const float4x4& matrix, float3& position, Quat& rotation, float3& scale) const;
 

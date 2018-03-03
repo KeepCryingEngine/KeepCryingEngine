@@ -406,3 +406,8 @@ const float3 & Transform::Right() const
 	RecalculateIfNecessary();
 	return right;
 }
+
+const float3 & Transform::Velocity() const
+{
+	return velocity;
+}
