@@ -19,6 +19,8 @@ public:
 
 	virtual std::vector<Component::Type> GetProhibitedComponents() const override;
 
+	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
+
 	float4x4 GetLocalMatrix() const;
 	const float3& GetLocalPosition() const;
 	const Quat& GetLocalRotation() const;
@@ -51,6 +53,8 @@ public:
 private:
 	void Decompose(const float4x4& matrix, float3& position, Quat& rotation, float3& scale) const;
 
+	void UpdateVelocity(float deltaTimeS, float realDeltaTimeS);
+
 	// Const method that modify mutable data
 	void SetDirty() const; 
 	const float4x4& GetParentMatrix() const;
@@ -69,6 +73,9 @@ private:
 	float3 localPosition;
 	Quat localRotation;
 	float3 localScale;
+
+	float3 velocity;
+	mutable float3 previousWorldPosition;
 
 	mutable bool dirty;
 	mutable float4x4 modelMatrix;
