@@ -8,8 +8,6 @@
 #include "ModuleScene.h"
 #include "AudioSource.h"
 
-#include <freeverb.h>
-
 using namespace std;
 
 ReverbZone::ReverbZone() :
