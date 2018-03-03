@@ -270,8 +270,8 @@ void Transform::Decompose(const float4x4 & matrix, float3 & position, Quat & rot
 
 void Transform::UpdateVelocity(float deltaTimeS, float realDeltaTimeS)
 {
-	velocity = (worldPosition - previousWorldPosition).Div(realDeltaTimeS);
-	previousWorldPosition = worldPosition;
+	velocity = (GetWorldPosition() - previousWorldPosition).Div(realDeltaTimeS);
+	previousWorldPosition = GetWorldPosition();
 }
 
 void Transform::SetDirty() const
