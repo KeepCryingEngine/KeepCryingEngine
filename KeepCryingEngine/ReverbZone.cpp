@@ -21,6 +21,13 @@ ReverbZone::ReverbZone() :
 ReverbZone::~ReverbZone()
 { }
 
+void ReverbZone::Awake()
+{
+	effect = new EffectInfo();
+	effect->reverbConfig = &reverbConfig;
+	effect->priority = 1;
+}
+
 void ReverbZone::Start()
 {
 	// TEST
@@ -223,35 +230,13 @@ float ReverbZone::CheckAudioListenerCollision(const AudioListener* audioListener
 
 void ReverbZone::ApplyReverbConfig()
 {
-	vector<AudioSource*> sources= App->audio->GetAllAudioSources();
-
-	for(AudioSource* audioSource: sources)
-	{
-		if(audioSource->id != 0)
-		{
-			hfxValid = true;
-			reverbEffect = BASS_ChannelSetFX(audioSource->id, BASS_FX_DX8_I3DL2REVERB, 1);
-			BASS_FXSetParameters(reverbEffect, &reverbConfig);
-		}
-	}
+	
+	App->audio->GetSceneEffects()->AddEffect( *effect);
 }
 
 void ReverbZone::DeapplyReverbConfig()
 {
-	if(hfxValid)
-	{
-		vector<AudioSource*> sources = App->audio->GetAllAudioSources();
-
-		for(AudioSource* audioSource : sources)
-		{
-			if(audioSource->id != 0)
-			{
-				hfxValid = false;
-				BASS_ChannelRemoveFX(audioSource->id, reverbEffect);
-			}
-		}
-	}
-
+	App->audio->GetSceneEffects()->RemoveEffect(*effect);
 	audioListener = nullptr;
 }
 

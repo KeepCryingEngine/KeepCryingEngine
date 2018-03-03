@@ -130,6 +130,9 @@
     <ClCompile Include="AudioClip.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="SoundsEffects.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -277,6 +280,9 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="AudioClip.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundsEffects.h">
       <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>

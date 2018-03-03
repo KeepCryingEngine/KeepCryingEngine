@@ -97,6 +97,7 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 			break;
 		case SourceStates::WAITING_TO_STOP:
 		{
+			ClearChannelEffects();
 			if(BASS_ChannelStop(id) == FALSE)
 			{
 				//LOG("BASS_ChannelStop() with channel [%ul] error: %s", id, BASS_GetErrorString());
@@ -156,6 +157,7 @@ void AudioSource::UpdateChannelForAudio()
 		assert(false);
 		break;
 	}
+	UpdateChannelEffects();
 }
 
 void AudioSource::DrawUI()
@@ -244,6 +246,20 @@ void AudioSource::OnPlayButtonPressed()
 	}
 }
 
+void AudioSource::UpdateChannelEffects()
+{
+	
+	ClearChannelEffects();
+
+	SoundEffects* newEffects = App->audio->GetSceneEffects();
+	for(EffectInfo* ef:newEffects->GetEffects())
+	{
+		HFX reverbEffect = BASS_ChannelSetFX(id, BASS_FX_DX8_I3DL2REVERB, ef->priority);
+		BASS_FXSetParameters(reverbEffect, ef->reverbConfig);
+		activeEffects.push_back(reverbEffect);
+	}
+}
+
 void AudioSource::SetMusic(AudioClip* audioInfo)
 {
 	this->audioClip = audioInfo;
@@ -327,5 +343,14 @@ void AudioSource::OnLoadButtonPressed(const std::experimental::filesystem::path 
 
 		BASS_ChannelGetAttribute(id, BASS_ATTRIB_FREQ, &originalFreq);
 	}
+}
+
+void AudioSource::ClearChannelEffects()
+{
+	for(HFX ef : activeEffects)
+	{
+		BASS_ChannelRemoveFX(id, ef);
+	}
+	activeEffects.clear();
 }
 

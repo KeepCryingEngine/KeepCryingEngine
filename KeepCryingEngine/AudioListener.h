@@ -1,6 +1,8 @@
 #ifndef _AUDIOLISTENER_H_
 #define _AUDIOLISTENER_H_
 
+#include <list>
+
 #include "Component.h"
 
 class AudioListener : public Component
