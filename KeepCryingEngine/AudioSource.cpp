@@ -74,7 +74,7 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 			BASS_ChannelSet3DPosition(id,
 				(BASS_3DVECTOR*)&body->GetWorldPosition(), // position
 				(BASS_3DVECTOR*)&body->Forward(), // front
-				nullptr); // velocity
+				(BASS_3DVECTOR*)&body->Velocity()); // velocity
 
 
 			BASS_Apply3D();
