@@ -1,12 +1,13 @@
 #include "ReverbZone.h"
 
+#include <LineSegment.h>
+
 #include "Transform.h"
 #include "GameObject.h"
 #include "Application.h"
-#include "ModuleAudio.h"
-#include "AudioListener.h"
-#include "ModuleScene.h"
 #include "AudioSource.h"
+#include "ModuleRender.h"
+#include "AudioListener.h"
 
 using namespace std;
 
@@ -24,32 +25,75 @@ void ReverbZone::Start()
 {
 	// TEST
 
-	SetMinDistance(5.0f);
-	SetMaxDistance(10.0f);
+	SetMinDistance(minDistance);
+	SetMaxDistance(maxDistance);
 
-	reverbConfig.fHighFreqRTRatio = 0.001f;
-	reverbConfig.fInGain = -0.0f;
-	reverbConfig.fReverbMix = -0.0f;
-	reverbConfig.fReverbTime = 1500.0f;
-
-	/* env = EAX_ENVIRONMENT_HANGAR;
-	decay = 3;
-	damp = 0; */
+	// SetUp reverbConfig
 }
 
-void ReverbZone::Update(float deltaTimeS, float realDeltaTimeS)
+void ReverbZone::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	SetMinDistance(minDistance);
 	SetMaxDistance(maxDistance);
 
 	CheckAudioListener();
+
+	if(mode == 0)
+	{
+		DrawCube(minDistanceCube, float3(255.0f, 0.0f, 0.0f));
+		DrawCube(maxDistanceCube, float3(0.0f, 0.0f, 255.0f));
+	}
+	else if(mode == 1)
+	{
+		DrawSphere(minDistanceSphere, float3(255.0f, 0.0f, 0.0f));
+		DrawSphere(maxDistanceSphere, float3(0.0f, 0.0f, 255.0f));
+	}
+}
+
+void ReverbZone::Destroy()
+{
+	DeapplyReverbConfig();
 }
 
 void ReverbZone::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Reverb Zone"))
 	{
+		if(ImGui::Checkbox("Active", &enabled))
+		{
+			if(!enabled)
+			{
+				DeapplyReverbConfig();
+			}
+		}
 
+		ImGui::SameLine();
+
+		if(ImGui::Button("Delete Component"))
+		{
+			gameObject->RemoveComponent(this);
+		}
+
+		static float minDistanceTmp = minDistance;
+
+		if(ImGui::DragFloat("Min distance", &minDistanceTmp, 0.05f, 0.001f, 100.0f))
+		{
+			SetMinDistance(minDistanceTmp);
+			minDistanceTmp = minDistance;
+		}
+
+		static float maxDistanceTmp = maxDistance;
+
+		if(ImGui::DragFloat("Max distance", &maxDistanceTmp, 0.05f, 0.001f, 100.0f))
+		{
+			SetMaxDistance(maxDistanceTmp);
+			maxDistanceTmp = maxDistance;
+		}
+
+		if(ImGui::Combo("Mode", &mode, "Cube\0Sphere"))
+		{
+			SetMode(mode);
+		}
 	}
 }
 
@@ -65,12 +109,34 @@ vector<Component::Type> ReverbZone::GetProhibitedComponents() const
 
 void ReverbZone::SetMinDistance(float minDistance)
 {
-	SetDistanceAndComputeSphere(this->minDistance, minDistanceSphere, minDistance);
+	if(minDistance < maxDistance)
+	{
+		SetDistanceAndComputeCube(this->minDistance, minDistanceCube, minDistance);
+		SetDistanceAndComputeSphere(this->minDistance, minDistanceSphere, minDistance);
+	}
 }
 
 void ReverbZone::SetMaxDistance(float maxDistance)
 {
-	SetDistanceAndComputeSphere(this->maxDistance, maxDistanceSphere, maxDistance);
+	if(maxDistance > minDistance)
+	{
+		SetDistanceAndComputeCube(this->maxDistance, maxDistanceCube, maxDistance);
+		SetDistanceAndComputeSphere(this->maxDistance, maxDistanceSphere, maxDistance);
+	}
+}
+
+void ReverbZone::SetMode(int mode)
+{
+	this->mode = mode;
+	DeapplyReverbConfig();
+}
+
+void ReverbZone::SetDistanceAndComputeCube(float& distance, AABB& cube, float distanceValue)
+{
+	const float3& center = gameObject->GetTransform()->GetWorldPosition();
+
+	distance = distanceValue;
+	cube = AABB(Sphere(center, distance));
 }
 
 void ReverbZone::SetDistanceAndComputeSphere(float& distance, Sphere& sphere, float distanceValue)
@@ -90,18 +156,12 @@ void ReverbZone::CheckAudioListener()
 
 	if(audioListener == nullptr && newActiveAudioListenerDetected)
 	{
-		StoreReverbConfig();
+		ApplyReverbConfig();
 		audioListener = activeAudioListener;
 	}
 	else if(audioListener != nullptr && !newActiveAudioListenerDetected)
 	{
-		audioListener = nullptr;
-		ApplyReverbConfig(true);
-	}
-
-	if(newActiveAudioListenerDetected)
-	{
-		ApplyReverbConfig();
+		DeapplyReverbConfig();
 	}
 }
 
@@ -113,12 +173,25 @@ float ReverbZone::CheckAudioListenerCollision(const AudioListener* audioListener
 	{
 		const float3& audioListenerPosition = audioListener->gameObject->GetTransform()->GetWorldPosition();
 
-		if(maxDistanceSphere.Contains(audioListenerPosition))
-		{
-			float distanceBetweenSpheres = maxDistance - minDistance; // minDistanceSphere.Distance(maxDistanceSphere);
-			float minDistanceSphereDistance = minDistanceSphere.Centroid().Distance(audioListenerPosition) - minDistance;
+		bool contained = false;
+		float computedMinDistance = 0.0f;
 
-			volume = 1.0f - minDistanceSphereDistance / distanceBetweenSpheres;
+		if(mode == 0)
+		{
+			contained = maxDistanceCube.Contains(audioListenerPosition);
+			computedMinDistance = minDistanceCube.Centroid().Distance(audioListenerPosition) - sqrtf(2.0f) * minDistance;
+		}
+		else if(mode == 1)
+		{
+			contained = maxDistanceSphere.Contains(audioListenerPosition);
+			computedMinDistance = minDistanceSphere.Centroid().Distance(audioListenerPosition) - minDistance;
+		}
+
+		if(contained)
+		{
+			float distanceBetweenDefinedCollisions = maxDistance - minDistance;
+
+			volume = 1.0f - computedMinDistance / distanceBetweenDefinedCollisions;
 
 			if(volume > 1.0f)
 			{
@@ -130,76 +203,40 @@ float ReverbZone::CheckAudioListenerCollision(const AudioListener* audioListener
 	return volume;
 }
 
-void ReverbZone::StoreReverbConfig()
+void ReverbZone::ApplyReverbConfig()
 {
-	// BASS_FXGetParameters(BASS_FX_DX8_REVERB, &storedReverbConfig);
+	AudioSource* audioSource = gameObject->GetComponent<AudioSource>();
 
-	// BASS_GetEAXParameters(&storedEnv, NULL, &storedDecay, &storedDamp);
+	if(audioSource->id != 0)
+	{
+		hfxValid = true;
+		reverbEffect = BASS_ChannelSetFX(audioSource->id, BASS_FX_DX8_I3DL2REVERB, 1);
+		BASS_FXSetParameters(reverbEffect, &reverbConfig);
+	}
 }
 
-void ReverbZone::ApplyReverbConfig(bool stored)
+void ReverbZone::DeapplyReverbConfig()
 {
-	if(stored)
+	if(hfxValid)
 	{
-		LOG_DEBUG("STORED: %f, %f, %f, %f", storedReverbConfig.fHighFreqRTRatio, storedReverbConfig.fInGain, storedReverbConfig.fReverbMix, storedReverbConfig.fReverbTime);
-
 		AudioSource* audioSource = gameObject->GetComponent<AudioSource>();
 
 		if(audioSource->id != 0)
 		{
-			BASS_FXSetParameters(audioSource->id, &storedReverbConfig);
+			hfxValid = false;
+			BASS_ChannelRemoveFX(audioSource->id, reverbEffect);
 		}
-
-		/* for(AudioSource* audioSource : App->scene->GetRoot()->GetComponentsInChildren<AudioSource>())
-		{
-			if(audioSource->id != 0)
-			{
-				BASS_FXSetParameters(audioSource->id, &storedReverbConfig);
-			}
-		} */
-	}
-	else
-	{
-		LOG_DEBUG("REVERB: %f, %f, %f, %f", reverbConfig.fHighFreqRTRatio, reverbConfig.fInGain, reverbConfig.fReverbMix, reverbConfig.fReverbTime);
-
-		AudioSource* audioSource = gameObject->GetComponent<AudioSource>();
-
-		static bool jaja = false;
-
-		if(audioSource->id != 0)
-		{
-			if(!jaja)
-			{
-				HFX hfx = BASS_ChannelSetFX(audioSource->id, BASS_FX_DX8_REVERB, 1);
-
-				jaja = true;
-
-				if(!BASS_FXSetParameters(hfx, &reverbConfig))
-				{
-					int a = BASS_ErrorGetCode();
-
-					a++;
-				}
-			}
-		}
-
-		/* for(AudioSource* audioSource : App->scene->GetRoot()->GetComponentsInChildren<AudioSource>())
-		{
-			if(audioSource->id != 0)
-			{
-				BASS_FXSetParameters(audioSource->id, &reverbConfig);
-			}
-		} */
-
-		// BASS_FXSetParameters(BASS_FX_DX8_REVERB, &reverbConfig);
 	}
 
-	// BASS_SetEAXParameters(storedEnv, -1, storedDecay, storedDamp);
+	audioListener = nullptr;
 }
 
-/* void ReverbZone::ApplyEAXConfig()
+void ReverbZone::DrawCube(const AABB& cube, const float3& color) const
 {
-	BASS_FXSetParameters(BASS_FX_DX8_REVERB, &reverbConfig);
+	App->renderer->DrawCube(cube.Centroid(), color, 0.5f * cube.Edge(0).Length());
+}
 
-	// BASS_SetEAXParameters(env, vol, decay, damp);
-} */
+void ReverbZone::DrawSphere(const Sphere& sphere, const float3& color) const
+{
+	App->renderer->DrawSphere(sphere.Centroid(), color, sphere.r);
+}

@@ -2,6 +2,7 @@
 #define _REVERBZONE_H_
 
 #include <bass.h>
+#include <AABB.h>
 #include <Sphere.h>
 
 #include "Component.h"
@@ -17,8 +18,8 @@ public:
 	virtual ~ReverbZone();
 
 	virtual void Start() override;
-
-	virtual void Update(float deltaTimeS, float realDeltaTimeS) override;
+	virtual void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
+	virtual void Destroy() override;
 
 	void DrawUI() override;
 
@@ -28,39 +29,40 @@ public:
 	void SetMinDistance(float minDistance);
 	void SetMaxDistance(float minDistance);
 
+	void SetMode(int mode);
+
 private:
+	void SetDistanceAndComputeCube(float& distance, AABB& cube, float distanceValue);
 	void SetDistanceAndComputeSphere(float& distance, Sphere& sphere, float distanceValue);
 
 	void CheckAudioListener();
 	float CheckAudioListenerCollision(const AudioListener* audioListener) const;
 
-	void StoreReverbConfig();
-	void ApplyReverbConfig(bool stored = false);
+	void ApplyReverbConfig();
+	void DeapplyReverbConfig();
+
+	void DrawCube(const AABB& cube, const float3& color) const;
+	void DrawSphere(const Sphere& sphere, const float3& color) const;
 
 private:
+	int mode = 0; // 0 Cube, 1 Sphere
+
+	AABB minDistanceCube;
+	AABB maxDistanceCube;
+
 	Sphere minDistanceSphere;
 	Sphere maxDistanceSphere;
 
-	float minDistance = 0.0f;
-	float maxDistance = 0.0f;
+	float minDistance = 5.0f;
+	float maxDistance = 10.0f;
 
 	const AudioListener* audioListener = nullptr;
 
-	/*
+	HFX reverbEffect;
 
-	// EAX config
+	bool hfxValid = false;
 
-	unsigned long env = -1;
-	float decay = -1, damp = -1;
-
-	unsigned long storedEnv;
-	float storedDecay, storedDamp;
-
-	*/
-
-	BASS_DX8_REVERB reverbConfig;
-
-	BASS_DX8_REVERB storedReverbConfig;
+	BASS_DX8_I3DL2REVERB reverbConfig;
 };
 
 #endif
