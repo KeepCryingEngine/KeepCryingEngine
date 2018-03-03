@@ -68,6 +68,7 @@ private:
 	float volume = 1;
 	float pitch = 100;
 	float pan = 0;
+	float minDistance = 0;
 	float maxDistance = 10;
 	float rollOffFactor = 1;
 	float doplerFactor = 1;
