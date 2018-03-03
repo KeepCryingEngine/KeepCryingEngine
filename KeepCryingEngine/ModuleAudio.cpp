@@ -20,6 +20,7 @@ ModuleAudio::~ModuleAudio()
 bool ModuleAudio::Init()
 {
 	BASS_Init(DEVICE, FRECUENCY, BASS_DEVICE_3D, 0, NULL);
+	sceneEffects = new SoundEffects();
 	return true;
 }
 
@@ -71,6 +72,11 @@ void ModuleAudio::EnableListener(AudioListener* listener)
 AudioListener * ModuleAudio::GetActiveListener() const
 {
 	return activeListener;
+}
+
+SoundEffects * ModuleAudio::GetSceneEffects()const
+{
+	return sceneEffects;
 }
 
 void ModuleAudio::SubscribeSource(AudioSource& source)

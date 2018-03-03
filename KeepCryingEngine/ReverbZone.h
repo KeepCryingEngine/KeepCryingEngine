@@ -6,6 +6,7 @@
 #include <Sphere.h>
 
 #include "Component.h"
+#include "SoundsEffects.h"
 
 class AudioListener;
 
@@ -17,6 +18,7 @@ public:
 	ReverbZone();
 	virtual ~ReverbZone();
 
+	virtual void Awake() override;
 	virtual void Start() override;
 	virtual void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 	virtual void Destroy() override;
@@ -58,11 +60,10 @@ private:
 
 	const AudioListener* audioListener = nullptr;
 
-	HFX reverbEffect;
-
 	bool hfxValid = false;
 
 	BASS_DX8_I3DL2REVERB reverbConfig;
+	EffectInfo* effect;
 };
 
 #endif

@@ -32,48 +32,48 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		return;
 	}
 
-	if(id == 0)
+	if(channel == 0)
 	{
 		return;
 	}
 
 	//Set audio properties
-	BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, volume);
-	BASS_ChannelSetAttribute(id, BASS_ATTRIB_FREQ, originalFreq + freqModifier);
+	BASS_ChannelSetAttribute(channel, BASS_ATTRIB_VOL, volume);
+	BASS_ChannelSetAttribute(channel, BASS_ATTRIB_FREQ, originalFreq + freqModifier);
 	BASS_Set3DFactors(1.0f, rollOffFactor, doplerFactor);
 	BASS_Apply3D();
 
 	//LOOPcontrol
 	if(loop)
 	{
-		BASS_ChannelFlags(id, BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP);
+		BASS_ChannelFlags(channel, BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP);
 	}
 	else
 	{
-		BASS_ChannelFlags(id, 0, BASS_SAMPLE_LOOP);
+		BASS_ChannelFlags(channel, 0, BASS_SAMPLE_LOOP);
 	}
 
 	switch(state)
 	{
 		case SourceStates::PLAYING:
 		{
-			if(BASS_ChannelIsActive(id) == BASS_ACTIVE_STOPPED && !loop)
+			if(BASS_ChannelIsActive(channel) == BASS_ACTIVE_STOPPED && !loop)
 			{
 				state = SourceStates::WAITING_TO_STOP;
 				break;
 			}
 
-			BASS_ChannelSet3DAttributes(id, BASS_3DMODE_NORMAL, minDistance, maxDistance, 360, 360, -1);
+			BASS_ChannelSet3DAttributes(channel, BASS_3DMODE_NORMAL, minDistance, maxDistance, 360, 360, -1);
 			BASS_Apply3D();
 
 			// Update 3D position
 
 			Transform* body = gameObject->GetTransform();
 	
-			BASS_ChannelSet3DPosition(id,
+			BASS_ChannelSet3DPosition(channel,
 				(BASS_3DVECTOR*)&body->GetWorldPosition(), // position
 				(BASS_3DVECTOR*)&body->Forward(), // front
-				nullptr); // velocity
+				(BASS_3DVECTOR*)&body->Velocity()); // velocity
 
 
 			BASS_Apply3D();
@@ -81,9 +81,9 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 			break;
 		case SourceStates::WAITING_TO_PLAY:
 		{
-			if(BASS_ChannelPlay(id, FALSE))
+			if(BASS_ChannelPlay(channel, FALSE))
 			{
-				BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, 0.0f);
+				BASS_ChannelSetAttribute(channel, BASS_ATTRIB_VOL, 0.0f);
 				state = SourceStates::PLAYING;
 			}
 			else
@@ -94,9 +94,10 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 			break;
 		case SourceStates::WAITING_TO_STOP:
 		{
-			if(BASS_ChannelStop(id))
+			ClearChannelEffects();
+			if(BASS_ChannelStop(channel))
 			{
-				id = 0;
+				channel = 0;
 				state = SourceStates::STOPPED;
 			}
 			else
@@ -107,7 +108,7 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 			break;
 		case SourceStates::WAITING_TO_PAUSE:
 		{
-			if(BASS_ChannelPause(id) == FALSE)
+			if(BASS_ChannelPause(channel) == FALSE)
 			{
 				state = SourceStates::PAUSED;
 			}
@@ -119,7 +120,7 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 			break;
 		case SourceStates::WAITING_TO_UNPAUSE:
 		{
-			if(BASS_ChannelPlay(id, FALSE) == FALSE)
+			if(BASS_ChannelPlay(channel, FALSE) == FALSE)
 			{
 				state = SourceStates::PLAYING;
 			}
@@ -214,7 +215,8 @@ void AudioSource::OnPlayButtonPressed()
 	else if (state != SourceStates::PLAYING)
 	{
 		state = SourceStates::WAITING_TO_PLAY;
-		id = GetChannelForAudio(audioClip);
+		channel = GetChannelForAudio(audioClip);
+		UpdateChannelEffects();
 	}
 }
 
@@ -241,8 +243,20 @@ DWORD AudioSource::GetChannelForAudio(const AudioClip* audioClip) const
 			break;
 		}
 	}
-
 	return channel;
+}
+
+void AudioSource::UpdateChannelEffects()
+{
+	ClearChannelEffects();
+
+	SoundEffects* newEffects = App->audio->GetSceneEffects();
+	for(EffectInfo* ef:newEffects->GetEffects())
+	{
+		HFX reverbEffect = BASS_ChannelSetFX(channel, BASS_FX_DX8_I3DL2REVERB, ef->priority);
+		BASS_FXSetParameters(reverbEffect, ef->reverbConfig);
+		activeEffects.push_back(reverbEffect);
+	}
 }
 
 void AudioSource::SetMusic(AudioClip* audioInfo)
@@ -321,11 +335,20 @@ void AudioSource::OnLoadButtonPressed(const std::experimental::filesystem::path 
 	AudioClip* audioClip = App->audio->Load(path, loadingAudioType ,loadingChannelType);
 	if(audioClip != nullptr)
 	{
-		BASS_ChannelStop(id);
+		BASS_ChannelStop(channel);
 
 		this->audioClip = audioClip;
 
-		BASS_ChannelGetAttribute(id, BASS_ATTRIB_FREQ, &originalFreq);
+		BASS_ChannelGetAttribute(channel, BASS_ATTRIB_FREQ, &originalFreq);
 	}
+}
+
+void AudioSource::ClearChannelEffects()
+{
+	for(HFX ef : activeEffects)
+	{
+		BASS_ChannelRemoveFX(channel, ef);
+	}
+	activeEffects.clear();
 }
 

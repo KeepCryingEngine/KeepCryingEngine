@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include "ModuleAudio.h"
+#include "SoundsEffects.h"
 
 enum class SourceStates
 {
@@ -27,12 +28,12 @@ public:
 
 	void DrawUI() override;
 
-
+	void UpdateChannelEffects();
 
 	void SetMusic(AudioClip* audioInfo);
 	void SetVolume(float value);
 	void SetPitch(float value);
-	void SetPan(float value);
+	//void SetPan(float value);
 	void SetMaxDistance(float value);
 	void SetRollOffFactor(float value);
 	void SetDoplerFactor(float value);
@@ -41,7 +42,7 @@ public:
 	AudioClip* GetMusic() const;
 	float GetVolume() const;
 	float GetPitch() const;
-	float GetPan() const;
+	//float GetPan() const;
 	float GetMaxDistance() const;
 	float GetRollOffFactor() const;
 	float GetDoplerFactor() const;
@@ -55,10 +56,10 @@ private:
 
 	DWORD GetChannelForAudio(const AudioClip* audioClip) const;
 
+	void ClearChannelEffects();
 
 public:
-
-	DWORD id = 0;
+	DWORD channel = 0;
 
 private:
 	SourceStates state = SourceStates::STOPPED;
@@ -77,6 +78,8 @@ private:
 
 	ChannelType loadingChannelType = ChannelType::Mono;
 	AudioType loadingAudioType = AudioType::SFX;
+
+	std::list<HFX>activeEffects;
 
 	//BASS_BFX_PITCHSHIFT pitchConfig;
 };

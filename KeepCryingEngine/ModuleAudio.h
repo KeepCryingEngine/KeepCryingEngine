@@ -12,6 +12,7 @@
 class AudioClip;
 class AudioSource;
 class AudioListener;
+class SoundEffects;
 
 typedef unsigned MusicId;
 
@@ -41,6 +42,8 @@ public:
 
 	AudioListener* GetActiveListener() const;
 
+	SoundEffects* GetSceneEffects()const;
+
 	void SubscribeSource(AudioSource& source);
 	void Unsubscribe(AudioSource& source);
 
@@ -54,6 +57,8 @@ private:
 	std::map<std::string, AudioClip*> soundCache;
 
 	AudioListener* activeListener = nullptr;
+
+	SoundEffects* sceneEffects = nullptr;
 
 	std::vector<AudioSource*> sceneSources;
 
