@@ -251,10 +251,10 @@ std::vector<Component*> GameObject::GetComponents(Component::Type type) const
 
 std::vector<Component*> GameObject::GetComponentsInChildren(Component::Type type) const
 {
-	vector<Component*> components;
+	vector<Component*> components = GetComponents(type);
 	for (GameObject* child : children)
 	{
-		vector<Component*> childComponents = child->GetComponents(type);
+		vector<Component*> childComponents = child->GetComponentsInChildren(type);
 		components.insert(components.end(),childComponents.begin(), childComponents.end());
 	}
 	return components;
