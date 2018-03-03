@@ -36,8 +36,8 @@ void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 
 	//Set audio properties
 	BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, volume);
-	BASS_ChannelSetAttribute(id, BASS_ATTRIB_PAN,pan);
-	BASS_ChannelSetAttribute(id, BASS_ATTRIB_MUSIC_SPEED, pitch);
+	BASS_ChannelSetAttribute(id, BASS_ATTRIB_PAN, pan);
+	BASS_ChannelSetAttribute(id, BASS_ATTRIB_FREQ, originalFreq + freqModifier);
 	BASS_Set3DFactors(0,rollOffFactor,doplerFactor);
 	BASS_Apply3D();
 
@@ -178,7 +178,7 @@ void AudioSource::DrawUI()
 
 		ImGui::Checkbox(" Loop", &loop);
 		ImGui::DragFloat("Volume", &volume, 0.05f, 0.0f, 1.0f);
-		ImGui::DragFloat("Pitch", &pitch, 1.0f, 0.0f, 255.0f);
+		ImGui::DragFloat("Pitch", &freqModifier, 200.0f, -20000.0f, 60000.0f);
 		ImGui::DragFloat("Pan", &pan, 0.05f, -1.0f, 1.0f);
 		ImGui::DragFloat("Max Distance", &maxDistance, 1.0f, 1.0f, 10000.0f);
 		ImGui::DragFloat("RollOff factor", &rollOffFactor, 0.1f, 0.0f, 10.0f);
@@ -247,7 +247,7 @@ void AudioSource::SetVolume(float value)
 
 void AudioSource::SetPitch(float value)
 {
-	pitch = value;
+	freqModifier = value;
 }
 
 void AudioSource::SetPan(float value)
@@ -287,7 +287,7 @@ float AudioSource::GetVolume() const
 
 float AudioSource::GetPitch() const
 {
-	return pitch;
+	return freqModifier;
 }
 
 float AudioSource::GetPan() const
@@ -325,6 +325,8 @@ void AudioSource::OnLoadButtonPressed(const std::experimental::filesystem::path 
 
 		this->audioClip = audioClip;
 		UpdateChannelForAudio();
+
+		BASS_ChannelGetAttribute(id, BASS_ATTRIB_FREQ, &originalFreq);
 	}
 }
 

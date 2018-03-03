@@ -64,9 +64,9 @@ private:
 	SourceStates state = SourceStates::STOPPED;
 	AudioClip* audioClip = nullptr;
 	
-
 	float volume = 1;
-	float pitch = 100;
+	float originalFreq = 0;
+	float freqModifier = 0;
 	float pan = 0;
 	float maxDistance = 10;
 	float rollOffFactor = 1;
@@ -77,6 +77,8 @@ private:
 
 	ChannelType loadingChannelType = ChannelType::Mono;
 	AudioType loadingAudioType = AudioType::SFX;
+
+	//BASS_BFX_PITCHSHIFT pitchConfig;
 };
 
 #endif // !_AUDIOSOURCE_H_
