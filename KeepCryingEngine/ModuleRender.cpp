@@ -243,6 +243,116 @@ void ModuleRender::DrawFrustum(Camera & camera)
 	glLineWidth(lineWidth);
 }
 
+void ModuleRender::DrawCube(const float3& offset, const float3& color, float radius) const
+{
+	// IMPROVE
+
+	float lineWidth;
+
+	glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+
+	float3 positions[8] = 
+	{
+		float3(-1.0f, -1.0f, -1.0f),
+		float3(1.0f, -1.0f, -1.0f),
+		float3(1.0f, 1.0f, -1.0f),
+		float3(-1.0f, 1.0f, -1.0f),
+
+		float3(-1.0f, -1.0f, 1.0f),
+		float3(1.0f, -1.0f, 1.0f),
+		float3(1.0f, 1.0f, 1.0f),
+		float3(-1.0f, 1.0f, 1.0f)
+	};
+
+	for(size_t i = 0; i < 8; ++i)
+	{
+		positions[i] *= radius;
+	}
+
+	glPushMatrix();
+
+	glLineWidth(3.0f);
+
+	glColor3f(color.x, color.y, color.z);
+
+	glTranslatef(offset.x, offset.y, offset.z);
+
+	glBegin(GL_LINE_STRIP);
+
+	glVertex3f(positions[0].x, positions[0].y, positions[0].z);
+	glVertex3f(positions[1].x, positions[1].y, positions[1].z);
+	glVertex3f(positions[2].x, positions[2].y, positions[2].z);
+	glVertex3f(positions[3].x, positions[3].y, positions[3].z);
+	glVertex3f(positions[0].x, positions[0].y, positions[0].z);
+
+	glEnd();
+
+	glBegin(GL_LINE_STRIP);
+
+	glVertex3f(positions[4].x, positions[4].y, positions[4].z);
+	glVertex3f(positions[5].x, positions[5].y, positions[5].z);
+	glVertex3f(positions[6].x, positions[6].y, positions[6].z);
+	glVertex3f(positions[7].x, positions[7].y, positions[7].z);
+	glVertex3f(positions[4].x, positions[4].y, positions[4].z);
+
+	glEnd();
+
+	glBegin(GL_LINES);
+
+	glVertex3f(positions[0].x, positions[0].y, positions[0].z);
+	glVertex3f(positions[4].x, positions[4].y, positions[4].z);
+
+	glVertex3f(positions[1].x, positions[1].y, positions[1].z);
+	glVertex3f(positions[5].x, positions[5].y, positions[5].z);
+
+	glVertex3f(positions[3].x, positions[3].y, positions[3].z);
+	glVertex3f(positions[7].x, positions[7].y, positions[7].z);
+
+	glVertex3f(positions[2].x, positions[2].y, positions[2].z);
+	glVertex3f(positions[6].x, positions[6].y, positions[6].z);
+
+	glEnd();
+
+	glEnd();
+
+	glLineWidth(lineWidth);
+
+	glPopMatrix();
+}
+
+void ModuleRender::DrawSphere(const float3& offset, const float3& color, float radius) const
+{
+	// IMPROVE
+
+	const Mesh* sphere = App->entity->GetSphere();
+
+	float pointSize;
+
+	glGetFloatv(GL_POINT_SIZE, &pointSize);
+
+	glPushMatrix();
+
+	glPointSize(3.0f);
+
+	glColor3f(color.x, color.y, color.z);
+
+	glTranslatef(offset.x, offset.y, offset.z);
+
+	glBegin(GL_POINTS);
+
+	for(Vertex vertex : sphere->GetVertices())
+	{
+		float3 position = radius * vertex.position;
+		glVertex3f(position.x, position.y, position.z);
+	}
+
+	glEnd();
+
+	glPointSize(pointSize);
+
+	glPopMatrix();
+}
+
 void ModuleRender::SetUpLight() const
 {
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);

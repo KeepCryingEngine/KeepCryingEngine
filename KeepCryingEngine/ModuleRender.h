@@ -44,6 +44,10 @@ public:
 
 	void DrawFrustum(Camera& camera);
 
+	void DrawCube(const float3& offset, const float3& color, float radius) const;
+
+	void DrawSphere(const float3& offset, const float3& color, float radius) const;
+
 private:
 	void DrawGrid() const;
 
