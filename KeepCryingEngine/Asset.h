@@ -15,7 +15,7 @@ class Asset
 public:
 	
 
-	Asset(AssetType type);
+	Asset(const std::experimental::filesystem::path& path, AssetType type);
 	virtual ~Asset();
 
 	const std::experimental::filesystem::path& Path() const;
