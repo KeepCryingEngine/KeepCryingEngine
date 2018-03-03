@@ -40,7 +40,7 @@ void SoundEffects::Callback()
 
 	for(AudioSource* audioSource : sources)
 	{
-		if(audioSource->id != 0)
+		if(audioSource->channel != 0)
 		{
 			audioSource->UpdateChannelEffects();
 		}
