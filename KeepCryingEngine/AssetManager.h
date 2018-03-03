@@ -20,15 +20,11 @@ public:
 	void Release(T* asset);
 
 	size_t Size() const;
-	const std::experimental::filesystem::path& GetPath(T* asset) const;
 
 protected:
-	void Register(const std::experimental::filesystem::path& path, T* asset);
+	void Register(T* asset);
 	virtual T * Load(const std::experimental::filesystem::path& path) = 0;
 	virtual void Unload(T* asset) = 0;
-
-private:
-	typename std::map<std::experimental::filesystem::path, T*>::const_iterator FindAssetIteratorByReference(T * asset) const;
 
 private:
 	std::map<std::experimental::filesystem::path, T*> assets;

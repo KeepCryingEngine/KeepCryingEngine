@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 
 #include "Globals.h"
+#include "Asset.h"
 
 struct TextureConfiguration {
 	GLenum textureType = GL_TEXTURE_2D;
@@ -15,11 +16,10 @@ struct TextureConfiguration {
 	bool anisotropicFilter = true;
 };
 
-class Texture
+class Texture : public Asset
 {
 public:
-	Texture(GLuint textureId);
-	Texture(GLuint textureId, const TextureConfiguration& textureConfiguration, uint size);
+	Texture(GLuint textureId, const TextureConfiguration& textureConfiguration, uint size, const std::experimental::filesystem::path& path);
 
 	virtual ~Texture();
 

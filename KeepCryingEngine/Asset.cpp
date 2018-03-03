@@ -1,10 +1,7 @@
 #include "Asset.h"
 
-Asset::Asset()
-{
-}
-
-Asset::Asset(AssetType type) :
+Asset::Asset(const std::experimental::filesystem::path & path, AssetType type) :
+	path(path),
 	type(type)
 {
 }

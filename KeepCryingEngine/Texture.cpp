@@ -3,13 +3,8 @@
 #include "ModuleTexture.h"
 
 
-Texture::Texture(GLuint textureId) :
-	textureId(textureId)
-{
-	SetTextureConfiguration(textureConfiguration);
-}
-
-Texture::Texture(GLuint textureId, const TextureConfiguration & textureConfiguration, uint size) :
+Texture::Texture(GLuint textureId, const TextureConfiguration & textureConfiguration, uint size, const std::experimental::filesystem::path& path) :
+	Asset(path, AssetType::Texture),
 	textureId(textureId),
 	size(size)
 {
