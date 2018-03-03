@@ -18,12 +18,6 @@ Component * ComponentFabric::CreateComponent(Component::Type type)
 		case Component::Type::Transform:
 			component = new Transform();
 			break;
-		/*case Component::Type::Material:
-			component = new Material();
-			break;*/
-		/*case Component::Type::Mesh:
-			component = new Mesh();
-			break;*/
 		case Component::Type::Camera:
 			component = new Camera();
 			break;
