@@ -94,6 +94,24 @@ void ReverbZone::DrawUI()
 		{
 			SetMode(mode);
 		}
+
+		ImGui::Indent(16.0f);
+
+		if(ImGui::CollapsingHeader("Config"))
+		{
+			ImGui::DragInt("Room Atten.", &reverbConfig.lRoom, 10,-10000, 0);
+			ImGui::DragInt("Room Atten. (HF)", &reverbConfig.lRoomHF, 10, -10000, 0);
+			ImGui::DragFloat("RollOff Factor", &reverbConfig.flRoomRolloffFactor, 0.1f, 0.0f, 10.0f);
+			ImGui::DragFloat("Decay Time", &reverbConfig.flDecayTime, 0.1f, 0.1f, 20.0f);
+			ImGui::DragFloat("Decay Ratio (HF)", &reverbConfig.flDecayHFRatio, 0.1f, 0.1f, 2.0f);
+			ImGui::DragInt("Reflection Atten.", &reverbConfig.lReflections, 10, -10000, 1000);
+			ImGui::DragFloat("Reflection Delay", &reverbConfig.flReflectionsDelay, 0.01f, 0.0f, 0.3f);
+			ImGui::DragInt("Reverb Atten.", &reverbConfig.lReverb, 100, -10000, 2000);
+			ImGui::DragFloat("Reverb Delay", &reverbConfig.flReverbDelay, 0.01f, 0.0f, 0.1f);
+			ImGui::DragFloat("Echo Density", &reverbConfig.flDiffusion, 1.0f, 0.0f, 100.0f);
+			ImGui::DragFloat("Modal Density", &reverbConfig.flDensity, 1.0f, 0.0f, 100.0f);
+			ImGui::DragFloat("Reference (HF)", &reverbConfig.flHFReference, 10.0f, 20.0f, 20000.0f);
+		}
 	}
 }
 
