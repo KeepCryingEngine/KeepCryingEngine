@@ -25,6 +25,18 @@ void ReverbZone::Awake()
 {
 	effect = new EffectInfo();
 	effect->reverbConfig = &reverbConfig;
+	reverbConfig.lRoom = -1000;
+	reverbConfig.lRoomHF = -100;
+	reverbConfig.flRoomRolloffFactor = 0;
+	reverbConfig.flDecayTime = 1.49f;
+	reverbConfig.flDecayHFRatio = 0.83f;
+	reverbConfig.lReflections = -2602;
+	reverbConfig.flReflectionsDelay = 0.007f;
+	reverbConfig.lReverb = 200;
+	reverbConfig.flReverbDelay = 0.011f;
+	reverbConfig.flDiffusion = 100;
+	reverbConfig.flDensity = 100;
+	reverbConfig.flHFReference = 5000;
 	effect->priority = 1;
 }
 
