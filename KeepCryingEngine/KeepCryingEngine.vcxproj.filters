@@ -123,9 +123,21 @@
     <ClCompile Include="AudioSource.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="AssetManager.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+=======
+    <ClCompile Include="ReverbZone.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioClip.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundsEffects.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+>>>>>>> Feature/Sound
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -268,9 +280,21 @@
     <ClInclude Include="AudioSource.h">
       <Filter>Components</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="AssetManager.h">
       <Filter>Components</Filter>
     </ClInclude>
+=======
+    <ClInclude Include="ReverbZone.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioClip.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundsEffects.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+>>>>>>> Feature/Sound
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">

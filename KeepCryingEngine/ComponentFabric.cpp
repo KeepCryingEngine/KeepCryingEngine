@@ -9,6 +9,7 @@
 #include "Animator.h"
 #include "AudioListener.h"
 #include "AudioSource.h"
+#include "ReverbZone.h"
 
 Component * ComponentFabric::CreateComponent(Component::Type type)
 {
@@ -35,6 +36,9 @@ Component * ComponentFabric::CreateComponent(Component::Type type)
 			break;
 		case Component::Type::AudioSource:
 			component = new AudioSource();
+			break;
+		case Component::Type::ReverbZone:
+			component = new ReverbZone();
 			break;
 	}
 	assert(component);

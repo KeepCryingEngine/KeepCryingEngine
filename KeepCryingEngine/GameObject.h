@@ -112,25 +112,41 @@ private:
 template<typename T>
 inline T * GameObject::AddComponent()
 {
+	static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+
 	return (T*)AddComponent(T::TYPE);
 }
 
 template<typename T>
 inline T * GameObject::GetComponent() const
 {
+	static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+
 	return (T*)GetComponent(T::TYPE);
 }
 
 template <typename T>
 std::vector<T*> GameObject::GetComponents() const
 {
-	return (std::vector<T*>)GetComponents(T::TYPE);
+	static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+
+	std::vector<Component*> components = GetComponents(T::TYPE);
+	std::vector<T*> tComponents;
+	std::transform(components.begin(), components.end(), std::back_inserter(tComponents), [](Component* c) -> T* { return (T*)c; });
+
+	return tComponents;
 }
 
 template<typename T>
 inline std::vector<T*> GameObject::GetComponentsInChildren() const
 {
-	return (std::vector<T*>)GetComponentsInChildren(T::TYPE);
+	static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+
+	std::vector<Component*> components = GetComponentsInChildren(T::TYPE);
+	std::vector<T*> tComponents;
+	std::transform(components.begin(), components.end(), std::back_inserter(tComponents), [](Component* c) -> T* { return (T*)c; });
+
+	return tComponents;
 }
 
 #endif

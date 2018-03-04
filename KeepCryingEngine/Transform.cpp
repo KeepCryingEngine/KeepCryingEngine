@@ -14,6 +14,7 @@ Transform::Transform() :
 	eulerLocalRotation(float3::zero),
 	localScale(float3::one),
 	worldPosition(float3::zero),
+	previousWorldPosition(float3::zero),
 	worldRotation(Quat::identity),
 	worldScale(float3::one),
 	modelMatrix(float4x4::identity),
@@ -94,6 +95,11 @@ void Transform::DrawUI()
 vector<Component::Type> Transform::GetProhibitedComponents() const
 {
 	return { Transform::TYPE };
+}
+
+void Transform::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+{
+	UpdateVelocity(deltaTimeS, realDeltaTimeS);
 }
 
 float4x4 Transform::GetLocalMatrix() const
@@ -262,6 +268,12 @@ void Transform::Decompose(const float4x4 & matrix, float3 & position, Quat & rot
 	rotation.Normalize();
 }
 
+void Transform::UpdateVelocity(float deltaTimeS, float realDeltaTimeS)
+{
+	velocity = (GetWorldPosition() - previousWorldPosition).Div(realDeltaTimeS);
+	previousWorldPosition = GetWorldPosition();
+}
+
 void Transform::SetDirty() const
 {
 	if (!dirty)
@@ -393,4 +405,9 @@ const float3 & Transform::Right() const
 {
 	RecalculateIfNecessary();
 	return right;
+}
+
+const float3 & Transform::Velocity() const
+{
+	return velocity;
 }

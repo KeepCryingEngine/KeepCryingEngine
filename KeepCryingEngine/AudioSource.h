@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include "ModuleAudio.h"
+#include "SoundsEffects.h"
 
 enum class SourceStates
 {
@@ -27,43 +28,60 @@ public:
 
 	void DrawUI() override;
 
-	void SetMusic(AudioId* audioInfo);
-	void SetMode(SoundProperty newMode);
+	void UpdateChannelEffects();
+
+	void SetMusic(AudioClip* audioInfo);
 	void SetVolume(float value);
 	void SetPitch(float value);
-	void SetPan(float value);
+	//void SetPan(float value);
 	void SetMaxDistance(float value);
 	void SetRollOffFactor(float value);
 	void SetDoplerFactor(float value);
 	void SetLoop(bool value);
 
-	AudioId* GetMusic() const;
-	SoundProperty GetMode() const;
+	AudioClip* GetMusic() const;
 	float GetVolume() const;
 	float GetPitch() const;
-	float GetPan() const;
+	//float GetPan() const;
 	float GetMaxDistance() const;
 	float GetRollOffFactor() const;
 	float GetDoplerFactor() const;
 	bool GetLoop();
 
 private:
-	void Load(const std::experimental::filesystem::path& path);
+	void OnLoadButtonPressed(const std::experimental::filesystem::path& path);
+	void OnStopButtonPressed();
+	void OnPauseButtonPressed();
+	void OnPlayButtonPressed();
+
+	DWORD GetChannelForAudio(const AudioClip* audioClip) const;
+
+	void ClearChannelEffects();
+
+public:
+	DWORD channel = 0;
 
 private:
 	SourceStates state = SourceStates::STOPPED;
-	AudioId* audioInfo = nullptr;
-	SoundProperty mode = SoundProperty::MONO;
+	AudioClip* audioClip = nullptr;
+	
 	float volume = 1;
-	float pitch = 100;
-	float pan = 0;
+	float originalFreq = 0;
+	float freqModifier = 0;
+	float minDistance = 0;
 	float maxDistance = 10;
 	float rollOffFactor = 1;
 	float doplerFactor = 1;
 	bool loop = false;
 
-	unsigned long id = 0;
-	bool reloadId = false;
+	// DWORD id = 0;
+
+	ChannelType loadingChannelType = ChannelType::Mono;
+	AudioType loadingAudioType = AudioType::SFX;
+
+	std::list<HFX>activeEffects;
+
+	//BASS_BFX_PITCHSHIFT pitchConfig;
 };
 
 #endif // !_AUDIOSOURCE_H_

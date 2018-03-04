@@ -17,7 +17,8 @@ public:
 		MeshRenderer,
 		Animator,
 		AudioListener,
-		AudioSource
+		AudioSource,
+		ReverbZone
 	};
 
 	Component(Component::Type type) : enabled(true), wasEnabled(true), type(type)

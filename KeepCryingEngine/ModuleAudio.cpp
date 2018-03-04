@@ -2,11 +2,11 @@
 #include <algorithm>
 
 #include "AudioListener.h"
+#include "AudioClip.h"
+#include "AudioSource.h"
 
 const int ModuleAudio::DEVICE = -1; // Default Sounddevice
 const int ModuleAudio::FRECUENCY = 44100;
-MusicId ModuleAudio::sfxActualIndex = 1;
-MusicId ModuleAudio::musicActualIndex = 1;
 
 using namespace std;
 
@@ -20,97 +20,38 @@ ModuleAudio::~ModuleAudio()
 bool ModuleAudio::Init()
 {
 	BASS_Init(DEVICE, FRECUENCY, BASS_DEVICE_3D, 0, NULL);
+	sceneEffects = new SoundEffects();
 	return true;
 }
 
 bool ModuleAudio::CleanUp()
 {
-	stereoMusic.clear();
-	stereoSfx.clear();
-	monoMusic.clear();
-	monoSfx.clear();
 	return true;
 }
 
-update_status ModuleAudio::PostUpdate(float deltaTimeS, float realDeltaTimeS)
-{
-	return update_status::UPDATE_CONTINUE;
-}
-
-AudioId* ModuleAudio::Load(const std::experimental::filesystem::path& path)
+AudioClip* ModuleAudio::Load(const std::experimental::filesystem::path& path, AudioType type, ChannelType channelType)
 {
 	if(soundCache.count(path.string()))
 	{
-		return &soundCache[path.string()];
+		return soundCache[path.string()];
 	}
 
-	AudioId* newAudioId = new AudioId();
+	AudioClip* audioClip = nullptr;
 	string extension = path.extension().string();
-	if(extension == ".ogg")
-	{
-		if(!LoadOgg(path, *newAudioId))
-		{
-			return nullptr;
-		}
-	}
-	else if(extension == ".wav")
-	{
-		if(!LoadWav(path, *newAudioId))
-		{
-			return nullptr;
-		}
-	}
-	else
-	{
-		return nullptr;
-	}
-	soundCache[path.string()] = *newAudioId;
-	return newAudioId;
-}
 
-HSTREAM ModuleAudio::GetSFX(MusicId id, SoundProperty p) const
-{
-	HSTREAM ret = 0;
-	switch(p)
+	switch (type)
 	{
-		case SoundProperty::STEREO:
-		{
-			ret = stereoSfx.at(id);
-		}
-			break;
-		case SoundProperty::MONO:
-		{
-			ret = monoSfx.at(id);
-		}
-			break;
-		default:
-			assert(false);
-			break;
+	case AudioType::Music:
+		audioClip = LoadMusic(path, channelType);
+		break;
+	case AudioType::SFX:
+		audioClip = LoadSFX(path, channelType);
+		break;
 	}
+	
+	soundCache[path.string()] = audioClip;
 
-	return ret;
-}
-
-HCHANNEL ModuleAudio::GetMusic(MusicId id, SoundProperty p) const
-{
-	HCHANNEL ret = 0;
-	switch(p)
-	{
-		case SoundProperty::STEREO:
-		{
-			ret = stereoMusic.at(id);
-		}
-			break;
-		case SoundProperty::MONO:
-		{
-			ret = monoMusic.at(id);
-		}
-			break;
-		default:
-			assert(false);
-			break;
-	}
-	return ret;
+	return audioClip;
 }
 
 void ModuleAudio::EnableListener(AudioListener* listener)
@@ -133,75 +74,80 @@ AudioListener * ModuleAudio::GetActiveListener() const
 	return activeListener;
 }
 
-bool ModuleAudio::LoadOgg(const std::experimental::filesystem::path& path, AudioId& audio)
+SoundEffects * ModuleAudio::GetSceneEffects()const
 {
-	HSTREAM streamHandleStereo = BASS_StreamCreateFile(FALSE, path.string().c_str(), 0, 0, BASS_SAMPLE_3D);
-	if(streamHandleStereo == 0)
-	{
-		LOG_DEBUG("Error loading ogg file");
-		assert(false);
-		return false;
-	}
-	MusicId newId;
-	if(sfxHoles.size() > 0)
-	{
-		newId = sfxHoles.front();
-		sfxHoles.pop_front();
-	}
-	else
-	{
-		newId = sfxActualIndex;
-		sfxActualIndex++;
-	}
-	stereoSfx[newId] = streamHandleStereo;
-	audio.id = newId;
-	audio.type = SoundType::SFX;
-
-	//Mono
-	HSTREAM streamHandleMono = BASS_StreamCreateFile(FALSE, path.string().c_str(), 0, 0, BASS_SAMPLE_MONO | BASS_SAMPLE_3D);
-	if(streamHandleMono == 0)
-	{
-		LOG_DEBUG("Error loading ogg file");
-		assert(false);
-		return false;
-	}
-	monoSfx[newId] = streamHandleMono;
-	return true;
+	return sceneEffects;
 }
 
-bool ModuleAudio::LoadWav(const std::experimental::filesystem::path& path, AudioId& audio)
+void ModuleAudio::SubscribeSource(AudioSource& source)
 {
-	//Stereo
-	HSAMPLE streamHandleStereo = BASS_SampleLoad(FALSE, path.string().c_str(), 0, 0, 5, BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
-	if(streamHandleStereo == 0)
+	//If subscribe item is not already in the list, add it
+	if(find(sceneSources.begin(),sceneSources.end(),&source) == sceneSources.end())
 	{
-		LOG_DEBUG("Error loading wav file");
-		assert(false);
-		return false;
+		sceneSources.push_back(&source);
 	}
-	MusicId newId;
-	if(musicHoles.size() > 0)
-	{
-		newId = musicHoles.front();
-		musicHoles.pop_front();
-	}
-	else
-	{
-		newId = musicActualIndex;
-		musicActualIndex++;
-	}
-	stereoMusic[newId] = streamHandleStereo;
-	audio.id = newId;
-	audio.type = SoundType::MUSIC;
+}
 
-	//Mono
-	HSAMPLE streamHandleMono = BASS_SampleLoad(FALSE, path.string().c_str(), 0, 0, 5, BASS_SAMPLE_MONO | BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
-	if(streamHandleMono == 0)
+void ModuleAudio::Unsubscribe(AudioSource& source)
+{
+	vector<AudioSource*>::iterator it = find(sceneSources.begin(), sceneSources.end(), &source);
+	if( it != sceneSources.end())
 	{
-		LOG_DEBUG("Error loading wav file");
-		assert(false);
-		return false;
+		sceneSources.erase(it);
 	}
-	monoMusic[newId] = streamHandleMono;
-	return true;
+}
+
+const vector<AudioSource*>& ModuleAudio::GetAllAudioSources() const
+{
+	return sceneSources;
+}
+
+AudioClip * ModuleAudio::LoadMusic(const std::experimental::filesystem::path & path, ChannelType channelType)
+{
+	AudioClip* audioClip = nullptr;
+	HSTREAM handle = 0;
+	switch (channelType)
+	{
+	case ChannelType::Mono:
+		handle = BASS_StreamCreateFile(FALSE, path.string().c_str(), 0, 0, BASS_SAMPLE_MONO | BASS_SAMPLE_3D);
+		break;
+	case ChannelType::Stereo:
+		handle = BASS_StreamCreateFile(FALSE, path.string().c_str(), 0, 0, BASS_SAMPLE_3D);
+		break;
+	}
+
+	if (handle != 0)
+	{
+		audioClip = new AudioClip();
+		audioClip->type = AudioType::Music;
+		audioClip->channelType = channelType;
+		audioClip->musicStream = handle;
+	}
+
+	return audioClip;
+}
+
+AudioClip * ModuleAudio::LoadSFX(const std::experimental::filesystem::path & path, ChannelType channelType)
+{
+	AudioClip* audioClip = nullptr;
+	HSAMPLE handle = 0;
+	switch (channelType)
+	{
+	case ChannelType::Mono:
+		handle = BASS_SampleLoad(FALSE, path.string().c_str(), 0, 0, 5, BASS_SAMPLE_MONO | BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
+		break;
+	case ChannelType::Stereo:
+		handle = BASS_SampleLoad(FALSE, path.string().c_str(), 0, 0, 5, BASS_SAMPLE_3D | BASS_SAMPLE_OVER_VOL);
+		break;
+	}
+	
+	if (handle != 0)
+	{
+		audioClip = new AudioClip();
+		audioClip->type = AudioType::SFX;
+		audioClip->channelType = channelType;
+		audioClip->sfxSample = handle;
+	}
+
+	return audioClip;
 }

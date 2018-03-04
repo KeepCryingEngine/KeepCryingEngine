@@ -1,6 +1,8 @@
 #ifndef _AUDIOLISTENER_H_
 #define _AUDIOLISTENER_H_
 
+#include <list>
+
 #include "Component.h"
 
 class AudioListener : public Component
@@ -10,7 +12,8 @@ public:
 	AudioListener();
 	~AudioListener();
 
-	void Awake()override;
+	void Awake() override;
+	void Destroy() override;
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
 
 	void SetEnable(bool enable)override;

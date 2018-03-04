@@ -8,140 +8,125 @@
 #include "ModuleAudio.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "AudioClip.h"
 
 using namespace std;
 
 AudioSource::AudioSource():Component(AudioSource::TYPE)
 {
+	App->audio->SubscribeSource(*this);
 }
 
 AudioSource::~AudioSource()
-{}
+{
+	App->audio->Unsubscribe(*this);
+}
 
 void AudioSource::Awake()
 {}
 
 void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-	if(audioInfo == nullptr)
+	if(audioClip == nullptr)
 	{
 		return;
 	}
 
-	if(reloadId)
-	{
-		switch(audioInfo->type)
-		{
-			case SoundType::MUSIC:
-			{
-				id = BASS_SampleGetChannel(App->audio->GetMusic(audioInfo->id,mode), FALSE);
-			}
-			break;
-			case SoundType::SFX:
-			{
-				id = App->audio->GetSFX(audioInfo->id,mode);
-			}
-			break;
-			default:
-				assert(false);
-				break;
-		}
-		reloadId = false;
-	}
-
-	if(id == 0)
+	if(channel == 0)
 	{
 		return;
 	}
+
 	//Set audio properties
-	BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, volume);
-	BASS_ChannelSetAttribute(id, BASS_ATTRIB_PAN,pan);
-	BASS_ChannelSetAttribute(id, BASS_ATTRIB_MUSIC_SPEED, pitch);
-	BASS_Set3DFactors(0,rollOffFactor,doplerFactor);
+	BASS_ChannelSetAttribute(channel, BASS_ATTRIB_VOL, volume);
+	BASS_ChannelSetAttribute(channel, BASS_ATTRIB_FREQ, originalFreq + freqModifier);
+	BASS_Set3DFactors(1.0f, rollOffFactor, doplerFactor);
 	BASS_Apply3D();
 
 	//LOOPcontrol
 	if(loop)
 	{
-		BASS_ChannelFlags(id, BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP);
+		BASS_ChannelFlags(channel, BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP);
 	}
 	else
 	{
-		BASS_ChannelFlags(id, 0, BASS_SAMPLE_LOOP);
+		BASS_ChannelFlags(channel, 0, BASS_SAMPLE_LOOP);
 	}
 
 	switch(state)
 	{
 		case SourceStates::PLAYING:
 		{
-			if(BASS_ChannelIsActive(id) == BASS_ACTIVE_STOPPED && !loop)
+			if(BASS_ChannelIsActive(channel) == BASS_ACTIVE_STOPPED && !loop)
 			{
 				state = SourceStates::WAITING_TO_STOP;
 				break;
 			}
 
-			BASS_ChannelSet3DAttributes(id, BASS_3DMODE_NORMAL, 0, maxDistance, -1, -1, -1);
+			BASS_ChannelSet3DAttributes(channel, BASS_3DMODE_NORMAL, minDistance, maxDistance, 360, 360, -1);
+			BASS_Apply3D();
 
 			// Update 3D position
 
 			Transform* body = gameObject->GetTransform();
 	
-			BASS_ChannelSet3DPosition(id,
+			BASS_ChannelSet3DPosition(channel,
 				(BASS_3DVECTOR*)&body->GetWorldPosition(), // position
 				(BASS_3DVECTOR*)&body->Forward(), // front
-				nullptr); // velocity
+				(BASS_3DVECTOR*)&body->Velocity()); // velocity
+
 
 			BASS_Apply3D();
 		}
 			break;
 		case SourceStates::WAITING_TO_PLAY:
 		{
-			if(BASS_ChannelPlay(id, FALSE) == FALSE)
+			if(BASS_ChannelPlay(channel, FALSE))
 			{
-				int a = BASS_ErrorGetCode();
-				int espera = 0;
-				//LOG_DEBUG("BASS_ChannelPlay() with channel [%ul] error: %s", id, BASS_GetErrorString());
+				BASS_ChannelSetAttribute(channel, BASS_ATTRIB_VOL, 0.0f);
+				state = SourceStates::PLAYING;
 			}
 			else
 			{
-				BASS_ChannelSetAttribute(id, BASS_ATTRIB_VOL, 0.0f);
-				state = SourceStates::PLAYING;
+				//LOG_DEBUG("BASS_ChannelPlay() with channel [%ul] error: %s", id, BASS_GetErrorString());
 			}
 		}
 			break;
 		case SourceStates::WAITING_TO_STOP:
 		{
-			if(BASS_ChannelStop(id) == FALSE)
+			ClearChannelEffects();
+			if(BASS_ChannelStop(channel))
 			{
-				//LOG("BASS_ChannelStop() with channel [%ul] error: %s", id, BASS_GetErrorString());
+				channel = 0;
+				state = SourceStates::STOPPED;
 			}
 			else
 			{
-				state = SourceStates::STOPPED;
+				//LOG("BASS_ChannelStop() with channel [%ul] error: %s", id, BASS_GetErrorString());
 			}
 		}
 			break;
 		case SourceStates::WAITING_TO_PAUSE:
 		{
-			if(BASS_ChannelPause(id) == FALSE)
+			if(BASS_ChannelPause(channel) == FALSE)
 			{
-				//LOG("BASS_ChannelPause() with channel [%ul] error: %s", id, BASS_GetErrorString());
+				state = SourceStates::PAUSED;
 			}
 			else
 			{
-				state = SourceStates::PAUSED;
+				//LOG("BASS_ChannelPause() with channel [%ul] error: %s", id, BASS_GetErrorString());
 			}
 		}
 			break;
 		case SourceStates::WAITING_TO_UNPAUSE:
 		{
-			if(BASS_ChannelPlay(id, FALSE) == FALSE)
+			if(BASS_ChannelPlay(channel, FALSE) == FALSE)
 			{
-				//LOG("BASS_ChannelPlay() with channel [%ul] error: %s", id, BASS_GetErrorString());
+				state = SourceStates::PLAYING;
 			}
 			else
 			{
-				state = SourceStates::PLAYING;
+				//LOG("BASS_ChannelPlay() with channel [%ul] error: %s", id, BASS_GetErrorString());
 			}
 		}
 			break;
@@ -152,100 +137,131 @@ void AudioSource::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Audio Source"))
 	{
-		static char pathToAudio[180] = "";
+		static char pathToAudio[180] = "Assets/sfx/oggSound.ogg";
 
-		ImGui::InputText("##PathToAudio", pathToAudio, sizeof(pathToAudio)); ImGui::SameLine();
+		ImGui::InputText("##PathToAudio", pathToAudio, sizeof(pathToAudio)); 
+		
+		int channelType = (int)loadingChannelType;
+		if (ImGui::Combo("ChannelType", &channelType, "Mono\0Stereo"))
+		{
+			loadingChannelType = (ChannelType)channelType;
+		}
+
+		int audioType = (int)loadingAudioType;
+		if (ImGui::Combo("AudioType", &audioType, "SFX\0Music"))
+		{
+			loadingAudioType = (AudioType)audioType;
+		}
+		
 		if(ImGui::Button("Load audio"))
 		{
 			std::experimental::filesystem::path path(pathToAudio);
-			Load(path);
+			OnLoadButtonPressed(path);
 		}
 
-		static bool isLooping = GetLoop();
-		if(ImGui::Checkbox(" Frustum Culling", &isLooping))
-		{
-			SetLoop(isLooping);
-		}
 
-		int audioMode = (int)mode;
-		if(ImGui::Combo("Mode", &audioMode, "Stereo\0Mono"))
-		{
-			mode = (SoundProperty)audioMode;
-		}
-
-		static float volume = GetVolume();
-		if(ImGui::DragFloat("Volume", &volume,0.05f,0.0f,1.0f))
-		{
-			SetVolume(volume);
-		}
-
-		static float pitch = GetPitch();
-		if(ImGui::DragFloat("Pitch", &pitch,1.0f,0.0f,255.0f))
-		{
-			SetPitch(pitch);
-		}
-
-		static float pan = GetPan();
-		if(ImGui::DragFloat("Pan", &pan,0.05f,-1.0f,1.0f))
-		{
-			SetPan(pan);
-		}
-
-		static float maxDistance = GetMaxDistance();
-		if(ImGui::DragFloat("Max Distance", &maxDistance,1.0f,1.0f,10000.0f))
-		{
-			SetMaxDistance(maxDistance);
-		}
-
-		static float rollOff = GetRollOffFactor();
-		if(ImGui::DragFloat("RollOff factor", &rollOff,0.1f,0.0f,10.0f))
-		{
-			SetRollOffFactor(rollOff);
-		}
-
-		static float dopler = GetDoplerFactor();
-		if(ImGui::DragFloat("Dopler factor", &dopler,0.1f,0.0f,10.0f))
-		{
-			SetDoplerFactor(dopler);
-		}
+		ImGui::Checkbox(" Loop", &loop);
+		ImGui::DragFloat("Volume", &volume, 0.05f, 0.0f, 1.0f);
+		ImGui::DragFloat("Pitch", &freqModifier, 200.0f, -20000.0f, 60000.0f);
+		ImGui::DragFloat("Min Distance", &minDistance, 0.5f, 0.0f, 10000.0f);
+		ImGui::DragFloat("Max Distance", &maxDistance, 0.5f, 1.0f, 10000.0f);
+		ImGui::DragFloat("RollOff factor", &rollOffFactor, 0.1f, 0.0f, 10.0f);
+		ImGui::DragFloat("Dopler factor", &doplerFactor, 0.1f, 0.0f, 10.0f);
+		
 
 		if(ImGui::Button("Play"))
 		{			
-			if(state == SourceStates::PAUSED)
-			{
-				state = SourceStates::WAITING_TO_UNPAUSE;
-			}
-			else if(state != SourceStates::PLAYING)
-			{
-				state = SourceStates::WAITING_TO_PLAY;
-				reloadId = true;
-			}
-		}ImGui::SameLine();
+			OnPlayButtonPressed();
+		} 
+		
+		ImGui::SameLine();
+
 		if(ImGui::Button("Pause"))
 		{
-			if(state != SourceStates::PAUSED)
-			{
-				state = SourceStates::WAITING_TO_PAUSE;
-			}
-		}ImGui::SameLine();
+			OnPauseButtonPressed();
+		}
+		
+		ImGui::SameLine();
+
 		if(ImGui::Button("Stop"))
 		{
-			if(state != SourceStates::STOPPED)
-			{
-				state = SourceStates::WAITING_TO_STOP;
-			}
+			OnStopButtonPressed();
 		}
 	}
 }
 
-void AudioSource::SetMusic(AudioId* audioInfo)
+void AudioSource::OnStopButtonPressed()
 {
-	this->audioInfo = audioInfo;
+	if (state != SourceStates::STOPPED)
+	{
+		state = SourceStates::WAITING_TO_STOP;
+	}
 }
 
-void AudioSource::SetMode(SoundProperty newMode)
+void AudioSource::OnPauseButtonPressed()
 {
-	mode = newMode;
+	if (state != SourceStates::PAUSED)
+	{
+		state = SourceStates::WAITING_TO_PAUSE;
+	}
+}
+
+void AudioSource::OnPlayButtonPressed()
+{
+	if (state == SourceStates::PAUSED)
+	{
+		state = SourceStates::WAITING_TO_UNPAUSE;
+	}
+	else if (state != SourceStates::PLAYING)
+	{
+		state = SourceStates::WAITING_TO_PLAY;
+		channel = GetChannelForAudio(audioClip);
+		UpdateChannelEffects();
+	}
+}
+
+DWORD AudioSource::GetChannelForAudio(const AudioClip* audioClip) const
+{
+	DWORD channel = 0;
+
+	if (audioClip != nullptr)
+	{
+		switch (audioClip->type)
+		{
+		case AudioType::Music:
+		{
+			channel = audioClip->musicStream;
+		}
+		break;
+		case AudioType::SFX:
+		{
+			channel = BASS_SampleGetChannel(audioClip->sfxSample, FALSE);
+		}
+		break;
+		default:
+			assert(false);
+			break;
+		}
+	}
+	return channel;
+}
+
+void AudioSource::UpdateChannelEffects()
+{
+	ClearChannelEffects();
+
+	SoundEffects* newEffects = App->audio->GetSceneEffects();
+	for(EffectInfo* ef:newEffects->GetEffects())
+	{
+		HFX reverbEffect = BASS_ChannelSetFX(channel, BASS_FX_DX8_I3DL2REVERB, ef->priority);
+		BASS_FXSetParameters(reverbEffect, ef->reverbConfig);
+		activeEffects.push_back(reverbEffect);
+	}
+}
+
+void AudioSource::SetMusic(AudioClip* audioInfo)
+{
+	this->audioClip = audioInfo;
 }
 
 void AudioSource::SetVolume(float value)
@@ -255,12 +271,7 @@ void AudioSource::SetVolume(float value)
 
 void AudioSource::SetPitch(float value)
 {
-	pitch = value;
-}
-
-void AudioSource::SetPan(float value)
-{
-	pan = value;
+	freqModifier = value;
 }
 
 void AudioSource::SetMaxDistance(float value)
@@ -283,14 +294,9 @@ void AudioSource::SetLoop(bool value)
 	loop = value;
 }
 
-AudioId* AudioSource::GetMusic() const
+AudioClip* AudioSource::GetMusic() const
 {
-	return audioInfo;
-}
-
-SoundProperty AudioSource::GetMode() const
-{
-	return mode;
+	return audioClip;
 }
 
 float AudioSource::GetVolume() const
@@ -300,12 +306,7 @@ float AudioSource::GetVolume() const
 
 float AudioSource::GetPitch() const
 {
-	return pitch;
-}
-
-float AudioSource::GetPan() const
-{
-	return pan;
+	return freqModifier;
 }
 
 float AudioSource::GetMaxDistance() const
@@ -328,20 +329,26 @@ bool AudioSource::GetLoop()
 	return loop;
 }
 
-void AudioSource::Load(const std::experimental::filesystem::path & path)
+void AudioSource::OnLoadButtonPressed(const std::experimental::filesystem::path & path)
 {
-
-	AudioId* temp = App->audio->Load(path);
-	if(temp == nullptr)
+	//TODO: Delete old audio clip if already loaded
+	AudioClip* audioClip = App->audio->Load(path, loadingAudioType ,loadingChannelType);
+	if(audioClip != nullptr)
 	{
-		LOG_DEBUG("Error on audio load");
-		assert(false);
-		return;
-	}
-	BASS_ChannelStop(id);
-	state = SourceStates::STOPPED;
+		BASS_ChannelStop(channel);
 
-	audioInfo = temp;
-	reloadId = true;
+		this->audioClip = audioClip;
+
+		BASS_ChannelGetAttribute(channel, BASS_ATTRIB_FREQ, &originalFreq);
+	}
+}
+
+void AudioSource::ClearChannelEffects()
+{
+	for(HFX ef : activeEffects)
+	{
+		BASS_ChannelRemoveFX(channel, ef);
+	}
+	activeEffects.clear();
 }
 
