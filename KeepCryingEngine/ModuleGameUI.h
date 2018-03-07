@@ -15,6 +15,9 @@ public:
 	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
 	bool CleanUp() override;
 
+	void SetCanvas(Canvas& canvas);
+	Canvas* GetCanvas();
+
 private:
 	void UpdateRecursive(float deltaTimeS, float realDeltaTimeS, GameObject* g);
 

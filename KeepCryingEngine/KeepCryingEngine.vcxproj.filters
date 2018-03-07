@@ -148,6 +148,9 @@
     <ClCompile Include="InputText.cpp">
       <Filter>Components\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Components\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -317,6 +320,9 @@
       <Filter>Components\UI</Filter>
     </ClInclude>
     <ClInclude Include="InputText.h">
+      <Filter>Components\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
       <Filter>Components\UI</Filter>
     </ClInclude>
   </ItemGroup>

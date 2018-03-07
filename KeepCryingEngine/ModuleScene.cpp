@@ -18,6 +18,12 @@
 #include "ModuleEditorUI.h"
 #include "Animator.h"
 #include "AudioSource.h"
+#include "ModuleGameUI.h"
+#include "Canvas.h"
+#include "Image.h"
+#include "Button.h"
+#include "Text.h"
+#include "InputText.h"
 
 using namespace std;
 
@@ -226,6 +232,117 @@ GameObject* ModuleScene::AddCamera(GameObject& parent)
 
 	gameObject->AddComponent<Camera>();
 
+	return gameObject;
+}
+
+GameObject * ModuleScene::AddCanvas(GameObject & parent)
+{
+	GameObject* gameObject = AddEmpty(parent, "Canvas");
+
+	gameObject->AddComponent<Canvas>();
+	return gameObject;
+}
+
+GameObject * ModuleScene::AddImage(GameObject & parent)
+{
+	GameObject* gameObject;
+	switch(IsChildOfCanvas(parent))
+	{
+		case uiState::NO_CANVAS:
+		{
+			gameObject = AddEmpty(*AddCanvas(parent), "Image");
+		}
+		break;
+		case uiState::NO_FATHER_CANVAS:
+		{
+			gameObject = AddEmpty(*App->uiGame->GetCanvas()->gameObject, "Image");
+		}
+		break;
+		case uiState::FATHER_CANVAS:
+		{
+			gameObject = AddEmpty(parent, "Image");
+		}
+		break;
+	}
+	gameObject->AddComponent<Image>();
+	return gameObject;
+}
+
+GameObject * ModuleScene::AddButton(GameObject & parent)
+{
+	GameObject* gameObject;
+	switch(IsChildOfCanvas(parent))
+	{
+		case uiState::NO_CANVAS:
+		{
+			gameObject = AddEmpty(*AddCanvas(parent), "Button");
+		}
+			break;
+		case uiState::NO_FATHER_CANVAS:
+		{
+			gameObject = AddEmpty(*App->uiGame->GetCanvas()->gameObject, "Button");
+		}
+			break;
+		case uiState::FATHER_CANVAS:
+		{
+			gameObject = AddEmpty(parent, "Button");
+		}
+		break;
+	}
+	gameObject->AddComponent<Image>();
+	gameObject->AddComponent<Button>();
+	AddEmpty(*gameObject, "Text");//Add text in a sub-object
+	return gameObject;
+}
+
+GameObject * ModuleScene::AddText(GameObject & parent)
+{
+	GameObject* gameObject;
+	switch(IsChildOfCanvas(parent))
+	{
+		case uiState::NO_CANVAS:
+		{
+			gameObject = AddEmpty(*AddCanvas(parent), "Text");
+		}
+		break;
+		case uiState::NO_FATHER_CANVAS:
+		{
+			gameObject = AddEmpty(*App->uiGame->GetCanvas()->gameObject, "Text");
+		}
+		break;
+		case uiState::FATHER_CANVAS:
+		{
+			gameObject = AddEmpty(parent, "Text");
+		}
+		break;
+	}
+	gameObject->AddComponent<Text>();
+	return gameObject;
+}
+
+GameObject * ModuleScene::AddInputText(GameObject & parent)
+{
+	GameObject* gameObject;
+	switch(IsChildOfCanvas(parent))
+	{
+		case uiState::NO_CANVAS:
+		{
+			gameObject = AddEmpty(*AddCanvas(parent), "Text");
+		}
+		break;
+		case uiState::NO_FATHER_CANVAS:
+		{
+			gameObject = AddEmpty(*App->uiGame->GetCanvas()->gameObject, "Text");
+		}
+		break;
+		case uiState::FATHER_CANVAS:
+		{
+			gameObject = AddEmpty(parent, "Text");
+		}
+		break;
+	}
+	gameObject->AddComponent<Image>();
+	gameObject->AddComponent<InputText>();
 	return gameObject;
 }
 
@@ -501,6 +618,25 @@ bool ModuleScene::RayCastMesh(GameObject* gameObject, Mesh * mesh, const LineSeg
 	}
 
 	return hit;
+}
+
+uiState ModuleScene::IsChildOfCanvas(GameObject & g) const
+{
+	if(App->uiGame->GetCanvas() == nullptr)
+	{
+		return uiState::NO_CANVAS;
+	}
+
+	GameObject* currentGameObject = &g;
+	while(currentGameObject != root)
+	{
+		if(currentGameObject == App->uiGame->GetCanvas()->gameObject)
+		{
+			return uiState::FATHER_CANVAS;
+		}
+		currentGameObject = g.GetParent();
+	}
+	return uiState::NO_FATHER_CANVAS;
 }
 
 /// Loads the next triangle adapting triangles to mesh draw type

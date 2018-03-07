@@ -64,6 +64,11 @@ private:
 	bool addSphereGameObject = false;
 	bool addEmptyGameObject = false;
 	bool addCameraGameObject = false;
+	bool addCanvasGameObject = false;
+	bool addImageGameObject = false;
+	bool addButtonGameObject = false;
+	bool addTextGameObject = false;
+	bool addInputTextGameObject = false;
 
 	//Parameter control bools
 	bool frustumCulling = false;

@@ -23,6 +23,11 @@
 #include "Animator.h"
 #include "MeshRenderer.h"
 #include "ReverbZone.h"
+#include "ModuleGameUI.h"
+#include "Canvas.h"
+#include "Button.h"
+#include "Text.h"
+#include "InputText.h"
 
 using namespace std;
 
@@ -453,6 +458,31 @@ void ModuleEditorUI::CallEntityCreation()
 		App->scene->AddCamera(*App->scene->Get(selectedNodeID));
 		addCameraGameObject = false;
 	}
+	if(addCanvasGameObject)
+	{
+		App->scene->AddCanvas(*App->scene->Get(selectedNodeID));
+		addCanvasGameObject = false;
+	}
+	if(addImageGameObject)
+	{
+		App->scene->AddImage(*App->scene->Get(selectedNodeID));
+		addImageGameObject = false;
+	}
+	if(addButtonGameObject)
+	{
+		App->scene->AddButton(*App->scene->Get(selectedNodeID));
+		addButtonGameObject = false;
+	}
+	if(addTextGameObject)
+	{
+		App->scene->AddText(*App->scene->Get(selectedNodeID));
+		addTextGameObject = false;
+	}
+	if(addInputTextGameObject)
+	{
+		App->scene->AddInputText(*App->scene->Get(selectedNodeID));
+		addInputTextGameObject = false;
+	}
 }
 
 void ModuleEditorUI::CallWindows()
@@ -685,6 +715,33 @@ void ModuleEditorUI::DrawHierarchyWindow()
 			{
 				addCameraGameObject = true;
 			}
+			if(ImGui::BeginMenu("UI"))
+			{
+				if(App->uiGame->GetCanvas() == nullptr)
+				{
+					if(ImGui::Selectable("Canvas"))
+					{
+						addCanvasGameObject = true;
+					}
+				}
+				if(ImGui::Selectable("Image"))
+				{
+					addImageGameObject = true;
+				}
+				if(ImGui::Selectable("Button"))
+				{
+					addButtonGameObject = true;
+				}
+				if(ImGui::Selectable("Text"))
+				{
+					addTextGameObject = true;
+				}
+				if(ImGui::Selectable("InputText"))
+				{
+					addInputTextGameObject = true;
+				}
+				ImGui::EndMenu();
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndPopup();
@@ -752,6 +809,26 @@ void ModuleEditorUI::DrawInspectorWindow()
 				if(ImGui::Selectable("Reverb Zone"))
 				{
 					temp->AddComponent<ReverbZone>();
+				}
+				ImGui::EndMenu();
+			}
+			if(ImGui::BeginMenu("UI"))
+			{
+				if(ImGui::Selectable("Image"))
+				{
+					addImageGameObject = true;
+				}
+				if(ImGui::Selectable("Button"))
+				{
+					temp->AddComponent<Button>();
+				}
+				if(ImGui::Selectable("Text"))
+				{
+					temp->AddComponent<Text>();
+				}
+				if(ImGui::Selectable("InputText"))
+				{
+					temp->AddComponent<InputText>();
 				}
 				ImGui::EndMenu();
 			}
@@ -885,6 +962,33 @@ void ModuleEditorUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 				if(ImGui::Selectable("Camera"))
 				{
 					addCameraGameObject = true;
+				}
+				if(ImGui::BeginMenu("UI"))
+				{
+					if(App->uiGame->GetCanvas() == nullptr)
+					{
+						if(ImGui::Selectable("Canvas"))
+						{
+							addCanvasGameObject = true;
+						}
+					}
+					if(ImGui::Selectable("Image"))
+					{
+						addImageGameObject = true;
+					}
+					if(ImGui::Selectable("Button"))
+					{
+						addButtonGameObject = true;
+					}
+					if(ImGui::Selectable("Text"))
+					{
+						addTextGameObject = true;
+					}
+					if(ImGui::Selectable("InputText"))
+					{
+						addInputTextGameObject = true;
+					}
+					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
 			}

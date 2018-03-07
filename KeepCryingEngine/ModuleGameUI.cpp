@@ -27,6 +27,16 @@ bool ModuleGameUI::CleanUp()
 	return true;
 }
 
+void ModuleGameUI::SetCanvas(Canvas& canvas)
+{
+	root = &canvas;
+}
+
+Canvas * ModuleGameUI::GetCanvas()
+{
+	return root;
+}
+
 void ModuleGameUI::UpdateRecursive(float deltaTimeS, float realDeltaTimeS, GameObject * g)
 {
 	vector<Component*> components = g->GetComponents();

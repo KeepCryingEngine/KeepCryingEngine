@@ -25,6 +25,13 @@ struct RayCastHit
 	float normalizedDistance;
 };
 
+enum class uiState
+{
+	NO_CANVAS,
+	NO_FATHER_CANVAS,
+	FATHER_CANVAS
+};
+
 class ModuleScene : public Module
 {
 public:
@@ -49,6 +56,11 @@ public:
 	GameObject* AddCube(GameObject& parent);
 	GameObject* AddSphere(GameObject& parent);
 	GameObject* AddCamera(GameObject& parent);
+	GameObject* AddCanvas(GameObject& parent);
+	GameObject* AddImage(GameObject& parent);
+	GameObject* AddButton(GameObject& parent);
+	GameObject* AddText(GameObject& parent);
+	GameObject* AddInputText(GameObject& parent);
 
 	void Generate(int count, float staticPercentage, float minX, float maxX, float minY, float maxY, float minZ, float maxZ);
 
@@ -69,6 +81,8 @@ private:
 	LineSegment ProjectLineSegmentToGameObjectsLocalSpace(const LineSegment& worldSpaceLineSegment, const GameObject& gameObject) const;
 	bool RayCastGameObject(GameObject* gameObject, const LineSegment& lineSegment, RayCastHit& rayCastHit) const;
 	bool RayCastMesh(GameObject* gameObject, Mesh* mesh, const LineSegment& lineSegment, RayCastHit& rayCastHit) const;
+
+	uiState IsChildOfCanvas(GameObject& g) const;
 
 	void CheckToDestroy();
 

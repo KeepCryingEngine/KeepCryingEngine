@@ -20,6 +20,7 @@ public:
 		AudioSource,
 		ReverbZone,
 		Canvas,
+		Image,
 		Button,
 		Text,
 		InpuText
