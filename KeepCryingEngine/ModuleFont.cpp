@@ -73,14 +73,19 @@ const Texture* ModuleFont::CreateTextureFromSurface(const SDL_Surface* surface) 
 
 	glBindTexture(GL_TEXTURE_2D, tId);
 
-	int mode = GL_RGB;
+	int textureFormat;
+	int colors = surface->format->BytesPerPixel;
 
-	if(surface->format->BytesPerPixel == 4)
+	if(colors == 4)
 	{
-		mode = GL_RGBA;
+		textureFormat = surface->format->Rmask == 0x000000ff ? GL_RGBA : GL_BGRA;
+	}
+	else
+	{
+		textureFormat = surface->format->Rmask == 0x000000ff ? GL_RGB : GL_BGR;
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, mode, w, h, 0, mode, GL_UNSIGNED_BYTE, surface->pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0, colors, w, h, 0, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
