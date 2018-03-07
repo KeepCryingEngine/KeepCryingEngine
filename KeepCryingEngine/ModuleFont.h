@@ -1,12 +1,12 @@
 #ifndef _MODULEFONT_H_
 #define _MODULEFONT_H_
 
+#include <map>
 #include <SDL_ttf.h>
+#include <experimental/filesystem>
 
 #include "Module.h"
 
-struct SDL_Surface;
-struct SDL_Texture;
 class Texture;
 
 class ModuleFont : public Module
@@ -18,12 +18,15 @@ public:
 	bool Init() override;
 	bool CleanUp() override;
 
-private:
-	Texture * CreateTextureFromFontSurface(SDL_Surface * fontSurface);
+	const TTF_Font* LoadFont(const std::experimental::filesystem::path& fontPath, int size);
+
+	const Texture* RenderFromText(const TTF_Font* font, const std::string& message, const SDL_Color& color) const;
 
 private:
-	TTF_Font * font = nullptr;
-	Texture * tFont = nullptr;
+	const Texture* CreateTextureFromSurface(const SDL_Surface* surface) const;
+
+private:
+	std::map<std::pair<std::experimental::filesystem::path, int>, TTF_Font*> fonts;
 };
 
 #endif
