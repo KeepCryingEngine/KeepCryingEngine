@@ -19,7 +19,7 @@ private:
 	void UpdateRecursive(float deltaTimeS, float realDeltaTimeS, GameObject* g);
 
 private:
-	Canvas* root;
+	Canvas* root = nullptr;
 
 };
 

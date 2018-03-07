@@ -15,7 +15,10 @@ ModuleGameUI::~ModuleGameUI()
 
 update_status ModuleGameUI::Update(float deltaTimeS, float realDeltaTimeS)
 {
-	UpdateRecursive(deltaTimeS,realDeltaTimeS,root->gameObject);
+	if(root != nullptr)
+	{
+		UpdateRecursive(deltaTimeS, realDeltaTimeS, root->gameObject);
+	}
 	return update_status::UPDATE_CONTINUE;
 }
 

@@ -139,6 +139,15 @@
     <ClCompile Include="Canvas.cpp">
       <Filter>Components\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>Components\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="InputText.cpp">
+      <Filter>Components\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -299,6 +308,15 @@
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="Canvas.h">
+      <Filter>Components\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Components\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>Components\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="InputText.h">
       <Filter>Components\UI</Filter>
     </ClInclude>
   </ItemGroup>

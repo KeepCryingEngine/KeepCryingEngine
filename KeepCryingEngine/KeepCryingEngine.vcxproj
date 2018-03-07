@@ -88,6 +88,7 @@
     <ClInclude Include="AudioListener.h" />
     <ClInclude Include="AudioSource.h" />
     <ClInclude Include="Brofiler.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="Component.h" />
@@ -104,6 +105,7 @@
     <ClInclude Include="external\ImGui\stb_truetype.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="InputText.h" />
     <ClInclude Include="json_serializer.h" />
     <ClInclude Include="KDTree.h" />
     <ClInclude Include="KDTreeNode.h" />
@@ -131,6 +133,7 @@
     <ClInclude Include="QuadtreeNode.h" />
     <ClInclude Include="ReverbZone.h" />
     <ClInclude Include="SoundsEffects.h" />
+    <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Tree.h" />
@@ -143,6 +146,7 @@
     <ClCompile Include="AudioClip.cpp" />
     <ClCompile Include="AudioListener.cpp" />
     <ClCompile Include="AudioSource.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="ComponentFabric.cpp" />
@@ -154,6 +158,7 @@
     <ClCompile Include="external\ImGui\imgui_draw.cpp" />
     <ClCompile Include="external\ImGui\imgui_impl_sdl_gl3.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="InputText.cpp" />
     <ClCompile Include="json_serializer.cpp" />
     <ClCompile Include="KDTree.cpp" />
     <ClCompile Include="KDTreeNode.cpp" />
@@ -181,6 +186,7 @@
     <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="ReverbZone.cpp" />
     <ClCompile Include="SoundsEffects.cpp" />
+    <ClCompile Include="Text.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Tree.cpp" />
