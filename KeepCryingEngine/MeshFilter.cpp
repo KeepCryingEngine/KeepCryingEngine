@@ -49,7 +49,7 @@ void MeshFilter::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		if (meshRenderer)
 		{
 			meshRenderer->Render(*mesh);
-			if (App->ui->GetDebugMode())
+			if (App->uiEditor->GetDebugMode())
 			{
 				DrawGameObjectAABB();
 			}

@@ -13,11 +13,11 @@ enum class ClickMode
 	Pick
 };
 
-class ModuleUI : public Module
+class ModuleEditorUI : public Module
 {
 public:
-	ModuleUI();
-	virtual ~ModuleUI();
+	ModuleEditorUI();
+	virtual ~ModuleEditorUI();
 
 	bool Init() override;
 	bool Start() override;

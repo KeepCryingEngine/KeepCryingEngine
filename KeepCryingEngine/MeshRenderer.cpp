@@ -70,7 +70,7 @@ void MeshRenderer::Render(Mesh& mesh)
 				}
 				else
 				{
-					if(App->ui->GetFrustumCulling())
+					if(App->uiEditor->GetFrustumCulling())
 					{
 						if(App->camera->GetEnabledCamera() != nullptr && App->camera->GetEnabledCamera()->Intersects(App->camera->GetEnabledCamera()->GetFrustum(), gameObject->GetAABB()))
 						{

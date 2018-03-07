@@ -18,7 +18,11 @@ public:
 		Animator,
 		AudioListener,
 		AudioSource,
-		ReverbZone
+		ReverbZone,
+		Canvas,
+		Button,
+		Text,
+		InpuText
 	};
 
 	Component(Component::Type type) : enabled(true), wasEnabled(true), type(type)

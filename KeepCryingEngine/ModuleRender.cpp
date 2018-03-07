@@ -112,7 +112,7 @@ update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 	DrawGeometry();
 	drawBuffer.clear();
 
-	if(App->ui->GetDebugMode())
+	if(App->uiEditor->GetDebugMode())
 	{
 		DrawLastRay();
 	}

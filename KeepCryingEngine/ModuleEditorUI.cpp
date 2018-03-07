@@ -26,20 +26,20 @@
 
 using namespace std;
 
-ModuleUI::ModuleUI()
+ModuleEditorUI::ModuleEditorUI()
 { }
 
-ModuleUI::~ModuleUI()
+ModuleEditorUI::~ModuleEditorUI()
 { }
 
-bool ModuleUI::Init()
+bool ModuleEditorUI::Init()
 {
 	ImGui_ImplSdlGL3_Init(App->window->window);
 	ImGui::StyleColorsClassic();
 	return true;
 }
 
-bool ModuleUI::Start()
+bool ModuleEditorUI::Start()
 {
 	nearPlane = App->camera->camera->GetNearPlane();
 	farPlane = App->camera->camera->GetFarPlane();
@@ -60,7 +60,7 @@ bool ModuleUI::Start()
 	return true;
 }
 
-update_status ModuleUI::Update(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleEditorUI::Update(float deltaTimeS, float realDeltaTimeS)
 {	
 	DrawMainMenu();
 
@@ -71,45 +71,45 @@ update_status ModuleUI::Update(float deltaTimeS, float realDeltaTimeS)
 	return update_status::UPDATE_CONTINUE;
 }
 
-update_status ModuleUI::PostUpdate(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleEditorUI::PostUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	ImGui::Render();
 
 	return update_status::UPDATE_CONTINUE;
 }
 
-bool ModuleUI::GetFrustumCulling() const
+bool ModuleEditorUI::GetFrustumCulling() const
 {
 	return frustumCulling;
 }
 
-bool ModuleUI::GetDebugMode() const
+bool ModuleEditorUI::GetDebugMode() const
 {
 	return debugMode;
 }
 
-ClickMode ModuleUI::GetClickMode() const
+ClickMode ModuleEditorUI::GetClickMode() const
 {
 	return clickMode;
 }
 
-void ModuleUI::SetSelectedNodeID(unsigned long long id)
+void ModuleEditorUI::SetSelectedNodeID(unsigned long long id)
 {
 	selectedNodeID = id;
 }
 
-unsigned long long ModuleUI::GetSelectedNode() const
+unsigned long long ModuleEditorUI::GetSelectedNode() const
 {
 	return selectedNodeID;
 }
 
-bool ModuleUI::CleanUp()
+bool ModuleEditorUI::CleanUp()
 {
 	ImGui_ImplSdlGL3_Shutdown();
 	return true;
 }
 
-void ModuleUI::DrawMainMenu()
+void ModuleEditorUI::DrawMainMenu()
 {
 	ImVec2 buttonSize = { 120.0f, 20.0f };
 
@@ -252,7 +252,7 @@ void ModuleUI::DrawMainMenu()
 	}
 }
 
-void ModuleUI::SetAllParameters()
+void ModuleEditorUI::SetAllParameters()
 {
 	//glEnable Parameters
 	if(textureEnabled)
@@ -387,12 +387,12 @@ void ModuleUI::SetAllParameters()
 	}
 }
 
-void ModuleUI::SetUpTextEditor()
+void ModuleEditorUI::SetUpTextEditor()
 {
 	editor.SetLanguageDefinition(TextEditor::LanguageDefinition::GLSL());
 }
 
-void ModuleUI::SetTextOnEditor(int shaderMode)
+void ModuleEditorUI::SetTextOnEditor(int shaderMode)
 {
 	const char* shaderPath = "";
 
@@ -421,17 +421,17 @@ void ModuleUI::SetTextOnEditor(int shaderMode)
 	t.close();
 }
 
-void ModuleUI::OpenInspectorWindow()
+void ModuleEditorUI::OpenInspectorWindow()
 {
 	inspectorWindow = true;
 }
 
-void ModuleUI::CloseInspectorWindow()
+void ModuleEditorUI::CloseInspectorWindow()
 {
 	inspectorWindow = false;
 }
 
-void ModuleUI::CallEntityCreation()
+void ModuleEditorUI::CallEntityCreation()
 {
 	if(addEmptyGameObject)
 	{
@@ -455,7 +455,7 @@ void ModuleUI::CallEntityCreation()
 	}
 }
 
-void ModuleUI::CallWindows()
+void ModuleEditorUI::CallWindows()
 {
 	if(cameraWindow)
 	{
@@ -491,7 +491,7 @@ void ModuleUI::CallWindows()
 	}
 }
 
-void ModuleUI::CallGuizmo()
+void ModuleEditorUI::CallGuizmo()
 {
 	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 	static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
@@ -563,7 +563,7 @@ void ModuleUI::CallGuizmo()
 	}
 }
 
-void ModuleUI::DrawCameraWindow()
+void ModuleEditorUI::DrawCameraWindow()
 {
 	ImGui::Begin("Camera Controls", &cameraWindow, ImGuiWindowFlags_MenuBar);
 	ImGui::CloseCurrentPopup();
@@ -590,7 +590,7 @@ void ModuleUI::DrawCameraWindow()
 	ImGui::End();
 }
 
-void ModuleUI::DrawSpeedWindow()
+void ModuleEditorUI::DrawSpeedWindow()
 {
 	ImGui::Begin("Speed Controls", &speedWindow, ImGuiWindowFlags_MenuBar);
 	ImGui::DragFloat("Movement", &movementSpeed, 0.5f, 0.0f, 100.0f, "%.2f");
@@ -606,7 +606,7 @@ void ModuleUI::DrawSpeedWindow()
 	ImGui::End();
 }
 
-void ModuleUI::DrawShaderWindow()
+void ModuleEditorUI::DrawShaderWindow()
 {
 	ImGui::Begin("Text Editor Demo", &shaderEditorWindow, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
 	ImGui::SetWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
@@ -643,7 +643,7 @@ void ModuleUI::DrawShaderWindow()
 	ImGui::End();
 }
 
-void ModuleUI::DrawHierarchyWindow()
+void ModuleEditorUI::DrawHierarchyWindow()
 {
 	ImGui::Begin("Game Object Hierarchy", &hierarchyWindow);
 
@@ -716,7 +716,7 @@ void ModuleUI::DrawHierarchyWindow()
 	ImGui::End();
 }
 
-void ModuleUI::DrawInspectorWindow()
+void ModuleEditorUI::DrawInspectorWindow()
 {
 	GameObject* temp = App->scene->Get(selectedNodeID);
 
@@ -781,7 +781,7 @@ void ModuleUI::DrawInspectorWindow()
 	ImGui::End();
 }
 
-void ModuleUI::DrawGenerateGameObjectWindow()
+void ModuleEditorUI::DrawGenerateGameObjectWindow()
 {
 	ImGui::Begin("Generate GameObject Controls", &generateGameObjectWindow, ImGuiWindowFlags_MenuBar);
 
@@ -808,7 +808,7 @@ void ModuleUI::DrawGenerateGameObjectWindow()
 	ImGui::End();
 }
 
-void ModuleUI::DrawSpacePartitioningWindow()
+void ModuleEditorUI::DrawSpacePartitioningWindow()
 {
 	ImGui::Begin("Space Partitioning Controls", &spacePartitioningWindow, ImGuiWindowFlags_MenuBar);
 
@@ -822,7 +822,7 @@ void ModuleUI::DrawSpacePartitioningWindow()
 	ImGui::End();
 }
 
-void ModuleUI::DrawLoadedTexturesInfoWindow()
+void ModuleEditorUI::DrawLoadedTexturesInfoWindow()
 {
 	ImGui::Begin("Loaded Textures Information", &loadedTexturesInfoWindow, ImGuiWindowFlags_MenuBar);
 
@@ -842,7 +842,7 @@ void ModuleUI::DrawLoadedTexturesInfoWindow()
 	ImGui::End();
 }
 
-void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
+void ModuleEditorUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 {
 	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
@@ -933,7 +933,7 @@ void ModuleUI::PrintChildrenOnHierarchy(std::vector<GameObject*> children)
 	}
 }
 
-void ModuleUI::DrawAboutMenu()
+void ModuleEditorUI::DrawAboutMenu()
 {
 	if(ImGui::Button("KeepCrying Engine"))
 	{

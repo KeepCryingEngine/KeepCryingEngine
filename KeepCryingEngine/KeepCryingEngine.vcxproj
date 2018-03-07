@@ -89,6 +89,7 @@
     <ClInclude Include="AudioSource.h" />
     <ClInclude Include="Brofiler.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Canvas.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentFabric.h" />
     <ClInclude Include="external\devil\include\DevIL.h" />
@@ -116,6 +117,7 @@
     <ClInclude Include="ModuleAudio.h" />
     <ClInclude Include="ModuleCamera.h" />
     <ClInclude Include="ModuleEntity.h" />
+    <ClInclude Include="ModuleGameUI.h" />
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleScene.h" />
@@ -142,6 +144,7 @@
     <ClCompile Include="AudioListener.cpp" />
     <ClCompile Include="AudioSource.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="ComponentFabric.cpp" />
     <ClCompile Include="external\ImGuiTextEditor\TextEditor.cpp" />
     <ClCompile Include="external\ImGuizmo\ImGuizmo.cpp" />
@@ -164,6 +167,7 @@
     <ClCompile Include="ModuleAudio.cpp" />
     <ClCompile Include="ModuleCamera.cpp" />
     <ClCompile Include="ModuleEntity.cpp" />
+    <ClCompile Include="ModuleGameUI.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleScene.cpp" />

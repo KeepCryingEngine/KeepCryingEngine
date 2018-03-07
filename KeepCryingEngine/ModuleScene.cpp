@@ -47,9 +47,9 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 		AddCube(*root)->AddComponent<AudioSource>();
 	}
 
-	DrawHierarchy(Get(App->ui->GetSelectedNode()));
+	DrawHierarchy(Get(App->uiEditor->GetSelectedNode()));
 
-	if(!App->ui->GetFrustumCulling())
+	if(!App->uiEditor->GetFrustumCulling())
 	{
 		// All visible
 
@@ -123,7 +123,7 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 
 	generatedGameObjects.clear();
 
-	if(App->ui->GetDebugMode())
+	if(App->uiEditor->GetDebugMode())
 	{
 		if(App->input->GetKey(SDL_SCANCODE_SPACE) == KeyState::KEY_DOWN)
 		{

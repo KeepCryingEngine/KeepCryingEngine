@@ -66,7 +66,7 @@ void ModuleEntity::LoadMesh(const std::experimental::filesystem::path& path)
 		materials.insert(materials.end(), createdMaterials.begin(), createdMaterials.end());
 		meshes.insert(meshes.end(), createdMeshes.begin(), createdMeshes.end());
 
-		GameObject* root = App->scene->Get(App->ui->GetSelectedNode());
+		GameObject* root = App->scene->Get(App->uiEditor->GetSelectedNode());
 		LoadMeshRecursive(scene, scene->mRootNode, root, createdMaterials, createdMeshes);
 	}
 }

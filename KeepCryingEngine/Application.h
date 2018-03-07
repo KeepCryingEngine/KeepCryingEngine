@@ -9,7 +9,8 @@ class Module;
 class ModuleRender;
 class ModuleWindow;
 class ModuleInput;
-class ModuleUI;
+class ModuleEditorUI;
+class ModuleGameUI;
 class ModuleCamera;
 class ModuleShader;
 class ModuleScene;
@@ -39,14 +40,15 @@ public:
 	ModuleRender* renderer = nullptr;
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
-	ModuleUI* ui = nullptr;
+	ModuleEditorUI* uiEditor = nullptr;
+	ModuleGameUI* uiGame = nullptr;
 	ModuleCamera* camera = nullptr;
 	ModuleShader* shader = nullptr;
 	ModuleScene* scene = nullptr;
 	ModuleTexture* texture = nullptr;
-	ModuleEntity* entity = nullptr;
 	ModuleAnim* anim = nullptr;
 	ModuleAudio* audio = nullptr;
+	ModuleEntity* entity = nullptr;
 
 	// Cargar información desde json
 	// Tamaño pantalla, nombre, fps, etc
