@@ -1,4 +1,6 @@
 #include "ModuleTexture.h"
+#include "ModuleFont.h"
+#include "Application.h"
 
 #include <DevIL.h>
 #include <string>
