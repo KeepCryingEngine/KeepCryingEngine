@@ -15,7 +15,7 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "ModuleCamera.h"
-#include "ModuleUI.h"
+#include "ModuleEditorUI.h"
 #include "Animator.h"
 #include "AudioSource.h"
 

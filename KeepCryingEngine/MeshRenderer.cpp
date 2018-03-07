@@ -10,7 +10,7 @@
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
-#include "ModuleUI.h"
+#include "ModuleEditorUI.h"
 #include "Camera.h"
 
 MeshRenderer::MeshRenderer() : Component(MeshRenderer::TYPE)

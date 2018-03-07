@@ -1,5 +1,5 @@
-#ifndef _MODULEUI_H_
-#define _MODULEUI_H_
+#ifndef _MODULEEDITORUI_H_
+#define _MODULEEDITORUI_H_
 
 #include <float3.h>
 #include <TextEditor.h>
@@ -111,4 +111,4 @@ private:
 	unsigned long long selectedNodeID = 0;
 };
 
-#endif // !_MODULEUI_H_
+#endif // !_MODULEEDITORUI_H_

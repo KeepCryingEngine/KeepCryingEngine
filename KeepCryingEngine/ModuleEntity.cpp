@@ -10,7 +10,7 @@
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 #include "Application.h"
-#include "ModuleUI.h"
+#include "ModuleEditorUI.h"
 #include "ModuleScene.h"
 #include "ModuleTexture.h"
 #include "GameObject.h"

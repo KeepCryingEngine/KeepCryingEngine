@@ -8,7 +8,7 @@
 #include "ModuleScene.h"
 #include "ComponentFabric.h"
 #include "Transform.h"
-#include "ModuleUI.h"
+#include "ModuleEditorUI.h"
 
 using namespace std;
 

@@ -3,7 +3,7 @@
 #include "Application.h"
 #include "ModuleEntity.h"
 #include "MeshRenderer.h"
-#include "ModuleUI.h"
+#include "ModuleEditorUI.h"
 #include "GameObject.h"
 #include "Mesh.h"
 #include "Transform.h"

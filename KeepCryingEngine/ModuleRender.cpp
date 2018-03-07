@@ -11,7 +11,7 @@
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleShader.h"
-#include "ModuleUI.h"
+#include "ModuleEditorUI.h"
 #include "Camera.h"
 #include "GameObject.h"
 #include "Transform.h"
