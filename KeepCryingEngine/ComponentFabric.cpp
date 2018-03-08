@@ -12,6 +12,7 @@
 #include "AudioSource.h"
 #include "ReverbZone.h"
 #include "ModuleGameUI.h"
+#include "Transform2D.h"
 #include "Canvas.h"
 #include "Image.h"
 #include "Button.h"
@@ -53,6 +54,9 @@ Component * ComponentFabric::CreateComponent(Component::Type type)
 				component = new Canvas();
 				App->uiGame->SetCanvas(*(Canvas*)component);
 			}
+			break;
+		case Component::Type::Transform2D:
+			component = new Transform2D();
 			break;
 		case Component::Type::Image:
 			component = new Image();

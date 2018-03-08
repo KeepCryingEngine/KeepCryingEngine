@@ -3,13 +3,27 @@
 
 
 Transform2D::Transform2D() :
-	Component(Transform2D::TYPE)
+	Component(Transform2D::TYPE),
+	localPosition(0,0,0),
+	size(100,100),
+	anchor(0.5f, 0.5f),
+	pivot(0.5f, 0.5f)
 {
 }
 
 
 Transform2D::~Transform2D()
 {
+}
+
+void Transform2D::DrawUI()
+{
+	if (ImGui::CollapsingHeader("Transform2D"))
+	{
+		ImGui::DragFloat3(" Position", localPosition.ptr(), 0.1f);
+		ImGui::DragFloat2(" Size", size.ptr(), 0.1f);
+		ImGui::DragFloat2(" Pivot", pivot.ptr(), 0.1f);
+	}
 }
 
 float3 Transform2D::GetWorldPosition() const

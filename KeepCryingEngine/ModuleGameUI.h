@@ -4,7 +4,9 @@
 #include "Module.h"
 
 class Canvas;
+class Image;
 class GameObject;
+class Component;
 
 class ModuleGameUI : public Module
 {
@@ -20,6 +22,11 @@ public:
 
 private:
 	void UpdateRecursive(float deltaTimeS, float realDeltaTimeS, GameObject* g);
+
+	void UpdateComponent(Component * component);
+
+	void UpdateCanvas(Canvas* canvas);
+	void UpdateImage(Image* image);
 
 private:
 	Canvas* root = nullptr;

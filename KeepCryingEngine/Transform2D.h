@@ -13,6 +13,8 @@ public:
 	Transform2D();
 	virtual ~Transform2D();
 
+	void DrawUI() override;
+
 	float3 GetWorldPosition() const;
 	float3 GetLocalPosition() const;
 	

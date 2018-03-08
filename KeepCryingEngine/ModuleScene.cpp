@@ -19,6 +19,7 @@
 #include "Animator.h"
 #include "AudioSource.h"
 #include "ModuleGameUI.h"
+#include "Transform2D.h"
 #include "Canvas.h"
 #include "Image.h"
 #include "Button.h"
@@ -264,6 +265,7 @@ GameObject * ModuleScene::AddImage(GameObject & parent)
 		}
 		break;
 	}
+	gameObject->AddComponent<Transform2D>();
 	gameObject->AddComponent<Image>();
 	return gameObject;
 }
