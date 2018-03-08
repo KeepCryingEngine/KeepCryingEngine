@@ -142,7 +142,7 @@ void ModuleGameUI::UpdateImage(Image * image)
 	glTexCoord2f(0, 1); glVertex3f(min.x, max.y, min.z);
 	glEnd();
 
-
+	glBindTexture(GL_TEXTURE_2D,0);
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_LIGHTING);
 	glPopMatrix();
