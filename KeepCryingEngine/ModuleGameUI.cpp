@@ -3,9 +3,11 @@
 #include <GL/glew.h>
 
 #include <vector>
+#include <SDL.h>
 
 #include "Application.h"
 #include "ModuleWindow.h"
+#include "ModuleInput.h"
 
 #include "GameObject.h"
 #include "Transform2D.h"
@@ -53,6 +55,11 @@ Canvas * ModuleGameUI::GetCanvas()
 GameObject * ModuleGameUI::GetFocusGameObject()
 {
 	return focus;
+}
+
+GameObject * ModuleGameUI::GetHoveringGameObject()
+{
+	return hovering;
 }
 
 void ModuleGameUI::UpdateRecursive(float deltaTimeS, float realDeltaTimeS, GameObject * gameObject)
@@ -111,7 +118,63 @@ void ModuleGameUI::UpdateComponent(Component * component)
 }
 
 void ModuleGameUI::CheckUIStatus()
-{}
+{
+	PreOrdenZCheck(root->gameObject);
+	if(hovering != nullptr)
+	{
+		if(App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
+		{
+			focus = hovering;
+		}
+		if(focus != nullptr)
+		{
+			App->input->SetOverUI(true);
+		}
+	}
+}
+
+void ModuleGameUI::PreOrdenZCheck(GameObject * currentNode)
+{
+	if(currentNode->ChildCount() == 0)
+	{
+		if(CheckIfMouseOver(currentNode))
+		{
+			hovering = currentNode;
+		}
+		return;
+	}
+	if(CheckIfMouseOver(currentNode))
+	{
+		hovering = currentNode;
+	}
+	vector<GameObject*> children = currentNode->GetChildren();
+	for(GameObject* g : children)
+	{
+		PreOrdenZCheck(g);
+	}
+}
+
+bool ModuleGameUI::CheckIfMouseOver(GameObject * g)
+{
+	float2 mousePos = App->input->GetMousePosition();
+	float3 maxPos = g->GetComponent<Transform2D>()->GetMaxPosition();
+	float3 minPos = g->GetComponent<Transform2D>()->GetMinPosition();
+
+	bool xHit = true;
+	bool yHit = true;
+
+	if(mousePos.x > maxPos.x || mousePos.x < minPos.x)
+	{
+		xHit = false;
+	}
+
+	if(mousePos.y > maxPos.y || mousePos.y < minPos.y)
+	{
+		yHit = false;
+	}
+
+	return (xHit && yHit);
+}
 
 void ModuleGameUI::UpdateCanvas(Canvas * canvas)
 {

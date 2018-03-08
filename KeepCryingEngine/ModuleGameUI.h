@@ -23,6 +23,7 @@ public:
 	void SetCanvas(Canvas& canvas);
 	Canvas* GetCanvas();
 	GameObject* GetFocusGameObject();
+	GameObject* GetHoveringGameObject();
 
 private:
 	void UpdateRecursive(float deltaTimeS, float realDeltaTimeS, GameObject* g);
@@ -30,6 +31,10 @@ private:
 	void UpdateComponent(Component * component);
 
 	void CheckUIStatus();
+
+	void PreOrdenZCheck(GameObject* currentNode);
+
+	bool CheckIfMouseOver(GameObject* g);
 
 	void UpdateCanvas(Canvas* canvas);
 	void UpdateImage(Image* image);
@@ -40,6 +45,7 @@ private:
 private:
 	Canvas* root = nullptr;
 	GameObject* focus = nullptr;
+	GameObject* hovering = nullptr;
 
 };
 
