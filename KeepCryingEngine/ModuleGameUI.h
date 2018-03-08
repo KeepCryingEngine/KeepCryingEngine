@@ -29,6 +29,8 @@ private:
 
 	void UpdateComponent(Component * component);
 
+	void CheckUIStatus();
+
 	void UpdateCanvas(Canvas* canvas);
 	void UpdateImage(Image* image);
 	void UpdateButton(Button* button);

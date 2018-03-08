@@ -48,6 +48,8 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	static SDL_Event event;
 
+	SetOverUI(false);
+
 	mouse_motion = { 0, 0 };
 	wheel_motion = 0;
 	memset(windowEvents, false, (uint)EventWindow::WE_COUNT * sizeof(bool));
@@ -164,17 +166,19 @@ bool ModuleInput::CleanUp()
 float ModuleInput::GetAxis(Axis axis) const
 {
 	float ret = 0.0f;
-	if(axis == Axis::Horizontal)
+	if(!overUI)
 	{
-		ret -= GetKey(SDL_SCANCODE_A) == KeyState::KEY_REPEAT ? 1 : 0;
-		ret += GetKey(SDL_SCANCODE_D) == KeyState::KEY_REPEAT ? 1 : 0;
+		if(axis == Axis::Horizontal)
+		{
+			ret -= GetKey(SDL_SCANCODE_A) == KeyState::KEY_REPEAT ? 1 : 0;
+			ret += GetKey(SDL_SCANCODE_D) == KeyState::KEY_REPEAT ? 1 : 0;
+		}
+		else
+		{
+			ret -= GetKey(SDL_SCANCODE_W) == KeyState::KEY_REPEAT ? 1 : 0;
+			ret += GetKey(SDL_SCANCODE_S) == KeyState::KEY_REPEAT ? 1 : 0;
+		}
 	}
-	else
-	{
-		ret -= GetKey(SDL_SCANCODE_W) == KeyState::KEY_REPEAT ? 1 : 0;
-		ret += GetKey(SDL_SCANCODE_S) == KeyState::KEY_REPEAT ? 1 : 0;
-	}
-
 	return ret;
 }
 
@@ -190,7 +194,24 @@ const float2& ModuleInput::GetMousePosition() const
 
 const float & ModuleInput::GetWheelMotion() const
 {
-	return wheel_motion;
+	if(!overUI)
+	{
+		return wheel_motion;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+void ModuleInput::SetOverUI(bool value)
+{
+	overUI = value;
+}
+
+bool ModuleInput::GetOverUI() const
+{
+	return overUI;
 }
 
 const float2& ModuleInput::GetMouseMotion() const

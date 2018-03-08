@@ -26,6 +26,8 @@ ModuleGameUI::~ModuleGameUI()
 
 update_status ModuleGameUI::Update(float deltaTimeS, float realDeltaTimeS)
 {
+	CheckUIStatus();
+
 	if(root != nullptr)
 	{
 		UpdateRecursive(deltaTimeS, realDeltaTimeS, root->gameObject);
@@ -107,6 +109,9 @@ void ModuleGameUI::UpdateComponent(Component * component)
 		}
 	}
 }
+
+void ModuleGameUI::CheckUIStatus()
+{}
 
 void ModuleGameUI::UpdateCanvas(Canvas * canvas)
 {

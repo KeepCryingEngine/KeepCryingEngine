@@ -21,12 +21,12 @@ using nlohmann::json;
 
 Application::Application()
 {
-	modules.push_back(input = new ModuleInput());
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(uiEditor = new ModuleEditorUI());
 	modules.push_back(anim = new ModuleAnim());
 	modules.push_back(scene = new ModuleScene());
 	modules.push_back(renderer = new ModuleRender());
+	modules.push_back(input = new ModuleInput());
 	modules.push_back(uiGame = new ModuleGameUI());
 	modules.push_back(camera = new ModuleCamera());
 	modules.push_back(shader = new ModuleShader());

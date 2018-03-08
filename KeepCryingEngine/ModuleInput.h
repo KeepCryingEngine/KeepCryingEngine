@@ -52,23 +52,40 @@ public:
 
 	bool GetKeyPressed(int id) const
 	{
-		KeyState keyState = GetKey(id);
+		if(!overUI)
+		{
+			KeyState keyState = GetKey(id);
 
-		return keyState == KeyState::KEY_REPEAT || keyState == KeyState::KEY_DOWN;
+			return keyState == KeyState::KEY_REPEAT || keyState == KeyState::KEY_DOWN;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	float GetAxis(Axis) const;
 
 	KeyState GetMouseButton(int id) const
 	{
-		return mouse_buttons[id - 1];
+		if(!overUI)
+		{
+			return mouse_buttons[id - 1];
+		}
 	}
 
 	bool GetMouseButtonDown(int id) const
 	{
-		KeyState keyState = GetMouseButton(id);
+		if(!overUI)
+		{
+			KeyState keyState = GetMouseButton(id);
 
-		return keyState == KeyState::KEY_REPEAT || keyState == KeyState::KEY_DOWN;
+			return keyState == KeyState::KEY_REPEAT || keyState == KeyState::KEY_DOWN;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	bool GetWindowEvent(EventWindow code) const;
@@ -77,6 +94,9 @@ public:
 	const float2& GetMousePosition() const;
 	const float& GetWheelMotion() const;
 
+	void SetOverUI(bool value);
+	bool GetOverUI()const;
+
 private:
 	bool windowEvents[(uint)EventWindow::WE_COUNT];
 	KeyState* keyboard;
@@ -84,6 +104,7 @@ private:
 	float2 mouse_motion;
 	float2 mouse;
 	float wheel_motion;
+	bool overUI = false;
 };
 
 #endif // !_MODULEINPUT_H_
