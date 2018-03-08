@@ -2,6 +2,8 @@
 
 #include "ModuleTexture.h"
 
+#include <DevIL.h>
+
 using namespace std;
 using namespace std::experimental::filesystem;
 
@@ -65,29 +67,37 @@ const Texture* ModuleFont::CreateTextureFromSurface(const SDL_Surface* surface) 
 		return nullptr;
 	}
 
-	const uint w = surface->w;
-	const uint h = surface->h;
+	ILuint imageId;
+	ilGenImages(1, &imageId);
+	ilBindImage(imageId);
+
+	ilTexImage(surface->w, surface->h, 1, surface->format->BytesPerPixel, IL_RGBA, IL_UNSIGNED_BYTE, surface->pixels);
+
+	iluMirror();
+	iluFlipImage();
 
 	GLuint tId = 0;
 	glGenTextures(1, &tId);
 
 	glBindTexture(GL_TEXTURE_2D, tId);
 
-	int textureFormat;
-	int colors = surface->format->BytesPerPixel;
-
-	if(colors == 4)
-	{
-		textureFormat = surface->format->Rmask == 0x000000ff ? GL_RGBA : GL_BGRA;
-	}
-	else
-	{
-		textureFormat = surface->format->Rmask == 0x000000ff ? GL_RGB : GL_BGR;
-	}
-
-	glTexImage2D(GL_TEXTURE_2D, 0, colors, w, h, 0, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+	glTexImage2D(
+		GL_TEXTURE_2D,
+		0,
+		ilGetInteger(IL_IMAGE_FORMAT),
+		ilGetInteger(IL_IMAGE_WIDTH),
+		ilGetInteger(IL_IMAGE_HEIGHT),
+		0,
+		ilGetInteger(IL_IMAGE_FORMAT),
+		GL_UNSIGNED_BYTE,
+		ilGetData()
+	);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	ilDeleteImages(1, &imageId);
+
+	ilBindImage(0);
 
 	TextureConfiguration tConfig;
 	tConfig.textureType = GL_TEXTURE_2D;
@@ -98,5 +108,5 @@ const Texture* ModuleFont::CreateTextureFromSurface(const SDL_Surface* surface) 
 	tConfig.wrapModeT = GL_CLAMP;
 	tConfig.anisotropicFilter = true;
 
-	return new Texture(tId, tConfig, w * h * surface->format->BytesPerPixel);
+	return new Texture(tId, tConfig, surface->w * surface->h * surface->format->BytesPerPixel);
 }
