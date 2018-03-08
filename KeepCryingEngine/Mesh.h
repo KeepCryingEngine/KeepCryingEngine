@@ -4,8 +4,22 @@
 #include <GL/glew.h>
 #include <AABB.h>
 #include <MathGeoLib.h>
+#include <assimp/anim.h>
 
 #include <vector>
+
+struct Weigth
+{
+	unsigned vertex = 0;
+	float weight = 0.0f;
+};
+
+struct Bone
+{
+	std::string name;
+	std::vector<Weigth> weights;
+	aiMatrix4x4 bind;
+};
 
 struct Vertex
 {
@@ -21,7 +35,7 @@ public:
 	Mesh();
 	virtual ~Mesh();
 
-	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, GLenum drawMode);
+	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, const std::vector<Bone> bones, GLenum drawMode);
 
 	const AABB& GetAABB() const;
 	GLuint GetVertexBufferId() const;
@@ -44,6 +58,7 @@ private:
 	GLsizei nIndices = 0;
 	GLenum drawMode = GL_TRIANGLES;
 
+	std::vector<Bone> bones;
 	std::vector<Vertex> vertices;
 	std::vector<GLushort> indices;
 

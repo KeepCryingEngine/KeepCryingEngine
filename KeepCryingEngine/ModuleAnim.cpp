@@ -4,6 +4,10 @@
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 
+#include "Mesh.h"
+#include "GameObject.h"
+#include "Transform.h"
+
 using namespace std;
 
 ModuleAnim::ModuleAnim()
@@ -296,6 +300,21 @@ bool ModuleAnim::GetTransform(AnimInstance* animInstance, const char * channel, 
 	}
 
 	return true;
+}
+
+void ModuleAnim::CalculateBoneMatrix(const GameObject& rootGameObject, const Mesh & mesh, const Bone & bone)
+{
+	aiMatrix4x4 bind = bone.bind; //todo to float4x4
+	float4x4 global =  rootGameObject.GetChildByName(bone.name)->GetTransform()->GetWorldPosition();
+	for (const Weigth& weight : bone.weights)
+	{
+		const Vertex& vertex = mesh.GetVertices()[weight.vertex];
+		vertex.position;
+		weight.weight;
+
+		float3 vertexPosition = weight.weight * global * bind * vertex.position;
+	}
+
 }
 
 AnimInstance* ModuleAnim::FindNextBlendingAnimInstance(AnimInstance * animInstance) const

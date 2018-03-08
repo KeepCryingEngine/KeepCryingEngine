@@ -46,13 +46,14 @@ GLenum Mesh::GetDrawMode() const
 	return drawMode;
 }
 
-void Mesh::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& indices, GLenum drawMode)
+void Mesh::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& indices, const vector<Bone> bones, GLenum drawMode)
 {
 	GenerateBuffers(vertices, indices);
 	CalculateAABBForMesh(vertices);
 	this->drawMode = drawMode;
 	this->vertices = vertices;
 	this->indices = indices;
+	this->bones = bones;
 }
 
 const std::vector<Vertex>& Mesh::GetVertices() const

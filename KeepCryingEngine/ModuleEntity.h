@@ -31,6 +31,7 @@ private:
 	void ExtractMaterialsFromScene(std::vector<Material *> &createdMaterials, const aiScene * scene, const std::experimental::filesystem::path & path) const;
 	void ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, const aiScene * scene) const;
 	void ExtractVerticesAndIndicesFromScene(const aiScene * scene, aiMesh& mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices) const;
+	void ExtractBonesFromMesh(const aiScene * scene, aiMesh& mesh, std::vector<Bone> &bones) const;
 
 	void SetUpCube();
 	void SetUpSphere();

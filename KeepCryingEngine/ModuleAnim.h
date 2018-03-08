@@ -1,7 +1,7 @@
 #ifndef _MODULEANIM_H_
 #define _MODULEANIM_H_
 
-#include <assimp\anim.h>
+#include <assimp/anim.h>
 #include <set>
 #include <map>
 #include <list>
@@ -9,6 +9,10 @@
 #include <experimental/filesystem>
 
 #include "Module.h"
+
+struct Bone;
+class Mesh;
+class GameObject;
 
 struct NodeAnim
 {
@@ -61,6 +65,7 @@ public:
 
 private:
 	bool GetTransform(AnimInstance* animInstance, const char* channel, aiVector3D& position, aiQuaternion& rotation) const;
+	void CalculateBoneMatrix(const GameObject& gameObject, const Mesh& mesh, const Bone& bone);
 
 	AnimInstance* FindNextBlendingAnimInstance(AnimInstance* animInstance) const;
 

@@ -99,13 +99,34 @@ void ModuleEntity::ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, co
 
 		vector<Vertex> vertices;
 		vector<GLushort> indices;
+		vector<Bone> bones;
 
 		ExtractVerticesAndIndicesFromScene(scene, *aiMesh, vertices, indices);
+		ExtractBonesFromMesh(scene, *aiMesh, bones);
+		
 
 		Mesh* mesh = new Mesh();
-		mesh->SetMeshData(vertices, indices, GL_TRIANGLES);
+		mesh->SetMeshData(vertices, indices, bones , GL_TRIANGLES);
 
 		createdMeshes.push_back(mesh);
+	}
+}
+
+void ModuleEntity::ExtractBonesFromMesh(const aiScene * scene, aiMesh& mesh, std::vector<Bone> &bones) const
+{
+	for (unsigned int i = 0; i < mesh.mNumBones; i++)
+	{
+		aiBone* aiBone = mesh.mBones[i];
+		Bone bone;
+		bone.name = aiBone->mName.C_Str();
+		for (unsigned weightIndex = 0; weightIndex < aiBone->mNumWeights; weightIndex++)
+		{
+			Weigth weight;
+			weight.vertex = aiBone->mWeights[weightIndex].mVertexId;
+			weight.weight = aiBone->mWeights[weightIndex].mWeight;
+			bone.weights.push_back(weight);
+		}
+		bone.bind = aiBone->mOffsetMatrix;
 	}
 }
 
@@ -142,7 +163,7 @@ void ModuleEntity::SetUpCube()
 	GetCubeMeshData(vertices, indices, drawMode);
 
 	cube = new Mesh();
-	cube->SetMeshData(vertices,indices, drawMode);
+	cube->SetMeshData(vertices,indices, , drawMode);
 }
 
 void ModuleEntity::SetUpSphere()
@@ -153,7 +174,7 @@ void ModuleEntity::SetUpSphere()
 	GetSphereMeshData(vertices, indices, drawMode);
 
 	sphere = new Mesh();
-	sphere->SetMeshData(vertices, indices, drawMode);
+	sphere->SetMeshData(vertices, indices, , drawMode);
 }
 
 void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& indices, GLenum& drawMode) const

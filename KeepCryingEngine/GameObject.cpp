@@ -205,6 +205,11 @@ void GameObject::SetVisible(bool visible)
 	this->visible = visible;
 }
 
+GameObject * GameObject::GetChildByName(std::string name) const
+{
+	return nullptr;
+}
+
 Component* GameObject::GetComponent(Component::Type type) const
 {
 	for (Component* component : components)

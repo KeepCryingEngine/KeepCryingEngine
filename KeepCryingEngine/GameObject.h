@@ -75,6 +75,8 @@ public:
 	bool GetVisible() const;
 	void SetVisible(bool visible);
 
+	GameObject* GetChildByName(std::string name) const;
+
 private:
 	Component * AddComponent(Component::Type type);
 
