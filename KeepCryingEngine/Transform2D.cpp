@@ -1,4 +1,6 @@
 #include "Transform2D.h"
+
+#include "Application.h"
 #include "GameObject.h"
 
 
@@ -23,6 +25,7 @@ void Transform2D::DrawUI()
 		ImGui::DragFloat3(" Position", localPosition.ptr(), 0.1f);
 		ImGui::DragFloat2(" Size", size.ptr(), 0.1f);
 		ImGui::DragFloat2(" Pivot", pivot.ptr(), 0.1f);
+		ImGui::DragFloat2(" Anchor", anchor.ptr(), 0.1f);
 	}
 }
 
@@ -60,7 +63,7 @@ float2 Transform2D::GetSize() const
 //Top Left Of the UI Element bounds
 float3 Transform2D::GetMinPosition() const
 {
-	return GetLocalPosition() - float3(size.Mul(pivot),0);
+	return GetLocalPosition() - float3(size.Mul(pivot),0) + float3(App->configuration.screenWidth*anchor.x, App->configuration.screenHeight*anchor.y,0);
 }
 
 //Bottom Right Of the UI Element bounds
