@@ -66,12 +66,14 @@ const Texture* ModuleFont::CreateTextureFromSurface(const SDL_Surface* surface) 
 	{
 		return nullptr;
 	}
+	
+	SDL_Surface* tmpSurface = SDL_ConvertSurfaceFormat((SDL_Surface*)surface, SDL_PIXELFORMAT_UNKNOWN, 0);
 
 	ILuint imageId;
 	ilGenImages(1, &imageId);
 	ilBindImage(imageId);
-
-	ilTexImage(surface->w, surface->h, 1, surface->format->BytesPerPixel, IL_RGBA, IL_UNSIGNED_BYTE, surface->pixels);
+	
+	ilTexImage(tmpSurface->w, tmpSurface->h, 1, tmpSurface->format->BytesPerPixel, IL_RGBA, IL_UNSIGNED_BYTE, tmpSurface->pixels);
 
 	iluMirror();
 	iluFlipImage();
@@ -108,5 +110,9 @@ const Texture* ModuleFont::CreateTextureFromSurface(const SDL_Surface* surface) 
 	tConfig.wrapModeT = GL_CLAMP;
 	tConfig.anisotropicFilter = true;
 
-	return new Texture(tId, tConfig, surface->w * surface->h * surface->format->BytesPerPixel);
+	Texture* texture = new Texture(tId, tConfig, tmpSurface->w * tmpSurface->h * tmpSurface->format->BytesPerPixel);
+	
+	SDL_FreeSurface(tmpSurface);
+
+	return texture;
 }
