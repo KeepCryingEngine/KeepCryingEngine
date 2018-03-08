@@ -291,9 +291,10 @@ GameObject * ModuleScene::AddButton(GameObject & parent)
 		}
 		break;
 	}
+	gameObject->AddComponent<Transform2D>();
 	gameObject->AddComponent<Image>();
 	gameObject->AddComponent<Button>();
-	AddEmpty(*gameObject, "Text");//Add text in a sub-object
+	AddText(*gameObject);//Add text in a sub-object
 	return gameObject;
 }
 
@@ -318,6 +319,7 @@ GameObject * ModuleScene::AddText(GameObject & parent)
 		}
 		break;
 	}
+	gameObject->AddComponent<Transform2D>();
 	gameObject->AddComponent<Text>();
 	return gameObject;
 }
@@ -343,8 +345,10 @@ GameObject * ModuleScene::AddInputText(GameObject & parent)
 		}
 		break;
 	}
+	gameObject->AddComponent<Transform2D>();
 	gameObject->AddComponent<Image>();
 	gameObject->AddComponent<InputText>();
+	AddText(*gameObject);//Add text in a sub-object
 	return gameObject;
 }
 

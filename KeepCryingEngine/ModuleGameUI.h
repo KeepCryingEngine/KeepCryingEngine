@@ -5,6 +5,9 @@
 
 class Canvas;
 class Image;
+class Button;
+class Text;
+class InputText;
 class GameObject;
 class Component;
 
@@ -19,6 +22,7 @@ public:
 
 	void SetCanvas(Canvas& canvas);
 	Canvas* GetCanvas();
+	GameObject* GetFocusGameObject();
 
 private:
 	void UpdateRecursive(float deltaTimeS, float realDeltaTimeS, GameObject* g);
@@ -27,9 +31,13 @@ private:
 
 	void UpdateCanvas(Canvas* canvas);
 	void UpdateImage(Image* image);
+	void UpdateButton(Button* button);
+	void UpdateText(Text* text);
+	void UpdateInputText(InputText* inputText);
 
 private:
 	Canvas* root = nullptr;
+	GameObject* focus = nullptr;
 
 };
 

@@ -11,6 +11,9 @@
 #include "Transform2D.h"
 #include "Canvas.h"
 #include "Image.h"
+#include "Button.h"
+#include "Text.h"
+#include "InputText.h"
 #include "Texture.h"
 
 using namespace std;
@@ -43,6 +46,11 @@ void ModuleGameUI::SetCanvas(Canvas& canvas)
 Canvas * ModuleGameUI::GetCanvas()
 {
 	return root;
+}
+
+GameObject * ModuleGameUI::GetFocusGameObject()
+{
+	return focus;
 }
 
 void ModuleGameUI::UpdateRecursive(float deltaTimeS, float realDeltaTimeS, GameObject * gameObject)
@@ -85,7 +93,7 @@ void ModuleGameUI::UpdateComponent(Component * component)
 		break;
 		case Component::Type::Button:
 		{
-
+			UpdateButton((Button*)component);
 		}
 		break;
 		case Component::Type::InpuText:
@@ -153,3 +161,12 @@ void ModuleGameUI::UpdateImage(Image * image)
 
 	glMatrixMode(GL_MODELVIEW);
 }
+
+void ModuleGameUI::UpdateButton(Button * button)
+{}
+
+void ModuleGameUI::UpdateText(Text * text)
+{}
+
+void ModuleGameUI::UpdateInputText(InputText * inputText)
+{}
