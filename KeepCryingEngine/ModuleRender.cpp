@@ -97,16 +97,17 @@ bool ModuleRender::Init()
 update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(App->camera->camera->GetProyectionMatrix().ptr());
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->camera->GetViewMatrix().ptr());
 	
 	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 {
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(App->camera->camera->GetProyectionMatrix().ptr());
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(App->camera->camera->GetViewMatrix().ptr());
+
 	DrawGrid();
 
 	DrawGeometry();
