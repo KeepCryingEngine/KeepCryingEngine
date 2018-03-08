@@ -23,7 +23,8 @@ public:
 		Image,
 		Button,
 		Text,
-		InpuText
+		InpuText,
+		Transform2D
 	};
 
 	Component(Component::Type type) : enabled(true), wasEnabled(true), type(type)

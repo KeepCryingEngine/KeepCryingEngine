@@ -137,6 +137,7 @@
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Transform2D.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="TreeNode.h" />
   </ItemGroup>
@@ -191,6 +192,7 @@
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Transform2D.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="TreeNode.cpp" />
   </ItemGroup>

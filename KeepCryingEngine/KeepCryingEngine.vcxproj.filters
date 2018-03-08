@@ -151,6 +151,7 @@
     <ClCompile Include="Image.cpp">
       <Filter>Components\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Transform2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -325,6 +326,7 @@
     <ClInclude Include="Image.h">
       <Filter>Components\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Transform2D.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
