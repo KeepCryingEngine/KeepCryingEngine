@@ -25,6 +25,7 @@
 #include "ReverbZone.h"
 #include "ModuleGameUI.h"
 #include "Canvas.h"
+#include "Image.h"
 #include "Button.h"
 #include "Text.h"
 #include "InputText.h"
@@ -816,7 +817,7 @@ void ModuleEditorUI::DrawInspectorWindow()
 			{
 				if(ImGui::Selectable("Image"))
 				{
-					addImageGameObject = true;
+					temp->AddComponent<Image>();
 				}
 				if(ImGui::Selectable("Button"))
 				{

@@ -43,6 +43,7 @@ void InputText::OnFocus()
 {
 	onFocus = true;
 	App->input->SetStartToRead(true);
+	App->input->SetText(textGameObject->GetComponent<Text>()->GetText().c_str());
 }
 
 void InputText::SetPlaceHolderGameObject(GameObject & g)

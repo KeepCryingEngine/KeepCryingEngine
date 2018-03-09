@@ -93,10 +93,6 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 	{
 		SDL_StartTextInput();
 	}
-	else
-	{
-		text = "";
-	}
 	while(SDL_PollEvent(&event) != 0)
 	{
 		ImGui_ImplSdlGL3_ProcessEvent(&event);
@@ -160,11 +156,12 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 				if(startToRead)
 				{
 					strcat(text, event.text.text);
-					SetStartToRead(false);
 				}
 			}
 		}
 	}
+
+	SetStartToRead(false);
 
 	if(GetWindowEvent(EventWindow::WE_QUIT) || GetKey(SDL_SCANCODE_ESCAPE) == KeyState::KEY_DOWN)
 		return update_status::UPDATE_STOP;
@@ -259,6 +256,11 @@ void ModuleInput::SetStartToRead(bool value)
 bool ModuleInput::GetStartToRead() const
 {
 	return startToRead;
+}
+
+void ModuleInput::SetText(const char* newText)
+{
+	strcpy(text, newText);
 }
 
 char * ModuleInput::GetCurrentText()

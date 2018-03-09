@@ -7,6 +7,8 @@
 
 #include "Module.h"
 
+#define MAX_TEXT 255
+
 enum class EventWindow
 {
 	WE_QUIT,
@@ -137,6 +139,7 @@ public:
 	void SetStartToRead(bool value);
 	bool GetStartToRead()const;
 
+	void SetText(const char*  newText);
 	char* GetCurrentText();
 
 private:
@@ -148,7 +151,7 @@ private:
 	float wheel_motion;
 	bool overUI = false;
 	bool startToRead = false;
-	char* text = "";
+	char text[MAX_TEXT];
 };
 
 #endif // !_MODULEINPUT_H_
