@@ -5,7 +5,7 @@
 #include "ModuleInput.h"
 #include "ModuleRender.h"
 #include "ModuleScene.h"
-#include "ModuleUI.h"
+#include "ModuleEditorUI.h"
 
 const float ModuleCamera::SHIFT_MULTIPLIER = 10.0f;
 const float ModuleCamera::WHEEL_FORCE = 10.0f;
@@ -164,7 +164,7 @@ void ModuleCamera::MovementMouse(float shiftDeltaMultiplier)
 	}
 	else if(leftPressed)
 	{
-		switch(App->ui->GetClickMode())
+		switch(App->uiEditor->GetClickMode())
 		{
 			case ClickMode::Drag:
 			{
@@ -373,13 +373,13 @@ void ModuleCamera::ScenePick()
 
 	if(App->scene->RayCast(picking.a, picking.Dir(), camera->GetFarPlane(), hit))
 	{
-		App->ui->OpenInspectorWindow();
-		App->ui->SetSelectedNodeID(hit.gameObject->GetId());
+		App->uiEditor->OpenInspectorWindow();
+		App->uiEditor->SetSelectedNodeID(hit.gameObject->GetId());
 	}
 	else
 	{
-		App->ui->CloseInspectorWindow();
-		App->ui->SetSelectedNodeID(0);
+		App->uiEditor->CloseInspectorWindow();
+		App->uiEditor->SetSelectedNodeID(0);
 	}
 }
 

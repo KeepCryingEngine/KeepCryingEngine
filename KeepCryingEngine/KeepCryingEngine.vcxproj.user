@@ -5,7 +5,7 @@
     <LocalDebuggerWorkingDirectory>$(ProjectDir)dependencies\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup>
-    <ShowAllFiles>false</ShowAllFiles>
+    <ShowAllFiles>true</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(ProjectDir)dependencies\</LocalDebuggerWorkingDirectory>

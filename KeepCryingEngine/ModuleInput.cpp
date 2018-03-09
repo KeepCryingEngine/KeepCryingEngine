@@ -48,6 +48,8 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	static SDL_Event event;
 
+	SetOverUI(false);
+
 	mouse_motion = { 0, 0 };
 	wheel_motion = 0;
 	memset(windowEvents, false, (uint)EventWindow::WE_COUNT * sizeof(bool));
@@ -87,6 +89,14 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 	bool mouseHoveringAnyWindow = ImGui::IsMouseHoveringAnyWindow();
 	bool mouseHoveringAnyGuizmo = ImGuizmo::IsOver();
 
+	if(startToRead)
+	{
+		SDL_StartTextInput();
+	}
+	else
+	{
+		text = "";
+	}
 	while(SDL_PollEvent(&event) != 0)
 	{
 		ImGui_ImplSdlGL3_ProcessEvent(&event);
@@ -145,6 +155,14 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 					wheel_motion = (float)event.wheel.y;
 				}
 				break;
+			case SDL_TEXTINPUT:
+			{
+				if(startToRead)
+				{
+					strcat(text, event.text.text);
+					SetStartToRead(false);
+				}
+			}
 		}
 	}
 
@@ -164,6 +182,25 @@ bool ModuleInput::CleanUp()
 float ModuleInput::GetAxis(Axis axis) const
 {
 	float ret = 0.0f;
+	if(!overUI)
+	{
+		if(axis == Axis::Horizontal)
+		{
+			ret -= GetKey(SDL_SCANCODE_A) == KeyState::KEY_REPEAT ? 1 : 0;
+			ret += GetKey(SDL_SCANCODE_D) == KeyState::KEY_REPEAT ? 1 : 0;
+		}
+		else
+		{
+			ret -= GetKey(SDL_SCANCODE_W) == KeyState::KEY_REPEAT ? 1 : 0;
+			ret += GetKey(SDL_SCANCODE_S) == KeyState::KEY_REPEAT ? 1 : 0;
+		}
+	}
+	return ret;
+}
+
+float ModuleInput::UIGetAxis(Axis axis) const
+{
+	float ret = 0.0f;
 	if(axis == Axis::Horizontal)
 	{
 		ret -= GetKey(SDL_SCANCODE_A) == KeyState::KEY_REPEAT ? 1 : 0;
@@ -174,7 +211,6 @@ float ModuleInput::GetAxis(Axis axis) const
 		ret -= GetKey(SDL_SCANCODE_W) == KeyState::KEY_REPEAT ? 1 : 0;
 		ret += GetKey(SDL_SCANCODE_S) == KeyState::KEY_REPEAT ? 1 : 0;
 	}
-
 	return ret;
 }
 
@@ -190,7 +226,44 @@ const float2& ModuleInput::GetMousePosition() const
 
 const float & ModuleInput::GetWheelMotion() const
 {
+	if(!overUI)
+	{
+		return wheel_motion;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+const float & ModuleInput::UIGetWheelMotion() const
+{
 	return wheel_motion;
+}
+
+void ModuleInput::SetOverUI(bool value)
+{
+	overUI = value;
+}
+
+bool ModuleInput::GetOverUI() const
+{
+	return overUI;
+}
+
+void ModuleInput::SetStartToRead(bool value)
+{
+	startToRead = value;
+}
+
+bool ModuleInput::GetStartToRead() const
+{
+	return startToRead;
+}
+
+char * ModuleInput::GetCurrentText()
+{
+	return text;
 }
 
 const float2& ModuleInput::GetMouseMotion() const

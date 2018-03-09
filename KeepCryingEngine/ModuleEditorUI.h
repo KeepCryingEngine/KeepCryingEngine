@@ -1,5 +1,5 @@
-#ifndef _MODULEUI_H_
-#define _MODULEUI_H_
+#ifndef _MODULEEDITORUI_H_
+#define _MODULEEDITORUI_H_
 
 #include <float3.h>
 #include <TextEditor.h>
@@ -13,11 +13,11 @@ enum class ClickMode
 	Pick
 };
 
-class ModuleUI : public Module
+class ModuleEditorUI : public Module
 {
 public:
-	ModuleUI();
-	virtual ~ModuleUI();
+	ModuleEditorUI();
+	virtual ~ModuleEditorUI();
 
 	bool Init() override;
 	bool Start() override;
@@ -64,6 +64,11 @@ private:
 	bool addSphereGameObject = false;
 	bool addEmptyGameObject = false;
 	bool addCameraGameObject = false;
+	bool addCanvasGameObject = false;
+	bool addImageGameObject = false;
+	bool addButtonGameObject = false;
+	bool addTextGameObject = false;
+	bool addInputTextGameObject = false;
 
 	//Parameter control bools
 	bool frustumCulling = false;
@@ -111,4 +116,4 @@ private:
 	unsigned long long selectedNodeID = 0;
 };
 
-#endif // !_MODULEUI_H_
+#endif // !_MODULEEDITORUI_H_

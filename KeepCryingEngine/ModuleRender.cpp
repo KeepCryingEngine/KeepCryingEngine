@@ -11,7 +11,7 @@
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleShader.h"
-#include "ModuleUI.h"
+#include "ModuleEditorUI.h"
 #include "Camera.h"
 #include "GameObject.h"
 #include "Transform.h"
@@ -97,22 +97,23 @@ bool ModuleRender::Init()
 update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(App->camera->camera->GetProyectionMatrix().ptr());
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->camera->GetViewMatrix().ptr());
 	
 	return update_status::UPDATE_CONTINUE;
 }
 
 update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 {
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(App->camera->camera->GetProyectionMatrix().ptr());
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(App->camera->camera->GetViewMatrix().ptr());
+
 	DrawGrid();
 
 	DrawGeometry();
 	drawBuffer.clear();
 
-	if(App->ui->GetDebugMode())
+	if(App->uiEditor->GetDebugMode())
 	{
 		DrawLastRay();
 	}
