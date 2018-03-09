@@ -272,6 +272,11 @@ bool ModuleAnim::GetTransform(AnimInstance* animInstance, const char * channel, 
 		}
 	}
 
+	if (node == nullptr)
+	{
+		return true;
+	}
+
 	float posKey = float(animInstance->time * (node->numPositions - 1)) / float(anim->duration);
 	float rotKey = float(animInstance->time * (node->numRotations - 1)) / float(anim->duration);
 
