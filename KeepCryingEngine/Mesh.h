@@ -45,6 +45,11 @@ public:
 	GLenum GetDrawMode()const;
 	const std::vector<Vertex>& GetVertices() const;
 	const std::vector<GLushort>& GetIndices() const;
+	const std::vector<Vertex>& GetOriginalVertices() const;
+
+	void UpdateVertices(const std::vector<Vertex>& vertices);
+
+	const std::vector<Bone>& GetBones() const;
 
 private:
 	void GenerateBuffers(const std::vector<Vertex> vertices, const std::vector<GLushort> indices);
@@ -62,6 +67,7 @@ private:
 	std::vector<Vertex> vertices;
 	std::vector<GLushort> indices;
 
+	std::vector<Vertex> originalVertices;
 };
 
 #endif // !_MESHENTITY_H_

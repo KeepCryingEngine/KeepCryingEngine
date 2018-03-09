@@ -4,9 +4,14 @@
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 
+#include "Application.h"
+#include "ModuleScene.h"
 #include "Mesh.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "MeshFilter.h"
+#include "Mesh.h"
+#include "Animator.h"
 
 using namespace std;
 
@@ -73,6 +78,12 @@ update_status ModuleAnim::Update(float deltaTimeS, float realDeltaTimeS)
 				instances[i] = nextAnimInstance;
 			}
 		}
+	}
+
+	vector<Animator*> animators = App->scene->GetRoot()->GetComponentsInChildren<Animator>();
+	for (Animator* animator : animators)
+	{
+		DoVertexSkinning(animator->gameObject);
 	}
 
 	return update_status::UPDATE_CONTINUE;
@@ -302,19 +313,51 @@ bool ModuleAnim::GetTransform(AnimInstance* animInstance, const char * channel, 
 	return true;
 }
 
-void ModuleAnim::CalculateBoneMatrix(const GameObject& rootGameObject, const Mesh & mesh, const Bone & bone)
+void ModuleAnim::DoVertexSkinning(GameObject * root)
 {
-	aiMatrix4x4 bind = bone.bind; //todo to float4x4
-	float4x4 global =  rootGameObject.GetChildByName(bone.name)->GetTransform()->GetWorldPosition();
-	for (const Weigth& weight : bone.weights)
+	vector<MeshFilter*> meshFilters = root->GetParent()->GetComponentsInChildren<MeshFilter>();
+	for (MeshFilter* meshFilter : meshFilters)
 	{
-		const Vertex& vertex = mesh.GetVertices()[weight.vertex];
-		vertex.position;
-		weight.weight;
+		Mesh * mesh = meshFilter->GetMesh();
+		vector<Vertex> vertices = mesh->GetOriginalVertices();
 
-		float3 vertexPosition = weight.weight * global * bind * vertex.position;
+		for (const Bone& bone : mesh->GetBones())
+		{
+			CalculateBoneMatrix(*root, mesh, bone, vertices);
+		}
+
+		mesh->UpdateVertices(vertices);
+	}
+}
+
+void ModuleAnim::CalculateBoneMatrix(const GameObject& rootGameObject, Mesh* mesh, const Bone & bone, vector<Vertex>& vertices)
+{
+	if (rootGameObject.GetChildByName(bone.name) == nullptr)
+	{
+		return;
 	}
 
+	Transform * boneTransform = rootGameObject.GetChildByName(bone.name)->GetTransform();
+	float4x4 boneMatrixToRoot = boneTransform->GetModelMatrix().Mul(rootGameObject.GetTransform()->GetModelMatrix().Inverted());
+
+	aiMatrix4x4 aiBind = bone.bind;
+	float4x4 bondBindInvertedMatrix(	(float)aiBind.a1, (float)aiBind.a2, (float)aiBind.a3, (float)aiBind.a4,
+					(float)aiBind.b1, (float)aiBind.b2, (float)aiBind.b3, (float)aiBind.b4,
+					(float)aiBind.c1, (float)aiBind.c2, (float)aiBind.c3, (float)aiBind.c4,
+					(float)aiBind.d1, (float)aiBind.d2, (float)aiBind.d3, (float)aiBind.d4
+	);
+		
+	float4x4 transformation = (boneMatrixToRoot * bondBindInvertedMatrix);
+
+	for (const Weigth& weight : bone.weights)
+	{
+		float4x4 weightTransformation = transformation * weight.weight;
+		Vertex& vertex = vertices[weight.vertex];
+		const Vertex& originalVertex = mesh->GetOriginalVertices()[weight.vertex];
+
+		vertex.position += (weightTransformation * originalVertex.position.ToPos4()).Float3Part();
+		vertex.normal += (weightTransformation * originalVertex.normal.ToDir4()).Float3Part();
+	}
 }
 
 AnimInstance* ModuleAnim::FindNextBlendingAnimInstance(AnimInstance * animInstance) const

@@ -29,7 +29,7 @@ void Animator::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Animator"))
 	{
-		static char animatorLoadBuffer[252] = { };
+		static char animatorLoadBuffer[252] = "ArmyPilot\\Animations\\ArmyPilot_Aim Running.fbx";
 		ImGui::InputText("##loadAnimation", animatorLoadBuffer, 252); ImGui::SameLine();
 		if(ImGui::Button("Load"))
 		{

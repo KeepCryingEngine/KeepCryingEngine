@@ -7,6 +7,7 @@
 #include <list>
 #include <vector>
 #include <experimental/filesystem>
+#include "Mesh.h"
 
 #include "Module.h"
 
@@ -65,7 +66,8 @@ public:
 
 private:
 	bool GetTransform(AnimInstance* animInstance, const char* channel, aiVector3D& position, aiQuaternion& rotation) const;
-	void CalculateBoneMatrix(const GameObject& gameObject, const Mesh& mesh, const Bone& bone);
+	void DoVertexSkinning(GameObject * root);
+	void CalculateBoneMatrix(const GameObject& gameObject, Mesh* mesh, const Bone& bone, std::vector<Vertex>& vertices);
 
 	AnimInstance* FindNextBlendingAnimInstance(AnimInstance* animInstance) const;
 
