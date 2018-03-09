@@ -85,7 +85,7 @@ const Texture* ModuleFont::CreateTextureFromSurface(const SDL_Surface* surface) 
 
 	ilTexImage(surface->w, surface->h, 1, colors, textureFormat, IL_UNSIGNED_BYTE, surface->pixels);
 
-	iluMirror();
+	//iluMirror();
 	iluFlipImage();
 
 	GLuint tId = 0;

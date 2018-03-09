@@ -3,6 +3,8 @@
 
 #include "Component.h"
 
+#include <SDL_ttf.h>
+
 #include <float4.h>
 #include <experimental/filesystem>
 
@@ -30,6 +32,7 @@ private:
 	std::string actualText= "Text";
 	Texture * texture = nullptr;
 	float4 color = float4().zero;
+	const TTF_Font* font;
 };
 
 #endif // !_TEXT_H_

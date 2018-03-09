@@ -1,6 +1,8 @@
 #include "Text.h"
 
 #include "GameObject.h"
+#include "Application.h"
+#include "ModuleFont.h"
 
 Text::Text(): Component(Text::TYPE)
 {}
@@ -35,7 +37,10 @@ void Text::SetText(const std::string & newText)
 }
 
 void Text::SetTexture(const std::string & text)
-{}
+{
+	font = App->font->LoadFont("Assets/Fonts/arial.ttf",69);
+	texture =(Texture*) App->font->RenderFromText(font, text, SDL_Color{ 255, 0, 0, 255 });
+}
 
 void Text::SetColor(float4 color)
 {
