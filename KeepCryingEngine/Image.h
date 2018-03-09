@@ -2,14 +2,13 @@
 #define _IMAGE_H_
 
 #include "Component.h"
-#include "GameUI.h"
 
 #include <float4.h>
 #include <experimental/filesystem>
 
 class Texture;
 
-class Image : public Component,public GameUI
+class Image : public Component
 {
 public:
 	static const Component::Type TYPE = Component::Type::Image;

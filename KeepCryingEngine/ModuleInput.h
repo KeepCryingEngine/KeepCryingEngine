@@ -47,6 +47,18 @@ public:
 
 	KeyState GetKey(int id) const
 	{
+		if(!overUI)
+		{
+			return keyboard[id];
+		}
+		else
+		{
+			return KeyState::KEY_IDLE;
+		}
+	}
+
+	KeyState UIGetKey(int id) const
+	{
 		return keyboard[id];
 	}
 
@@ -64,7 +76,15 @@ public:
 		}
 	}
 
+	bool UIGetKeyPressed(int id) const
+	{
+		KeyState keyState = GetKey(id);
+
+		return keyState == KeyState::KEY_REPEAT || keyState == KeyState::KEY_DOWN;
+	}
+
 	float GetAxis(Axis) const;
+	float UIGetAxis(Axis) const;
 
 	KeyState GetMouseButton(int id) const
 	{
@@ -72,6 +92,15 @@ public:
 		{
 			return mouse_buttons[id - 1];
 		}
+		else
+		{
+			return KeyState::KEY_IDLE;
+		}
+	}
+
+	KeyState UIGetMouseButton(int id) const
+	{
+		return mouse_buttons[id - 1];
 	}
 
 	bool GetMouseButtonDown(int id) const
@@ -88,14 +117,27 @@ public:
 		}
 	}
 
+	bool UIGetMouseButtonDown(int id) const
+	{
+		KeyState keyState = GetMouseButton(id);
+
+		return keyState == KeyState::KEY_REPEAT || keyState == KeyState::KEY_DOWN;
+	}
+
 	bool GetWindowEvent(EventWindow code) const;
 
 	const float2& GetMouseMotion() const;
 	const float2& GetMousePosition() const;
 	const float& GetWheelMotion() const;
+	const float& UIGetWheelMotion() const;
 
 	void SetOverUI(bool value);
 	bool GetOverUI()const;
+
+	void SetStartToRead(bool value);
+	bool GetStartToRead()const;
+
+	char* GetCurrentText();
 
 private:
 	bool windowEvents[(uint)EventWindow::WE_COUNT];
@@ -105,6 +147,8 @@ private:
 	float2 mouse;
 	float wheel_motion;
 	bool overUI = false;
+	bool startToRead = false;
+	char* text = "";
 };
 
 #endif // !_MODULEINPUT_H_

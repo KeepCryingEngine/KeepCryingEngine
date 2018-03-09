@@ -2,7 +2,6 @@
 #define _BUTTON_H_
 
 #include "Component.h"
-#include "GameUI.h"
 
 #include <float4.h>
 #include <vector>
@@ -26,7 +25,7 @@ enum class  Transition
 
 class GameObject;
 
-class Button : public Component,public GameUI
+class Button : public Component
 {
 public:
 	static const Component::Type TYPE = Component::Type::Button;
@@ -40,8 +39,8 @@ public:
 
 	void DrawUI() override;
 
-	void OnHovering() override;
-	void OnClick() override;
+	void OnHovering();
+	void OnClick();
 
 	void SetTextureByPath(const std::experimental::filesystem::path& path,ButtonState state);
 	void SetColor(float4 newColor,ButtonState state);

@@ -2,11 +2,10 @@
 #define _INPUTTEXT_H_
 
 #include "Component.h"
-#include "GameUI.h"
 
 class GameObject;
 
-class InputText : public Component,public GameUI
+class InputText : public Component
 {
 public:
 	static const Component::Type TYPE = Component::Type::InpuText;
@@ -14,11 +13,21 @@ public:
 	InputText();
 	~InputText();
 
+	void RealUpdate(float deltaTimeS, float realDeltaTimeS)override;
+
+	void DrawUI() override;
+
+	void OnFocus();
+
+	void SetPlaceHolderGameObject(GameObject& g);
 	void SetTextGameObject(GameObject& g);
 
+	GameObject* GetPlaceHolderGameObject()const;
 	GameObject* GetTextGameObject() const;
 
 private:
+	bool onFocus = false;
+	GameObject * placeHolderGameObject;
 	GameObject * textGameObject;
 };
 

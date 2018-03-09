@@ -2,6 +2,7 @@
 
 #include "Application.h"
 #include "ModuleTexture.h"
+#include "GameObject.h"
 #include "Texture.h"
 
 using namespace std;
@@ -16,16 +17,20 @@ void Image::DrawUI()
 {
 	if (ImGui::CollapsingHeader("Image"))
 	{
-
+		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		if(ImGui::Button("Delete Component"))
+		{
+			gameObject->RemoveComponent(this);
+		}
 		static char texturePath[252] = "Lenna.png";
 		ImGui::InputText("##setTexture", texturePath, 252); ImGui::SameLine();
-		if (ImGui::Button("Set Texture"))
+		if(ImGui::Button("Set Texture"))
 		{
 			std::experimental::filesystem::path path = "Assets/";
 			path /= texturePath;
 
 			SetTextureByPath(path);
-		}
+		}	
 	}
 }
 

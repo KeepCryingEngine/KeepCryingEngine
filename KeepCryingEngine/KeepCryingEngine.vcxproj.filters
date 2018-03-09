@@ -331,9 +331,6 @@
     <ClInclude Include="Transform2D.h">
       <Filter>Components\UI</Filter>
     </ClInclude>
-    <ClInclude Include="GameUI.h">
-      <Filter>Components\UI</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">

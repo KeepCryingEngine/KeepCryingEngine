@@ -1,5 +1,7 @@
 #include "Text.h"
 
+#include "GameObject.h"
+
 Text::Text(): Component(Text::TYPE)
 {}
 
@@ -8,13 +10,19 @@ Text::~Text()
 
 void Text::DrawUI()
 {
-	static char newText[252] = "Text";
-	ImGui::Text("Disabled"); ImGui::SameLine();
-	if(ImGui::InputText("##buttonDisabledTexture", newText, 252))
+	if(ImGui::CollapsingHeader("Text"))
 	{
-		SetText(newText);
+		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		if(ImGui::Button("Delete Component"))
+		{
+			gameObject->RemoveComponent(this);
+		}
+		static char newText[252] = "Text";
+		if(ImGui::InputText("##buttonDisabledTexture", newText, 252))
+		{
+			SetText(newText);
+		}
 	}
-
 }
 
 void Text::SetText(const std::string & newText)

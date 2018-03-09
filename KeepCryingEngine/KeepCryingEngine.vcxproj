@@ -104,7 +104,6 @@
     <ClInclude Include="external\ImGui\stb_textedit.h" />
     <ClInclude Include="external\ImGui\stb_truetype.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GameUI.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="InputText.h" />

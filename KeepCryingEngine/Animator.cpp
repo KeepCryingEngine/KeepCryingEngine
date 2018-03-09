@@ -29,7 +29,12 @@ void Animator::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Animator"))
 	{
-		static char animatorLoadBuffer[252] = { };
+		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		if(ImGui::Button("Delete Component"))
+		{
+			gameObject->RemoveComponent(this);
+		}
+		static char animatorLoadBuffer[252] = {};
 		ImGui::InputText("##loadAnimation", animatorLoadBuffer, 252); ImGui::SameLine();
 		if(ImGui::Button("Load"))
 		{
@@ -43,7 +48,7 @@ void Animator::DrawUI()
 		for(string animationName : animationNames)
 		{
 			ImGui::Text(animationName.c_str());
-			
+
 			ImGui::SameLine();
 
 			ImGui::PushID(animationName.c_str());
@@ -52,7 +57,7 @@ void Animator::DrawUI()
 			{
 				PlayAnimInstance(animationName.c_str());
 			}
-			
+
 			ImGui::PopID();
 
 			if(animationName == currentAnimationName)
@@ -64,7 +69,7 @@ void Animator::DrawUI()
 					ImGui::ProgressBar(App->anim->GetPercent(animInstanceId));
 				}
 			}
-		}
+		}	
 	}
 }
 

@@ -54,7 +54,11 @@ void Button::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Button"))
 	{
-
+		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		if(ImGui::Button("Delete Component"))
+		{
+			gameObject->RemoveComponent(this);
+		}
 		static char textureDisabledPath[252] = "Lenna.png";
 		ImGui::Text("Disabled"); ImGui::SameLine();
 		ImGui::InputText("##buttonDisabledTexture", textureDisabledPath, 252); ImGui::SameLine();
@@ -63,11 +67,12 @@ void Button::DrawUI()
 			std::experimental::filesystem::path path = "Assets/";
 			path /= textureDisabledPath;
 
-			SetTextureByPath(path,ButtonState::DISABLED);
+			SetTextureByPath(path, ButtonState::DISABLED);
 		}
 
 		static int transitionMode = (int)transitionType;
-		if(ImGui::Combo("Transition", &transitionMode, "Color\0Sprite")){
+		if(ImGui::Combo("Transition", &transitionMode, "Color\0Sprite"))
+		{
 			transitionType = (Transition)transitionMode;
 		}
 
@@ -75,11 +80,11 @@ void Button::DrawUI()
 		{
 			case Transition::COLOR:
 			{
-				ImGui::DragFloat4("Disabled", colors[(unsigned int)ButtonState::DISABLED].ptr(),0.01f,0.0f,1.0f);
-				ImGui::DragFloat4("Hover",colors[(unsigned int)ButtonState::HOVER].ptr(), 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat4("Disabled", colors[(unsigned int)ButtonState::DISABLED].ptr(), 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat4("Hover", colors[(unsigned int)ButtonState::HOVER].ptr(), 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat4("Pressed", colors[(unsigned int)ButtonState::PRESSED].ptr(), 0.01f, 0.0f, 1.0f);
 			}
-				break;
+			break;
 			case Transition::SPRITE:
 			{
 				static char textureHoverPath[252] = "Lenna.png";
@@ -104,12 +109,11 @@ void Button::DrawUI()
 					SetTextureByPath(path, ButtonState::PRESSED);
 				}
 			}
-				break;
+			break;
 			default:
 				assert(false);
 				break;
 		}
-
 	}
 }
 

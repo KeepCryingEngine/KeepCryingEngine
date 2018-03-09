@@ -89,6 +89,14 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 	bool mouseHoveringAnyWindow = ImGui::IsMouseHoveringAnyWindow();
 	bool mouseHoveringAnyGuizmo = ImGuizmo::IsOver();
 
+	if(startToRead)
+	{
+		SDL_StartTextInput();
+	}
+	else
+	{
+		text = "";
+	}
 	while(SDL_PollEvent(&event) != 0)
 	{
 		ImGui_ImplSdlGL3_ProcessEvent(&event);
@@ -147,6 +155,11 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 					wheel_motion = (float)event.wheel.y;
 				}
 				break;
+			case SDL_TEXTINPUT:
+			{
+				strcat(text, event.text.text);
+				SetStartToRead(false);
+			}
 		}
 	}
 
@@ -182,6 +195,22 @@ float ModuleInput::GetAxis(Axis axis) const
 	return ret;
 }
 
+float ModuleInput::UIGetAxis(Axis axis) const
+{
+	float ret = 0.0f;
+	if(axis == Axis::Horizontal)
+	{
+		ret -= GetKey(SDL_SCANCODE_A) == KeyState::KEY_REPEAT ? 1 : 0;
+		ret += GetKey(SDL_SCANCODE_D) == KeyState::KEY_REPEAT ? 1 : 0;
+	}
+	else
+	{
+		ret -= GetKey(SDL_SCANCODE_W) == KeyState::KEY_REPEAT ? 1 : 0;
+		ret += GetKey(SDL_SCANCODE_S) == KeyState::KEY_REPEAT ? 1 : 0;
+	}
+	return ret;
+}
+
 bool ModuleInput::GetWindowEvent(EventWindow ev) const
 {
 	return windowEvents[(uint)ev];
@@ -204,6 +233,11 @@ const float & ModuleInput::GetWheelMotion() const
 	}
 }
 
+const float & ModuleInput::UIGetWheelMotion() const
+{
+	return wheel_motion;
+}
+
 void ModuleInput::SetOverUI(bool value)
 {
 	overUI = value;
@@ -212,6 +246,21 @@ void ModuleInput::SetOverUI(bool value)
 bool ModuleInput::GetOverUI() const
 {
 	return overUI;
+}
+
+void ModuleInput::SetStartToRead(bool value)
+{
+	startToRead = value;
+}
+
+bool ModuleInput::GetStartToRead() const
+{
+	return startToRead;
+}
+
+char * ModuleInput::GetCurrentText()
+{
+	return text;
 }
 
 const float2& ModuleInput::GetMouseMotion() const

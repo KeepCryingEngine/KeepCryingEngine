@@ -2,14 +2,13 @@
 #define _TEXT_H_
 
 #include "Component.h"
-#include "GameUI.h"
 
 #include <float4.h>
 #include <experimental/filesystem>
 
 class Texture;
 
-class Text : public Component, public GameUI
+class Text : public Component
 {
 public:
 	static const Component::Type TYPE = Component::Type::Text;

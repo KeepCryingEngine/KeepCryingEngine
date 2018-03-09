@@ -331,12 +331,12 @@ GameObject * ModuleScene::AddInputText(GameObject & parent)
 	{
 		case uiState::NO_CANVAS:
 		{
-			gameObject = AddEmpty(*AddCanvas(parent), "Text");
+			gameObject = AddEmpty(*AddCanvas(parent), "InputText");
 		}
 		break;
 		case uiState::NO_FATHER_CANVAS:
 		{
-			gameObject = AddEmpty(*App->uiGame->GetCanvas()->gameObject, "Text");
+			gameObject = AddEmpty(*App->uiGame->GetCanvas()->gameObject, "InputText");
 		}
 		break;
 		case uiState::FATHER_CANVAS:
@@ -347,7 +347,9 @@ GameObject * ModuleScene::AddInputText(GameObject & parent)
 	}
 	gameObject->AddComponent<Transform2D>();
 	gameObject->AddComponent<Image>();
-	gameObject->AddComponent<InputText>()->SetTextGameObject(*AddText(*gameObject));//Add text in a sub-object
+	InputText* tempInput = gameObject->AddComponent<InputText>();
+	tempInput->SetPlaceHolderGameObject(*AddText(*gameObject));//Add text in a sub-object
+	tempInput->SetTextGameObject(*AddText(*gameObject));//Add text in a sub-object
 	return gameObject;
 }
 
