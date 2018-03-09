@@ -257,7 +257,55 @@ void ModuleGameUI::UpdateButton(Button * button)
 }
 
 void ModuleGameUI::UpdateText(Text * text)
-{}
+{
+	Transform2D *transform = text->gameObject->GetComponent<Transform2D>();
+	assert(transform != nullptr);
+
+	if(text->GetTexture() == nullptr)
+	{
+		return;
+	}
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0, App->configuration.screenWidth, 0.0, App->configuration.screenHeight, -1.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+
+
+	glLoadIdentity();
+	glDisable(GL_LIGHTING);
+
+	//float4 color = image->GetColor();
+	//glColor4f(color.x, color.y, color.z, color.w);
+	glColor3f(1.0f,1.0f,1.0f);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, text->GetTexture()->GetId());
+
+
+	// Draw a textured quad
+	float3 min = transform->GetMinPosition();
+	float3 max = transform->GetMaxPosition();
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0, 0); glVertex3f(min.x, min.y, min.z);
+	glTexCoord2f(1, 0);  glVertex3f(max.x, min.y, min.z);
+	glTexCoord2f(1, 1); glVertex3f(max.x, max.y, min.z);
+	glTexCoord2f(0, 1); glVertex3f(min.x, max.y, min.z);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
+	glPopMatrix();
+
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	glMatrixMode(GL_MODELVIEW);
+}
 
 void ModuleGameUI::UpdateInputText(InputText * inputText)
 {}
