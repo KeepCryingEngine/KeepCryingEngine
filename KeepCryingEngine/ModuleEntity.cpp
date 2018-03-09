@@ -103,7 +103,6 @@ void ModuleEntity::ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, co
 
 		ExtractVerticesAndIndicesFromScene(scene, *aiMesh, vertices, indices);
 		ExtractBonesFromMesh(scene, *aiMesh, bones);
-		
 
 		Mesh* mesh = new Mesh();
 		mesh->SetMeshData(vertices, indices, bones , GL_TRIANGLES);
@@ -135,13 +134,13 @@ void ModuleEntity::ExtractBonesFromMesh(const aiScene * scene, aiMesh& mesh, std
 
 void ModuleEntity::ExtractVerticesAndIndicesFromScene(const aiScene * scene, aiMesh& mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices) const
 {
-	bool addNormals = mesh.mNormals != nullptr;
-
+	bool addNormals = mesh.HasNormals();
+	
 	for (unsigned int k = 0; k < mesh.mNumVertices; k++)
 	{
 		Vertex vertex;
 		vertex.position = float3(mesh.mVertices[k].x, mesh.mVertices[k].y, mesh.mVertices[k].z);
-		if (addNormals)
+		if(addNormals)
 		{
 			vertex.normal = float3(mesh.mNormals[k].x, mesh.mNormals[k].y, mesh.mNormals[k].z);
 		}
@@ -444,7 +443,7 @@ GameObject* ModuleEntity::CreateGameObjectForNode(const aiScene* scene, aiNode *
 		aiMesh * aiMesh = scene->mMeshes[meshIndex];
 		Mesh* mesh = meshes[meshIndex];
 
-		GameObject* currentGameobjectMesh = App->scene->AddEmpty(*nodeGameObject, aiMesh->mName.C_Str());
+		GameObject* currentGameobjectMesh = App->scene->AddEmpty(*gameObject, aiMesh->mName.C_Str());
 
 		Material * material = materials[aiMesh->mMaterialIndex];
 		currentGameobjectMesh->AddComponent<MeshRenderer>();

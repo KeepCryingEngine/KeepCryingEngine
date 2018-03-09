@@ -83,7 +83,10 @@ update_status ModuleAnim::Update(float deltaTimeS, float realDeltaTimeS)
 	vector<Animator*> animators = App->scene->GetRoot()->GetComponentsInChildren<Animator>();
 	for (Animator* animator : animators)
 	{
-		DoVertexSkinning(animator->gameObject);
+		if(animator->HasValidAnimationInstance())
+		{
+			DoVertexSkinning(animator->gameObject);
+		}
 	}
 
 	return update_status::UPDATE_CONTINUE;
@@ -337,30 +340,37 @@ void ModuleAnim::DoVertexSkinning(GameObject * root)
 
 void ModuleAnim::CalculateBoneMatrix(const GameObject& rootGameObject, Mesh* mesh, const Bone & bone, vector<Vertex>& vertices)
 {
-	if (rootGameObject.GetChildByName(bone.name) == nullptr)
+	// Inverted & 100
+
+	GameObject* boneGameObject = rootGameObject.GetChildByName(bone.name);
+
+	if(boneGameObject == nullptr)
 	{
 		return;
 	}
 
-	Transform * boneTransform = rootGameObject.GetChildByName(bone.name)->GetTransform();
-	float4x4 boneMatrixToRoot = boneTransform->GetModelMatrix().Mul(rootGameObject.GetTransform()->GetModelMatrix().Inverted());
+	Transform* boneTransform = boneGameObject->GetTransform();
+	float4x4 boneMatrixToRoot = boneTransform->GetModelMatrix().Mul(rootGameObject.GetTransform()->GetModelMatrix()); // .Inverted());
 
 	aiMatrix4x4 aiBind = bone.bind;
-	float4x4 bondBindInvertedMatrix(	(float)aiBind.a1, (float)aiBind.a2, (float)aiBind.a3, (float)aiBind.a4,
-					(float)aiBind.b1, (float)aiBind.b2, (float)aiBind.b3, (float)aiBind.b4,
-					(float)aiBind.c1, (float)aiBind.c2, (float)aiBind.c3, (float)aiBind.c4,
-					(float)aiBind.d1, (float)aiBind.d2, (float)aiBind.d3, (float)aiBind.d4
+	float4x4 bondBindInvertedMatrix
+	(
+		(float)aiBind.a1, (float)aiBind.a2, (float)aiBind.a3, (float)aiBind.a4,
+		(float)aiBind.b1, (float)aiBind.b2, (float)aiBind.b3, (float)aiBind.b4,
+		(float)aiBind.c1, (float)aiBind.c2, (float)aiBind.c3, (float)aiBind.c4,
+		(float)aiBind.d1, (float)aiBind.d2, (float)aiBind.d3, (float)aiBind.d4
 	);
-		
+	
 	float4x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix;
 
-	for (const Weigth& weight : bone.weights)
+	for(const Weigth& weight : bone.weights)
 	{
 		float4x4 weightTransformation = transformation * weight.weight;
+		
 		Vertex& vertex = vertices[weight.vertex];
 		const Vertex& originalVertex = mesh->GetOriginalVertices()[weight.vertex];
 
-		vertex.position += (weightTransformation * originalVertex.position.ToPos4()).Float3Part();
+		vertex.position += 100 * (weightTransformation * originalVertex.position.ToPos4()).Float3Part();
 		vertex.normal += (weightTransformation * originalVertex.normal.ToDir4()).Float3Part();
 	}
 }
