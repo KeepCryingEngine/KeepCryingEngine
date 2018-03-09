@@ -347,7 +347,7 @@ void ModuleAnim::CalculateBoneMatrix(const GameObject& rootGameObject, Mesh* mes
 					(float)aiBind.d1, (float)aiBind.d2, (float)aiBind.d3, (float)aiBind.d4
 	);
 		
-	float4x4 transformation = (boneMatrixToRoot * bondBindInvertedMatrix);
+	float4x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix;
 
 	for (const Weigth& weight : bone.weights)
 	{
