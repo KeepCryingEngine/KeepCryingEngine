@@ -157,8 +157,11 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 				break;
 			case SDL_TEXTINPUT:
 			{
-				strcat(text, event.text.text);
-				SetStartToRead(false);
+				if(startToRead)
+				{
+					strcat(text, event.text.text);
+					SetStartToRead(false);
+				}
 			}
 		}
 	}

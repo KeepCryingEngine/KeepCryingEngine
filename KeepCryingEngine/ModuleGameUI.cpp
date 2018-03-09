@@ -107,7 +107,7 @@ void ModuleGameUI::UpdateComponent(Component * component)
 		break;
 		case Component::Type::Text:
 		{
-
+			UpdateText((Text*)component);
 		}
 		break;
 		case Component::Type::Button:
@@ -117,7 +117,7 @@ void ModuleGameUI::UpdateComponent(Component * component)
 		break;
 		case Component::Type::InpuText:
 		{
-
+			UpdateInputText((InputText*)component);
 		}
 		break;
 		case Component::Type::Image:
@@ -308,4 +308,9 @@ void ModuleGameUI::UpdateText(Text * text)
 }
 
 void ModuleGameUI::UpdateInputText(InputText * inputText)
-{}
+{
+	if(inputText->GetTextGameObject() == focus || inputText->GetPlaceHolderGameObject() == focus || inputText->gameObject == focus)
+	{
+		inputText->OnFocus();
+	}
+}
