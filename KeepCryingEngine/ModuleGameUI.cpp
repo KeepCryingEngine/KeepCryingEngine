@@ -246,11 +246,11 @@ void ModuleGameUI::UpdateImage(Image * image)
 
 void ModuleGameUI::UpdateButton(Button * button)
 {
-	if(button->GetTextGameObject() == pressed)
+	if(button->GetTextGameObject() == pressed || button->gameObject == pressed)
 	{
 		button->OnClick();
 	}
-	else if(button->GetTextGameObject() == hovering)
+	else if(button->GetTextGameObject() == hovering || button->gameObject == hovering)
 	{
 		button->OnHovering();
 	}
