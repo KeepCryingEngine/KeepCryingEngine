@@ -67,33 +67,44 @@ const Texture* ModuleFont::CreateTextureFromSurface(const SDL_Surface* surface) 
 		return nullptr;
 	}
 	
-	SDL_Surface* tmpSurface = SDL_ConvertSurfaceFormat((SDL_Surface*)surface, SDL_PIXELFORMAT_UNKNOWN, 0);
+	int textureFormat;
+	int colors = surface->format->BytesPerPixel;
 
+	if(colors == 4)
+	{
+		textureFormat = surface->format->Rmask == 0x000000FF ? IL_RGBA : IL_BGRA;
+	}
+	else
+	{
+		textureFormat = surface->format->Rmask == 0x000000FF ? IL_RGB : IL_BGR;
+	}
+	
 	ILuint imageId;
 	ilGenImages(1, &imageId);
 	ilBindImage(imageId);
-	
-	ilTexImage(tmpSurface->w, tmpSurface->h, 1, tmpSurface->format->BytesPerPixel, IL_RGBA, IL_UNSIGNED_BYTE, tmpSurface->pixels);
+
+	ilTexImage(surface->w, surface->h, 1, colors, textureFormat, IL_UNSIGNED_BYTE, surface->pixels);
 
 	iluMirror();
 	iluFlipImage();
 
 	GLuint tId = 0;
 	glGenTextures(1, &tId);
-
 	glBindTexture(GL_TEXTURE_2D, tId);
 
 	glTexImage2D(
 		GL_TEXTURE_2D,
 		0,
-		ilGetInteger(IL_IMAGE_FORMAT),
+		ilGetInteger(IL_IMAGE_BPP),
 		ilGetInteger(IL_IMAGE_WIDTH),
 		ilGetInteger(IL_IMAGE_HEIGHT),
 		0,
 		ilGetInteger(IL_IMAGE_FORMAT),
-		GL_UNSIGNED_BYTE,
+		ilGetInteger(IL_IMAGE_TYPE),
 		ilGetData()
 	);
+
+	int tSize = ilGetInteger(IL_IMAGE_SIZE_OF_DATA);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -110,9 +121,5 @@ const Texture* ModuleFont::CreateTextureFromSurface(const SDL_Surface* surface) 
 	tConfig.wrapModeT = GL_CLAMP;
 	tConfig.anisotropicFilter = true;
 
-	Texture* texture = new Texture(tId, tConfig, tmpSurface->w * tmpSurface->h * tmpSurface->format->BytesPerPixel);
-	
-	SDL_FreeSurface(tmpSurface);
-
-	return texture;
+	return new Texture(tId, tConfig, tSize);
 }
