@@ -331,6 +331,7 @@
     <ClInclude Include="Transform2D.h">
       <Filter>Components\UI</Filter>
     </ClInclude>
+	<ClInclude Include="ModuleFont.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">

@@ -29,6 +29,23 @@ ModuleRender::ModuleRender()
 ModuleRender::~ModuleRender()
 {}
 
+// TEST ---
+
+#include "ModuleFont.h"
+
+const Texture* tex;
+const TTF_Font* font;
+
+bool ModuleRender::Start()
+{
+	font = App->font->LoadFont("Assets/Fonts/arial.ttf", 128);
+	tex = App->font->RenderFromText(font, "Test message", SDL_Color{ 255, 0, 0, 255 });
+
+	return true;
+}
+
+// --- TEST
+
 bool ModuleRender::Init()
 {
 	LOG_DEBUG("Creating Renderer context");
@@ -375,6 +392,8 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 {
 	GLuint progId = drawInfo.material.GetProgramId();
 	GLuint textId = drawInfo.material.GetTexture()->GetId();
+
+	textId = tex->GetId(); // TEST
 
 	glUseProgram(progId);
 	if (textId != 0)

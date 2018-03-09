@@ -18,6 +18,7 @@ class ModuleTexture;
 class ModuleEntity;
 class ModuleAnim;
 class ModuleAudio;
+class ModuleFont;
 
 class Application
 {
@@ -49,6 +50,7 @@ public:
 	ModuleAnim* anim = nullptr;
 	ModuleAudio* audio = nullptr;
 	ModuleEntity* entity = nullptr;
+	ModuleFont* font = nullptr;
 
 	// Cargar información desde json
 	// Tamaño pantalla, nombre, fps, etc

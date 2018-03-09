@@ -180,10 +180,10 @@ void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& i
 		{ -size, size, -size }, // 6 Left top right
 		{ -size, size, size }, // 7 Left top left
 
-		{ -size, size, size }, // 8 Back top left
-		{ size, size, size }, // 9 Back top right
 		{ size, -size, size }, // 10 Back bottom right
 		{ -size, -size, size }, // 11 Back bottom left
+		{ -size, size, size }, // 8 Back top left
+		{ size, size, size }, // 9 Back top right
 
 		{ size, -size, -size }, // 12 Right bottom left
 		{ size, -size, size }, // 13 Right bottom right
@@ -213,30 +213,30 @@ void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& i
 			{ 1.0f, 1.0f },
 			{ 0.0f, 1.0f },
 
-			{ 1.0f, 0.0f },
-			{ 0.0f, 0.0f },
-			{ 0.0f, 1.0f },
-			{ 1.0f, 1.0f },
-
-			{ 1.0f, 1.0f },
-			{ 0.0f, 1.0f },
 			{ 0.0f, 0.0f },
 			{ 1.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.0f, 1.0f },
 
 			{ 0.0f, 0.0f },
 			{ 1.0f, 0.0f },
 			{ 1.0f, 1.0f },
 			{ 0.0f, 1.0f },
 
-			{ 0.0f, 1.0f },
-			{ 1.0f, 1.0f },
-			{ 1.0f, 0.0f },
 			{ 0.0f, 0.0f },
+			{ 1.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.0f, 1.0f },
 
 			{ 0.0f, 0.0f },
 			{ 1.0f, 0.0f },
 			{ 1.0f, 1.0f },
-			{ 0.0f, 1.0f }
+			{ 0.0f, 1.0f },
+
+			{ 0.0f, 0.0f },
+			{ 1.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.0f, 1.0f },
 		};
 
 		float3 normals[nCubeVertices]; // TODO FILL THE NORMALS WITH THE NORMAL VALUE
