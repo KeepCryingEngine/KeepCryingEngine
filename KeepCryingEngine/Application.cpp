@@ -6,7 +6,7 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleInput.h"
-#include "ModuleUI.h"
+#include "ModuleEditorUI.h"
 #include "ModuleCamera.h"
 #include "ModuleShader.h"
 #include "ModuleScene.h"
@@ -14,23 +14,27 @@
 #include "ModuleEntity.h"
 #include "ModuleAnim.h"
 #include "ModuleAudio.h"
+#include "ModuleGameUI.h"
+#include "ModuleFont.h"
 
 using namespace std;
 using nlohmann::json;
 
 Application::Application()
 {
-	modules.push_back(input = new ModuleInput());
 	modules.push_back(window = new ModuleWindow());
-	modules.push_back(ui = new ModuleUI());
+	modules.push_back(uiEditor = new ModuleEditorUI());
 	modules.push_back(anim = new ModuleAnim());
 	modules.push_back(scene = new ModuleScene());
 	modules.push_back(renderer = new ModuleRender());
+	modules.push_back(input = new ModuleInput());
+	modules.push_back(uiGame = new ModuleGameUI());
 	modules.push_back(camera = new ModuleCamera());
 	modules.push_back(shader = new ModuleShader());
 	modules.push_back(texture = new ModuleTexture());
-	modules.push_back(entity = new ModuleEntity());//After Renderer, it needs access to buffer on init
 	modules.push_back(audio = new ModuleAudio());
+	modules.push_back(entity = new ModuleEntity());//After Renderer, it needs access to buffer on init
+	modules.push_back(font = new ModuleFont());
 }
 
 Application::~Application()

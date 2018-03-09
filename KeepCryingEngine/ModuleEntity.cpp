@@ -10,7 +10,7 @@
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 #include "Application.h"
-#include "ModuleUI.h"
+#include "ModuleEditorUI.h"
 #include "ModuleScene.h"
 #include "ModuleTexture.h"
 #include "GameObject.h"
@@ -66,7 +66,7 @@ void ModuleEntity::LoadMesh(const std::experimental::filesystem::path& path)
 		materials.insert(materials.end(), createdMaterials.begin(), createdMaterials.end());
 		meshes.insert(meshes.end(), createdMeshes.begin(), createdMeshes.end());
 
-		GameObject* root = App->scene->Get(App->ui->GetSelectedNode());
+		GameObject* root = App->scene->Get(App->uiEditor->GetSelectedNode());
 		LoadMeshRecursive(scene, scene->mRootNode, root, createdMaterials, createdMeshes);
 	}
 }
@@ -201,10 +201,10 @@ void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& i
 		{ -size, size, -size }, // 6 Left top right
 		{ -size, size, size }, // 7 Left top left
 
-		{ -size, size, size }, // 8 Back top left
-		{ size, size, size }, // 9 Back top right
 		{ size, -size, size }, // 10 Back bottom right
 		{ -size, -size, size }, // 11 Back bottom left
+		{ -size, size, size }, // 8 Back top left
+		{ size, size, size }, // 9 Back top right
 
 		{ size, -size, -size }, // 12 Right bottom left
 		{ size, -size, size }, // 13 Right bottom right
@@ -234,30 +234,30 @@ void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& i
 			{ 1.0f, 1.0f },
 			{ 0.0f, 1.0f },
 
-			{ 1.0f, 0.0f },
-			{ 0.0f, 0.0f },
-			{ 0.0f, 1.0f },
-			{ 1.0f, 1.0f },
-
-			{ 1.0f, 1.0f },
-			{ 0.0f, 1.0f },
 			{ 0.0f, 0.0f },
 			{ 1.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.0f, 1.0f },
 
 			{ 0.0f, 0.0f },
 			{ 1.0f, 0.0f },
 			{ 1.0f, 1.0f },
 			{ 0.0f, 1.0f },
 
-			{ 0.0f, 1.0f },
-			{ 1.0f, 1.0f },
-			{ 1.0f, 0.0f },
 			{ 0.0f, 0.0f },
+			{ 1.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.0f, 1.0f },
 
 			{ 0.0f, 0.0f },
 			{ 1.0f, 0.0f },
 			{ 1.0f, 1.0f },
-			{ 0.0f, 1.0f }
+			{ 0.0f, 1.0f },
+
+			{ 0.0f, 0.0f },
+			{ 1.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.0f, 1.0f },
 		};
 
 		float3 normals[nCubeVertices]; // TODO FILL THE NORMALS WITH THE NORMAL VALUE

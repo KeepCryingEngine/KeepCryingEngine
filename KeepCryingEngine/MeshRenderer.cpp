@@ -10,7 +10,7 @@
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
-#include "ModuleUI.h"
+#include "ModuleEditorUI.h"
 #include "Camera.h"
 
 MeshRenderer::MeshRenderer() : Component(MeshRenderer::TYPE)
@@ -70,7 +70,7 @@ void MeshRenderer::Render(Mesh& mesh)
 				}
 				else
 				{
-					if(App->ui->GetFrustumCulling())
+					if(App->uiEditor->GetFrustumCulling())
 					{
 						if(App->camera->GetEnabledCamera() != nullptr && App->camera->GetEnabledCamera()->Intersects(App->camera->GetEnabledCamera()->GetFrustum(), gameObject->GetAABB()))
 						{

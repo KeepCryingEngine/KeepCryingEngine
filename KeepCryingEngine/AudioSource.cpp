@@ -137,22 +137,27 @@ void AudioSource::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Audio Source"))
 	{
+		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		if(ImGui::Button("Delete Component"))
+		{
+			gameObject->RemoveComponent(this);
+		}
 		static char pathToAudio[180] = "Assets/sfx/oggSound.ogg";
 
-		ImGui::InputText("##PathToAudio", pathToAudio, sizeof(pathToAudio)); 
-		
+		ImGui::InputText("##PathToAudio", pathToAudio, sizeof(pathToAudio));
+
 		int channelType = (int)loadingChannelType;
-		if (ImGui::Combo("ChannelType", &channelType, "Mono\0Stereo"))
+		if(ImGui::Combo("ChannelType", &channelType, "Mono\0Stereo"))
 		{
 			loadingChannelType = (ChannelType)channelType;
 		}
 
 		int audioType = (int)loadingAudioType;
-		if (ImGui::Combo("AudioType", &audioType, "SFX\0Music"))
+		if(ImGui::Combo("AudioType", &audioType, "SFX\0Music"))
 		{
 			loadingAudioType = (AudioType)audioType;
 		}
-		
+
 		if(ImGui::Button("Load audio"))
 		{
 			std::experimental::filesystem::path path(pathToAudio);
@@ -167,26 +172,26 @@ void AudioSource::DrawUI()
 		ImGui::DragFloat("Max Distance", &maxDistance, 0.5f, 1.0f, 10000.0f);
 		ImGui::DragFloat("RollOff factor", &rollOffFactor, 0.1f, 0.0f, 10.0f);
 		ImGui::DragFloat("Dopler factor", &doplerFactor, 0.1f, 0.0f, 10.0f);
-		
+
 
 		if(ImGui::Button("Play"))
-		{			
+		{
 			OnPlayButtonPressed();
-		} 
-		
+		}
+
 		ImGui::SameLine();
 
 		if(ImGui::Button("Pause"))
 		{
 			OnPauseButtonPressed();
 		}
-		
+
 		ImGui::SameLine();
 
 		if(ImGui::Button("Stop"))
 		{
 			OnStopButtonPressed();
-		}
+		}	
 	}
 }
 
