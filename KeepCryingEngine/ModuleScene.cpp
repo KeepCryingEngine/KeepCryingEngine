@@ -240,6 +240,7 @@ GameObject * ModuleScene::AddCanvas(GameObject & parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Canvas");
 
+	gameObject->AddComponent<Transform2D>();
 	gameObject->AddComponent<Canvas>();
 	return gameObject;
 }
@@ -293,8 +294,7 @@ GameObject * ModuleScene::AddButton(GameObject & parent)
 	}
 	gameObject->AddComponent<Transform2D>();
 	gameObject->AddComponent<Image>();
-	gameObject->AddComponent<Button>();
-	AddText(*gameObject);//Add text in a sub-object
+	gameObject->AddComponent<Button>()->SetTextGameObject(*AddText(*gameObject));//Add text in a sub-object
 	return gameObject;
 }
 
@@ -347,8 +347,7 @@ GameObject * ModuleScene::AddInputText(GameObject & parent)
 	}
 	gameObject->AddComponent<Transform2D>();
 	gameObject->AddComponent<Image>();
-	gameObject->AddComponent<InputText>();
-	AddText(*gameObject);//Add text in a sub-object
+	gameObject->AddComponent<InputText>()->SetTextGameObject(*AddText(*gameObject));//Add text in a sub-object
 	return gameObject;
 }
 

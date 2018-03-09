@@ -2,8 +2,9 @@
 #define _TEXT_H_
 
 #include "Component.h"
+#include "GameUI.h"
 
-class Text : public Component
+class Text : public Component, public GameUI
 {
 public:
 	static const Component::Type TYPE = Component::Type::Text;

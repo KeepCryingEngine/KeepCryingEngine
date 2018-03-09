@@ -31,7 +31,7 @@ update_status ModuleGameUI::Update(float deltaTimeS, float realDeltaTimeS)
 	if(root != nullptr)
 	{
 		CheckUIStatus();
-		UpdateRecursive(deltaTimeS, realDeltaTimeS, root->gameObject);
+		UpdateRecursivePreOrder(deltaTimeS, realDeltaTimeS, root->gameObject);
 	}
 	return update_status::UPDATE_CONTINUE;
 }
@@ -61,11 +61,29 @@ GameObject * ModuleGameUI::GetHoveringGameObject()
 	return hovering;
 }
 
-void ModuleGameUI::UpdateRecursive(float deltaTimeS, float realDeltaTimeS, GameObject * gameObject)
+void ModuleGameUI::UpdateRecursivePreOrder(float deltaTimeS, float realDeltaTimeS, GameObject * gameObject)
 {
 	assert(gameObject != nullptr);
 
-	const vector<Component*>& components = gameObject->GetComponents();
+	if(gameObject->ChildCount() == 0)
+	{
+		UpdateNode(deltaTimeS, realDeltaTimeS, gameObject);
+		return;
+	}
+	UpdateNode(deltaTimeS, realDeltaTimeS, gameObject);
+
+	const vector<GameObject*>& childs = gameObject->GetChildren();
+	for(vector<GameObject*>::const_iterator it = childs.cbegin();it != childs.cend();it++)
+	{
+		GameObject * child = *it;
+		UpdateRecursivePreOrder(deltaTimeS,realDeltaTimeS, child);
+	}
+}
+
+void ModuleGameUI::UpdateNode(float deltaTimeS, float realDeltaTimeS, GameObject * g)
+{
+	assert(g != nullptr);
+	const vector<Component*>& components = g->GetComponents();
 	for(vector<Component*>::const_iterator it = components.cbegin(); it != components.cend(); it++)
 	{
 		Component * component = *it;
@@ -75,13 +93,6 @@ void ModuleGameUI::UpdateRecursive(float deltaTimeS, float realDeltaTimeS, GameO
 		}
 
 		UpdateComponent(component);
-	}
-
-	const vector<GameObject*>& childs = gameObject->GetChildren();
-	for(vector<GameObject*>::const_iterator it = childs.cbegin();it != childs.cend();it++)
-	{
-		GameObject * child = *it;
-		UpdateRecursive(deltaTimeS,realDeltaTimeS, child);
 	}
 }
 
@@ -118,12 +129,16 @@ void ModuleGameUI::UpdateComponent(Component * component)
 
 void ModuleGameUI::CheckUIStatus()
 {
+	pressed = nullptr;
+	hovering = nullptr;
+
 	PreOrdenZCheck(root->gameObject);
 	if(hovering != nullptr)
 	{
 		if(App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
 		{
 			focus = hovering;
+			pressed = hovering;
 		}
 		if(focus != nullptr)
 		{
@@ -200,8 +215,8 @@ void ModuleGameUI::UpdateImage(Image * image)
 	glLoadIdentity();
 	glDisable(GL_LIGHTING);
 
-
-	glColor3f(1, 1, 1);
+	float4 color = image->GetColor();
+	glColor4f(color.x,color.y,color.z,color.w);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, image->GetTexture()->GetId());
 
@@ -230,7 +245,16 @@ void ModuleGameUI::UpdateImage(Image * image)
 }
 
 void ModuleGameUI::UpdateButton(Button * button)
-{}
+{
+	if(button->GetTextGameObject() == pressed)
+	{
+		button->OnClick();
+	}
+	else if(button->GetTextGameObject() == hovering)
+	{
+		button->OnHovering();
+	}
+}
 
 void ModuleGameUI::UpdateText(Text * text)
 {}

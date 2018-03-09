@@ -2,8 +2,9 @@
 #define _CANVAS_H_
 
 #include "Component.h"
+#include "GameUI.h"
 
-class Canvas : public Component
+class Canvas : public Component, public GameUI
 {
 public:
 	static const Component::Type TYPE = Component::Type::Canvas;

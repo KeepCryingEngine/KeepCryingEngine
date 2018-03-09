@@ -37,6 +37,21 @@ void Image::SetTextureByPath(const std::experimental::filesystem::path & path)
 	texture = App->texture->GetAsset(path);
 }
 
+void Image::SetTexture(Texture & texture)
+{
+	this->texture = &texture;
+}
+
+void Image::SetColor(float4 color)
+{
+	this->color = color;
+}
+
+float4 Image::GetColor() const
+{
+	return color;
+}
+
 Texture * Image::GetTexture() const
 {
 	return texture;

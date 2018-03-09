@@ -26,7 +26,8 @@ public:
 	GameObject* GetHoveringGameObject();
 
 private:
-	void UpdateRecursive(float deltaTimeS, float realDeltaTimeS, GameObject* g);
+	void UpdateRecursivePreOrder(float deltaTimeS, float realDeltaTimeS, GameObject* g);
+	void UpdateNode(float deltaTimeS, float realDeltaTimeS, GameObject* g);
 
 	void UpdateComponent(Component * component);
 
@@ -46,6 +47,7 @@ private:
 	Canvas* root = nullptr;
 	GameObject* focus = nullptr;
 	GameObject* hovering = nullptr;
+	GameObject* pressed = nullptr;
 
 };
 

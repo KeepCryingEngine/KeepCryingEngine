@@ -4,6 +4,8 @@
 #include "ModuleTexture.h"
 #include "ModuleGameUI.h"
 #include "ModuleInput.h"
+#include "Image.h"
+#include "GameObject.h"
 #include <SDL.h>
 
 Button::Button(): Component(Button::TYPE)
@@ -16,28 +18,36 @@ void Button::Awake()
 {
 	for(int i = 0; i < (int)ButtonState::NUMBER_STATES; i++)
 	{
-		colors[i] = float4().zero;
+		colors[i] = float4().one;
 		textures[i] = nullptr;
 	}
 }
 
 void Button::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
-	if(App->uiGame->GetFocusGameObject() == gameObject)
+	Image* img = gameObject->GetComponent<Image>();
+	if(img != nullptr)
 	{
-		if(App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
+		switch(transitionType)
 		{
-			state = ButtonState::PRESSED;
-		}
-		else
-		{
-			state = ButtonState::HOVER;
+			case Transition::COLOR:
+			{
+				img->SetTexture(*textures[(unsigned int)ButtonState::DISABLED]);
+				img->SetColor(colors[(unsigned int)state]);
+			}
+				break;
+			case Transition::SPRITE:
+			{
+				img->SetTexture(*textures[(unsigned int)state]);
+			}
+				break;
+			default:
+				assert(false);
+				break;
 		}
 	}
-	else
-	{
-		state = ButtonState::DISABLED;
-	}
+
+	state = ButtonState::DISABLED;
 }
 
 void Button::DrawUI()
@@ -65,9 +75,9 @@ void Button::DrawUI()
 		{
 			case Transition::COLOR:
 			{
-				ImGui::DragFloat4("Disabled", colors[(unsigned int)ButtonState::DISABLED].ptr(),1.0f,0.0f,255.0f);
-				ImGui::DragFloat4("Hover",colors[(unsigned int)ButtonState::HOVER].ptr(), 1.0f, 0.0f, 255.0f);
-				ImGui::DragFloat4("Pressed", colors[(unsigned int)ButtonState::PRESSED].ptr(), 1.0f, 0.0f, 255.0f);
+				ImGui::DragFloat4("Disabled", colors[(unsigned int)ButtonState::DISABLED].ptr(),0.01f,0.0f,1.0f);
+				ImGui::DragFloat4("Hover",colors[(unsigned int)ButtonState::HOVER].ptr(), 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat4("Pressed", colors[(unsigned int)ButtonState::PRESSED].ptr(), 0.01f, 0.0f, 1.0f);
 			}
 				break;
 			case Transition::SPRITE:
@@ -75,7 +85,7 @@ void Button::DrawUI()
 				static char textureHoverPath[252] = "Lenna.png";
 				ImGui::Text("Hover"); ImGui::SameLine();
 				ImGui::InputText("##buttonHoverTexture", textureHoverPath, 252); ImGui::SameLine();
-				if(ImGui::Button("Set Texture"))
+				if(ImGui::Button("Set Texture"))//TODO:CHANGE NAME/ID
 				{
 					std::experimental::filesystem::path path = "Assets/";
 					path /= textureHoverPath;
@@ -86,7 +96,7 @@ void Button::DrawUI()
 				static char texturePressedPath[252] = "Lenna.png";
 				ImGui::Text("Pressed"); ImGui::SameLine();
 				ImGui::InputText("##buttonPressedTexture", texturePressedPath, 252); ImGui::SameLine();
-				if(ImGui::Button("Set Texture"))
+				if(ImGui::Button("Set Texture"))//TODO:CHANGE NAME/ID
 				{
 					std::experimental::filesystem::path path = "Assets/";
 					path /= texturePressedPath;
@@ -101,6 +111,16 @@ void Button::DrawUI()
 		}
 
 	}
+}
+
+void Button::OnHovering()
+{
+	state = ButtonState::HOVER;
+}
+
+void Button::OnClick()
+{
+	state = ButtonState::PRESSED;
 }
 
 void Button::SetTextureByPath(const std::experimental::filesystem::path & path, ButtonState state)
@@ -118,6 +138,11 @@ void Button::SetColor(float4 newColor, ButtonState state)
 	colors[(unsigned int)state] = newColor;
 }
 
+void Button::SetTextGameObject(GameObject& g)
+{
+	textGameObject = &g;
+}
+
 Texture * Button::GetTexture(ButtonState state) const
 {
 	return textures[(unsigned int) state];
@@ -126,4 +151,9 @@ Texture * Button::GetTexture(ButtonState state) const
 float4 Button::GetColor(ButtonState state) const
 {
 	return colors[(unsigned int)state];
+}
+
+GameObject * Button::GetTextGameObject() const
+{
+	return textGameObject;
 }
