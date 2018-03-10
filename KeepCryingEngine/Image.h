@@ -18,6 +18,7 @@ public:
 
 	void Awake() override;
 	void Destroy() override;
+	void SetEnable(bool value) override;
 
 	void DrawUI() override;
 

@@ -25,11 +25,28 @@ void Image::Destroy()
 	gameObject->CheckIfHovereableUI();
 }
 
+void Image::SetEnable(bool value)
+{
+	Component::SetEnable(value);
+	if(value)
+	{
+		isHovereableUI = true;
+		gameObject->SetHovereableUI(true);
+	}
+	else
+	{
+		isHovereableUI = false;
+		gameObject->CheckIfHovereableUI();
+	}
+}
+
 void Image::DrawUI()
 {
 	if (ImGui::CollapsingHeader("Image"))
 	{
-		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		static bool uiEnable = enabled;
+		ImGui::Checkbox("Active", &uiEnable); ImGui::SameLine();
+		SetEnable(uiEnable);
 		if(ImGui::Button("Delete Component"))
 		{
 			gameObject->RemoveComponent(this);

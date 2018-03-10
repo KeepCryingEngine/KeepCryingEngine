@@ -22,6 +22,9 @@ void Transform2D::DrawUI()
 {
 	if (ImGui::CollapsingHeader("Transform2D"))
 	{
+		static bool uiEnable = enabled;
+		ImGui::Checkbox("Active", &uiEnable); ImGui::SameLine();
+		SetEnable(uiEnable);
 		ImGui::DragFloat3(" Position", localPosition.ptr(), 0.1f);
 		ImGui::DragFloat2(" Size", size.ptr(), 0.1f);
 		ImGui::DragFloat2(" Pivot", pivot.ptr(), 0.1f);

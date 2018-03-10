@@ -67,6 +67,11 @@ void ModuleGameUI::UpdateRecursivePreOrder(float deltaTimeS, float realDeltaTime
 {
 	assert(gameObject != nullptr);
 
+	if(!gameObject->IsEnabled())
+	{
+		return;
+	}
+
 	if(gameObject->ChildCount() == 0)
 	{
 		UpdateNode(deltaTimeS, realDeltaTimeS, gameObject);
@@ -149,9 +154,9 @@ void ModuleGameUI::CheckUIStatus()
 		alreadyPressed = false;
 	}
 
-	if(hovering != nullptr)
+	if(App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
 	{
-		if(App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
+		if(hovering != nullptr)
 		{
 			if(hovering->IsFocuseableUI())
 			{
@@ -163,6 +168,10 @@ void ModuleGameUI::CheckUIStatus()
 				focus = nullptr;
 			}
 		}
+		else
+		{
+			focus = nullptr;
+		}
 	}
 	//We are still on UI, then we absorb input
 	if(hovering != nullptr || focus != nullptr)
@@ -173,6 +182,10 @@ void ModuleGameUI::CheckUIStatus()
 
 void ModuleGameUI::PreOrdenZCheck(GameObject * currentNode)
 {
+	if(!currentNode->IsEnabled())
+	{
+		return;
+	}
 	if(currentNode->ChildCount() == 0)
 	{
 		if(currentNode->IsHovereableUI())
@@ -233,6 +246,10 @@ void ModuleGameUI::NextFocus()
 
 bool ModuleGameUI::NextFocusPreOrderZCheck(GameObject * currentNode)
 {
+	if(!currentNode->IsEnabled())
+	{
+		return false;
+	}
 	if(currentNode->ChildCount() == 0)
 	{
 		if(firstFocusAvailableFlag)
@@ -326,6 +343,7 @@ void ModuleGameUI::UpdateImage(Image * image)
 	glTexCoord2f(1, 0);  glVertex3f(max.x, min.y, min.z);
 	glTexCoord2f(1, 1); glVertex3f(max.x, max.y, min.z);
 	glTexCoord2f(0, 1); glVertex3f(min.x, max.y, min.z);
+
 	glEnd();
 
 	glBindTexture(GL_TEXTURE_2D,0);

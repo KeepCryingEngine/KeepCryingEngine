@@ -21,7 +21,9 @@ void Text::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Text"))
 	{
-		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		static bool uiEnable = enabled;
+		ImGui::Checkbox("Active", &uiEnable); ImGui::SameLine();
+		SetEnable(uiEnable);
 		if(ImGui::Button("Delete Component"))
 		{
 			gameObject->RemoveComponent(this);
