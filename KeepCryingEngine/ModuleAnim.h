@@ -55,6 +55,8 @@ public:
 	bool CleanUp() override;
 	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
 
+	void UpdateAnimationInstance(const size_t &i, unsigned int time);
+
 	std::set<std::string> Load(const std::experimental::filesystem::path& path);
 	AnimInstanceId Play(const char* name);
 	void Stop(AnimInstanceId id);
