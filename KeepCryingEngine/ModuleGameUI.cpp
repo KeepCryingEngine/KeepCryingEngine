@@ -147,7 +147,7 @@ void ModuleGameUI::CheckUIStatus()
 		{
 			NextFocus();
 			alreadyPressed = true;
-		}
+		}	
 	}
 	else if(App->input->UIGetKey(SDL_SCANCODE_TAB) == KeyState::KEY_UP)
 	{
@@ -252,14 +252,14 @@ bool ModuleGameUI::NextFocusPreOrderZCheck(GameObject * currentNode)
 	}
 	if(currentNode->ChildCount() == 0)
 	{
-		if(firstFocusAvailableFlag)
-		{
-			firstFocusAvailable = currentNode;
-			firstFocusAvailableFlag = false;
-		}
-
 		if(currentNode->IsFocuseableUI())
 		{
+			if(firstFocusAvailableFlag)
+			{
+				firstFocusAvailable = currentNode;
+				firstFocusAvailableFlag = false;
+			}
+
 			if(focus == currentNode)
 			{
 				nextItsFocusFlag = true;

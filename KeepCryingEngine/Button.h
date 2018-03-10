@@ -11,6 +11,7 @@ class Texture;
 
 enum class ButtonState
 {
+	NORMAL,
 	HOVER,
 	PRESSED,
 	DISABLED,
@@ -53,7 +54,7 @@ public:
 	GameObject* GetTextGameObject() const;
 
 private:
-	ButtonState state = ButtonState::DISABLED;
+	ButtonState state = ButtonState::NORMAL;
 	Transition transitionType = Transition::COLOR;
 	float4 colors[(unsigned int)ButtonState::NUMBER_STATES];
 	Texture* textures[(unsigned int)ButtonState::NUMBER_STATES];
