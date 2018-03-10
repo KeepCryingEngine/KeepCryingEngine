@@ -159,26 +159,54 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 					//Handle backspace
 					if(event.key.keysym.sym == SDLK_BACKSPACE && text.length() > 0)
 					{
-						//lop off character
-						if(actualTextPos > 0)
+						if(IsShifting())
+						{
+							int startErase = min(actualTextPos, shiftInitialTextPos);
+							if(startErase < 0)
+							{
+								startErase++;
+							}
+							text.erase(startErase,abs(actualTextPos-shiftInitialTextPos));
+							actualTextPos = min(actualTextPos, shiftInitialTextPos);
+							shiftInitialTextPos = actualTextPos;
+						}
+						else if(actualTextPos > 0)
 						{
 							text.erase(actualTextPos - 1, 1);
 							if(--actualTextPos < 0)
 							{
 								actualTextPos++;
 							}
+							shiftInitialTextPos = actualTextPos;
 						}
 						
 					}
 					//Handle copy
 					else if(event.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL)
 					{
-						SDL_SetClipboardText(text.c_str());
+						if(IsShifting())
+						{
+							SDL_SetClipboardText(GetShiftedText().c_str());
+						}
 					}
 					//Handle paste
 					else if(event.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL)
 					{
-						text = SDL_GetClipboardText();
+						if(IsShifting())
+						{
+							int startErase = min(actualTextPos, shiftInitialTextPos);
+							if(startErase < 0)
+							{
+								startErase++;
+							}
+							text.erase(startErase, abs(actualTextPos - shiftInitialTextPos));
+							actualTextPos = min(actualTextPos, shiftInitialTextPos);
+							shiftInitialTextPos = actualTextPos;
+						}
+						text.insert(actualTextPos, SDL_GetClipboardText());
+						int size = strlen(SDL_GetClipboardText());
+						actualTextPos += size;
+						shiftInitialTextPos = actualTextPos;
 					}
 					else if(event.key.keysym.sym == SDLK_RIGHT)
 					{
@@ -186,12 +214,21 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 						{
 							actualTextPos--;
 						}
+
+						if(!(SDL_GetModState() & KMOD_SHIFT)){
+							shiftInitialTextPos = actualTextPos;
+						}
 					}
 					else if(event.key.keysym.sym == SDLK_LEFT)
 					{
 						if(--actualTextPos < 0)
 						{
 							actualTextPos++;
+						}
+
+						if(!(SDL_GetModState() & KMOD_SHIFT))
+						{
+							shiftInitialTextPos = actualTextPos;
 						}
 					}
 				}
@@ -201,11 +238,32 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 			{
 				if(startToRead)
 				{
+					if(IsShifting())
+					{
+						int startErase = min(actualTextPos, shiftInitialTextPos);
+						if(startErase < 0)
+						{
+							startErase++;
+						}
+						text.erase(startErase, abs(actualTextPos - shiftInitialTextPos));
+						actualTextPos = min(actualTextPos, shiftInitialTextPos);
+						shiftInitialTextPos = actualTextPos;
+					}
 					text.insert(actualTextPos++, event.text.text);
+					shiftInitialTextPos = actualTextPos;
 				}
 			}
 			break;
 		}
+	}
+
+	if(actualTextPos != shiftInitialTextPos)
+	{
+		isShifting = true;
+	}
+	else
+	{
+		isShifting = false;
 	}
 
 	SetStartToRead(false);
@@ -309,11 +367,36 @@ void ModuleInput::SetText(const char* newText)
 {
 	text = newText;
 	actualTextPos = text.length();
+	shiftInitialTextPos = actualTextPos;
 }
 
 const std::string& ModuleInput::GetCurrentText()
 {
 	return text;
+}
+
+bool ModuleInput::IsShifting() const
+{
+	return isShifting;
+}
+
+const std::string ModuleInput::GetShiftedText()
+{
+	if(IsShifting())
+	{
+		int minOffset = min(shiftInitialTextPos, actualTextPos);
+		int maxOffset = max(shiftInitialTextPos, actualTextPos);
+		return text.substr(minOffset, maxOffset);
+	}
+	else
+	{
+		return "";
+	}
+}
+
+int ModuleInput::GetActualTextPos()
+{
+	return actualTextPos;
 }
 
 const float2& ModuleInput::GetMouseMotion() const

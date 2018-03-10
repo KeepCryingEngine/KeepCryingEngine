@@ -141,6 +141,9 @@ public:
 
 	void SetText(const char*  newText);
 	const std::string& GetCurrentText();
+	bool IsShifting()const;
+	const std::string GetShiftedText();
+	int GetActualTextPos();
 
 private:
 	bool windowEvents[(uint)EventWindow::WE_COUNT];
@@ -152,8 +155,9 @@ private:
 	bool overUI = false;
 	bool startToRead = false;
 	std::string text;
-	std::string shiftedText;
+	int shiftInitialTextPos = 0;
 	int actualTextPos = 0;
+	bool isShifting = false;
 };
 
 #endif // !_MODULEINPUT_H_
