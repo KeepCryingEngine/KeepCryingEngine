@@ -100,7 +100,8 @@ void Button::DrawUI()
 			break;
 			case Transition::SPRITE:
 			{
-				static char textureHoverPath[252] = "Lenna.png";
+				ImGui::PushID(gameObject->GetId());
+				static char textureHoverPath[252] = "rock.jpg";
 				ImGui::Text("Hover"); ImGui::SameLine();
 				ImGui::InputText("##buttonHoverTexture", textureHoverPath, 252); ImGui::SameLine();
 				if(ImGui::Button("Set Texture"))//TODO:CHANGE NAME/ID
@@ -111,7 +112,8 @@ void Button::DrawUI()
 					SetTextureByPath(path, ButtonState::HOVER);
 				}
 
-				static char texturePressedPath[252] = "Lenna.png";
+				ImGui::PushID(gameObject->GetId() + 1);
+				static char texturePressedPath[252] = "exodia.dds";
 				ImGui::Text("Pressed"); ImGui::SameLine();
 				ImGui::InputText("##buttonPressedTexture", texturePressedPath, 252); ImGui::SameLine();
 				if(ImGui::Button("Set Texture"))//TODO:CHANGE NAME/ID
@@ -121,6 +123,9 @@ void Button::DrawUI()
 
 					SetTextureByPath(path, ButtonState::PRESSED);
 				}
+				ImGui::PopID();
+
+				ImGui::PopID();
 			}
 			break;
 			default:
