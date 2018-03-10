@@ -36,6 +36,25 @@ void Button::Destroy()
 	gameObject->CheckIfHovereableUI();
 }
 
+void Button::SetEnable(bool value)
+{
+	Component::SetEnable(value);
+	if(value)
+	{
+		isFocuseableUI = true;
+		isHovereableUI = true;
+		gameObject->SetFocuseableUI(true);
+		gameObject->SetHovereableUI(true);
+	}
+	else
+	{
+		isFocuseableUI = false;
+		isHovereableUI = false;
+		gameObject->CheckIfFocuseableUI();
+		gameObject->CheckIfHovereableUI();
+	}
+}
+
 void Button::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	Image* img = gameObject->GetComponent<Image>();
@@ -68,6 +87,7 @@ void Button::DrawUI()
 	if(ImGui::CollapsingHeader("Button"))
 	{
 		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		SetEnable(enabled);
 		if(ImGui::Button("Delete Component"))
 		{
 			gameObject->RemoveComponent(this);

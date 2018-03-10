@@ -27,6 +27,25 @@ void InputText::Destroy()
 	gameObject->CheckIfHovereableUI();
 }
 
+void InputText::SetEnable(bool value)
+{
+	Component::SetEnable(value);
+	if(value)
+	{
+		isFocuseableUI = true;
+		isHovereableUI = true;
+		gameObject->SetFocuseableUI(true);
+		gameObject->SetHovereableUI(true);
+	}
+	else
+	{
+		isFocuseableUI = false;
+		isHovereableUI = false;
+		gameObject->CheckIfFocuseableUI();
+		gameObject->CheckIfHovereableUI();
+	}
+}
+
 void InputText::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	if(onFocus)
@@ -53,7 +72,9 @@ void InputText::DrawUI()
 {
 	if(ImGui::CollapsingHeader("InputText"))
 	{
-		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		static bool uiEnable = enabled;
+		ImGui::Checkbox("Active", &uiEnable); ImGui::SameLine();
+		SetEnable(uiEnable);
 		if(ImGui::Button("Delete Component"))
 		{
 			gameObject->RemoveComponent(this);
