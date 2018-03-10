@@ -326,15 +326,20 @@ bool ModuleAnim::GetTransform(AnimInstance* animInstance, const char * channel, 
 	return true;
 }
 
-void ModuleAnim::DoVertexSkinning(GameObject * root)
+void ModuleAnim::DoVertexSkinning(GameObject* root)
 {
 	vector<MeshFilter*> meshFilters = root->GetParent()->GetComponentsInChildren<MeshFilter>();
-	for (MeshFilter* meshFilter : meshFilters)
+	for(MeshFilter* meshFilter : meshFilters)
 	{
-		Mesh * mesh = meshFilter->GetMesh();
+		Mesh* mesh = meshFilter->GetMesh();
 		vector<Vertex> vertices = mesh->GetOriginalVertices();
 
-		for (const Bone& bone : mesh->GetBones())
+		for(Vertex& vertex : vertices)
+		{
+			vertex.position = float3::zero;
+		}
+
+		for(const Bone& bone : mesh->GetBones())
 		{
 			CalculateBoneMatrix(*root, mesh, bone, vertices);
 		}
@@ -354,8 +359,9 @@ void ModuleAnim::CalculateBoneMatrix(const GameObject& rootGameObject, Mesh* mes
 	}
 
 	Transform* boneTransform = boneGameObject->GetTransform();
-	float4x4 boneMatrixToRoot = boneTransform->GetModelMatrix();// .Mul(rootGameObject.GetTransform()->GetModelMatrix());
-	//boneMatrixToRoot.UniformScale(10);
+	float4x4 boneMatrixToRoot = boneTransform->GetModelMatrix();
+
+	float3 scaleCorrection = float3::one.Div(rootGameObjectMatrix.GetScale());
 
 	aiMatrix4x4 aiBind = bone.bind;
 	float4x4 bondBindInvertedMatrix
@@ -366,7 +372,7 @@ void ModuleAnim::CalculateBoneMatrix(const GameObject& rootGameObject, Mesh* mes
 		(float)aiBind.d1, (float)aiBind.d2, (float)aiBind.d3, (float)aiBind.d4
 	);
 	
-	float4x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix * 10;
+	float4x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix;
 
 	for(const Weigth& weight : bone.weights)
 	{
@@ -375,7 +381,7 @@ void ModuleAnim::CalculateBoneMatrix(const GameObject& rootGameObject, Mesh* mes
 		Vertex& vertex = vertices[weight.vertex];
 		const Vertex& originalVertex = mesh->GetOriginalVertices()[weight.vertex];
 
-		vertex.position += (weightTransformation * originalVertex.position.ToPos4()).Float3Part();
+		vertex.position += scaleCorrection.Mul((weightTransformation * originalVertex.position.ToPos4()).Float3Part());
 		vertex.normal += (weightTransformation * originalVertex.normal.ToDir4()).Float3Part();
 		vertex.normal.Normalize();
 	}
