@@ -152,6 +152,8 @@ private:
 	bool overUI = false;
 	bool startToRead = false;
 	std::string text;
+	std::string shiftedText;
+	int actualTextPos = 0;
 };
 
 #endif // !_MODULEINPUT_H_

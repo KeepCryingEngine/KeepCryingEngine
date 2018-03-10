@@ -154,21 +154,46 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 
 			case SDL_KEYDOWN:
 			{
-				//Handle backspace
-				if(event.key.keysym.sym == SDLK_BACKSPACE && text.length() > 0)
+				if(startToRead)
 				{
-					//lop off character
-					text.pop_back();
-				}
-				//Handle copy
-				else if(event.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL)
-				{
-					SDL_SetClipboardText(text.c_str());
-				}
-				//Handle paste
-				else if(event.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL)
-				{
-					text = SDL_GetClipboardText();
+					//Handle backspace
+					if(event.key.keysym.sym == SDLK_BACKSPACE && text.length() > 0)
+					{
+						//lop off character
+						if(actualTextPos > 0)
+						{
+							text.erase(actualTextPos - 1, 1);
+							if(--actualTextPos < 0)
+							{
+								actualTextPos++;
+							}
+						}
+						
+					}
+					//Handle copy
+					else if(event.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL)
+					{
+						SDL_SetClipboardText(text.c_str());
+					}
+					//Handle paste
+					else if(event.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL)
+					{
+						text = SDL_GetClipboardText();
+					}
+					else if(event.key.keysym.sym == SDLK_RIGHT)
+					{
+						if(++actualTextPos > text.length())
+						{
+							actualTextPos--;
+						}
+					}
+					else if(event.key.keysym.sym == SDLK_LEFT)
+					{
+						if(--actualTextPos < 0)
+						{
+							actualTextPos++;
+						}
+					}
 				}
 			}
 			break;
@@ -176,7 +201,7 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 			{
 				if(startToRead)
 				{
-					text += event.text.text;
+					text.insert(actualTextPos++, event.text.text);
 				}
 			}
 			break;
@@ -283,6 +308,7 @@ bool ModuleInput::GetStartToRead() const
 void ModuleInput::SetText(const char* newText)
 {
 	text = newText;
+	actualTextPos = text.length();
 }
 
 const std::string& ModuleInput::GetCurrentText()

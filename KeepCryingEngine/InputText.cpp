@@ -17,6 +17,11 @@ void InputText::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	{
 		textGameObject->GetComponent<Text>()->SetText(App->input->GetCurrentText());
 	}
+	else
+	{
+		dirtyText = true;
+	}
+
 	if(textGameObject->GetComponent<Text>()->GetText() == "")
 	{
 		placeHolderGameObject->GetComponent<Text>()->enabled = true;
@@ -25,6 +30,7 @@ void InputText::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	{
 		placeHolderGameObject->GetComponent<Text>()->enabled = false;
 	}
+	onFocus = false;
 }
 
 void InputText::DrawUI()
@@ -43,7 +49,11 @@ void InputText::OnFocus()
 {
 	onFocus = true;
 	App->input->SetStartToRead(true);
-	App->input->SetText(textGameObject->GetComponent<Text>()->GetText().c_str());
+	if(dirtyText)
+	{
+		App->input->SetText(textGameObject->GetComponent<Text>()->GetText().c_str());
+		dirtyText = false;
+	}
 }
 
 void InputText::SetPlaceHolderGameObject(GameObject & g)

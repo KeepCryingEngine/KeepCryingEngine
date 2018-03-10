@@ -29,6 +29,7 @@ private:
 	bool onFocus = false;
 	GameObject * placeHolderGameObject;
 	GameObject * textGameObject;
+	bool dirtyText = true;
 };
 
 #endif // !_INPUTTEXT_H_
