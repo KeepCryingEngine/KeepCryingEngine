@@ -38,7 +38,7 @@ private:
 private:
 	std::string actualText= "Text";
 	Texture * texture = nullptr;
-	float4 color = float4().zero;
+	float4 color = float4().one * 255;
 	const TTF_Font* font;
 	float size = 20;
 	std::experimental::filesystem::path currentFontPath = "";
