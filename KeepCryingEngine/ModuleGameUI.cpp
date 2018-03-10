@@ -201,6 +201,7 @@ void ModuleGameUI::PreOrdenZCheck(GameObject * currentNode)
 bool ModuleGameUI::CheckIfMouseOver(GameObject * g)
 {
 	float2 mousePos = App->input->GetMousePosition();
+	mousePos.y = App->configuration.screenHeight - mousePos.y;
 	float3 maxPos = g->GetComponent<Transform2D>()->GetMaxPosition();
 	float3 minPos = g->GetComponent<Transform2D>()->GetMinPosition();
 
