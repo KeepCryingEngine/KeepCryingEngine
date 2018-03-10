@@ -55,11 +55,23 @@ public:
 	virtual std::vector<Component::Type> GetNeededComponents() const { return { }; }
 	virtual std::vector<Component::Type> GetProhibitedComponents() const { return { }; }
 
+	virtual bool IsFocuseableUI() const
+	{
+		return isFocuseableUI;
+	}
+
+	virtual bool IsHovereableUI() const
+	{
+		return isHovereableUI;
+	}
+
 public:
 	bool enabled;
 	bool wasEnabled;
 	Component::Type type;
 	GameObject* gameObject = nullptr;
+	bool isFocuseableUI = false;
+	bool isHovereableUI = false;
 };
 
 #endif // !_COMPONENT_H_

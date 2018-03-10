@@ -13,6 +13,9 @@ public:
 	InputText();
 	~InputText();
 
+	void Awake() override;
+	void Destroy() override;
+
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS)override;
 
 	void DrawUI() override;

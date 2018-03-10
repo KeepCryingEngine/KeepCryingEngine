@@ -16,6 +16,9 @@ public:
 	Image();
 	virtual ~Image();
 
+	void Awake() override;
+	void Destroy() override;
+
 	void DrawUI() override;
 
 	void SetTextureByPath(const std::experimental::filesystem::path& path);

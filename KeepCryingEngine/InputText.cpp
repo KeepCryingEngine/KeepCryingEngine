@@ -11,6 +11,22 @@ InputText::InputText():Component(InputText::TYPE)
 InputText::~InputText()
 {}
 
+void InputText::Awake()
+{
+	isFocuseableUI = true;
+	isHovereableUI = true;
+	gameObject->SetFocuseableUI(true);
+	gameObject->SetHovereableUI(true);
+}
+
+void InputText::Destroy()
+{
+	isFocuseableUI = false;
+	isHovereableUI = false;
+	gameObject->CheckIfFocuseableUI();
+	gameObject->CheckIfHovereableUI();
+}
+
 void InputText::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	if(onFocus)

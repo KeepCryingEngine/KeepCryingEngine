@@ -34,6 +34,7 @@ public:
 	~Button();
 
 	void Awake() override;
+	void Destroy() override;
 
 	void RealUpdate(float deltaTimeS, float realDeltaTimeS)override;
 

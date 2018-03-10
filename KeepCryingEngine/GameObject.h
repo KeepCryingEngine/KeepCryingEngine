@@ -75,6 +75,14 @@ public:
 	bool GetVisible() const;
 	void SetVisible(bool visible);
 
+	void CheckIfFocuseableUI();
+	void SetFocuseableUI(bool value);
+	bool IsFocuseableUI()const;
+
+	void CheckIfHovereableUI();
+	void SetHovereableUI(bool value);
+	bool IsHovereableUI()const;
+
 private:
 	Component * AddComponent(Component::Type type);
 
@@ -100,6 +108,8 @@ private:
 	Transform* transform = nullptr;
 	std::string name;
 
+	bool isFocuseableUI = false;
+	bool isHovereableUI = false;
 	bool enable = true;
 	bool isStatic = false;
 	int id;

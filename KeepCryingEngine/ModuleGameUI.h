@@ -37,6 +37,9 @@ private:
 
 	bool CheckIfMouseOver(GameObject* g);
 
+	void NextFocus();
+	bool NextFocusPreOrderZCheck(GameObject* currentNode);
+
 	void UpdateCanvas(Canvas* canvas);
 	void UpdateImage(Image* image);
 	void UpdateButton(Button* button);
@@ -48,6 +51,14 @@ private:
 	GameObject* focus = nullptr;
 	GameObject* hovering = nullptr;
 	GameObject* pressed = nullptr;
+
+	//Internal flag for NextFocus function
+	bool nextItsFocusFlag = false;
+	bool firstFocusAvailableFlag = false;
+	GameObject* firstFocusAvailable = nullptr;
+
+	//To make nextFocus only once per tab
+	bool alreadyPressed = false;
 
 };
 

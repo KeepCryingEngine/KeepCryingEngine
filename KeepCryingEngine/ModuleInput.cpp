@@ -249,6 +249,12 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 							shiftInitialTextPos = actualTextPos;
 						}
 					}
+					else if(event.key.keysym.sym == SDLK_RETURN)
+					{
+						//TODO: it creates space, not return
+						/*text.insert(actualTextPos,"\n");
+						shiftInitialTextPos = ++actualTextPos;*/
+					}
 				}
 			}
 			break;

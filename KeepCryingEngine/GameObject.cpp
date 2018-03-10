@@ -205,6 +205,52 @@ void GameObject::SetVisible(bool visible)
 	this->visible = visible;
 }
 
+void GameObject::CheckIfFocuseableUI()
+{
+	for(Component* const c : GetComponents())
+	{
+		if(c->IsFocuseableUI())
+		{
+			isFocuseableUI = true;
+			return;
+		}
+	}
+	isFocuseableUI = false;
+}
+
+void GameObject::SetFocuseableUI(bool value)
+{
+	isFocuseableUI = value;
+}
+
+bool GameObject::IsFocuseableUI() const
+{
+	return isFocuseableUI;
+}
+
+void GameObject::CheckIfHovereableUI()
+{
+	for(Component* const c : GetComponents())
+	{
+		if(c->IsHovereableUI())
+		{
+			isHovereableUI = true;
+			return;
+		}
+	}
+	isHovereableUI = false;
+}
+
+void GameObject::SetHovereableUI(bool value)
+{
+	isHovereableUI = value;
+}
+
+bool GameObject::IsHovereableUI() const
+{
+	return isHovereableUI;
+}
+
 Component* GameObject::GetComponent(Component::Type type) const
 {
 	for (Component* component : components)

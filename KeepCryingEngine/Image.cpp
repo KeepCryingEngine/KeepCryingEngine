@@ -13,6 +13,18 @@ Image::Image(): Component(Image::TYPE)
 Image::~Image()
 {}
 
+void Image::Awake()
+{
+	isHovereableUI = true;
+	gameObject->SetHovereableUI(true);
+}
+
+void Image::Destroy()
+{
+	isHovereableUI = false;
+	gameObject->CheckIfHovereableUI();
+}
+
 void Image::DrawUI()
 {
 	if (ImGui::CollapsingHeader("Image"))

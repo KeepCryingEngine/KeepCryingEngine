@@ -9,18 +9,31 @@
 #include <SDL.h>
 
 Button::Button(): Component(Button::TYPE)
-{}
+{
+}
 
 Button::~Button()
 {}
 
 void Button::Awake()
 {
+	isFocuseableUI = true;
+	isHovereableUI = true;
+	gameObject->SetFocuseableUI(true);
+	gameObject->SetHovereableUI(true);
 	for(int i = 0; i < (int)ButtonState::NUMBER_STATES; i++)
 	{
 		colors[i] = float4().one;
 		textures[i] = nullptr;
 	}
+}
+
+void Button::Destroy()
+{
+	isFocuseableUI = false;
+	isHovereableUI = false;
+	gameObject->CheckIfFocuseableUI();
+	gameObject->CheckIfHovereableUI();
 }
 
 void Button::RealUpdate(float deltaTimeS, float realDeltaTimeS)

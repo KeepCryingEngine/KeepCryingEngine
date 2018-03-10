@@ -133,17 +133,39 @@ void ModuleGameUI::CheckUIStatus()
 	hovering = nullptr;
 
 	PreOrdenZCheck(root->gameObject);
+	//Tab functionality
+	if(focus != nullptr && App->input->UIGetKey(SDL_SCANCODE_TAB) == KeyState::KEY_DOWN)
+	{
+		if(!alreadyPressed)
+		{
+			NextFocus();
+			alreadyPressed = true;
+		}
+	}
+	else if(App->input->UIGetKey(SDL_SCANCODE_TAB) == KeyState::KEY_UP)
+	{
+		alreadyPressed = false;
+	}
+
 	if(hovering != nullptr)
 	{
 		if(App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
 		{
-			focus = hovering;
-			pressed = hovering;
+			if(hovering->IsFocuseableUI())
+			{
+				focus = hovering;
+				pressed = hovering;
+			}
+			else
+			{
+				focus = nullptr;
+			}
 		}
-		if(focus != nullptr)
-		{
-			App->input->SetOverUI(true);
-		}
+	}
+	//We are still on UI, then we absorb input
+	if(hovering != nullptr || focus != nullptr)
+	{
+		App->input->SetOverUI(true);
 	}
 }
 
@@ -151,15 +173,21 @@ void ModuleGameUI::PreOrdenZCheck(GameObject * currentNode)
 {
 	if(currentNode->ChildCount() == 0)
 	{
+		if(currentNode->IsHovereableUI())
+		{
+			if(CheckIfMouseOver(currentNode))
+			{
+				hovering = currentNode;
+			}
+		}
+		return;
+	}
+	if(currentNode->IsHovereableUI())
+	{
 		if(CheckIfMouseOver(currentNode))
 		{
 			hovering = currentNode;
 		}
-		return;
-	}
-	if(CheckIfMouseOver(currentNode))
-	{
-		hovering = currentNode;
 	}
 	vector<GameObject*> children = currentNode->GetChildren();
 	for(GameObject* g : children)
@@ -188,6 +216,72 @@ bool ModuleGameUI::CheckIfMouseOver(GameObject * g)
 	}
 
 	return (xHit && yHit);
+}
+
+void ModuleGameUI::NextFocus()
+{
+	firstFocusAvailable = nullptr;
+	firstFocusAvailableFlag = true;
+	nextItsFocusFlag = false;
+	if(!NextFocusPreOrderZCheck(root->gameObject))
+	{
+		focus = firstFocusAvailable;
+	}
+}
+
+bool ModuleGameUI::NextFocusPreOrderZCheck(GameObject * currentNode)
+{
+	if(currentNode->ChildCount() == 0)
+	{
+		if(firstFocusAvailableFlag)
+		{
+			firstFocusAvailable = currentNode;
+			firstFocusAvailableFlag = false;
+		}
+
+		if(currentNode->IsFocuseableUI())
+		{
+			if(focus == currentNode)
+			{
+				nextItsFocusFlag = true;
+			}
+			else if(nextItsFocusFlag)
+			{
+				focus = currentNode;
+				return true;
+			}
+		}
+		return false;
+	}
+	if(currentNode->IsFocuseableUI())
+	{
+		if(firstFocusAvailableFlag)
+		{
+			firstFocusAvailable = currentNode;
+			firstFocusAvailableFlag = false;
+		}
+
+		if(focus == currentNode)
+		{
+			nextItsFocusFlag = true;
+		}
+		else if(nextItsFocusFlag)
+		{
+			focus = currentNode;
+			return true;
+		}
+	}
+	bool ret = false;
+	vector<GameObject*> children = currentNode->GetChildren();
+	for(GameObject* g : children)
+	{
+		ret = ret || NextFocusPreOrderZCheck(g);
+		if(ret)
+		{
+			return ret;
+		}
+	}
+	return ret;
 }
 
 void ModuleGameUI::UpdateCanvas(Canvas * canvas)
@@ -246,11 +340,11 @@ void ModuleGameUI::UpdateImage(Image * image)
 
 void ModuleGameUI::UpdateButton(Button * button)
 {
-	if(button->GetTextGameObject() == pressed || button->gameObject == pressed)
+	if(button->gameObject == pressed)
 	{
 		button->OnClick();
 	}
-	else if(button->GetTextGameObject() == hovering || button->gameObject == hovering)
+	else if(button->gameObject == hovering || button->gameObject == focus)
 	{
 		button->OnHovering();
 	}
@@ -309,7 +403,7 @@ void ModuleGameUI::UpdateText(Text * text)
 
 void ModuleGameUI::UpdateInputText(InputText * inputText)
 {
-	if(inputText->GetTextGameObject() == focus || inputText->GetPlaceHolderGameObject() == focus || inputText->gameObject == focus)
+	if(inputText->gameObject == focus)
 	{
 		inputText->OnFocus();
 	}
