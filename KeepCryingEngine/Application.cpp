@@ -120,6 +120,8 @@ update_status Application::Update()
 		if((*it)->IsEnabled())
 			ret = (*it)->PostUpdate(deltaTimeS, realDeltaTimeS);
 
+	LOG_DEBUG("FPS: %f", 1.0f / deltaTimeS);
+
 	if(configuration.limitFps)
 	{
 		if(realDeltaTimeS < desiredS)

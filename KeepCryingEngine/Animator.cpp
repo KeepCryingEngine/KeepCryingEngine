@@ -4,6 +4,7 @@
 #include "ModuleAnim.h"
 #include "GameObject.h"
 #include "Application.h"
+#include "MeshFilter.h"
 
 using namespace std;
 
@@ -13,6 +14,16 @@ Animator::Animator() :
 
 Animator::~Animator()
 { }
+
+void Animator::Start()
+{
+	vector<MeshFilter*> meshFilters = gameObject->GetParent()->GetComponentsInChildren<MeshFilter>();
+
+	for(MeshFilter* meshFilter : meshFilters)
+	{
+		meshFilter->GetMesh()->SetDynamicDraw(true);
+	}
+}
 
 void Animator::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {

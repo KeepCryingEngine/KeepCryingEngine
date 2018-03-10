@@ -74,17 +74,14 @@ const std::vector<Vertex>& Mesh::GetOriginalVertices() const
 
 void Mesh::UpdateVertices(const std::vector<Vertex>& vertices)
 {
+	assert(dynamicDraw);
 	assert(vertices.size() == nVertices);
 
-	glDeleteBuffers(1, &vertexBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(Vertex), &vertices[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	this->vertices = vertices;
-
-	const Vertex * verticesPointer = &vertices[0];
-	glGenBuffers(1, &vertexBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * nVertices, verticesPointer, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 const std::vector<Bone>& Mesh::GetBones() const
@@ -92,7 +89,23 @@ const std::vector<Bone>& Mesh::GetBones() const
 	return bones;
 }
 
-void Mesh::GenerateBuffers(const vector<Vertex> vertices, const vector<GLushort> indices)
+void Mesh::SetDynamicDraw(bool dynamicDraw)
+{
+	if(this->dynamicDraw != dynamicDraw)
+	{
+		glDeleteBuffers(1, &vertexBufferId);
+
+		const Vertex * verticesPointer = &vertices[0];
+		glGenBuffers(1, &vertexBufferId);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * nVertices, verticesPointer, dynamicDraw ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	this->dynamicDraw = dynamicDraw;
+}
+
+void Mesh::GenerateBuffers(const vector<Vertex>& vertices, const vector<GLushort>& indices)
 {
 	assert(vertices.size() > 0);
 	assert(indices.size() > 0);

@@ -51,8 +51,10 @@ public:
 
 	const std::vector<Bone>& GetBones() const;
 
+	void SetDynamicDraw(bool dynamicDraw);
+
 private:
-	void GenerateBuffers(const std::vector<Vertex> vertices, const std::vector<GLushort> indices);
+	void GenerateBuffers(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices);
 	void CalculateAABBForMesh(const std::vector<Vertex> &vertices);
 
 private:
@@ -68,6 +70,8 @@ private:
 	std::vector<GLushort> indices;
 
 	std::vector<Vertex> originalVertices;
+
+	bool dynamicDraw = false;
 };
 
 #endif // !_MESHENTITY_H_

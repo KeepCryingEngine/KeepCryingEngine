@@ -350,7 +350,7 @@ void ModuleAnim::DoVertexSkinning(GameObject* root)
 
 void ModuleAnim::CalculateBoneMatrix(const GameObject& rootGameObject, Mesh* mesh, const Bone & bone, vector<Vertex>& vertices)
 {
-	float4x4 rootGameObjectMatrix = rootGameObject.GetTransform()->GetModelMatrix();
+	float3x4 rootGameObjectMatrix = rootGameObject.GetTransform()->GetModelMatrix().Float3x4Part();
 	GameObject* boneGameObject = rootGameObject.GetChildByName(bone.name);
 
 	if(boneGameObject == nullptr)
@@ -359,24 +359,24 @@ void ModuleAnim::CalculateBoneMatrix(const GameObject& rootGameObject, Mesh* mes
 	}
 
 	Transform* boneTransform = boneGameObject->GetTransform();
-	float4x4 boneMatrixToRoot = boneTransform->GetModelMatrix();
+	float3x4 boneMatrixToRoot = boneTransform->GetModelMatrix().Float3x4Part();
 
 	float3 scaleCorrection = float3::one.Div(rootGameObjectMatrix.GetScale());
 
 	aiMatrix4x4 aiBind = bone.bind;
-	float4x4 bondBindInvertedMatrix
+	float3x4 bondBindInvertedMatrix
 	(
 		(float)aiBind.a1, (float)aiBind.a2, (float)aiBind.a3, (float)aiBind.a4,
 		(float)aiBind.b1, (float)aiBind.b2, (float)aiBind.b3, (float)aiBind.b4,
-		(float)aiBind.c1, (float)aiBind.c2, (float)aiBind.c3, (float)aiBind.c4,
-		(float)aiBind.d1, (float)aiBind.d2, (float)aiBind.d3, (float)aiBind.d4
+		(float)aiBind.c1, (float)aiBind.c2, (float)aiBind.c3, (float)aiBind.c4
+		// (float)aiBind.d1, (float)aiBind.d2, (float)aiBind.d3, (float)aiBind.d4
 	);
 	
-	float4x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix;
+	float3x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix;
 
 	for(const Weigth& weight : bone.weights)
 	{
-		float4x4 weightTransformation = transformation * weight.weight;
+		float3x4 weightTransformation = transformation * weight.weight;
 		
 		Vertex& vertex = vertices[weight.vertex];
 		const Vertex& originalVertex = mesh->GetOriginalVertices()[weight.vertex];
