@@ -140,7 +140,7 @@ public:
 	bool GetStartToRead()const;
 
 	void SetText(const char*  newText);
-	char* GetCurrentText();
+	const std::string& GetCurrentText();
 
 private:
 	bool windowEvents[(uint)EventWindow::WE_COUNT];
@@ -151,7 +151,7 @@ private:
 	float wheel_motion;
 	bool overUI = false;
 	bool startToRead = false;
-	char text[MAX_TEXT];
+	std::string text;
 };
 
 #endif // !_MODULEINPUT_H_

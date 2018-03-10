@@ -151,13 +151,35 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 					wheel_motion = (float)event.wheel.y;
 				}
 				break;
+
+			case SDL_KEYDOWN:
+			{
+				//Handle backspace
+				if(event.key.keysym.sym == SDLK_BACKSPACE && text.length() > 0)
+				{
+					//lop off character
+					text.pop_back();
+				}
+				//Handle copy
+				else if(event.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL)
+				{
+					SDL_SetClipboardText(text.c_str());
+				}
+				//Handle paste
+				else if(event.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL)
+				{
+					text = SDL_GetClipboardText();
+				}
+			}
+			break;
 			case SDL_TEXTINPUT:
 			{
 				if(startToRead)
 				{
-					strcat(text, event.text.text);
+					text += event.text.text;
 				}
 			}
+			break;
 		}
 	}
 
@@ -260,10 +282,10 @@ bool ModuleInput::GetStartToRead() const
 
 void ModuleInput::SetText(const char* newText)
 {
-	strcpy(text, newText);
+	text = newText;
 }
 
-char * ModuleInput::GetCurrentText()
+const std::string& ModuleInput::GetCurrentText()
 {
 	return text;
 }
