@@ -31,7 +31,9 @@ update_status ModuleGameUI::Update(float deltaTimeS, float realDeltaTimeS)
 	if(root != nullptr)
 	{
 		CheckUIStatus();
+		glDisable(GL_DEPTH_TEST);
 		UpdateRecursivePreOrder(deltaTimeS, realDeltaTimeS, root->gameObject);
+		glEnable(GL_DEPTH_TEST);
 	}
 	return update_status::UPDATE_CONTINUE;
 }
