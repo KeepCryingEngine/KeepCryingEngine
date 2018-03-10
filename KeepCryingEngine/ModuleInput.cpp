@@ -208,6 +208,7 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 						actualTextPos += size;
 						shiftInitialTextPos = actualTextPos;
 					}
+					//Handle right arrow
 					else if(event.key.keysym.sym == SDLK_RIGHT)
 					{
 						if(++actualTextPos > text.length())
@@ -219,6 +220,7 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 							shiftInitialTextPos = actualTextPos;
 						}
 					}
+					//Handle left arrow
 					else if(event.key.keysym.sym == SDLK_LEFT)
 					{
 						if(--actualTextPos < 0)
@@ -226,6 +228,22 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 							actualTextPos++;
 						}
 
+						if(!(SDL_GetModState() & KMOD_SHIFT))
+						{
+							shiftInitialTextPos = actualTextPos;
+						}
+					}
+					else if(event.key.keysym.sym == SDLK_HOME)
+					{
+						actualTextPos = 0;
+						if(!(SDL_GetModState() & KMOD_SHIFT))
+						{
+							shiftInitialTextPos = actualTextPos;
+						}
+					}
+					else if(event.key.keysym.sym == SDLK_END)
+					{
+						actualTextPos = text.length();
 						if(!(SDL_GetModState() & KMOD_SHIFT))
 						{
 							shiftInitialTextPos = actualTextPos;
