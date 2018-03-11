@@ -251,9 +251,8 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 					}
 					else if(event.key.keysym.sym == SDLK_RETURN)
 					{
-						//TODO: it creates space, not return
-						/*text.insert(actualTextPos,"\n");
-						shiftInitialTextPos = ++actualTextPos;*/
+						text.insert(actualTextPos,"\n");
+						shiftInitialTextPos = ++actualTextPos;
 					}
 				}
 			}
