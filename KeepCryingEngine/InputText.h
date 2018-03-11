@@ -14,6 +14,7 @@ public:
 	~InputText();
 
 	void Awake() override;
+	void Start() override;
 	void Destroy() override;
 	void SetEnable(bool value)override;
 
@@ -25,12 +26,16 @@ public:
 
 	void SetPlaceHolderGameObject(GameObject& g);
 	void SetTextGameObject(GameObject& g);
+	void SetPasswordMode(bool value);
 
+	bool GetPasswordMode()const;
 	GameObject* GetPlaceHolderGameObject()const;
 	GameObject* GetTextGameObject() const;
 
 private:
 	bool onFocus = false;
+	bool passwordMode = false;
+	std::string currentTextUnderPassword;
 	GameObject * placeHolderGameObject;
 	GameObject * textGameObject;
 	bool dirtyText = true;

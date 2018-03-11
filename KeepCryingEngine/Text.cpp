@@ -22,9 +22,12 @@ void Text::DrawUI()
 	if(ImGui::CollapsingHeader("Text"))
 	{
 		ImGui::PushID(gameObject->GetId());
-		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		if(ImGui::Checkbox("Active", &enabled))
+		{
+			SetEnable(enabled);
+		}
+		ImGui::SameLine();
 		ImGui::PopID();
-		SetEnable(enabled);
 		if(ImGui::Button("Delete Component"))
 		{
 			gameObject->RemoveComponent(this);

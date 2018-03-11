@@ -12,9 +12,12 @@ void Canvas::DrawUI()
 	if(ImGui::CollapsingHeader("Canvas"))
 	{
 		ImGui::PushID(gameObject->GetId());
-		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		if(ImGui::Checkbox("Active", &enabled))
+		{
+			SetEnable(enabled);
+		}
+		ImGui::SameLine();
 		ImGui::PopID();
-		SetEnable(enabled);
 		if(ImGui::Button("Delete Component"))
 		{
 			gameObject->RemoveComponent(this);

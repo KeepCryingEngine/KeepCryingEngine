@@ -19,6 +19,11 @@ void InputText::Awake()
 	gameObject->SetHovereableUI(true);
 }
 
+void InputText::Start()
+{
+	currentTextUnderPassword = textGameObject->GetComponent<Text>()->GetText();
+}
+
 void InputText::Destroy()
 {
 	isFocuseableUI = false;
@@ -50,11 +55,29 @@ void InputText::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 {
 	if(onFocus)
 	{
-		textGameObject->GetComponent<Text>()->SetText(App->input->GetCurrentText());
+		currentTextUnderPassword = App->input->GetCurrentText();
+		textGameObject->GetComponent<Text>()->SetText(currentTextUnderPassword);
 	}
 	else
 	{
 		dirtyText = true;
+	}
+
+	if(passwordMode)
+	{
+		std::string passwordMessage;
+		for(int i = 0; i < currentTextUnderPassword.length(); i++)
+		{
+			passwordMessage.push_back('*');
+		}
+		textGameObject->GetComponent<Text>()->SetText(passwordMessage);
+	}
+	else
+	{
+		if(dirtyText)
+		{
+			textGameObject->GetComponent<Text>()->SetText(currentTextUnderPassword);
+		}
 	}
 
 	if(textGameObject->GetComponent<Text>()->GetText() == "")
@@ -73,13 +96,22 @@ void InputText::DrawUI()
 	if(ImGui::CollapsingHeader("InputText"))
 	{
 		ImGui::PushID(gameObject->GetId());
-		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		if(ImGui::Checkbox("Active", &enabled))
+		{
+			SetEnable(enabled);
+		}
+		ImGui::SameLine();
 		ImGui::PopID();
-		SetEnable(enabled);
 		if(ImGui::Button("Delete Component"))
 		{
 			gameObject->RemoveComponent(this);
 		}
+		
+		if(ImGui::Checkbox("Active", &passwordMode))
+		{
+			SetPasswordMode(passwordMode);
+		}
+
 	}
 }
 
@@ -102,6 +134,16 @@ void InputText::SetPlaceHolderGameObject(GameObject & g)
 void InputText::SetTextGameObject(GameObject & g)
 {
 	textGameObject = &g;
+}
+
+void InputText::SetPasswordMode(bool value)
+{
+	passwordMode = value;
+}
+
+bool InputText::GetPasswordMode() const
+{
+	return passwordMode;
 }
 
 GameObject * InputText::GetPlaceHolderGameObject() const

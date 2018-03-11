@@ -23,9 +23,12 @@ void Transform2D::DrawUI()
 	if (ImGui::CollapsingHeader("Transform2D"))
 	{
 		ImGui::PushID(gameObject->GetId());
-		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		if(ImGui::Checkbox("Active", &enabled))
+		{
+			SetEnable(enabled);
+		}
+		ImGui::SameLine();
 		ImGui::PopID();
-		SetEnable(enabled);
 		ImGui::DragFloat3(" Position", localPosition.ptr(), 0.1f);
 		ImGui::DragFloat2(" Size", size.ptr(), 0.1f);
 		ImGui::DragFloat2(" Pivot", pivot.ptr(), 0.1f);
