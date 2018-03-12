@@ -17,6 +17,11 @@ void Text::Awake()
 	SetTexture(actualText);
 }
 
+std::vector<Component::Type> Text::GetNeededComponents() const
+{
+	return { Component::Type::Transform2D };
+}
+
 void Text::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Text"))

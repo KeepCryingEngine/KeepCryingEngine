@@ -182,6 +182,7 @@ void ModuleGameUI::CheckUIStatus()
 
 void ModuleGameUI::PreOrdenZCheck(GameObject * currentNode)
 {
+	assert(currentNode);
 	if(!currentNode->IsEnabled())
 	{
 		return;

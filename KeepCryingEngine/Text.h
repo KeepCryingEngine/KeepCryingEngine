@@ -22,6 +22,7 @@ public:
 
 	void DrawUI() override;
 
+	std::vector<Component::Type> GetNeededComponents() const override;
 	void SetText(const std::string& newText);
 	void SetTexture(const std::string& text);
 	void SetColor(float4 color);

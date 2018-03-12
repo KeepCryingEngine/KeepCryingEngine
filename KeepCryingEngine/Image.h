@@ -22,6 +22,7 @@ public:
 
 	void DrawUI() override;
 
+	std::vector<Component::Type> GetNeededComponents() const override;
 	void SetTextureByPath(const std::experimental::filesystem::path& path);
 	void SetTexture(Texture& texture);
 	void SetColor(float4 color);

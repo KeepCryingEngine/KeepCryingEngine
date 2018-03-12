@@ -45,6 +45,7 @@ public:
 	void OnHovering();
 	void OnClick();
 
+	std::vector<Component::Type> GetNeededComponents() const override;
 	void SetTextureByPath(const std::experimental::filesystem::path& path,ButtonState state);
 	void SetColor(float4 newColor,ButtonState state);
 	void SetTextGameObject(GameObject& g);

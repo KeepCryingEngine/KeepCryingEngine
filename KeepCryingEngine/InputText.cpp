@@ -32,6 +32,11 @@ void InputText::Destroy()
 	gameObject->CheckIfHovereableUI();
 }
 
+std::vector<Component::Type> InputText::GetNeededComponents() const
+{
+	return { Component::Type::Transform2D };
+}
+
 void InputText::SetEnable(bool value)
 {
 	Component::SetEnable(value);

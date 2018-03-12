@@ -7,6 +7,11 @@ Canvas::Canvas():Component(Canvas::TYPE)
 Canvas::~Canvas()
 {}
 
+std::vector<Component::Type> Canvas::GetNeededComponents() const
+{
+	return { Component::Type::Transform2D };
+}
+
 void Canvas::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Canvas"))

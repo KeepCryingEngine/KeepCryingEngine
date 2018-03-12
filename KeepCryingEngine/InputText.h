@@ -24,6 +24,7 @@ public:
 
 	void OnFocus();
 
+	std::vector<Component::Type> GetNeededComponents() const override;
 	void SetPlaceHolderGameObject(GameObject& g);
 	void SetTextGameObject(GameObject& g);
 	void SetPasswordMode(bool value);

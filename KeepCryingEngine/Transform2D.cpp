@@ -70,7 +70,7 @@ float2 Transform2D::GetSize() const
 //Top Left Of the UI Element bounds
 float3 Transform2D::GetMinPosition() const
 {
-	return GetLocalPosition() - float3(size.Mul(pivot),0) + float3(App->configuration.screenWidth*anchor.x, App->configuration.screenHeight*anchor.y,0);
+	return GetWorldPosition() - float3(size.Mul(pivot),0) + float3(App->configuration.screenWidth*anchor.x, App->configuration.screenHeight*anchor.y,0);
 }
 
 //Bottom Right Of the UI Element bounds
@@ -81,11 +81,13 @@ float3 Transform2D::GetMaxPosition() const
 
 float3 Transform2D::GetParentWorldPosition() const
 {
-	float3 parentLocalPosition = float3::zero;
+	float3 parentWorldPosition = float3::zero;
 	GameObject *parent = gameObject->GetParent();
 	if (parent != nullptr)
 	{
-		parentLocalPosition = gameObject->GetComponent<Transform2D>()->GetLocalPosition();
+		Transform2D * parentTransform = parent->GetComponent<Transform2D>();
+		if(parentTransform != nullptr)
+			parentWorldPosition = parentTransform->GetWorldPosition();
 	}
-	return parentLocalPosition;
+	return parentWorldPosition;
 }

@@ -40,6 +40,11 @@ void Image::SetEnable(bool value)
 	}
 }
 
+std::vector<Component::Type> Image::GetNeededComponents() const
+{
+	return { Component::Type::Transform2D };
+}
+
 void Image::DrawUI()
 {
 	if (ImGui::CollapsingHeader("Image"))

@@ -36,6 +36,11 @@ void Button::Destroy()
 	gameObject->CheckIfHovereableUI();
 }
 
+std::vector<Component::Type> Button::GetNeededComponents() const
+{
+	return { Component::Type::Transform2D };
+}
+
 void Button::SetEnable(bool value)
 {
 	Component::SetEnable(value);
