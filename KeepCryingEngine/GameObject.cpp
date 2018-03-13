@@ -11,6 +11,7 @@
 #include "ModuleEditorUI.h"
 
 using namespace std;
+using namespace nlohmann;
 
 GameObject::GameObject(const string& name) : name(name)
 {
@@ -249,6 +250,32 @@ void GameObject::SetHovereableUI(bool value)
 bool GameObject::IsHovereableUI() const
 {
 	return isHovereableUI;
+}
+
+void GameObject::Load(const json& json)
+{
+	name = json["name"].get<string>();
+
+	for(const nlohmann::json& jsonComponent : json["components"])
+	{
+		Component::Type componentType = (Component::Type)((int)jsonComponent["type"]);
+
+		// AddComponent(componentType)->Load(jsonComponent);
+	}
+}
+
+void GameObject::Save(json& json) const
+{
+	nlohmann::json jsonComponents;
+
+	for(Component* component : components)
+	{
+		nlohmann::json jsonComponent;
+		// jsonComponents.push_back(component->Save(jsonComponent));
+	}
+
+	json["name"] = name;
+	json["components"] = jsonComponents;
 }
 
 Component* GameObject::GetComponent(Component::Type type) const

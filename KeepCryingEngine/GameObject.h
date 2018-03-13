@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <AABB.h>
+#include <json.hpp>
 
 #include "Component.h"
 
@@ -60,13 +61,8 @@ public:
 
 	void DrawUI();
 
-	// void Awake() {}
-	// void OnEnable() {}
-	// void Start() {}
-	// void PreUpdate() {}
 	void Update(float deltaTimeS, float realDeltaTimeS);
-	// void LateUpdate() {}
-	// void OnDisable() {}
+
 	void OnDestroy();
 
 	void SetAABB(const AABB& newAABB);
@@ -82,6 +78,9 @@ public:
 	void CheckIfHovereableUI();
 	void SetHovereableUI(bool value);
 	bool IsHovereableUI()const;
+
+	void Load(const nlohmann::json& json);
+	void Save(nlohmann::json& json) const;
 
 private:
 	Component * AddComponent(Component::Type type);
