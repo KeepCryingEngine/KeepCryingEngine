@@ -157,6 +157,7 @@
     <ClCompile Include="ModuleFont.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="ENGINE_UUID.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -337,6 +338,7 @@
     <ClInclude Include="ModuleFont.h">
       <Filter>Modules</Filter>
     </ClInclude>
+    <ClInclude Include="ENGINE_UUID.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">

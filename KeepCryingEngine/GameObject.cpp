@@ -251,6 +251,11 @@ bool GameObject::IsHovereableUI() const
 	return isHovereableUI;
 }
 
+const ENGINE_UUID & GameObject::UUID() const
+{
+	return uuid;
+}
+
 Component* GameObject::GetComponent(Component::Type type) const
 {
 	for (Component* component : components)

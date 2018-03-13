@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <imgui.h>
+#include "ENGINE_UUID.h"
 
 class GameObject;
 
@@ -66,6 +67,7 @@ public:
 	}
 
 public:
+	ENGINE_UUID uuid;
 	bool enabled;
 	bool wasEnabled;
 	Component::Type type;

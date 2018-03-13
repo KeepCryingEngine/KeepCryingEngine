@@ -7,6 +7,8 @@
 #include <AABB.h>
 
 #include "Component.h"
+#include "ENGINE_UUID.h"
+
 
 class Transform;
 
@@ -83,6 +85,8 @@ public:
 	void SetHovereableUI(bool value);
 	bool IsHovereableUI()const;
 
+	const ENGINE_UUID& UUID() const;
+
 private:
 	Component * AddComponent(Component::Type type);
 
@@ -98,6 +102,7 @@ private:
 	bool CanAttach(const Component& component) const;
 
 private:
+	ENGINE_UUID uuid;
 	GameObject* parent = nullptr;
 
 	std::list<Component*> toStart;
