@@ -48,6 +48,9 @@ public:
 	float GetDoplerFactor() const;
 	bool GetLoop();
 
+	virtual void Load(const nlohmann::json& json) override;
+	virtual void Save(nlohmann::json& json) const override;
+
 private:
 	void OnLoadButtonPressed(const std::experimental::filesystem::path& path);
 	void OnStopButtonPressed();

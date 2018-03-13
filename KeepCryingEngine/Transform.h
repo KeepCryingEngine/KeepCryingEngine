@@ -52,6 +52,9 @@ public:
 
 	const float3& Velocity() const;
 
+	virtual void Load(const nlohmann::json& json) override;
+	virtual void Save(nlohmann::json& json) const override;
+
 private:
 	void Decompose(const float4x4& matrix, float3& position, Quat& rotation, float3& scale) const;
 

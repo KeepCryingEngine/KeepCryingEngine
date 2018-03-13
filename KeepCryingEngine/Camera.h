@@ -67,6 +67,9 @@ public:
 
 	static bool Intersects(const Frustum& frustum, const AABB& aabb);
 
+	virtual void Load(const nlohmann::json& json) override;
+	virtual void Save(nlohmann::json& json) const override;
+
 private:
 	float ComputeHorizontalFov(float verticalFovRad, float aspect) const;
 	void SetUpFrustumBuffer();

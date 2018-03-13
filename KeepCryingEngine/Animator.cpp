@@ -130,3 +130,8 @@ void Animator::UpdateTransformRecursive(unsigned int animInstanceId, GameObject*
 		UpdateTransformRecursive(animInstanceId, child);
 	}
 }
+
+void Animator::Save(nlohmann::json& json)
+{
+
+}

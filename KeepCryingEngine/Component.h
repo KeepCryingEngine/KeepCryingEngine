@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <imgui.h>
+#include <json.hpp>
 
 class GameObject;
 
@@ -64,6 +65,9 @@ public:
 	{
 		return isHovereableUI;
 	}
+
+	virtual void Load(const nlohmann::json& json) = 0;
+	virtual void Save(nlohmann::json& json) const = 0;
 
 public:
 	bool enabled;

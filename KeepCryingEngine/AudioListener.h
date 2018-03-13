@@ -19,6 +19,9 @@ public:
 	void SetEnable(bool enable)override;
 
 	void DrawUI() override;
+
+	virtual void Load(const nlohmann::json& json) override;
+	virtual void Save(nlohmann::json& json) const override;
 };
 
 #endif // !_AUDIOLISTENER_H_
