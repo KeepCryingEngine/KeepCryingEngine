@@ -157,6 +157,9 @@
     <ClCompile Include="ModuleFont.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleTime.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -335,6 +338,9 @@
       <Filter>Components\UI</Filter>
     </ClInclude>
     <ClInclude Include="ModuleFont.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleTime.h">
       <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>

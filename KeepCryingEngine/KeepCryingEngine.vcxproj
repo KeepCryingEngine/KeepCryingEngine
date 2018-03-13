@@ -128,6 +128,7 @@
     <ClInclude Include="ModuleShader.h" />
     <ClInclude Include="ModuleTexture.h" />
     <ClInclude Include="ModuleEditorUI.h" />
+    <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="OctreeNode.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="ModuleShader.cpp" />
     <ClCompile Include="ModuleTexture.cpp" />
     <ClCompile Include="ModuleEditorUI.cpp" />
+    <ClCompile Include="ModuleTime.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="OctreeNode.cpp" />
