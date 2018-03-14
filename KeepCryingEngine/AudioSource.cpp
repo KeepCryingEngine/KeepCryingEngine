@@ -334,18 +334,52 @@ bool AudioSource::GetLoop()
 	return loop;
 }
 
-void AudioSource::Load(const nlohmann::json & json)
+void AudioSource::Load(const nlohmann::json& json)
 {
 
 }
 
-void AudioSource::Save(nlohmann::json & json) const
+void AudioSource::Save(nlohmann::json& json) const
 {
+	/*
 
+	Relevant information:
+
+	type
+	volume
+	originalFreq
+	freqModifier
+	minDistance
+	maxDistance
+	rollOffFactor
+	doplerFactor
+	loop
+	path
+	usedAudioType
+	usedChannelType
+
+	*/
+
+	json["type"] = type;
+	json["volume"] = volume;
+	json["originalFreq"] = originalFreq;
+	json["freqModifier"] = freqModifier;
+	json["minDistance"] = minDistance;
+	json["maxDistance"] = maxDistance;
+	json["rollOffFactor"] = rollOffFactor;
+	json["doplerFactor"] = doplerFactor;
+	json["loop"] = loop;
+	json["path"] = path.string();
+	json["usedAudioType"] = usedAudioType;
+	json["usedChannelType"] = usedChannelType;
 }
 
 void AudioSource::OnLoadButtonPressed(const std::experimental::filesystem::path & path)
 {
+	this->path = path;
+	usedAudioType = loadingAudioType;
+	usedChannelType = loadingChannelType;
+
 	//TODO: Delete old audio clip if already loaded
 	AudioClip* audioClip = App->audio->Load(path, loadingAudioType ,loadingChannelType);
 	if(audioClip != nullptr)
