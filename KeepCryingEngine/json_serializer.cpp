@@ -25,6 +25,19 @@ void from_json(const json& j, float3& v)
 	v.z = j.at("z").get<float>();
 }
 
+void to_json(nlohmann::json& j, const float4& v)
+{
+	j = json{ { "x", v.x },{ "y", v.y },{ "z", v.z },{ "w", v.w } };
+}
+
+void from_json(const nlohmann::json& j, float4& v)
+{
+	v.x = j.at("x").get<float>();
+	v.y = j.at("y").get<float>();
+	v.z = j.at("z").get<float>();
+	v.w = j.at("w").get<float>();
+}
+
 void to_json(nlohmann::json& j, const Quat& v)
 {
 	j = json{ { "x", v.x },{ "y", v.y },{ "z", v.z },{ "w", v.w } };

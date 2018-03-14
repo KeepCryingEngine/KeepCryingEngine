@@ -3,6 +3,7 @@
 
 #include <Quat.h>
 #include <float3.h>
+#include <float4.h>
 #include <json.hpp>
 #include <Frustum.h>
 #include <set>
@@ -13,6 +14,9 @@ void from_json(const nlohmann::json& j, float2& v);
 
 void to_json(nlohmann::json& j, const float3& v);
 void from_json(const nlohmann::json& j, float3& v);
+
+void to_json(nlohmann::json& j, const float4& v);
+void from_json(const nlohmann::json& j, float4& v);
 
 void to_json(nlohmann::json& j, const Quat& v);
 void from_json(const nlohmann::json& j, Quat& v);
