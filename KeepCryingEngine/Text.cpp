@@ -142,7 +142,7 @@ void Text::Save(nlohmann::json & json) const
 	to_json(jsonColor, color);
 	json["color"] = jsonColor;
 	json["size"] = size;
-	json["frustum"] = currentFontPath.string();
+	json["currentFontPath"] = currentFontPath.string();
 }
 
 void Text::UpdateFont()
