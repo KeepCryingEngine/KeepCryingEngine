@@ -160,6 +160,7 @@
     <ClCompile Include="ModuleTime.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="ENGINE_UUID.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -343,6 +344,7 @@
     <ClInclude Include="ModuleTime.h">
       <Filter>Modules</Filter>
     </ClInclude>
+    <ClInclude Include="ENGINE_UUID.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">

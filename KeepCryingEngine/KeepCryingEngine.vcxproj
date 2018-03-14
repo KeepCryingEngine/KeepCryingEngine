@@ -93,6 +93,7 @@
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentFabric.h" />
+    <ClInclude Include="ENGINE_UUID.h" />
     <ClInclude Include="external\devil\include\DevIL.h" />
     <ClInclude Include="external\ImGuiTextEditor\TextEditor.h" />
     <ClInclude Include="external\ImGuizmo\ImGuizmo.h" />
@@ -154,6 +155,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="ComponentFabric.cpp" />
+    <ClCompile Include="ENGINE_UUID.cpp" />
     <ClCompile Include="external\ImGuiTextEditor\TextEditor.cpp" />
     <ClCompile Include="external\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="external\ImGuizmo\ImSequencer.cpp" />
