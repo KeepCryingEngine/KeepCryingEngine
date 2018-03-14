@@ -134,7 +134,12 @@ bool Animator::HasValidAnimationInstance() const
 
 void Animator::Load(const nlohmann::json & json)
 {
-
+	currentAnimationName = json["currentAnimationName"].get<string>();
+	
+	for (const nlohmann::json& j : json["paths"])
+	{
+		LoadAnimInstance(j.get<string>()); //I do not agree with this - Xavi.
+	}
 }
 
 void Animator::Save(nlohmann::json & json) const
