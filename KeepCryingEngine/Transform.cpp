@@ -4,6 +4,7 @@
 #include <ImGuizmo.h>
 
 #include "GameObject.h"
+#include "json_serializer.h"
 
 using namespace std;
 
@@ -432,25 +433,18 @@ void Transform::Save(nlohmann::json& json) const
 
 	json["type"] = type;
 
-	json["position"] =
-	{
-		{ "x", localPosition.x },
-		{ "y", localPosition.y },
-		{ "z", localPosition.z }
-	};
+	nlohmann::json jsonPosition;
+	to_json(jsonPosition, localPosition);
 
-	json["rotation"] =
-	{
-		{ "x", localRotation.x },
-		{ "y", localRotation.y },
-		{ "z", localRotation.z },
-		{ "w", localRotation.w }
-	};
+	json["position"] = jsonPosition;
 
-	json["scale"] =
-	{
-		{ "x", localScale.x },
-		{ "y", localScale.y },
-		{ "z", localScale.z }
-	};
+	nlohmann::json jsonRotation;
+	to_json(jsonRotation, localRotation);
+
+	json["rotation"] = jsonRotation;
+
+	nlohmann::json jsonScale;
+	to_json(jsonScale, localScale);
+	
+	json["scale"] = jsonScale;
 }

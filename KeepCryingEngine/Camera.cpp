@@ -5,6 +5,7 @@
 #include "ModuleRender.h"
 #include "Transform.h"
 #include "ModuleCamera.h"
+#include "json_serializer.h"
 
 using namespace std;
 
@@ -296,14 +297,28 @@ bool Camera::Intersects(const Frustum& frustum, const AABB& aabb)
 	return true;
 }
 
-void Camera::Load(const nlohmann::json & json)
+void Camera::Load(const nlohmann::json& json)
 {
 
 }
 
-void Camera::Save(nlohmann::json & json) const
+void Camera::Save(nlohmann::json& json) const
 {
+	/*
 
+	Relevant information:
+
+	type
+	frustum
+
+	*/
+
+	json["type"] = type;
+
+	nlohmann::json jsonFrustum;
+	to_json(jsonFrustum, frustum);
+
+	json["frustum"] = jsonFrustum;
 }
 
 float Camera::ComputeHorizontalFov(float verticalFovRad, float aspect) const
