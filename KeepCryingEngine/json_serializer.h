@@ -9,6 +9,7 @@
 #include <set>
 #include <bass.h>
 #include <experimental/filesystem>
+#include "ENGINE_UUID.h"
 
 void to_json(nlohmann::json& j, const float2& v);
 void from_json(const nlohmann::json& j, float2& v);
@@ -27,5 +28,8 @@ void from_json(const nlohmann::json& j, Frustum& v);
 
 void to_json(nlohmann::json& j, const BASS_DX8_I3DL2REVERB& v);
 void from_json(const nlohmann::json& j, BASS_DX8_I3DL2REVERB& v);
+
+void to_json(nlohmann::json& j, const ENGINE_UUID& v);
+void from_json(const nlohmann::json& j, ENGINE_UUID& v);
 
 #endif // !_JSON_SERIALIZER_H_
