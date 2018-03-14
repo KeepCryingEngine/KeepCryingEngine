@@ -2,6 +2,17 @@
 
 using nlohmann::json;
 
+void to_json(nlohmann::json & j, const float2 & v)
+{
+	j = json{ { "x", v.x },{ "y", v.y } };
+}
+
+void from_json(const nlohmann::json & j, float2 & v)
+{
+	v.x = j.at("x").get<float>();
+	v.y = j.at("y").get<float>();
+}
+
 void to_json(json& j, const float3& v)
 {
 	j = json{ { "x", v.x },{ "y", v.y },{ "z", v.z } };
