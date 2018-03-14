@@ -2,6 +2,7 @@
 #define _MODULESCENE_H_
 
 #include <list>
+#include <json.hpp>
 
 #include "Module.h"
 #include "Octree.h"
@@ -74,6 +75,8 @@ public:
 	std::vector<RayCastHit> RayCastAll(const float3& origin, const float3& direction, float maxDistance) const;
 	void AddToDinamicGameobjectList(GameObject* gameobject);
 
+	void Save();
+	void Restore();
 
 private:
 	void InitializeRayCastHit(RayCastHit& rayCastHit) const;
@@ -98,6 +101,8 @@ private:
 
 	void DrawHierarchy(GameObject* gameObject) const;
 
+	void SaveRecursive(GameObject* gameObject, nlohmann::json& data);
+
 private:
 	GameObject* root = nullptr;
 
@@ -106,6 +111,10 @@ private:
 	int currentGameObjectId = 0;
 
 	std::list<std::pair<GameObject*, std::pair<float3, bool>>> generatedGameObjects;
+
+	nlohmann::json jsonData;
+
+	bool validJsonData = false;
 
 	int spaceStructure = 0; // 0 None, 1 Quadtree, 2 Octree, 3 KDTree
 

@@ -49,7 +49,6 @@ void GameObject::RemoveChild(GameObject& child)
 	child.parent = nullptr;
 }
 
-
 size_t GameObject::ChildCount() const
 {
 	return children.size();
@@ -260,21 +259,48 @@ void GameObject::Load(const json& json)
 	{
 		Component::Type componentType = (Component::Type)((int)jsonComponent["type"]);
 
-		// AddComponent(componentType)->Load(jsonComponent);
+		AddComponent(componentType)->Load(jsonComponent);
 	}
+
+	CheckIfFocuseableUI();
+	CheckIfHovereableUI();
 }
 
 void GameObject::Save(json& json) const
 {
+	/*
+	
+	Relevant information:
+
+	uID
+	parentUID
+	name
+	enable
+	isStatic
+	components
+
+	¿?
+
+	int id; // uID
+	
+	*/
+
+	// json["uID"] = uID;
+	// json["parentUID"] = parent->uID;
+	json["name"] = name;
+	json["enable"] = enable;
+	json["isStatic"] = isStatic;
+
 	nlohmann::json jsonComponents;
 
 	for(Component* component : components)
 	{
 		nlohmann::json jsonComponent;
-		// jsonComponents.push_back(component->Save(jsonComponent));
+		component->Save(jsonComponent);
+
+		jsonComponents.push_back(jsonComponent);
 	}
 
-	json["name"] = name;
 	json["components"] = jsonComponents;
 }
 

@@ -27,6 +27,7 @@
 #include "InputText.h"
 
 using namespace std;
+using namespace nlohmann;
 
 ModuleScene::ModuleScene()
 { }
@@ -572,6 +573,33 @@ void ModuleScene::AddToDinamicGameobjectList(GameObject* gameobject)
 	dGameobjects.push_back(gameobject);
 }
 
+#include <fstream>
+
+void ModuleScene::Save()
+{
+	jsonData.clear();
+
+	json jsonGameObjects;
+	SaveRecursive(root, jsonGameObjects);
+
+	jsonData["gameObjects"] = jsonGameObjects;
+	
+	// more scene stuff ...
+
+	validJsonData = true;
+
+	std::ofstream file("Assets/Scene.json");
+	file << jsonData;
+}
+
+void ModuleScene::Restore()
+{
+	if(validJsonData)
+	{
+
+	}
+}
+
 bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
 {
 	bool hit = false;
@@ -770,5 +798,18 @@ void ModuleScene::DrawHierarchy(GameObject* gameObject) const
 		glLineWidth(lineWidth);
 
 		DrawHierarchy(child);
+	}
+}
+
+void ModuleScene::SaveRecursive(GameObject* gameObject, nlohmann::json& data)
+{
+	json jsonGameObject;
+	gameObject->Save(jsonGameObject);
+
+	data.push_back(jsonGameObject);
+
+	for(GameObject* child : gameObject->GetChildren())
+	{
+		SaveRecursive(child, data);
 	}
 }

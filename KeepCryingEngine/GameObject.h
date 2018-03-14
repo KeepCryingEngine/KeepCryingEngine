@@ -20,7 +20,6 @@ public:
 	GameObject* GetParent() const;
 	void SetParent(GameObject& newParent);
 
-
 	size_t ChildCount() const;
 
 	GameObject* GetChild(size_t index) const;
@@ -39,7 +38,6 @@ public:
 	const bool IsStatic() const;
 
 	void SetStatic(bool value);
-
 
 	template <typename T>
 	T* AddComponent();

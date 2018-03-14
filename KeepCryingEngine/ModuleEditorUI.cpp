@@ -127,6 +127,21 @@ void ModuleEditorUI::DrawMainMenu()
 
 	if(ImGui::BeginMainMenuBar())
 	{
+		if(ImGui::BeginMenu("Scene"))
+		{
+			if(ImGui::Button("Save"))
+			{
+				App->scene->Save();
+			}
+
+			if(ImGui::Button("Restore"))
+			{
+				App->scene->Restore();
+			}
+
+			ImGui::EndMenu();
+		}
+
 		if(ImGui::BeginMenu("Windows"))
 		{
 			if (ImGui::Selectable("Hierarchy"))
