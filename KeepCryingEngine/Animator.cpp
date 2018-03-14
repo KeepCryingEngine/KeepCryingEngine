@@ -35,7 +35,7 @@ void Animator::DrawUI()
 		{
 			gameObject->RemoveComponent(this);
 		}
-		static char animatorLoadBuffer[252] = {};
+		static char animatorLoadBuffer[252] = "ArmyPilot/Animations/ArmyPilot_Run_Forwards.fbx";
 		ImGui::InputText("##loadAnimation", animatorLoadBuffer, 252); ImGui::SameLine();
 		if(ImGui::Button("Load"))
 		{
