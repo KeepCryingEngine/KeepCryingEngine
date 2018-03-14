@@ -115,3 +115,13 @@ void from_json(const nlohmann::json & j, std::set<std::experimental::filesystem:
 		s.insert(js.get<std::string>());
 	}
 }
+
+void to_json(nlohmann::json & j, const ENGINE_UUID & v)
+{
+	j["id"] = v.id;
+}
+
+void from_json(const nlohmann::json & j, ENGINE_UUID & v)
+{
+	v = ENGINE_UUID(j["id"]);
+}

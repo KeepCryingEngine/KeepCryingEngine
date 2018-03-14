@@ -8,6 +8,7 @@
 #include <Frustum.h>
 #include <set>
 #include <experimental/filesystem>
+#include "ENGINE_UUID.h"
 
 void to_json(nlohmann::json& j, const float2& v);
 void from_json(const nlohmann::json& j, float2& v);
@@ -26,5 +27,8 @@ void from_json(const nlohmann::json& j, Frustum& v);
 
 void to_json(nlohmann::json& j, const std::set<std::experimental::filesystem::path>& s);
 void from_json(const nlohmann::json& j, std::set<std::experimental::filesystem::path>& s);
+
+void to_json(nlohmann::json& j, const ENGINE_UUID& v);
+void from_json(const nlohmann::json& j, ENGINE_UUID& v);
 
 #endif // !_JSON_SERIALIZER_H_
