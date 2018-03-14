@@ -141,10 +141,7 @@ void Animator::Save(nlohmann::json & json) const
 {
 	json["type"] = type;
 	json["currentAnimationName"] = currentAnimationName;
-	
-	nlohmann::json jsonPaths;
-	to_json(jsonPaths, animationPaths);
-	json["paths"] = jsonPaths;
+	json["paths"] = animationPaths;
 }
 
 void Animator::UpdateTransformRecursive(unsigned int animInstanceId, GameObject* gameObject)

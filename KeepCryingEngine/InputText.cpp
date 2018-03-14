@@ -168,5 +168,10 @@ void InputText::Load(const nlohmann::json & json)
 
 void InputText::Save(nlohmann::json & json) const
 {
-
+	json["type"] = type;
+	json["onFocus"] = onFocus;
+	json["passwordMode"] = passwordMode;
+	json["currentTextUnderPassword"] = currentTextUnderPassword;
+	json["placeHolderGameObjectID"] = placeHolderGameObject->GetId();
+	json["textGameObjectID"] = textGameObject->GetId();
 }
