@@ -102,3 +102,36 @@ void from_json(const nlohmann::json & j, std::set<std::experimental::filesystem:
 		s.insert(js.get<std::string>());
 	}
 }
+
+void to_json(nlohmann::json& j, const BASS_DX8_I3DL2REVERB& v)
+{
+	j = json
+	{
+		{ "lRoom", v.lRoom },
+		{ "flRoomRolloffFactor", v.flRoomRolloffFactor },
+		{ "flDecayTime", v.flDecayTime },
+		{ "flDecayHFRatio", v.flDecayHFRatio },
+		{ "lReflections", v.lReflections },
+		{ "flReflectionsDelay", v.flReflectionsDelay },
+		{ "lReverb", v.lReverb },
+		{ "flReverbDelay", v.flReverbDelay },
+		{ "flDiffusion", v.flDiffusion },
+		{ "flDensity", v.flDensity },
+		{ "flHFReference", v.flHFReference }
+	};
+}
+
+void from_json(const nlohmann::json& j, BASS_DX8_I3DL2REVERB& v)
+{
+	v.lRoom = j["lRoom"];
+	v.flRoomRolloffFactor = j["flRoomRolloffFactor"];
+	v.flDecayTime = j["flDecayTime"];
+	v.flDecayHFRatio = j["flDecayHFRatio"];
+	v.lReflections = j["lReflections"];
+	v.flReflectionsDelay = j["flReflectionsDelay"];
+	v.lReverb = j["lReverb"];
+	v.flReverbDelay = j["flReverbDelay"];
+	v.flDiffusion = j["flDiffusion"];
+	v.flDensity = j["flDensity"];
+	v.flHFReference = j["flHFReference"];
+}

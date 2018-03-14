@@ -63,10 +63,10 @@ private:
 
 	const AudioListener* audioListener = nullptr;
 
-	bool hfxValid = false;
+	// bool hfxValid = false;
 
 	BASS_DX8_I3DL2REVERB reverbConfig;
-	EffectInfo* effect;
+	EffectInfo* effect = nullptr;
 };
 
 #endif
