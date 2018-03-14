@@ -160,3 +160,13 @@ GameObject * InputText::GetTextGameObject() const
 {
 	return textGameObject;
 }
+
+void InputText::Load(const nlohmann::json & json)
+{
+
+}
+
+void InputText::Save(nlohmann::json & json) const
+{
+
+}

@@ -296,6 +296,16 @@ bool Camera::Intersects(const Frustum& frustum, const AABB& aabb)
 	return true;
 }
 
+void Camera::Load(const nlohmann::json & json)
+{
+
+}
+
+void Camera::Save(nlohmann::json & json) const
+{
+
+}
+
 float Camera::ComputeHorizontalFov(float verticalFovRad, float aspect) const
 {
 	return 2.0f * atan(tan(verticalFovRad / 2.0f) * aspect);
@@ -335,8 +345,6 @@ void Camera::SetUpFrustumBuffer()
 		vertex[i].pos = points[i];
 		vertex[i].color = float4(255.0f, 0.0f, 0.0f, 255.0f);
 	}
-
-	
 
 	glGenBuffers(1, (GLuint*) &(frustumBufferId));
 	glBindBuffer(GL_ARRAY_BUFFER, frustumBufferId);

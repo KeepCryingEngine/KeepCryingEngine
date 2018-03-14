@@ -334,6 +334,16 @@ bool AudioSource::GetLoop()
 	return loop;
 }
 
+void AudioSource::Load(const nlohmann::json & json)
+{
+
+}
+
+void AudioSource::Save(nlohmann::json & json) const
+{
+
+}
+
 void AudioSource::OnLoadButtonPressed(const std::experimental::filesystem::path & path)
 {
 	//TODO: Delete old audio clip if already loaded
@@ -356,4 +366,3 @@ void AudioSource::ClearChannelEffects()
 	}
 	activeEffects.clear();
 }
-

@@ -168,6 +168,16 @@ void ReverbZone::SetMode(int mode)
 	DeapplyReverbConfig();
 }
 
+void ReverbZone::Load(const nlohmann::json & json)
+{
+
+}
+
+void ReverbZone::Save(nlohmann::json & json) const
+{
+
+}
+
 void ReverbZone::SetDistanceAndComputeCube(float& distance, AABB& cube, float distanceValue)
 {
 	const float3& center = gameObject->GetTransform()->GetWorldPosition();

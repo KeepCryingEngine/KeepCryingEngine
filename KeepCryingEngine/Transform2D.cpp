@@ -79,6 +79,16 @@ float3 Transform2D::GetMaxPosition() const
 	return GetMinPosition() + float3(size,0);
 }
 
+void Transform2D::Load(const nlohmann::json & json)
+{
+
+}
+
+void Transform2D::Save(nlohmann::json & json) const
+{
+
+}
+
 float3 Transform2D::GetParentWorldPosition() const
 {
 	float3 parentWorldPosition = float3::zero;

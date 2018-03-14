@@ -113,6 +113,16 @@ bool Animator::HasValidAnimationInstance() const
 	return animInstanceId != -1;
 }
 
+void Animator::Load(const nlohmann::json & json)
+{
+
+}
+
+void Animator::Save(nlohmann::json & json) const
+{
+
+}
+
 void Animator::UpdateTransformRecursive(unsigned int animInstanceId, GameObject* gameObject)
 {
 	aiVector3D position;
@@ -129,9 +139,4 @@ void Animator::UpdateTransformRecursive(unsigned int animInstanceId, GameObject*
 	{
 		UpdateTransformRecursive(animInstanceId, child);
 	}
-}
-
-void Animator::Save(nlohmann::json& json)
-{
-
 }

@@ -411,3 +411,13 @@ const float3 & Transform::Velocity() const
 {
 	return velocity;
 }
+
+void Transform::Load(const nlohmann::json & json)
+{
+
+}
+
+void Transform::Save(nlohmann::json & json) const
+{
+
+}

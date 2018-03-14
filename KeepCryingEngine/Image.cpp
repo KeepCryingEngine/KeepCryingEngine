@@ -99,3 +99,13 @@ Texture * Image::GetTexture() const
 {
 	return texture;
 }
+
+void Image::Load(const nlohmann::json & json)
+{
+
+}
+
+void Image::Save(nlohmann::json & json) const
+{
+
+}

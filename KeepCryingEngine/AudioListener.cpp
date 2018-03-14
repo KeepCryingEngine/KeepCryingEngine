@@ -69,3 +69,13 @@ void AudioListener::DrawUI()
 		}
 	}
 }
+
+void AudioListener::Load(const nlohmann::json & json)
+{
+
+}
+
+void AudioListener::Save(nlohmann::json & json) const
+{
+
+}

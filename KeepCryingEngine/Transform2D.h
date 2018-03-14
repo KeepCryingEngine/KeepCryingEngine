@@ -25,6 +25,9 @@ public:
 	float3 GetMinPosition() const;
 	float3 GetMaxPosition() const;
 
+	virtual void Load(const nlohmann::json& json) override;
+	virtual void Save(nlohmann::json& json) const override;
+
 private:
 	float3 GetParentWorldPosition() const;
 

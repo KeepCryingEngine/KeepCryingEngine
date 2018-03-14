@@ -29,6 +29,10 @@ public:
 
 	float4 GetColor() const;
 	Texture * GetTexture() const;
+
+	virtual void Load(const nlohmann::json& json) override;
+	virtual void Save(nlohmann::json& json) const override;
+
 private:
 	Texture * texture = nullptr;
 	float4 color = float4().one;

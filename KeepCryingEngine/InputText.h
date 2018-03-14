@@ -33,6 +33,9 @@ public:
 	GameObject* GetPlaceHolderGameObject()const;
 	GameObject* GetTextGameObject() const;
 
+	virtual void Load(const nlohmann::json& json) override;
+	virtual void Save(nlohmann::json& json) const override;
+
 private:
 	bool onFocus = false;
 	bool passwordMode = false;

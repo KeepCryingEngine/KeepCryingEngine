@@ -33,6 +33,9 @@ public:
 
 	void SetMode(int mode);
 
+	virtual void Load(const nlohmann::json& json) override;
+	virtual void Save(nlohmann::json& json) const override;
+
 private:
 	void SetDistanceAndComputeCube(float& distance, AABB& cube, float distanceValue);
 	void SetDistanceAndComputeSphere(float& distance, Sphere& sphere, float distanceValue);

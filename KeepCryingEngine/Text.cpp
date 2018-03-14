@@ -116,6 +116,16 @@ const std::string & Text::GetText() const
 	return actualText;
 }
 
+void Text::Load(const nlohmann::json & json)
+{
+
+}
+
+void Text::Save(nlohmann::json & json) const
+{
+
+}
+
 void Text::UpdateFont()
 {
 	font = App->font->LoadFont(currentFontPath, size);

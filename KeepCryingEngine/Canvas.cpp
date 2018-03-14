@@ -29,3 +29,13 @@ void Canvas::DrawUI()
 		}
 	}
 }
+
+void Canvas::Load(const nlohmann::json & json)
+{
+
+}
+
+void Canvas::Save(nlohmann::json & json) const
+{
+
+}

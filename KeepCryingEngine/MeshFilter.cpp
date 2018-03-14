@@ -131,8 +131,17 @@ void MeshFilter::SetMeshMode(MeshMode mode)
 	}
 }
 
+void MeshFilter::Load(const nlohmann::json & json)
+{
+
+}
+
+void MeshFilter::Save(nlohmann::json & json) const
+{
+
+}
+
 void MeshFilter::SetMesh(Mesh * mesh)
 {
 	this->mesh = mesh;
 }
-

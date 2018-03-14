@@ -54,6 +54,9 @@ public:
 	float4 GetColor(ButtonState state)const;
 	GameObject* GetTextGameObject() const;
 
+	virtual void Load(const nlohmann::json& json) override;
+	virtual void Save(nlohmann::json& json) const override;
+
 private:
 	ButtonState state = ButtonState::NORMAL;
 	Transition transitionType = Transition::COLOR;

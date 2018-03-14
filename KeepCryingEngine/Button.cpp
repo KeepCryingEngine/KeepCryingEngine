@@ -239,3 +239,13 @@ GameObject * Button::GetTextGameObject() const
 {
 	return textGameObject;
 }
+
+void Button::Load(const nlohmann::json & json)
+{
+
+}
+
+void Button::Save(nlohmann::json & json) const
+{
+
+}
