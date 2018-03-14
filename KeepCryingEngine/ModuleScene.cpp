@@ -5,6 +5,7 @@
 #include <ImGuizmo.h>
 #include <SDL_scancode.h>
 #include <LineSegment.h>
+#include <fstream>
 
 #include "MeshFilter.h"
 #include "Mesh.h"
@@ -38,6 +39,9 @@ ModuleScene::~ModuleScene()
 bool ModuleScene::Init()
 {
 	root = new GameObject("Root");
+
+	root->SetId(0);
+
 	return true;
 }
 
@@ -178,17 +182,17 @@ bool ModuleScene::CleanUp()
 	return true;
 }
 
-int ModuleScene::GetNewGameObjectId()
+/* int ModuleScene::GetNewGameObjectId()
 {
 	return currentGameObjectId++;
-}
+} */
 
 GameObject* ModuleScene::GetRoot() const
 {
 	return root;
 }
 
-GameObject* ModuleScene::Get(unsigned long long int gameObjectId) const
+GameObject* ModuleScene::Get(int gameObjectId) const
 {
 	GameObject* gameObject = root->GetById(gameObjectId);
 	if(gameObject == nullptr)
@@ -388,10 +392,6 @@ void ModuleScene::Generate(int count, float staticPercentage, float minX, float 
 				gameObjectStatic = true;
 			}
 
-			/* Transform* transform = gameObject->GetTransform();
-			transform->SetWorldPosition(float3(x, y, z));
-			gameObject->SetStatic(gameObjectStatic); */
-
 			generatedGameObjects.push_back(pair<GameObject*, pair<float3, bool>>(gameObject, pair<float3, bool>(float3(x, y, z), gameObjectStatic)));
 		}
 	}
@@ -488,7 +488,15 @@ void ModuleScene::Update(GameObject* gameObject) const
 	*/
 }
 
-void ModuleScene::InitializeRayCastHit(RayCastHit & rayCastHit) const 
+GameObject* ModuleScene::AddEmptyEmpty(GameObject& parent, const char* name)
+{
+	GameObject* gameObject = new GameObject(name, true);
+	gameObject->SetParent(parent);
+
+	return gameObject;
+}
+
+void ModuleScene::InitializeRayCastHit(RayCastHit & rayCastHit) const
 {
 	rayCastHit.gameObject = nullptr;
 	rayCastHit.normal = float3::zero;
@@ -573,8 +581,6 @@ void ModuleScene::AddToDinamicGameobjectList(GameObject* gameobject)
 	dGameobjects.push_back(gameobject);
 }
 
-#include <fstream>
-
 void ModuleScene::Save()
 {
 	jsonData.clear();
@@ -598,7 +604,19 @@ void ModuleScene::Restore()
 {
 	if(validJsonData)
 	{
+		CleanUp();
 
+		Init();
+
+		for(const json& jsonGameObject : jsonData["gameObjects"])
+		{
+			AddEmptyEmpty(*root)->PreLoad(jsonGameObject);
+		}
+
+		for(const json& jsonGameObject : jsonData["gameObjects"])
+		{
+			Get(jsonGameObject["uID"])->Load(jsonGameObject);
+		}
 	}
 }
 
@@ -805,10 +823,13 @@ void ModuleScene::DrawHierarchy(GameObject* gameObject) const
 
 void ModuleScene::SaveRecursive(GameObject* gameObject, nlohmann::json& data)
 {
-	json jsonGameObject;
-	gameObject->Save(jsonGameObject);
+	if(gameObject != root)
+	{
+		json jsonGameObject;
+		gameObject->Save(jsonGameObject);
 
-	data.push_back(jsonGameObject);
+		data.push_back(jsonGameObject);
+	}
 
 	for(GameObject* child : gameObject->GetChildren())
 	{

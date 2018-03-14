@@ -10,13 +10,12 @@
 #include "Component.h"
 #include "ENGINE_UUID.h"
 
-
 class Transform;
 
 class GameObject
 {
 public:
-	GameObject(const std::string& name);
+	GameObject(const std::string& name, bool empty = false);
 	virtual ~GameObject();
 
 	GameObject* GetParent() const;
@@ -29,12 +28,14 @@ public:
 
 	const std::vector<GameObject*>& GetChildren() const;
 
-	GameObject* GetById(unsigned long long int gameObjectId) const;
+	GameObject* GetById(int gameObjectId) const;
 	void DeleteChild(GameObject& childToRemove);
 
 	const std::string& GetName() const;
 
 	int GetId() const;
+
+	void SetId(int id);
 
 	const bool IsEnabled() const;
 	const bool IsStatic() const;
@@ -42,7 +43,7 @@ public:
 	void SetStatic(bool value);
 
 	template <typename T>
-	T* AddComponent();
+	T* AddComponent(bool useNeeded = true);
 
 	void RemoveComponent(Component* component);
 
@@ -61,13 +62,8 @@ public:
 
 	void DrawUI();
 
-	// void Awake() {}
-	// void OnEnable() {}
-	// void Start() {}
-	// void PreUpdate() {}
 	void Update();
-	// void LateUpdate() {}
-	// void OnDisable() {}
+
 	void OnDestroy();
 
 	void SetAABB(const AABB& newAABB);
@@ -86,13 +82,14 @@ public:
 	void SetHovereableUI(bool value);
 	bool IsHovereableUI()const;
 
+	void PreLoad(const nlohmann::json& json);
 	void Load(const nlohmann::json& json);
 	void Save(nlohmann::json& json) const;
 
 	const ENGINE_UUID& UUID() const;
 
 private:
-	Component * AddComponent(Component::Type type);
+	Component * AddComponent(Component::Type type, bool useNeeded = true);
 
 	Component* GetComponent(Component::Type type) const;
 	std::vector<Component*> GetComponents(Component::Type type) const;
@@ -121,7 +118,7 @@ private:
 	bool isHovereableUI = false;
 	bool enable = true;
 	bool isStatic = false;
-	int id;
+	// int id;
 
 	AABB aabb;
 
@@ -129,11 +126,11 @@ private:
 };
 
 template<typename T>
-inline T * GameObject::AddComponent()
+inline T * GameObject::AddComponent(bool useNeeded)
 {
 	static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
 
-	return (T*)AddComponent(T::TYPE);
+	return (T*)AddComponent(T::TYPE, useNeeded);
 }
 
 template<typename T>

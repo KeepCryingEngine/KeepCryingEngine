@@ -46,11 +46,11 @@ public:
 
 	bool CleanUp() override;
 
-	int GetNewGameObjectId();
+	// int GetNewGameObjectId();
 
 	GameObject* GetRoot() const;
 
-	GameObject* Get(unsigned long long int gameObjectId) const;
+	GameObject* Get(int gameObjectId) const;
 
 	GameObject* AddEmpty(GameObject& parent, const char* name = "Empty");
 
@@ -79,6 +79,8 @@ public:
 	void Restore();
 
 private:
+	GameObject* AddEmptyEmpty(GameObject& parent, const char* name = "EmptyEmpty");
+
 	void InitializeRayCastHit(RayCastHit& rayCastHit) const;
 	LineSegment BuildLineSegmentForRayCast(const math::float3 & origin, const math::float3 & direction, float maxDistance) const;
 	LineSegment ProjectLineSegmentToGameObjectsLocalSpace(const LineSegment& worldSpaceLineSegment, const GameObject& gameObject) const;

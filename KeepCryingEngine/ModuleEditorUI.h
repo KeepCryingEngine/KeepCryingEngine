@@ -28,8 +28,8 @@ public:
 	bool GetFrustumCulling()const;
 	bool GetDebugMode()const;
 	ClickMode GetClickMode() const;
-	void SetSelectedNodeID(unsigned long long id);
-	unsigned long long GetSelectedNode()const;
+	void SetSelectedNodeID(int id);
+	int GetSelectedNode()const;
 	void OpenInspectorWindow();
 	void CloseInspectorWindow();
 
@@ -115,7 +115,7 @@ private:
 
 	float fogDensity = 1.0f;
 
-	unsigned long long selectedNodeID = 0;
+	int selectedNodeID = 0;
 };
 
 #endif // !_MODULEEDITORUI_H_

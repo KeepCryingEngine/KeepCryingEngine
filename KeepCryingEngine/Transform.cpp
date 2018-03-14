@@ -415,9 +415,13 @@ const float3 & Transform::Velocity() const
 	return velocity;
 }
 
-void Transform::Load(const nlohmann::json & json)
+void Transform::Load(const nlohmann::json& json)
 {
+	from_json(json["position"], localPosition);
+	from_json(json["rotation"], localRotation);
+	from_json(json["scale"], localScale);
 
+	Recalculate();
 }
 
 void Transform::Save(nlohmann::json& json) const
