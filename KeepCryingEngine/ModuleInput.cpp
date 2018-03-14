@@ -211,7 +211,7 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 					//Handle right arrow
 					else if(event.key.keysym.sym == SDLK_RIGHT)
 					{
-						if(++actualTextPos > text.length())
+						if(++actualTextPos > (int)text.length())
 						{
 							actualTextPos--;
 						}
@@ -349,7 +349,7 @@ const float2& ModuleInput::GetMousePosition() const
 	return mouse;
 }
 
-const float & ModuleInput::GetWheelMotion() const
+float ModuleInput::GetWheelMotion() const
 {
 	if(!overUI)
 	{
@@ -361,7 +361,7 @@ const float & ModuleInput::GetWheelMotion() const
 	}
 }
 
-const float & ModuleInput::UIGetWheelMotion() const
+float ModuleInput::UIGetWheelMotion() const
 {
 	return wheel_motion;
 }

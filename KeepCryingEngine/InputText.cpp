@@ -71,7 +71,7 @@ void InputText::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 	if(passwordMode)
 	{
 		std::string passwordMessage;
-		for(int i = 0; i < currentTextUnderPassword.length(); i++)
+		for(size_t i = 0; i < currentTextUnderPassword.length(); i++)
 		{
 			passwordMessage.push_back('*');
 		}

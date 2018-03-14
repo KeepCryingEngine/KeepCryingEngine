@@ -130,8 +130,8 @@ public:
 
 	const float2& GetMouseMotion() const;
 	const float2& GetMousePosition() const;
-	const float& GetWheelMotion() const;
-	const float& UIGetWheelMotion() const;
+	float GetWheelMotion() const;
+	float UIGetWheelMotion() const;
 
 	void SetOverUI(bool value);
 	bool GetOverUI()const;

@@ -38,7 +38,8 @@ void Text::DrawUI()
 			gameObject->RemoveComponent(this);
 		}
 		static char newText[252];
-		strcpy(newText, GetText().c_str());
+		// strcpy(newText, GetText().c_str());
+		strcpy_s(newText, 252, GetText().c_str());
 		if(ImGui::InputText("##newText",newText, 252))
 		{
 			SetText(newText);
@@ -58,7 +59,7 @@ void Text::DrawUI()
 		{
 			SetColor(color);
 		}
-		if(ImGui::DragFloat("Size", &size, 0.1f, 1.0f, 255.0f))
+		if(ImGui::DragInt("Size", &size, 0.1f, 1, 255))
 		{
 			SetSize(size);
 		}
@@ -95,7 +96,7 @@ void Text::SetFont(const std::experimental::filesystem::path & path)
 	SetText(actualText);
 }
 
-void Text::SetSize(float size)
+void Text::SetSize(int size)
 {
 	this->size = size;
 	UpdateFont();
