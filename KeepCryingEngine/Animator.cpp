@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "Application.h"
 #include "json_serializer.h"
+#include "MeshFilter.h"
 
 using namespace std;
 
@@ -14,6 +15,16 @@ Animator::Animator() :
 
 Animator::~Animator()
 { }
+
+void Animator::Start()
+{
+	vector<MeshFilter*> meshFilters = gameObject->GetParent()->GetComponentsInChildren<MeshFilter>();
+
+	for(MeshFilter* meshFilter : meshFilters)
+	{
+		meshFilter->GetMesh()->SetDynamicDraw(true);
+	}
+}
 
 void Animator::RealUpdate()
 {
@@ -35,6 +46,7 @@ void Animator::DrawUI()
 		{
 			gameObject->RemoveComponent(this);
 		}
+
 		static char animatorLoadBuffer[252] = "ArmyPilot/Animations/ArmyPilot_Run_Forwards.fbx";
 		ImGui::InputText("##loadAnimation", animatorLoadBuffer, 252); ImGui::SameLine();
 		if(ImGui::Button("Load"))

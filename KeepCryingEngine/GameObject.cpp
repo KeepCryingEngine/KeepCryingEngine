@@ -205,6 +205,27 @@ void GameObject::SetVisible(bool visible)
 	this->visible = visible;
 }
 
+GameObject * GameObject::GetChildByName(const std::string& name) const
+{
+	GameObject * ret = nullptr;
+	if(this->name == name)
+	{
+		ret = (GameObject*)this;
+	}
+	else
+	{
+		for(GameObject* child : children)
+		{
+			ret = child->GetChildByName(name);
+			if(ret != nullptr)
+			{
+				break;
+			}
+		}
+	}
+	return ret;
+}
+
 void GameObject::CheckIfFocuseableUI()
 {
 	for(Component* const c : GetComponents())

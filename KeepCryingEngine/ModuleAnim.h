@@ -1,14 +1,19 @@
 #ifndef _MODULEANIM_H_
 #define _MODULEANIM_H_
 
-#include <assimp\anim.h>
+#include <assimp/anim.h>
 #include <set>
 #include <map>
 #include <list>
 #include <vector>
 #include <experimental/filesystem>
+#include "Mesh.h"
 
 #include "Module.h"
+
+struct Bone;
+class Mesh;
+class GameObject;
 
 struct NodeAnim
 {
@@ -50,6 +55,8 @@ public:
 	bool CleanUp() override;
 	update_status Update() override;
 
+	void UpdateAnimationInstance(const size_t &i, unsigned int time);
+
 	std::set<std::string> Load(const std::experimental::filesystem::path& path);
 	AnimInstanceId Play(const char* name);
 	void Stop(AnimInstanceId id);
@@ -61,6 +68,8 @@ public:
 
 private:
 	bool GetTransform(AnimInstance* animInstance, const char* channel, aiVector3D& position, aiQuaternion& rotation) const;
+	void DoVertexSkinning(GameObject * root);
+	void CalculateBoneMatrix(const GameObject& gameObject, Mesh* mesh, const Bone& bone, std::vector<Vertex>& vertices);
 
 	AnimInstance* FindNextBlendingAnimInstance(AnimInstance* animInstance) const;
 

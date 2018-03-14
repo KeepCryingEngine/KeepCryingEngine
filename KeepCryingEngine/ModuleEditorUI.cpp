@@ -429,7 +429,7 @@ void ModuleEditorUI::DrawEditorControler()
 	}
 
 	float tempScale = App->time->GetTimeScale();
-	if(ImGui::DragFloat("Time Scale",&tempScale,0.01,0.0f,1.0f))
+	if(ImGui::DragFloat("Time Scale",&tempScale,0.01f,0.0f,1.0f))
 	{
 		App->time->SetTimeScale(tempScale);
 	}

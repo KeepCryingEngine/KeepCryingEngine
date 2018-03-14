@@ -14,6 +14,7 @@ public:
 	Animator();
 	virtual ~Animator();
 
+	virtual void Start() override;
 	virtual void RealUpdate() override;
 
 	void DrawUI() override;

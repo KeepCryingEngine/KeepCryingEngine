@@ -76,6 +76,8 @@ public:
 	bool GetVisible() const;
 	void SetVisible(bool visible);
 
+	GameObject* GetChildByName(const std::string& name) const;
+
 	void CheckIfFocuseableUI();
 	void SetFocuseableUI(bool value);
 	bool IsFocuseableUI()const;

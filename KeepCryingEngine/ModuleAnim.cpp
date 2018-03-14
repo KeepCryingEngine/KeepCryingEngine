@@ -5,6 +5,13 @@
 #include <assimp/postprocess.h>
 
 #include "Application.h"
+#include "ModuleScene.h"
+#include "Mesh.h"
+#include "GameObject.h"
+#include "Transform.h"
+#include "MeshFilter.h"
+#include "Mesh.h"
+#include "Animator.h"
 #include "ModuleTime.h"
 
 using namespace std;
@@ -30,51 +37,65 @@ update_status ModuleAnim::Update()
 
 	for(size_t i = 0; i < instances.size(); ++i)
 	{
-		AnimInstance*& animInstance = instances[i];
+		UpdateAnimationInstance(i, time);
+	}
 
-		if(animInstance == nullptr)
+	vector<Animator*> animators = App->scene->GetRoot()->GetComponentsInChildren<Animator>();
+	for (Animator* animator : animators)
+	{
+		if(animator->HasValidAnimationInstance())
 		{
-			continue;
-		}
-
-		animInstance->time += time;
-
-		Anim* anim = animInstance->anim;
-
-		if(anim)
-		{
-			if(animInstance->time >= anim->duration)
-			{
-				if(animInstance->loop)
-				{
-					animInstance->time %= anim->duration;
-				}
-				else
-				{
-					animInstance->time = anim->duration;
-				}
-			}
-		}
-
-		// Blend
-
-		AnimInstance* nextAnimInstance = animInstance->next;
-
-		if(nextAnimInstance)
-		{
-			animInstance->blend_time += time;
-
-			if(animInstance->blend_time >= animInstance->blend_duration)
-			{
-				// Blend end
-
-				RELEASE(animInstance);
-				instances[i] = nextAnimInstance;
-			}
+			DoVertexSkinning(animator->gameObject);
 		}
 	}
 
 	return update_status::UPDATE_CONTINUE;
+}
+
+void ModuleAnim::UpdateAnimationInstance(const size_t &animationInstanceIndex, unsigned int time)
+{
+	AnimInstance* animInstance = instances[animationInstanceIndex];
+
+	if (animInstance == nullptr)
+	{
+		return;
+	}
+
+	animInstance->time += time;
+
+	Anim* anim = animInstance->anim;
+
+	if (anim)
+	{
+		if (animInstance->time >= anim->duration)
+		{
+			if (animInstance->loop)
+			{
+				animInstance->time %= anim->duration;
+			}
+			else
+			{
+				animInstance->time = anim->duration;
+			}
+		}
+	}
+
+	// Blend
+
+	AnimInstance* nextAnimInstance = animInstance->next;
+
+	if (nextAnimInstance)
+	{
+		animInstance->blend_time += time;
+
+		if (animInstance->blend_time >= animInstance->blend_duration)
+		{
+			// Blend end
+
+			RELEASE(animInstance);
+			instances[animationInstanceIndex] = nextAnimInstance;
+		}
+	}
 }
 
 set<string> ModuleAnim::Load(const std::experimental::filesystem::path& path)
@@ -260,6 +281,11 @@ bool ModuleAnim::GetTransform(AnimInstance* animInstance, const char * channel, 
 		}
 	}
 
+	if (node == nullptr)
+	{
+		return true;
+	}
+
 	float posKey = float(animInstance->time * (node->numPositions - 1)) / float(anim->duration);
 	float rotKey = float(animInstance->time * (node->numRotations - 1)) / float(anim->duration);
 
@@ -299,6 +325,67 @@ bool ModuleAnim::GetTransform(AnimInstance* animInstance, const char * channel, 
 	}
 
 	return true;
+}
+
+void ModuleAnim::DoVertexSkinning(GameObject* root)
+{
+	vector<MeshFilter*> meshFilters = root->GetParent()->GetComponentsInChildren<MeshFilter>();
+	for(MeshFilter* meshFilter : meshFilters)
+	{
+		Mesh* mesh = meshFilter->GetMesh();
+		vector<Vertex> vertices = mesh->GetOriginalVertices();
+
+		for(Vertex& vertex : vertices)
+		{
+			vertex.position = float3::zero;
+		}
+
+		for(const Bone& bone : mesh->GetBones())
+		{
+			CalculateBoneMatrix(*root, mesh, bone, vertices);
+		}
+
+		mesh->UpdateVertices(vertices);
+	}
+}
+
+void ModuleAnim::CalculateBoneMatrix(const GameObject& rootGameObject, Mesh* mesh, const Bone & bone, vector<Vertex>& vertices)
+{
+	float3x4 rootGameObjectMatrix = rootGameObject.GetTransform()->GetModelMatrix().Float3x4Part();
+	GameObject* boneGameObject = rootGameObject.GetChildByName(bone.name);
+
+	if(boneGameObject == nullptr)
+	{
+		return;
+	}
+
+	Transform* boneTransform = boneGameObject->GetTransform();
+	float3x4 boneMatrixToRoot = boneTransform->GetModelMatrix().Float3x4Part();
+
+	float3 scaleCorrection = float3::one.Div(rootGameObjectMatrix.GetScale());
+
+	aiMatrix4x4 aiBind = bone.bind;
+	float3x4 bondBindInvertedMatrix
+	(
+		(float)aiBind.a1, (float)aiBind.a2, (float)aiBind.a3, (float)aiBind.a4,
+		(float)aiBind.b1, (float)aiBind.b2, (float)aiBind.b3, (float)aiBind.b4,
+		(float)aiBind.c1, (float)aiBind.c2, (float)aiBind.c3, (float)aiBind.c4
+		// (float)aiBind.d1, (float)aiBind.d2, (float)aiBind.d3, (float)aiBind.d4
+	);
+	
+	float3x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix;
+
+	for(const Weigth& weight : bone.weights)
+	{
+		float3x4 weightTransformation = transformation * weight.weight;
+		
+		Vertex& vertex = vertices[weight.vertex];
+		const Vertex& originalVertex = mesh->GetOriginalVertices()[weight.vertex];
+
+		vertex.position += scaleCorrection.Mul((weightTransformation * originalVertex.position.ToPos4()).Float3Part());
+		vertex.normal += (weightTransformation * originalVertex.normal.ToDir4()).Float3Part();
+		vertex.normal.Normalize();
+	}
 }
 
 AnimInstance* ModuleAnim::FindNextBlendingAnimInstance(AnimInstance * animInstance) const
