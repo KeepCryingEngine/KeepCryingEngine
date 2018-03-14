@@ -132,3 +132,13 @@ void from_json(const nlohmann::json& j, BASS_DX8_I3DL2REVERB& v)
 	v.flDensity = j["flDensity"];
 	v.flHFReference = j["flHFReference"];
 }
+
+void to_json(nlohmann::json & j, const ENGINE_UUID & v)
+{
+	j["id"] = v.id;
+}
+
+void from_json(const nlohmann::json & j, ENGINE_UUID & v)
+{
+	v = ENGINE_UUID(j["id"]);
+}

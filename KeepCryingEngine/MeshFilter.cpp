@@ -138,7 +138,16 @@ void MeshFilter::Load(const nlohmann::json & json)
 
 void MeshFilter::Save(nlohmann::json & json) const
 {
+	/*
 
+	Relevant information:
+
+	type
+	mesh
+	*/
+
+	json["type"] = type;
+	mesh->Save(json);
 }
 
 void MeshFilter::SetMesh(Mesh * mesh)

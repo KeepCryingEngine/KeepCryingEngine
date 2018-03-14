@@ -1,10 +1,14 @@
 #ifndef _MESH_H_
 #define _MESH_H_
 
+#include <experimental/filesystem>
+#include <string>
+
 #include <GL/glew.h>
 #include <AABB.h>
 #include <MathGeoLib.h>
 #include <assimp/anim.h>
+#include <json.hpp>
 
 #include <vector>
 
@@ -34,7 +38,7 @@ class Mesh
 public:
 	Mesh();
 	virtual ~Mesh();
-
+	
 	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, const std::vector<Bone> bones, GLenum drawMode);
 
 	const AABB& GetAABB() const;
@@ -52,6 +56,15 @@ public:
 	const std::vector<Bone>& GetBones() const;
 
 	void SetDynamicDraw(bool dynamicDraw);
+
+	void SetPath(const std::experimental::filesystem::path& path);
+	void SetName(const std::string& name);
+
+	const std::experimental::filesystem::path& GetPath() const;
+	const std::string& GetName() const;
+
+	void Load(const nlohmann::json& json);
+	void Save(nlohmann::json& json);
 
 private:
 	void GenerateBuffers(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices);
@@ -72,6 +85,8 @@ private:
 	std::vector<Vertex> originalVertices;
 
 	bool dynamicDraw = false;
+	std::experimental::filesystem::path path;
+	std::string name;
 };
 
 #endif // !_MESHENTITY_H_
