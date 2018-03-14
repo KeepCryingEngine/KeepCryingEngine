@@ -38,6 +38,7 @@ private:
 	unsigned int animInstanceId = -1;
 	std::string currentAnimationName;
 	std::set<std::string> animationNames;
+	std::set<std::experimental::filesystem::path> animationPaths;
 };
 
 #endif

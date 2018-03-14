@@ -4,6 +4,7 @@
 #include "ModuleAnim.h"
 #include "GameObject.h"
 #include "Application.h"
+#include "json_serializer.h"
 
 using namespace std;
 
@@ -91,6 +92,12 @@ unsigned int Animator::GetAnimInstanceId() const
 void Animator::LoadAnimInstance(const std::experimental::filesystem::path& path)
 {
 	set<string> newAnimationNames = App->anim->Load(path);
+	
+	if (newAnimationNames.size() > 0)
+	{
+		animationPaths.insert(path);
+	}
+
 	animationNames.insert(newAnimationNames.begin(), newAnimationNames.end());
 }
 
@@ -120,7 +127,12 @@ void Animator::Load(const nlohmann::json & json)
 
 void Animator::Save(nlohmann::json & json) const
 {
-
+	json["type"] = type;
+	json["currentAnimationName"] = currentAnimationName;
+	
+	nlohmann::json jsonPaths;
+	to_json(jsonPaths, animationPaths);
+	json["paths"] = jsonPaths;
 }
 
 void Animator::UpdateTransformRecursive(unsigned int animInstanceId, GameObject* gameObject)
