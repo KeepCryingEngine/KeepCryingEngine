@@ -75,3 +75,19 @@ void from_json(const nlohmann::json& j, Frustum& v)
 	v.orthographicWidth = j["orthographicWidth"];
 	v.orthographicHeight = j["orthographicHeight"];
 }
+
+void to_json(nlohmann::json & j, const std::set<std::experimental::filesystem::path>& s)
+{
+	for (std::experimental::filesystem::path p : s)
+	{
+		j.push_back(p.string());
+	}
+}
+
+void from_json(const nlohmann::json & j, std::set<std::experimental::filesystem::path>& s)
+{
+	for (nlohmann::json js : j)
+	{
+		s.insert(js.get<std::string>());
+	}
+}
