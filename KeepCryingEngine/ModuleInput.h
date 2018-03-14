@@ -43,7 +43,7 @@ public:
 
 	bool Start() override;
 
-	update_status PreUpdate(float deltaTimeS, float realDeltaTimeS) override;
+	update_status PreUpdate() override;
 
 	bool CleanUp() override;
 

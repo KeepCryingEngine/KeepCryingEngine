@@ -24,7 +24,7 @@ public:
 	~AudioSource();
 
 	void Awake() override;
-	void RealUpdate(float deltaTimeS, float realDeltaTimeS)override;
+	void RealUpdate()override;
 
 	void DrawUI() override;
 

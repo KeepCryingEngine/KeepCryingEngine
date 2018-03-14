@@ -94,14 +94,14 @@ bool ModuleRender::Init()
 	return ret;
 }
 
-update_status ModuleRender::PreUpdate(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleRender::PreUpdate()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	return update_status::UPDATE_CONTINUE;
 }
 
-update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleRender::Update()
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(App->camera->camera->GetProyectionMatrix().ptr());
@@ -121,7 +121,7 @@ update_status ModuleRender::Update(float deltaTimeS, float realDeltaTimeS)
 	return update_status::UPDATE_CONTINUE;
 }
 
-update_status ModuleRender::PostUpdate(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleRender::PostUpdate()
 {
 	// DrawGeometry();
 	// drawBuffer.clear();

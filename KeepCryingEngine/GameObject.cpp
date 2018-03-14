@@ -151,7 +151,7 @@ void GameObject::SetStatic(bool value)
 	}
 }
 
-void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
+void GameObject::Update()
 {
 	CheckToStart();
 	CheckToDestroy();
@@ -160,7 +160,7 @@ void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
 	{
 		for(Component* component : components)
 		{
-			component->Update(deltaTimeS, realDeltaTimeS);
+			component->Update();
 		}
 	}
 }

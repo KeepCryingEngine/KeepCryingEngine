@@ -111,9 +111,9 @@ update_status Application::Update()
 
 	if(configuration.limitFps)
 	{
-		if(time->GetRealTimeDeltaTime() < desiredS)
+		if(time->GetEditorDeltaTime() < desiredS)
 		{
-			float waitingTimeS = desiredS - time->GetRealTimeDeltaTime();
+			float waitingTimeS = desiredS - time->GetEditorDeltaTime();
 
 			SDL_Delay((uint)(1000 * waitingTimeS));
 		}

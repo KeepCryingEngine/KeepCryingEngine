@@ -17,7 +17,7 @@ public:
 	ModuleGameUI();
 	~ModuleGameUI();
 
-	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
+	update_status Update() override;
 	bool CleanUp() override;
 
 	void SetCanvas(Canvas& canvas);
@@ -26,8 +26,8 @@ public:
 	GameObject* GetHoveringGameObject();
 
 private:
-	void UpdateRecursivePreOrder(float deltaTimeS, float realDeltaTimeS, GameObject* g);
-	void UpdateNode(float deltaTimeS, float realDeltaTimeS, GameObject* g);
+	void UpdateRecursivePreOrder(GameObject* g);
+	void UpdateNode(GameObject* g);
 
 	void UpdateComponent(Component * component);
 

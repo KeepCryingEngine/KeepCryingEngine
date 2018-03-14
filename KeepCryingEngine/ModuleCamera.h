@@ -14,7 +14,7 @@ public:
 	virtual ~ModuleCamera();
 
 	bool Init() override;
-	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
+	update_status Update() override;
 	bool CleanUp() override;
 
 	float GetMoveSpeed() const;

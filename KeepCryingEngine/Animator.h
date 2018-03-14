@@ -14,7 +14,7 @@ public:
 	Animator();
 	virtual ~Animator();
 
-	virtual void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
+	virtual void RealUpdate() override;
 
 	void DrawUI() override;
 

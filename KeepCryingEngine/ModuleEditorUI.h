@@ -22,8 +22,8 @@ public:
 	bool Init() override;
 	bool Start() override;
 	bool CleanUp() override;
-	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
-	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
+	update_status Update() override;
+	update_status PostUpdate() override;
 
 	bool GetFrustumCulling()const;
 	bool GetDebugMode()const;

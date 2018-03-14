@@ -35,11 +35,11 @@ public:
 	virtual void Start(){};
 	virtual void Destroy(){};
 
-	virtual void Update(float deltaTimeS, float realDeltaTimeS)
+	virtual void Update()
 	{
 		if(enabled)
 		{
-			RealUpdate(deltaTimeS,realDeltaTimeS);
+			RealUpdate();
 		}
 	};
 
@@ -48,7 +48,7 @@ public:
 		enabled = setEnable;
 	};
 
-	virtual void RealUpdate(float deltaTimeS, float realDeltaTimeS){};
+	virtual void RealUpdate(){};
 	
 	virtual void DrawUI(){};
 

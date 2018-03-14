@@ -8,6 +8,7 @@
 #include <fstream>
 
 #include "Application.h"
+#include "ModuleTime.h"
 #include "ModuleEntity.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
@@ -66,7 +67,7 @@ bool ModuleEditorUI::Start()
 	return true;
 }
 
-update_status ModuleEditorUI::Update(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleEditorUI::Update()
 {	
 	DrawMainMenu();
 
@@ -77,7 +78,7 @@ update_status ModuleEditorUI::Update(float deltaTimeS, float realDeltaTimeS)
 	return update_status::UPDATE_CONTINUE;
 }
 
-update_status ModuleEditorUI::PostUpdate(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleEditorUI::PostUpdate()
 {
 	ImGui::Render();
 

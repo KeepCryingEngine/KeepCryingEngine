@@ -64,7 +64,7 @@ public:
 	// void OnEnable() {}
 	// void Start() {}
 	// void PreUpdate() {}
-	void Update(float deltaTimeS, float realDeltaTimeS);
+	void Update();
 	// void LateUpdate() {}
 	// void OnDisable() {}
 	void OnDestroy();

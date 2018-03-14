@@ -33,9 +33,9 @@ public:
 	virtual ~ModuleRender();
 
 	bool Init() override;
-	update_status PreUpdate(float deltaTimeS, float realDeltaTimeS) override;
-	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
-	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
+	update_status PreUpdate() override;
+	update_status Update() override;
+	update_status PostUpdate() override;
 	bool CleanUp() override;
 
 	void DrawCross(const float3& pos, float scale) const;

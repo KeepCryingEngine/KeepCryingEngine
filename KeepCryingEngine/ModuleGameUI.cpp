@@ -8,6 +8,7 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
+#include "ModuleTime.h"
 
 #include "GameObject.h"
 #include "Transform2D.h"
@@ -26,13 +27,13 @@ ModuleGameUI::ModuleGameUI()
 ModuleGameUI::~ModuleGameUI()
 {}
 
-update_status ModuleGameUI::Update(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleGameUI::Update()
 {
 	if(root != nullptr)
 	{
 		CheckUIStatus();
 		glDisable(GL_DEPTH_TEST);
-		UpdateRecursivePreOrder(deltaTimeS, realDeltaTimeS, root->gameObject);
+		UpdateRecursivePreOrder(root->gameObject);
 		glEnable(GL_DEPTH_TEST);
 	}
 	return update_status::UPDATE_CONTINUE;
@@ -63,7 +64,7 @@ GameObject * ModuleGameUI::GetHoveringGameObject()
 	return hovering;
 }
 
-void ModuleGameUI::UpdateRecursivePreOrder(float deltaTimeS, float realDeltaTimeS, GameObject * gameObject)
+void ModuleGameUI::UpdateRecursivePreOrder(GameObject * gameObject)
 {
 	assert(gameObject != nullptr);
 
@@ -74,20 +75,20 @@ void ModuleGameUI::UpdateRecursivePreOrder(float deltaTimeS, float realDeltaTime
 
 	if(gameObject->ChildCount() == 0)
 	{
-		UpdateNode(deltaTimeS, realDeltaTimeS, gameObject);
+		UpdateNode(gameObject);
 		return;
 	}
-	UpdateNode(deltaTimeS, realDeltaTimeS, gameObject);
+	UpdateNode(gameObject);
 
 	const vector<GameObject*>& childs = gameObject->GetChildren();
 	for(vector<GameObject*>::const_iterator it = childs.cbegin();it != childs.cend();it++)
 	{
 		GameObject * child = *it;
-		UpdateRecursivePreOrder(deltaTimeS,realDeltaTimeS, child);
+		UpdateRecursivePreOrder(child);
 	}
 }
 
-void ModuleGameUI::UpdateNode(float deltaTimeS, float realDeltaTimeS, GameObject * g)
+void ModuleGameUI::UpdateNode(GameObject * g)
 {
 	assert(g != nullptr);
 	const vector<Component*>& components = g->GetComponents();
