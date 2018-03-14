@@ -45,7 +45,7 @@ private:
 	float4 color = float4().one * 255;
 	const TTF_Font* font;
 	int size = 20;
-	std::experimental::filesystem::path currentFontPath = "";
+	std::experimental::filesystem::path currentFontPath = "Assets/Fonts/arial.ttf";
 };
 
 #endif // !_TEXT_H_
