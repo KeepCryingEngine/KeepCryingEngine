@@ -29,8 +29,8 @@ public:
 	void SetTextGameObject(GameObject& g);
 	void SetPasswordMode(bool value);
 
-	bool GetPasswordMode()const;
-	GameObject* GetPlaceHolderGameObject()const;
+	bool GetPasswordMode() const;
+	GameObject* GetPlaceHolderGameObject() const;
 	GameObject* GetTextGameObject() const;
 
 	virtual void Load(const nlohmann::json& json) override;
