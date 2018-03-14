@@ -64,6 +64,10 @@ public:
 		return true;
 	}
 
+	virtual void Play(){}
+	virtual void Pause(){}
+	virtual void Stop(){}
+
 private:
 
 	bool enabled = true;

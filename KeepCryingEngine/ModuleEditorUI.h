@@ -39,6 +39,7 @@ private:
 
 	void CallWindows();
 	void SetAllParameters();
+	void DrawEditorControler();
 	void DrawMainMenu();
 	void DrawAboutMenu();
 	void DrawCameraWindow();
@@ -91,6 +92,7 @@ private:
 	bool generateGameObjectWindow = true;
 	bool spacePartitioningWindow = true;
 	bool loadedTexturesInfoWindow = true;
+	bool editorControler = true;
 
 	//Editor click
 	ClickMode clickMode = ClickMode::Pick;

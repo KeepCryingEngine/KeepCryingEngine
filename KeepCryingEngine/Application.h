@@ -32,6 +32,10 @@ public:
 	update_status Update();
 	bool CleanUp();
 
+	void Play();
+	void Pause();
+	void Stop();
+
 private:
 	void LoadConfiguration();
 

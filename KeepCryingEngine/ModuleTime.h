@@ -18,9 +18,9 @@ public:
 
 	update_status Update() override;
 
-	void Play();
-	void Pause();
-	void Stop();
+	void Play() override;
+	void Pause() override;
+	void Stop() override;
 
 	float GetFrameCount() const;
 	float GetTime() const;

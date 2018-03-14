@@ -132,3 +132,24 @@ bool Application::CleanUp()
 
 	return ret;
 }
+
+void Application::Play()
+{
+	for(list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
+		if((*it)->IsEnabled())
+			(*it)->Play();
+}
+
+void Application::Pause()
+{
+	for(list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
+		if((*it)->IsEnabled())
+			(*it)->Pause();
+}
+
+void Application::Stop()
+{
+	for(list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
+		if((*it)->IsEnabled())
+			(*it)->Stop();
+}

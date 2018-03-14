@@ -46,11 +46,15 @@ void ModuleTime::Play()
 
 void ModuleTime::Pause()
 {
+	deltaTime = 0;
+	realTimeDeltaTime = 0;
 	state = TimeState::PAUSED;
 }
 
 void ModuleTime::Stop()
 {
+	deltaTime = 0;
+	realTimeDeltaTime = 0;
 	state = TimeState::STOPED;
 }
 

@@ -272,7 +272,7 @@ void Transform::Decompose(const float4x4 & matrix, float3 & position, Quat & rot
 
 void Transform::UpdateVelocity()
 {
-	velocity = (GetWorldPosition() - previousWorldPosition).Div(App->time->GetEditorDeltaTime());
+	velocity = (GetWorldPosition() - previousWorldPosition).Div(App->time->GetDeltaTime());
 	previousWorldPosition = GetWorldPosition();
 }
 

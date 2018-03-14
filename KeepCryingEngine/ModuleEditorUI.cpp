@@ -151,6 +151,10 @@ void ModuleEditorUI::DrawMainMenu()
 				}
 				ImGui::EndMenu();
 			}
+			if(ImGui::Selectable("Editor Controler"))
+			{
+				editorControler ^= 1;
+			}
 			ImGui::EndMenu();
 		}
 
@@ -394,6 +398,28 @@ void ModuleEditorUI::SetAllParameters()
 	}
 }
 
+void ModuleEditorUI::DrawEditorControler()
+{
+	if(ImGui::Button("Play"))
+	{
+		App->Play();
+	} ImGui::SameLine();
+	if(ImGui::Button("Pause"))
+	{
+		App->Pause();
+	} ImGui::SameLine();
+	if(ImGui::Button("Stop"))
+	{
+		App->Stop();
+	}
+
+	float tempScale = App->time->GetTimeScale();
+	if(ImGui::DragFloat("Time Scale",&tempScale,0.01,0.0f,1.0f))
+	{
+		App->time->SetTimeScale(tempScale);
+	}
+}
+
 void ModuleEditorUI::SetUpTextEditor()
 {
 	editor.SetLanguageDefinition(TextEditor::LanguageDefinition::GLSL());
@@ -520,6 +546,10 @@ void ModuleEditorUI::CallWindows()
 	if(loadedTexturesInfoWindow)
 	{
 		DrawLoadedTexturesInfoWindow();
+	}
+	if(editorControler)
+	{
+		DrawEditorControler();
 	}
 }
 
