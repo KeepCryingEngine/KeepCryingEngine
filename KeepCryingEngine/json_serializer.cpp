@@ -25,6 +25,19 @@ void from_json(const json& j, float3& v)
 	v.z = j.at("z").get<float>();
 }
 
+void to_json(nlohmann::json& j, const float4& v)
+{
+	j = json{ { "x", v.x },{ "y", v.y },{ "z", v.z },{ "w", v.w } };
+}
+
+void from_json(const nlohmann::json& j, float4& v)
+{
+	v.x = j.at("x").get<float>();
+	v.y = j.at("y").get<float>();
+	v.z = j.at("z").get<float>();
+	v.w = j.at("w").get<float>();
+}
+
 void to_json(nlohmann::json& j, const Quat& v)
 {
 	j = json{ { "x", v.x },{ "y", v.y },{ "z", v.z },{ "w", v.w } };
@@ -85,22 +98,6 @@ void from_json(const nlohmann::json& j, Frustum& v)
 	v.nearPlaneDistance = j["nearPlaneDistance"];
 	v.orthographicWidth = j["orthographicWidth"];
 	v.orthographicHeight = j["orthographicHeight"];
-}
-
-void to_json(nlohmann::json & j, const std::set<std::experimental::filesystem::path>& s)
-{
-	for (std::experimental::filesystem::path p : s)
-	{
-		j.push_back(p.string());
-	}
-}
-
-void from_json(const nlohmann::json & j, std::set<std::experimental::filesystem::path>& s)
-{
-	for (nlohmann::json js : j)
-	{
-		s.insert(js.get<std::string>());
-	}
 }
 
 void to_json(nlohmann::json& j, const BASS_DX8_I3DL2REVERB& v)

@@ -4,6 +4,7 @@
 #include "ModuleTexture.h"
 #include "GameObject.h"
 #include "Texture.h"
+#include "json_serializer.h"
 
 using namespace std;
 
@@ -75,9 +76,16 @@ void Image::DrawUI()
 void Image::SetTextureByPath(const std::experimental::filesystem::path & path)
 {
 	if (texture != nullptr)
+	{
 		App->texture->Release(texture);
+	}
 
 	texture = App->texture->GetAsset(path);
+	
+	if (texture != nullptr)
+	{
+		texturePath = path;
+	}
 }
 
 void Image::SetTexture(Texture & texture)
@@ -107,5 +115,11 @@ void Image::Load(const nlohmann::json & json)
 
 void Image::Save(nlohmann::json & json) const
 {
+	json["type"] = type;
 
+	nlohmann::json jsonColor;
+	to_json(jsonColor, color);
+	json["color"] = jsonColor;
+
+	json["texturePath"] = texturePath.string();
 }

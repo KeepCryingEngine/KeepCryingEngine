@@ -2,6 +2,7 @@
 
 #include "Application.h"
 #include "GameObject.h"
+#include "json_serializer.h"
 
 
 Transform2D::Transform2D() :
@@ -86,7 +87,26 @@ void Transform2D::Load(const nlohmann::json & json)
 
 void Transform2D::Save(nlohmann::json & json) const
 {
+	json["type"] = type;
 
+	nlohmann::json jsonPosition;
+	to_json(jsonPosition, localPosition);
+	json["position"] = jsonPosition;
+
+	nlohmann::json jsonSize;
+	to_json(jsonSize, size);
+	json["size"] = jsonSize;
+
+	nlohmann::json jsonAnchor;
+	to_json(jsonAnchor, anchor);
+	json["anchor"] = jsonAnchor;
+
+	nlohmann::json jsonPivot;
+	to_json(jsonPivot, pivot);
+	json["pivot"] = jsonPivot;
+
+	json["cutChildren"] = cutChildren;
+	json["isLocked"] = isLocked;
 }
 
 float3 Transform2D::GetParentWorldPosition() const

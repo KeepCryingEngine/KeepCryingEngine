@@ -34,6 +34,7 @@ public:
 	virtual void Save(nlohmann::json& json) const override;
 
 private:
+	std::experimental::filesystem::path texturePath;
 	Texture * texture = nullptr;
 	float4 color = float4().one;
 };

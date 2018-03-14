@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Application.h"
 #include "ModuleFont.h"
+#include "json_serializer.h"
 
 Text::Text(): Component(Text::TYPE)
 {}
@@ -12,8 +13,7 @@ Text::~Text()
 
 void Text::Awake()
 {
-	font = App->font->LoadFont("Assets/Fonts/arial.ttf", 69);
-	currentFontPath = "Assets/Fonts/arial.ttf";
+	font = App->font->LoadFont(currentFontPath, size);
 	SetTexture(actualText);
 }
 
@@ -124,7 +124,25 @@ void Text::Load(const nlohmann::json & json)
 
 void Text::Save(nlohmann::json & json) const
 {
+	/*
 
+	Relevant information:
+
+	type
+	actualText
+	color
+	size
+	currentFontPath
+
+	*/
+
+	json["type"] = type;
+	json["actualText"] = actualText;
+	nlohmann::json jsonColor;
+	to_json(jsonColor, color);
+	json["color"] = jsonColor;
+	json["size"] = size;
+	json["frustum"] = currentFontPath.string();
 }
 
 void Text::UpdateFont()
