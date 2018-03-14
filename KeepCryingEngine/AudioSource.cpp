@@ -344,7 +344,7 @@ void AudioSource::Load(const nlohmann::json& json)
 	rollOffFactor = json["rollOffFactor"];
 	doplerFactor = json["doplerFactor"];
 	loop = json["loop"];
-	path = json["path"];
+	path = json["path"].get<string>();
 	usedAudioType = json["usedAudioType"];
 	usedChannelType = json["usedChannelType"];
 }
