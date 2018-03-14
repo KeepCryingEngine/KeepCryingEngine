@@ -40,14 +40,14 @@ bool ModuleScene::Init()
 	return true;
 }
 
-update_status ModuleScene::PreUpdate(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleScene::PreUpdate()
 {
 	CheckToDestroy();
 
 	return update_status::UPDATE_CONTINUE;
 }
 
-update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleScene::Update()
 {
 	if (App->input->GetKey(SDL_SCANCODE_1) == KeyState::KEY_DOWN)
 	{
@@ -119,7 +119,7 @@ update_status ModuleScene::Update(float deltaTimeS, float realDeltaTimeS)
 		gameObject->GetTransform()->SetWorldPosition(worldPosition);
 	}
 
-	Update(root, deltaTimeS, realDeltaTimeS);
+	Update(root);
 
 	for(pair<GameObject*, pair<float3, bool>> generateGameObject : generatedGameObjects)
 	{
@@ -447,7 +447,7 @@ LineSegment ModuleScene::ProjectLineSegmentToGameObjectsLocalSpace(const LineSeg
 	return gameObjectSpaceLineSegment;
 }
 
-void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const
+void ModuleScene::Update(GameObject* gameObject) const
 {
 	// Iterative
 
@@ -461,7 +461,7 @@ void ModuleScene::Update(GameObject* gameObject, float deltaTimeS, float realDel
 
 		if(currentGameObject->IsEnabled())
 		{
-			currentGameObject->Update(deltaTimeS, realDeltaTimeS);
+			currentGameObject->Update();
 
 			for(GameObject* gameObjectChild : currentGameObject->GetChildren())
 			{

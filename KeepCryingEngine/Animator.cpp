@@ -25,7 +25,7 @@ void Animator::Start()
 	}
 }
 
-void Animator::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+void Animator::RealUpdate()
 {
 	if(HasValidAnimationInstance())
 	{

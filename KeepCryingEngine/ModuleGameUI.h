@@ -17,7 +17,7 @@ public:
 	ModuleGameUI();
 	~ModuleGameUI();
 
-	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
+	update_status Update() override;
 	bool CleanUp() override;
 
 	void SetCanvas(Canvas& canvas);
@@ -26,8 +26,8 @@ public:
 	GameObject* GetHoveringGameObject();
 
 private:
-	void UpdateRecursivePreOrder(float deltaTimeS, float realDeltaTimeS, GameObject* g);
-	void UpdateNode(float deltaTimeS, float realDeltaTimeS, GameObject* g);
+	void UpdateRecursivePreOrder(GameObject* g);
+	void UpdateNode(GameObject* g);
 
 	void UpdateComponent(Component * component);
 
@@ -36,6 +36,9 @@ private:
 	void PreOrdenZCheck(GameObject* currentNode);
 
 	bool CheckIfMouseOver(GameObject* g);
+
+	void NextFocus();
+	bool NextFocusPreOrderZCheck(GameObject* currentNode);
 
 	void UpdateCanvas(Canvas* canvas);
 	void UpdateImage(Image* image);
@@ -48,6 +51,14 @@ private:
 	GameObject* focus = nullptr;
 	GameObject* hovering = nullptr;
 	GameObject* pressed = nullptr;
+
+	//Internal flag for NextFocus function
+	bool nextItsFocusFlag = false;
+	bool firstFocusAvailableFlag = false;
+	GameObject* firstFocusAvailable = nullptr;
+
+	//To make nextFocus only once per tab
+	bool alreadyPressed = false;
 
 };
 

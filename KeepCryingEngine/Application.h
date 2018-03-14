@@ -19,6 +19,7 @@ class ModuleEntity;
 class ModuleAnim;
 class ModuleAudio;
 class ModuleFont;
+class ModuleTime;
 
 class Application
 {
@@ -31,8 +32,9 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	float GetDeltaTimeScale() const;
-	void SetDeltaTimeScale(float deltaTimeScale);
+	void Play();
+	void Pause();
+	void Stop();
 
 private:
 	void LoadConfiguration();
@@ -51,6 +53,7 @@ public:
 	ModuleAudio* audio = nullptr;
 	ModuleEntity* entity = nullptr;
 	ModuleFont* font = nullptr;
+	ModuleTime* time = nullptr;
 
 	// Cargar información desde json
 	// Tamaño pantalla, nombre, fps, etc
@@ -70,11 +73,7 @@ public:
 private:
 	std::list<Module*> modules;
 
-	uint lastTimeMs = 0;
-
-	float deltaTimeScale = 1.0f;
-
-	float desiredS; // Computed
+	float desiredS;
 };
 
 extern Application* App;

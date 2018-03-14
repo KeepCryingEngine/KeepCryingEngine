@@ -16,8 +16,13 @@ public:
 	Image();
 	virtual ~Image();
 
+	void Awake() override;
+	void Destroy() override;
+	void SetEnable(bool value) override;
+
 	void DrawUI() override;
 
+	std::vector<Component::Type> GetNeededComponents() const override;
 	void SetTextureByPath(const std::experimental::filesystem::path& path);
 	void SetTexture(Texture& texture);
 	void SetColor(float4 color);

@@ -16,6 +16,7 @@
 #include "ModuleAudio.h"
 #include "ModuleGameUI.h"
 #include "ModuleFont.h"
+#include "ModuleTime.h"
 
 using namespace std;
 using nlohmann::json;
@@ -23,6 +24,7 @@ using nlohmann::json;
 Application::Application()
 {
 	modules.push_back(window = new ModuleWindow());
+	modules.push_back(time = new ModuleTime());
 	modules.push_back(uiEditor = new ModuleEditorUI());
 	modules.push_back(anim = new ModuleAnim());
 	modules.push_back(scene = new ModuleScene());
@@ -95,38 +97,23 @@ update_status Application::Update()
 {
 	update_status ret = update_status::UPDATE_CONTINUE;
 
-	uint currentTimeMs = SDL_GetTicks();
-
-	float realDeltaTimeS = (currentTimeMs - lastTimeMs) / 1000.0f;
-
-	// limit realDeltaTimeS
-	realDeltaTimeS = fminf(realDeltaTimeS, configuration.maxRealDeltaTimeS);
-
-	float deltaTimeS = deltaTimeScale * realDeltaTimeS;
-
-	//LOG_DEBUG("%f, %i, %f", realDeltaTimeS, configuration.limitFps, desiredS); // Test
-
-	lastTimeMs = currentTimeMs;
+	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == update_status::UPDATE_CONTINUE; ++it)
+		if((*it)->IsEnabled())
+			ret = (*it)->PreUpdate();
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == update_status::UPDATE_CONTINUE; ++it)
 		if((*it)->IsEnabled())
-			ret = (*it)->PreUpdate(deltaTimeS, realDeltaTimeS);
+			ret = (*it)->Update();
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == update_status::UPDATE_CONTINUE; ++it)
 		if((*it)->IsEnabled())
-			ret = (*it)->Update(deltaTimeS, realDeltaTimeS);
-
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == update_status::UPDATE_CONTINUE; ++it)
-		if((*it)->IsEnabled())
-			ret = (*it)->PostUpdate(deltaTimeS, realDeltaTimeS);
-
-	LOG_DEBUG("FPS: %f", 1.0f / deltaTimeS);
+			ret = (*it)->PostUpdate();
 
 	if(configuration.limitFps)
 	{
-		if(realDeltaTimeS < desiredS)
+		if(time->GetEditorDeltaTime() < desiredS)
 		{
-			float waitingTimeS = desiredS - realDeltaTimeS;
+			float waitingTimeS = desiredS - time->GetEditorDeltaTime();
 
 			SDL_Delay((uint)(1000 * waitingTimeS));
 		}
@@ -146,12 +133,23 @@ bool Application::CleanUp()
 	return ret;
 }
 
-float Application::GetDeltaTimeScale() const
+void Application::Play()
 {
-	return deltaTimeScale;
+	for(list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
+		if((*it)->IsEnabled())
+			(*it)->Play();
 }
 
-void Application::SetDeltaTimeScale(float deltaTimeScale)
+void Application::Pause()
 {
-	this->deltaTimeScale = fmaxf(fminf(deltaTimeScale, 1.0f), 0.0f);
+	for(list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
+		if((*it)->IsEnabled())
+			(*it)->Pause();
+}
+
+void Application::Stop()
+{
+	for(list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
+		if((*it)->IsEnabled())
+			(*it)->Stop();
 }

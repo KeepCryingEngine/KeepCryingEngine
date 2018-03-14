@@ -25,7 +25,7 @@ void AudioListener::Destroy()
 	}
 }
 
-void AudioListener::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+void AudioListener::RealUpdate()
 {
 	Transform* body = gameObject->GetTransform();
 	BASS_Set3DPosition(

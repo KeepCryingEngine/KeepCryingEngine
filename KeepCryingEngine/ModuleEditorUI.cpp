@@ -8,6 +8,7 @@
 #include <fstream>
 
 #include "Application.h"
+#include "ModuleTime.h"
 #include "ModuleEntity.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
@@ -25,6 +26,7 @@
 #include "ReverbZone.h"
 #include "ModuleGameUI.h"
 #include "Canvas.h"
+#include "Image.h"
 #include "Button.h"
 #include "Text.h"
 #include "InputText.h"
@@ -65,7 +67,7 @@ bool ModuleEditorUI::Start()
 	return true;
 }
 
-update_status ModuleEditorUI::Update(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleEditorUI::Update()
 {	
 	DrawMainMenu();
 
@@ -76,7 +78,7 @@ update_status ModuleEditorUI::Update(float deltaTimeS, float realDeltaTimeS)
 	return update_status::UPDATE_CONTINUE;
 }
 
-update_status ModuleEditorUI::PostUpdate(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleEditorUI::PostUpdate()
 {
 	ImGui::Render();
 
@@ -148,6 +150,10 @@ void ModuleEditorUI::DrawMainMenu()
 					spacePartitioningWindow ^= 1;
 				}
 				ImGui::EndMenu();
+			}
+			if(ImGui::Selectable("Editor Controler"))
+			{
+				editorControler ^= 1;
 			}
 			ImGui::EndMenu();
 		}
@@ -392,6 +398,28 @@ void ModuleEditorUI::SetAllParameters()
 	}
 }
 
+void ModuleEditorUI::DrawEditorControler()
+{
+	if(ImGui::Button("Play"))
+	{
+		App->Play();
+	} ImGui::SameLine();
+	if(ImGui::Button("Pause"))
+	{
+		App->Pause();
+	} ImGui::SameLine();
+	if(ImGui::Button("Stop"))
+	{
+		App->Stop();
+	}
+
+	float tempScale = App->time->GetTimeScale();
+	if(ImGui::DragFloat("Time Scale",&tempScale,0.01,0.0f,1.0f))
+	{
+		App->time->SetTimeScale(tempScale);
+	}
+}
+
 void ModuleEditorUI::SetUpTextEditor()
 {
 	editor.SetLanguageDefinition(TextEditor::LanguageDefinition::GLSL());
@@ -518,6 +546,10 @@ void ModuleEditorUI::CallWindows()
 	if(loadedTexturesInfoWindow)
 	{
 		DrawLoadedTexturesInfoWindow();
+	}
+	if(editorControler)
+	{
+		DrawEditorControler();
 	}
 }
 
@@ -816,7 +848,7 @@ void ModuleEditorUI::DrawInspectorWindow()
 			{
 				if(ImGui::Selectable("Image"))
 				{
-					addImageGameObject = true;
+					temp->AddComponent<Image>();
 				}
 				if(ImGui::Selectable("Button"))
 				{

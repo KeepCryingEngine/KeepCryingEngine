@@ -20,7 +20,7 @@ public:
 
 	const TTF_Font* LoadFont(const std::experimental::filesystem::path& fontPath, int size);
 
-	const Texture* RenderFromText(const TTF_Font* font, const std::string& message, const SDL_Color& color) const;
+	const Texture* RenderFromText(const TTF_Font* font, const std::string& message, const SDL_Color& color, int minWrapW = 200) const;
 
 private:
 	const Texture* CreateTextureFromSurface(const SDL_Surface* surface) const;

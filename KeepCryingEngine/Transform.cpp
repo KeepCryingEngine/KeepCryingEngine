@@ -3,6 +3,8 @@
 #include <MathGeoLib.h>
 #include <ImGuizmo.h>
 
+#include "Application.h"
+#include "ModuleTime.h"
 #include "GameObject.h"
 
 using namespace std;
@@ -97,9 +99,9 @@ vector<Component::Type> Transform::GetProhibitedComponents() const
 	return { Transform::TYPE };
 }
 
-void Transform::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+void Transform::RealUpdate()
 {
-	UpdateVelocity(deltaTimeS, realDeltaTimeS);
+	UpdateVelocity();
 }
 
 float4x4 Transform::GetLocalMatrix() const
@@ -268,9 +270,9 @@ void Transform::Decompose(const float4x4 & matrix, float3 & position, Quat & rot
 	rotation.Normalize();
 }
 
-void Transform::UpdateVelocity(float deltaTimeS, float realDeltaTimeS)
+void Transform::UpdateVelocity()
 {
-	velocity = (GetWorldPosition() - previousWorldPosition).Div(realDeltaTimeS);
+	velocity = (GetWorldPosition() - previousWorldPosition).Div(App->time->GetDeltaTime());
 	previousWorldPosition = GetWorldPosition();
 }
 

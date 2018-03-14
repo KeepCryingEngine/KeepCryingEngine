@@ -8,6 +8,7 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
+#include "ModuleTime.h"
 
 #include "GameObject.h"
 #include "Transform2D.h"
@@ -26,12 +27,14 @@ ModuleGameUI::ModuleGameUI()
 ModuleGameUI::~ModuleGameUI()
 {}
 
-update_status ModuleGameUI::Update(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleGameUI::Update()
 {
 	if(root != nullptr)
 	{
 		CheckUIStatus();
-		UpdateRecursivePreOrder(deltaTimeS, realDeltaTimeS, root->gameObject);
+		glDisable(GL_DEPTH_TEST);
+		UpdateRecursivePreOrder(root->gameObject);
+		glEnable(GL_DEPTH_TEST);
 	}
 	return update_status::UPDATE_CONTINUE;
 }
@@ -61,26 +64,31 @@ GameObject * ModuleGameUI::GetHoveringGameObject()
 	return hovering;
 }
 
-void ModuleGameUI::UpdateRecursivePreOrder(float deltaTimeS, float realDeltaTimeS, GameObject * gameObject)
+void ModuleGameUI::UpdateRecursivePreOrder(GameObject * gameObject)
 {
 	assert(gameObject != nullptr);
 
-	if(gameObject->ChildCount() == 0)
+	if(!gameObject->IsEnabled())
 	{
-		UpdateNode(deltaTimeS, realDeltaTimeS, gameObject);
 		return;
 	}
-	UpdateNode(deltaTimeS, realDeltaTimeS, gameObject);
+
+	if(gameObject->ChildCount() == 0)
+	{
+		UpdateNode(gameObject);
+		return;
+	}
+	UpdateNode(gameObject);
 
 	const vector<GameObject*>& childs = gameObject->GetChildren();
 	for(vector<GameObject*>::const_iterator it = childs.cbegin();it != childs.cend();it++)
 	{
 		GameObject * child = *it;
-		UpdateRecursivePreOrder(deltaTimeS,realDeltaTimeS, child);
+		UpdateRecursivePreOrder(child);
 	}
 }
 
-void ModuleGameUI::UpdateNode(float deltaTimeS, float realDeltaTimeS, GameObject * g)
+void ModuleGameUI::UpdateNode(GameObject * g)
 {
 	assert(g != nullptr);
 	const vector<Component*>& components = g->GetComponents();
@@ -133,33 +141,70 @@ void ModuleGameUI::CheckUIStatus()
 	hovering = nullptr;
 
 	PreOrdenZCheck(root->gameObject);
-	if(hovering != nullptr)
+	//Tab functionality
+	if(focus != nullptr && App->input->UIGetKey(SDL_SCANCODE_TAB) == KeyState::KEY_DOWN)
 	{
-		if(App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
+		if(!alreadyPressed)
 		{
-			focus = hovering;
-			pressed = hovering;
-		}
-		if(focus != nullptr)
+			NextFocus();
+			alreadyPressed = true;
+		}	
+	}
+	else if(App->input->UIGetKey(SDL_SCANCODE_TAB) == KeyState::KEY_UP)
+	{
+		alreadyPressed = false;
+	}
+
+	if(App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
+	{
+		if(hovering != nullptr)
 		{
-			App->input->SetOverUI(true);
+			if(hovering->IsFocuseableUI())
+			{
+				focus = hovering;
+				pressed = hovering;
+			}
+			else
+			{
+				focus = nullptr;
+			}
 		}
+		else
+		{
+			focus = nullptr;
+		}
+	}
+	//We are still on UI, then we absorb input
+	if(hovering != nullptr || focus != nullptr)
+	{
+		App->input->SetOverUI(true);
 	}
 }
 
 void ModuleGameUI::PreOrdenZCheck(GameObject * currentNode)
 {
+	assert(currentNode);
+	if(!currentNode->IsEnabled())
+	{
+		return;
+	}
 	if(currentNode->ChildCount() == 0)
+	{
+		if(currentNode->IsHovereableUI())
+		{
+			if(CheckIfMouseOver(currentNode))
+			{
+				hovering = currentNode;
+			}
+		}
+		return;
+	}
+	if(currentNode->IsHovereableUI())
 	{
 		if(CheckIfMouseOver(currentNode))
 		{
 			hovering = currentNode;
 		}
-		return;
-	}
-	if(CheckIfMouseOver(currentNode))
-	{
-		hovering = currentNode;
 	}
 	vector<GameObject*> children = currentNode->GetChildren();
 	for(GameObject* g : children)
@@ -171,6 +216,7 @@ void ModuleGameUI::PreOrdenZCheck(GameObject * currentNode)
 bool ModuleGameUI::CheckIfMouseOver(GameObject * g)
 {
 	float2 mousePos = App->input->GetMousePosition();
+	mousePos.y = App->configuration.screenHeight - mousePos.y;
 	float3 maxPos = g->GetComponent<Transform2D>()->GetMaxPosition();
 	float3 minPos = g->GetComponent<Transform2D>()->GetMinPosition();
 
@@ -188,6 +234,76 @@ bool ModuleGameUI::CheckIfMouseOver(GameObject * g)
 	}
 
 	return (xHit && yHit);
+}
+
+void ModuleGameUI::NextFocus()
+{
+	firstFocusAvailable = nullptr;
+	firstFocusAvailableFlag = true;
+	nextItsFocusFlag = false;
+	if(!NextFocusPreOrderZCheck(root->gameObject))
+	{
+		focus = firstFocusAvailable;
+	}
+}
+
+bool ModuleGameUI::NextFocusPreOrderZCheck(GameObject * currentNode)
+{
+	if(!currentNode->IsEnabled())
+	{
+		return false;
+	}
+	if(currentNode->ChildCount() == 0)
+	{
+		if(currentNode->IsFocuseableUI())
+		{
+			if(firstFocusAvailableFlag)
+			{
+				firstFocusAvailable = currentNode;
+				firstFocusAvailableFlag = false;
+			}
+
+			if(focus == currentNode)
+			{
+				nextItsFocusFlag = true;
+			}
+			else if(nextItsFocusFlag)
+			{
+				focus = currentNode;
+				return true;
+			}
+		}
+		return false;
+	}
+	if(currentNode->IsFocuseableUI())
+	{
+		if(firstFocusAvailableFlag)
+		{
+			firstFocusAvailable = currentNode;
+			firstFocusAvailableFlag = false;
+		}
+
+		if(focus == currentNode)
+		{
+			nextItsFocusFlag = true;
+		}
+		else if(nextItsFocusFlag)
+		{
+			focus = currentNode;
+			return true;
+		}
+	}
+	bool ret = false;
+	vector<GameObject*> children = currentNode->GetChildren();
+	for(GameObject* g : children)
+	{
+		ret = ret || NextFocusPreOrderZCheck(g);
+		if(ret)
+		{
+			return ret;
+		}
+	}
+	return ret;
 }
 
 void ModuleGameUI::UpdateCanvas(Canvas * canvas)
@@ -230,6 +346,7 @@ void ModuleGameUI::UpdateImage(Image * image)
 	glTexCoord2f(1, 0);  glVertex3f(max.x, min.y, min.z);
 	glTexCoord2f(1, 1); glVertex3f(max.x, max.y, min.z);
 	glTexCoord2f(0, 1); glVertex3f(min.x, max.y, min.z);
+
 	glEnd();
 
 	glBindTexture(GL_TEXTURE_2D,0);
@@ -246,11 +363,11 @@ void ModuleGameUI::UpdateImage(Image * image)
 
 void ModuleGameUI::UpdateButton(Button * button)
 {
-	if(button->GetTextGameObject() == pressed || button->gameObject == pressed)
+	if(button->gameObject == pressed)
 	{
 		button->OnClick();
 	}
-	else if(button->GetTextGameObject() == hovering || button->gameObject == hovering)
+	else if(button->gameObject == hovering || button->gameObject == focus)
 	{
 		button->OnHovering();
 	}
@@ -309,7 +426,7 @@ void ModuleGameUI::UpdateText(Text * text)
 
 void ModuleGameUI::UpdateInputText(InputText * inputText)
 {
-	if(inputText->GetTextGameObject() == focus || inputText->GetPlaceHolderGameObject() == focus || inputText->gameObject == focus)
+	if(inputText->gameObject == focus)
 	{
 		inputText->OnFocus();
 	}

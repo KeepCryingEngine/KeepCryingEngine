@@ -151,7 +151,7 @@ void GameObject::SetStatic(bool value)
 	}
 }
 
-void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
+void GameObject::Update()
 {
 	CheckToStart();
 	CheckToDestroy();
@@ -160,7 +160,7 @@ void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
 	{
 		for(Component* component : components)
 		{
-			component->Update(deltaTimeS, realDeltaTimeS);
+			component->Update();
 		}
 	}
 }
@@ -208,22 +208,73 @@ void GameObject::SetVisible(bool visible)
 GameObject * GameObject::GetChildByName(const std::string& name) const
 {
 	GameObject * ret = nullptr;
-	if (this->name == name)
+	if(this->name == name)
 	{
 		ret = (GameObject*)this;
-	} 
-	else 
+	}
+	else
 	{
-		for (GameObject* child : children)
+		for(GameObject* child : children)
 		{
 			ret = child->GetChildByName(name);
-			if (ret != nullptr)
+			if(ret != nullptr)
 			{
 				break;
 			}
 		}
 	}
 	return ret;
+}
+
+void GameObject::CheckIfFocuseableUI()
+{
+	for(Component* const c : GetComponents())
+	{
+		if(c->IsFocuseableUI())
+		{
+			isFocuseableUI = true;
+			return;
+		}
+	}
+	isFocuseableUI = false;
+}
+
+void GameObject::SetFocuseableUI(bool value)
+{
+	isFocuseableUI = value;
+}
+
+bool GameObject::IsFocuseableUI() const
+{
+	return isFocuseableUI;
+}
+
+void GameObject::CheckIfHovereableUI()
+{
+	for(Component* const c : GetComponents())
+	{
+		if(c->IsHovereableUI())
+		{
+			isHovereableUI = true;
+			return;
+		}
+	}
+	isHovereableUI = false;
+}
+
+void GameObject::SetHovereableUI(bool value)
+{
+	isHovereableUI = value;
+}
+
+bool GameObject::IsHovereableUI() const
+{
+	return isHovereableUI;
+}
+
+const ENGINE_UUID & GameObject::UUID() const
+{
+	return uuid;
 }
 
 Component* GameObject::GetComponent(Component::Type type) const

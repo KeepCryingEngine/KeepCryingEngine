@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <imgui.h>
+#include "ENGINE_UUID.h"
 
 class GameObject;
 
@@ -35,11 +36,11 @@ public:
 	virtual void Start(){};
 	virtual void Destroy(){};
 
-	virtual void Update(float deltaTimeS, float realDeltaTimeS)
+	virtual void Update()
 	{
 		if(enabled)
 		{
-			RealUpdate(deltaTimeS,realDeltaTimeS);
+			RealUpdate();
 		}
 	};
 
@@ -48,18 +49,31 @@ public:
 		enabled = setEnable;
 	};
 
-	virtual void RealUpdate(float deltaTimeS, float realDeltaTimeS){};
+	virtual void RealUpdate(){};
 	
 	virtual void DrawUI(){};
 
 	virtual std::vector<Component::Type> GetNeededComponents() const { return { }; }
 	virtual std::vector<Component::Type> GetProhibitedComponents() const { return { }; }
 
+	virtual bool IsFocuseableUI() const
+	{
+		return isFocuseableUI;
+	}
+
+	virtual bool IsHovereableUI() const
+	{
+		return isHovereableUI;
+	}
+
 public:
+	ENGINE_UUID uuid;
 	bool enabled;
 	bool wasEnabled;
 	Component::Type type;
 	GameObject* gameObject = nullptr;
+	bool isFocuseableUI = false;
+	bool isHovereableUI = false;
 };
 
 #endif // !_COMPONENT_H_

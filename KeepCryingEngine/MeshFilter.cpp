@@ -41,7 +41,7 @@ std::vector<Component::Type> MeshFilter::GetNeededComponents() const
 	return { MeshRenderer::TYPE };
 }
 
-void MeshFilter::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+void MeshFilter::RealUpdate()
 {
 	if (mesh)
 	{

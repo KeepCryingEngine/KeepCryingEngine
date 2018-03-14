@@ -22,8 +22,8 @@ public:
 	bool Init() override;
 	bool Start() override;
 	bool CleanUp() override;
-	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
-	update_status PostUpdate(float deltaTimeS, float realDeltaTimeS) override;
+	update_status Update() override;
+	update_status PostUpdate() override;
 
 	bool GetFrustumCulling()const;
 	bool GetDebugMode()const;
@@ -39,6 +39,7 @@ private:
 
 	void CallWindows();
 	void SetAllParameters();
+	void DrawEditorControler();
 	void DrawMainMenu();
 	void DrawAboutMenu();
 	void DrawCameraWindow();
@@ -91,6 +92,7 @@ private:
 	bool generateGameObjectWindow = true;
 	bool spacePartitioningWindow = true;
 	bool loadedTexturesInfoWindow = true;
+	bool editorControler = true;
 
 	//Editor click
 	ClickMode clickMode = ClickMode::Pick;

@@ -53,7 +53,7 @@ public:
 	virtual ~ModuleAnim();
 
 	bool CleanUp() override;
-	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
+	update_status Update() override;
 
 	void UpdateAnimationInstance(const size_t &i, unsigned int time);
 

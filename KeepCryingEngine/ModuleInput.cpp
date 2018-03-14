@@ -44,7 +44,7 @@ bool ModuleInput::Start()
 	return true;
 }
 
-update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleInput::PreUpdate()
 {
 	static SDL_Event event;
 
@@ -92,10 +92,6 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 	if(startToRead)
 	{
 		SDL_StartTextInput();
-	}
-	else
-	{
-		text = "";
 	}
 	while(SDL_PollEvent(&event) != 0)
 	{
@@ -155,16 +151,145 @@ update_status ModuleInput::PreUpdate(float deltaTimeS, float realDeltaTimeS)
 					wheel_motion = (float)event.wheel.y;
 				}
 				break;
+
+			case SDL_KEYDOWN:
+			{
+				if(startToRead)
+				{
+					//Handle backspace
+					if(event.key.keysym.sym == SDLK_BACKSPACE && text.length() > 0)
+					{
+						if(IsShifting())
+						{
+							int startErase = min(actualTextPos, shiftInitialTextPos);
+							if(startErase < 0)
+							{
+								startErase++;
+							}
+							text.erase(startErase,abs(actualTextPos-shiftInitialTextPos));
+							actualTextPos = min(actualTextPos, shiftInitialTextPos);
+							shiftInitialTextPos = actualTextPos;
+						}
+						else if(actualTextPos > 0)
+						{
+							text.erase(actualTextPos - 1, 1);
+							if(--actualTextPos < 0)
+							{
+								actualTextPos++;
+							}
+							shiftInitialTextPos = actualTextPos;
+						}
+						
+					}
+					//Handle copy
+					else if(event.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL)
+					{
+						if(IsShifting())
+						{
+							SDL_SetClipboardText(GetShiftedText().c_str());
+						}
+					}
+					//Handle paste
+					else if(event.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL)
+					{
+						if(IsShifting())
+						{
+							int startErase = min(actualTextPos, shiftInitialTextPos);
+							if(startErase < 0)
+							{
+								startErase++;
+							}
+							text.erase(startErase, abs(actualTextPos - shiftInitialTextPos));
+							actualTextPos = min(actualTextPos, shiftInitialTextPos);
+							shiftInitialTextPos = actualTextPos;
+						}
+						text.insert(actualTextPos, SDL_GetClipboardText());
+						int size = strlen(SDL_GetClipboardText());
+						actualTextPos += size;
+						shiftInitialTextPos = actualTextPos;
+					}
+					//Handle right arrow
+					else if(event.key.keysym.sym == SDLK_RIGHT)
+					{
+						if(++actualTextPos > text.length())
+						{
+							actualTextPos--;
+						}
+
+						if(!(SDL_GetModState() & KMOD_SHIFT)){
+							shiftInitialTextPos = actualTextPos;
+						}
+					}
+					//Handle left arrow
+					else if(event.key.keysym.sym == SDLK_LEFT)
+					{
+						if(--actualTextPos < 0)
+						{
+							actualTextPos++;
+						}
+
+						if(!(SDL_GetModState() & KMOD_SHIFT))
+						{
+							shiftInitialTextPos = actualTextPos;
+						}
+					}
+					else if(event.key.keysym.sym == SDLK_HOME)
+					{
+						actualTextPos = 0;
+						if(!(SDL_GetModState() & KMOD_SHIFT))
+						{
+							shiftInitialTextPos = actualTextPos;
+						}
+					}
+					else if(event.key.keysym.sym == SDLK_END)
+					{
+						actualTextPos = text.length();
+						if(!(SDL_GetModState() & KMOD_SHIFT))
+						{
+							shiftInitialTextPos = actualTextPos;
+						}
+					}
+					else if(event.key.keysym.sym == SDLK_RETURN)
+					{
+						text.insert(actualTextPos,"\n");
+						shiftInitialTextPos = ++actualTextPos;
+					}
+				}
+			}
+			break;
 			case SDL_TEXTINPUT:
 			{
 				if(startToRead)
 				{
-					strcat(text, event.text.text);
-					SetStartToRead(false);
+					if(IsShifting())
+					{
+						int startErase = min(actualTextPos, shiftInitialTextPos);
+						if(startErase < 0)
+						{
+							startErase++;
+						}
+						text.erase(startErase, abs(actualTextPos - shiftInitialTextPos));
+						actualTextPos = min(actualTextPos, shiftInitialTextPos);
+						shiftInitialTextPos = actualTextPos;
+					}
+					text.insert(actualTextPos++, event.text.text);
+					shiftInitialTextPos = actualTextPos;
 				}
 			}
+			break;
 		}
 	}
+
+	if(actualTextPos != shiftInitialTextPos)
+	{
+		isShifting = true;
+	}
+	else
+	{
+		isShifting = false;
+	}
+
+	SetStartToRead(false);
 
 	if(GetWindowEvent(EventWindow::WE_QUIT) || GetKey(SDL_SCANCODE_ESCAPE) == KeyState::KEY_DOWN)
 		return update_status::UPDATE_STOP;
@@ -261,9 +386,40 @@ bool ModuleInput::GetStartToRead() const
 	return startToRead;
 }
 
-char * ModuleInput::GetCurrentText()
+void ModuleInput::SetText(const char* newText)
+{
+	text = newText;
+	actualTextPos = text.length();
+	shiftInitialTextPos = actualTextPos;
+}
+
+const std::string& ModuleInput::GetCurrentText()
 {
 	return text;
+}
+
+bool ModuleInput::IsShifting() const
+{
+	return isShifting;
+}
+
+const std::string ModuleInput::GetShiftedText()
+{
+	if(IsShifting())
+	{
+		int minOffset = min(shiftInitialTextPos, actualTextPos);
+		int maxOffset = max(shiftInitialTextPos, actualTextPos);
+		return text.substr(minOffset, maxOffset);
+	}
+	else
+	{
+		return "";
+	}
+}
+
+int ModuleInput::GetActualTextPos()
+{
+	return actualTextPos;
 }
 
 const float2& ModuleInput::GetMouseMotion() const

@@ -40,8 +40,8 @@ public:
 
 	bool Init() override;
 
-	update_status PreUpdate(float deltaTimeS, float realDeltaTimeS) override;
-	update_status Update(float deltaTimeS, float realDeltaTimeS) override;
+	update_status PreUpdate() override;
+	update_status Update() override;
 
 	bool CleanUp() override;
 
@@ -86,7 +86,7 @@ private:
 
 	void CheckToDestroy();
 
-	void Update(GameObject* gameObject, float deltaTimeS, float realDeltaTimeS) const;
+	void Update(GameObject* gameObject) const;
 
 	void DestroyAndRelease(GameObject* &gameObject) const;
 

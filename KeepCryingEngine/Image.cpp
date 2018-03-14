@@ -13,11 +13,49 @@ Image::Image(): Component(Image::TYPE)
 Image::~Image()
 {}
 
+void Image::Awake()
+{
+	isHovereableUI = true;
+	gameObject->SetHovereableUI(true);
+}
+
+void Image::Destroy()
+{
+	isHovereableUI = false;
+	gameObject->CheckIfHovereableUI();
+}
+
+void Image::SetEnable(bool value)
+{
+	Component::SetEnable(value);
+	if(value)
+	{
+		isHovereableUI = true;
+		gameObject->SetHovereableUI(true);
+	}
+	else
+	{
+		isHovereableUI = false;
+		gameObject->CheckIfHovereableUI();
+	}
+}
+
+std::vector<Component::Type> Image::GetNeededComponents() const
+{
+	return { Component::Type::Transform2D };
+}
+
 void Image::DrawUI()
 {
 	if (ImGui::CollapsingHeader("Image"))
 	{
-		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		ImGui::PushID(gameObject->GetId());
+		if(ImGui::Checkbox("Active", &enabled))
+		{
+			SetEnable(enabled);
+		}
+		ImGui::SameLine();
+		ImGui::PopID();
 		if(ImGui::Button("Delete Component"))
 		{
 			gameObject->RemoveComponent(this);

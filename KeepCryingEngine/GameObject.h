@@ -7,6 +7,8 @@
 #include <AABB.h>
 
 #include "Component.h"
+#include "ENGINE_UUID.h"
+
 
 class Transform;
 
@@ -64,7 +66,7 @@ public:
 	// void OnEnable() {}
 	// void Start() {}
 	// void PreUpdate() {}
-	void Update(float deltaTimeS, float realDeltaTimeS);
+	void Update();
 	// void LateUpdate() {}
 	// void OnDisable() {}
 	void OnDestroy();
@@ -76,6 +78,16 @@ public:
 	void SetVisible(bool visible);
 
 	GameObject* GetChildByName(const std::string& name) const;
+
+	void CheckIfFocuseableUI();
+	void SetFocuseableUI(bool value);
+	bool IsFocuseableUI()const;
+
+	void CheckIfHovereableUI();
+	void SetHovereableUI(bool value);
+	bool IsHovereableUI()const;
+
+	const ENGINE_UUID& UUID() const;
 
 private:
 	Component * AddComponent(Component::Type type);
@@ -92,6 +104,7 @@ private:
 	bool CanAttach(const Component& component) const;
 
 private:
+	ENGINE_UUID uuid;
 	GameObject* parent = nullptr;
 
 	std::list<Component*> toStart;
@@ -102,6 +115,8 @@ private:
 	Transform* transform = nullptr;
 	std::string name;
 
+	bool isFocuseableUI = false;
+	bool isHovereableUI = false;
 	bool enable = true;
 	bool isStatic = false;
 	int id;

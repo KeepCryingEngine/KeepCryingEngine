@@ -3,6 +3,7 @@
 #include "ModuleTexture.h"
 
 #include <DevIL.h>
+#include <sstream>
 
 using namespace std;
 using namespace std::experimental::filesystem;
@@ -44,14 +45,52 @@ const TTF_Font* ModuleFont::LoadFont(const path& fontPath, int size)
 	return font;
 }
 
-const Texture* ModuleFont::RenderFromText(const TTF_Font* font, const string& message, const SDL_Color& color) const
+static void split(const string& s, char delim, vector<string>& elems)
+{
+	string item;
+	stringstream ss(s);
+	
+	while(getline(ss, item, delim))
+	{
+		elems.push_back(item);
+	}
+}
+
+const Texture* ModuleFont::RenderFromText(const TTF_Font* font, const string& message, const SDL_Color& color, int minWrapW) const
 {
 	if(font == nullptr)
 	{
 		return nullptr;
 	}
 
-	SDL_Surface* sFont = TTF_RenderText_Blended((TTF_Font*)font, message.c_str(), color);
+	SDL_Surface* sFont;
+
+	if(minWrapW >= 0)
+	{
+		int wrapLongestWordW = 0;
+
+		vector<string> words;
+		split(message, ' ', words);
+
+		for(const string& word : words)
+		{
+			int w;
+			TTF_SizeText((TTF_Font*)font, word.c_str(), &w, nullptr);
+
+			if(w > wrapLongestWordW)
+			{
+				wrapLongestWordW = w;
+			}
+		}
+
+		int wrapLength = max(minWrapW, wrapLongestWordW);
+
+		sFont = TTF_RenderText_Blended_Wrapped((TTF_Font*)font, message.c_str(), color, wrapLength);
+	}
+	else
+	{
+		sFont = TTF_RenderText_Blended((TTF_Font*)font, message.c_str(), color);
+	}
 
 	const Texture* tFont = CreateTextureFromSurface(sFont);
 

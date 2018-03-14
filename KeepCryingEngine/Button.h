@@ -11,6 +11,7 @@ class Texture;
 
 enum class ButtonState
 {
+	NORMAL,
 	HOVER,
 	PRESSED,
 	DISABLED,
@@ -34,14 +35,17 @@ public:
 	~Button();
 
 	void Awake() override;
+	void Destroy() override;
+	void SetEnable(bool value)override;
 
-	void RealUpdate(float deltaTimeS, float realDeltaTimeS)override;
+	void RealUpdate()override;
 
 	void DrawUI() override;
 
 	void OnHovering();
 	void OnClick();
 
+	std::vector<Component::Type> GetNeededComponents() const override;
 	void SetTextureByPath(const std::experimental::filesystem::path& path,ButtonState state);
 	void SetColor(float4 newColor,ButtonState state);
 	void SetTextGameObject(GameObject& g);
@@ -51,7 +55,7 @@ public:
 	GameObject* GetTextGameObject() const;
 
 private:
-	ButtonState state = ButtonState::DISABLED;
+	ButtonState state = ButtonState::NORMAL;
 	Transition transitionType = Transition::COLOR;
 	float4 colors[(unsigned int)ButtonState::NUMBER_STATES];
 	Texture* textures[(unsigned int)ButtonState::NUMBER_STATES];

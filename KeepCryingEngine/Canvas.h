@@ -1,6 +1,8 @@
 #ifndef _CANVAS_H_
 #define _CANVAS_H_
 
+#include <vector>
+
 #include "Component.h"
 
 class Canvas : public Component
@@ -11,6 +13,7 @@ public:
 	Canvas();
 	~Canvas();
 
+	std::vector<Component::Type> GetNeededComponents() const override;
 	void DrawUI() override;
 };
 

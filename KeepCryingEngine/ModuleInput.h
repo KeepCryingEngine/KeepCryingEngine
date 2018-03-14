@@ -7,6 +7,8 @@
 
 #include "Module.h"
 
+#define MAX_TEXT 255
+
 enum class EventWindow
 {
 	WE_QUIT,
@@ -41,7 +43,7 @@ public:
 
 	bool Start() override;
 
-	update_status PreUpdate(float deltaTimeS, float realDeltaTimeS) override;
+	update_status PreUpdate() override;
 
 	bool CleanUp() override;
 
@@ -137,7 +139,11 @@ public:
 	void SetStartToRead(bool value);
 	bool GetStartToRead()const;
 
-	char* GetCurrentText();
+	void SetText(const char*  newText);
+	const std::string& GetCurrentText();
+	bool IsShifting()const;
+	const std::string GetShiftedText();
+	int GetActualTextPos();
 
 private:
 	bool windowEvents[(uint)EventWindow::WE_COUNT];
@@ -148,7 +154,10 @@ private:
 	float wheel_motion;
 	bool overUI = false;
 	bool startToRead = false;
-	char* text = "";
+	std::string text;
+	int shiftInitialTextPos = 0;
+	int actualTextPos = 0;
+	bool isShifting = false;
 };
 
 #endif // !_MODULEINPUT_H_

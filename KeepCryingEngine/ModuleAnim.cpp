@@ -12,6 +12,7 @@
 #include "MeshFilter.h"
 #include "Mesh.h"
 #include "Animator.h"
+#include "ModuleTime.h"
 
 using namespace std;
 
@@ -30,9 +31,9 @@ bool ModuleAnim::CleanUp()
 	return true;
 }
 
-update_status ModuleAnim::Update(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleAnim::Update()
 {
-	unsigned time = (uint)(1000 * deltaTimeS);
+	unsigned time = (uint)(1000 * App->time->GetDeltaTime());
 
 	for(size_t i = 0; i < instances.size(); ++i)
 	{

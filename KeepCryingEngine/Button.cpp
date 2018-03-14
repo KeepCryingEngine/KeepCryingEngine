@@ -9,13 +9,18 @@
 #include <SDL.h>
 
 Button::Button(): Component(Button::TYPE)
-{}
+{
+}
 
 Button::~Button()
 {}
 
 void Button::Awake()
 {
+	isFocuseableUI = true;
+	isHovereableUI = true;
+	gameObject->SetFocuseableUI(true);
+	gameObject->SetHovereableUI(true);
 	for(int i = 0; i < (int)ButtonState::NUMBER_STATES; i++)
 	{
 		colors[i] = float4().one;
@@ -23,7 +28,55 @@ void Button::Awake()
 	}
 }
 
-void Button::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+void Button::Destroy()
+{
+	isFocuseableUI = false;
+	isHovereableUI = false;
+	gameObject->CheckIfFocuseableUI();
+	gameObject->CheckIfHovereableUI();
+}
+
+std::vector<Component::Type> Button::GetNeededComponents() const
+{
+	return { Component::Type::Transform2D };
+}
+
+void Button::SetEnable(bool value)
+{
+	Component::SetEnable(value);
+	Image* img = gameObject->GetComponent<Image>();
+	if(value)
+	{
+		isFocuseableUI = true;
+		isHovereableUI = true;
+		gameObject->SetFocuseableUI(true);
+		gameObject->SetHovereableUI(true);
+		state = ButtonState::NORMAL;
+	}
+	else
+	{
+		isFocuseableUI = false;
+		isHovereableUI = false;
+		gameObject->CheckIfFocuseableUI();
+		gameObject->CheckIfHovereableUI();
+		state = ButtonState::DISABLED;
+	}
+	switch(transitionType)
+	{
+		case Transition::COLOR:
+			img->SetTexture(*textures[(unsigned int)ButtonState::NORMAL]);
+			img->SetColor(colors[(unsigned int)state]);
+			break;
+		case Transition::SPRITE:
+			img->SetTexture(*textures[(unsigned int)state]);
+			break;
+		default:
+			assert(false);
+			break;
+	}
+}
+
+void Button::RealUpdate()
 {
 	Image* img = gameObject->GetComponent<Image>();
 	if(img != nullptr)
@@ -32,7 +85,7 @@ void Button::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		{
 			case Transition::COLOR:
 			{
-				img->SetTexture(*textures[(unsigned int)ButtonState::DISABLED]);
+				img->SetTexture(*textures[(unsigned int)ButtonState::NORMAL]);
 				img->SetColor(colors[(unsigned int)state]);
 			}
 				break;
@@ -47,27 +100,34 @@ void Button::RealUpdate(float deltaTimeS, float realDeltaTimeS)
 		}
 	}
 
-	state = ButtonState::DISABLED;
+	state = ButtonState::NORMAL;
 }
 
 void Button::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Button"))
 	{
-		ImGui::Checkbox("Active", &enabled); ImGui::SameLine();
+		ImGui::PushID(gameObject->GetId());
+		if(ImGui::Checkbox("Active", &enabled))
+		{
+			SetEnable(enabled);
+		}
+		ImGui::SameLine();
+		ImGui::PopID();
+
 		if(ImGui::Button("Delete Component"))
 		{
 			gameObject->RemoveComponent(this);
 		}
-		static char textureDisabledPath[252] = "Lenna.png";
+		static char textureNormalPath[252] = "Lenna.png";
 		ImGui::Text("Disabled"); ImGui::SameLine();
-		ImGui::InputText("##buttonDisabledTexture", textureDisabledPath, 252); ImGui::SameLine();
+		ImGui::InputText("##buttonDisabledTexture", textureNormalPath, 252); ImGui::SameLine();
 		if(ImGui::Button("Set Texture"))
 		{
 			std::experimental::filesystem::path path = "Assets/";
-			path /= textureDisabledPath;
+			path /= textureNormalPath;
 
-			SetTextureByPath(path, ButtonState::DISABLED);
+			SetTextureByPath(path, ButtonState::NORMAL);
 		}
 
 		static int transitionMode = (int)transitionType;
@@ -80,14 +140,16 @@ void Button::DrawUI()
 		{
 			case Transition::COLOR:
 			{
-				ImGui::DragFloat4("Disabled", colors[(unsigned int)ButtonState::DISABLED].ptr(), 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat4("Normal", colors[(unsigned int)ButtonState::NORMAL].ptr(), 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat4("Hover", colors[(unsigned int)ButtonState::HOVER].ptr(), 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat4("Pressed", colors[(unsigned int)ButtonState::PRESSED].ptr(), 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat4("Disabled", colors[(unsigned int)ButtonState::DISABLED].ptr(), 0.01f, 0.0f, 1.0f);
 			}
 			break;
 			case Transition::SPRITE:
 			{
-				static char textureHoverPath[252] = "Lenna.png";
+				ImGui::PushID(gameObject->GetId());
+				static char textureHoverPath[252] = "rock.jpg";
 				ImGui::Text("Hover"); ImGui::SameLine();
 				ImGui::InputText("##buttonHoverTexture", textureHoverPath, 252); ImGui::SameLine();
 				if(ImGui::Button("Set Texture"))//TODO:CHANGE NAME/ID
@@ -97,8 +159,10 @@ void Button::DrawUI()
 
 					SetTextureByPath(path, ButtonState::HOVER);
 				}
+				ImGui::PopID();
 
-				static char texturePressedPath[252] = "Lenna.png";
+				ImGui::PushID(gameObject->GetId() + 1);
+				static char texturePressedPath[252] = "exodia.dds";
 				ImGui::Text("Pressed"); ImGui::SameLine();
 				ImGui::InputText("##buttonPressedTexture", texturePressedPath, 252); ImGui::SameLine();
 				if(ImGui::Button("Set Texture"))//TODO:CHANGE NAME/ID
@@ -108,6 +172,20 @@ void Button::DrawUI()
 
 					SetTextureByPath(path, ButtonState::PRESSED);
 				}
+				ImGui::PopID();
+
+				ImGui::PushID(gameObject->GetId() + 2);
+				static char textureDisabledPath[252] = "Baker_house.png";
+				ImGui::Text("Pressed"); ImGui::SameLine();
+				ImGui::InputText("##buttonDisabledTexture", textureDisabledPath, 252); ImGui::SameLine();
+				if(ImGui::Button("Set Texture"))//TODO:CHANGE NAME/ID
+				{
+					std::experimental::filesystem::path path = "Assets/";
+					path /= textureDisabledPath;
+
+					SetTextureByPath(path, ButtonState::DISABLED);
+				}
+				ImGui::PopID();
 			}
 			break;
 			default:

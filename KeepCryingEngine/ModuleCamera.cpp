@@ -6,6 +6,7 @@
 #include "ModuleRender.h"
 #include "ModuleScene.h"
 #include "ModuleEditorUI.h"
+#include "ModuleTime.h"
 
 const float ModuleCamera::SHIFT_MULTIPLIER = 10.0f;
 const float ModuleCamera::WHEEL_FORCE = 10.0f;
@@ -25,21 +26,21 @@ bool ModuleCamera::Init()
 	return true;
 }
 
-update_status ModuleCamera::Update(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleCamera::Update()
 {
 	if(App->input->GetKey(SDL_SCANCODE_I) == KeyState::KEY_DOWN)
 	{
 		camera->SetUpFrustum(float3(0, 1, -10), Quat::identity);
 	}
 
-	float shiftDeltaMultiplier = deltaTimeS;
+	float shiftDeltaMultiplier = App->time->GetEditorDeltaTime();
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_LSHIFT) || App->input->GetKeyPressed(SDL_SCANCODE_RSHIFT))
 	{
 		shiftDeltaMultiplier *= SHIFT_MULTIPLIER;
 	}
 
-	Rotation(deltaTimeS);
+	Rotation(App->time->GetEditorDeltaTime());
 
 	Movement(shiftDeltaMultiplier);
 
