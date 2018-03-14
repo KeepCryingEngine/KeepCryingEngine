@@ -336,7 +336,17 @@ bool AudioSource::GetLoop()
 
 void AudioSource::Load(const nlohmann::json& json)
 {
-
+	volume = json["volume"];
+	originalFreq = json["originalFreq"];
+	freqModifier = json["freqModifier"];
+	minDistance = json["minDistance"];
+	maxDistance = json["maxDistance"];
+	rollOffFactor = json["rollOffFactor"];
+	doplerFactor = json["doplerFactor"];
+	loop = json["loop"];
+	path = json["path"];
+	usedAudioType = json["usedAudioType"];
+	usedChannelType = json["usedChannelType"];
 }
 
 void AudioSource::Save(nlohmann::json& json) const
