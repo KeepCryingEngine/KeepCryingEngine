@@ -77,6 +77,11 @@ private:
 	float doplerFactor = 1;
 	bool loop = false;
 
+	std::experimental::filesystem::path path;
+
+	ChannelType usedChannelType;
+	AudioType usedAudioType;
+
 	// DWORD id = 0;
 
 	ChannelType loadingChannelType = ChannelType::Mono;
@@ -88,4 +93,3 @@ private:
 };
 
 #endif // !_AUDIOSOURCE_H_
-
