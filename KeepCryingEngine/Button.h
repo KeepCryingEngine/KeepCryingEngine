@@ -48,11 +48,9 @@ public:
 	std::vector<Component::Type> GetNeededComponents() const override;
 	void SetTextureByPath(const std::experimental::filesystem::path& path,ButtonState state);
 	void SetColor(float4 newColor,ButtonState state);
-	void SetTextGameObject(GameObject& g);
 
 	Texture * GetTexture(ButtonState state) const;
 	float4 GetColor(ButtonState state)const;
-	GameObject* GetTextGameObject() const;
 
 	virtual void Load(const nlohmann::json& json) override;
 	virtual void Save(nlohmann::json& json) const override;
@@ -62,7 +60,7 @@ private:
 	Transition transitionType = Transition::COLOR;
 	float4 colors[(unsigned int)ButtonState::NUMBER_STATES];
 	Texture* textures[(unsigned int)ButtonState::NUMBER_STATES];
-	GameObject* textGameObject;
+	std::experimental::filesystem::path texturesPath[(unsigned int)ButtonState::NUMBER_STATES];
 };
 
 #endif // !_BUTTON_H_

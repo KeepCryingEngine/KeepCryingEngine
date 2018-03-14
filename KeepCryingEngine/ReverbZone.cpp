@@ -8,6 +8,7 @@
 #include "AudioSource.h"
 #include "ModuleRender.h"
 #include "AudioListener.h"
+#include "json_serializer.h"
 
 using namespace std;
 
@@ -168,14 +169,34 @@ void ReverbZone::SetMode(int mode)
 	DeapplyReverbConfig();
 }
 
-void ReverbZone::Load(const nlohmann::json & json)
+void ReverbZone::Load(const nlohmann::json& json)
 {
 
 }
 
-void ReverbZone::Save(nlohmann::json & json) const
+void ReverbZone::Save(nlohmann::json& json) const
 {
+	/*
 
+	Relevant information:
+
+	type
+	mode
+	minDistance
+	maxDistance
+	reverbConfig
+
+	*/
+
+	json["type"] = type;
+	json["mode"] = mode;
+	json["minDistance"] = minDistance;
+	json["maxDistance"] = maxDistance;
+
+	nlohmann::json jsonReverbConfig;
+	to_json(jsonReverbConfig, reverbConfig);
+
+	json["reverbConfig"] = jsonReverbConfig;
 }
 
 void ReverbZone::SetDistanceAndComputeCube(float& distance, AABB& cube, float distanceValue)

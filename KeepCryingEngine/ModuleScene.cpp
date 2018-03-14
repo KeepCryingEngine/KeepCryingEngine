@@ -295,7 +295,8 @@ GameObject * ModuleScene::AddButton(GameObject & parent)
 	}
 	gameObject->AddComponent<Transform2D>();
 	gameObject->AddComponent<Image>();
-	gameObject->AddComponent<Button>()->SetTextGameObject(*AddText(*gameObject));//Add text in a sub-object
+	gameObject->AddComponent<Button>();
+	AddText(*gameObject);
 	return gameObject;
 }
 
