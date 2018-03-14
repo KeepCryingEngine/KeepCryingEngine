@@ -47,7 +47,7 @@ void Mesh::Save(nlohmann::json & json)
 	mesh["name"] = name;
 	mesh["path"] = path.string();
 
-	json.push_back(mesh);
+	json["mesh"] = mesh;
 }
 
 const AABB & Mesh::GetAABB() const
