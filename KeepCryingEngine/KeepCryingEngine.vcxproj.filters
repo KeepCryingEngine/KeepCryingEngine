@@ -109,9 +109,6 @@
     <ClCompile Include="QuadtreeNode.cpp">
       <Filter>Trees</Filter>
     </ClCompile>
-    <ClCompile Include="ReverbZone.cpp">
-      <Filter>Entity</Filter>
-    </ClCompile>
     <ClCompile Include="SoundsEffects.cpp">
       <Filter>Entity</Filter>
     </ClCompile>
@@ -156,6 +153,9 @@
     </ClCompile>
     <ClCompile Include="ModuleFont.cpp">
       <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ReverbZone.cpp">
+      <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -280,9 +280,6 @@
     <ClInclude Include="QuadtreeNode.h">
       <Filter>Trees</Filter>
     </ClInclude>
-    <ClInclude Include="ReverbZone.h">
-      <Filter>Entity</Filter>
-    </ClInclude>
     <ClInclude Include="SoundsEffects.h">
       <Filter>Entity</Filter>
     </ClInclude>
@@ -336,6 +333,9 @@
     </ClInclude>
     <ClInclude Include="ModuleFont.h">
       <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ReverbZone.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

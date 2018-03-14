@@ -588,7 +588,9 @@ void ModuleScene::Save()
 
 	validJsonData = true;
 
-	std::ofstream file("Assets/Scene.json");
+	// test, save data
+
+	ofstream file("Assets/Scene.json");
 	file << jsonData;
 }
 

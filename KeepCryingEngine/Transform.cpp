@@ -417,7 +417,40 @@ void Transform::Load(const nlohmann::json & json)
 
 }
 
-void Transform::Save(nlohmann::json & json) const
+void Transform::Save(nlohmann::json& json) const
 {
+	/*
 
+	Relevant information:
+
+	type
+	localPosition
+	localRotation
+	localScale
+
+	*/
+
+	json["type"] = type;
+
+	json["position"] =
+	{
+		{ "x", localPosition.x },
+		{ "y", localPosition.y },
+		{ "z", localPosition.z }
+	};
+
+	json["rotation"] =
+	{
+		{ "x", localRotation.x },
+		{ "y", localRotation.y },
+		{ "z", localRotation.z },
+		{ "w", localRotation.w }
+	};
+
+	json["scale"] =
+	{
+		{ "x", localScale.x },
+		{ "y", localScale.y },
+		{ "z", localScale.z }
+	};
 }

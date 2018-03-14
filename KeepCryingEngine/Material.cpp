@@ -67,6 +67,8 @@ Texture* Material::GetTexture() const
 
 void Material::SetTexture(const std::experimental::filesystem::path& path)
 {
+	this->path = path;
+
 	Texture * texture = App->texture->GetAsset(path);
 	if(texture)
 	{
@@ -74,4 +76,24 @@ void Material::SetTexture(const std::experimental::filesystem::path& path)
 
 		this->texture = texture;
 	}
+}
+
+void Material::Load(const nlohmann::json& json)
+{
+
+}
+
+void Material::Save(nlohmann::json& json) const
+{
+	/*
+
+	Relevant information:
+
+	path
+	shaderType
+
+	*/
+
+	json["path"] = path.string();
+	json["type"] = shaderType;
 }

@@ -97,12 +97,26 @@ Material * MeshRenderer::GetMaterial() const
 	return material;
 }
 
-void MeshRenderer::Load(const nlohmann::json & json)
+void MeshRenderer::Load(const nlohmann::json& json)
 {
 
 }
 
-void MeshRenderer::Save(nlohmann::json & json) const
+void MeshRenderer::Save(nlohmann::json& json) const
 {
+	/*
 
+	Relevant information:
+
+	type
+	material
+
+	*/
+
+	json["type"] = type;
+
+	nlohmann::json jsonMaterial;
+	material->Save(jsonMaterial);
+
+	json["material"] = jsonMaterial;
 }
