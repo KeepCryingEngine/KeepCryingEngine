@@ -300,14 +300,10 @@ void GameObject::Save(json& json) const
 	isStatic
 	components
 
-	¿?
-
-	int id; // uID
-
 	*/
 
-	// json["uID"] = uID;
-	// json["parentUID"] = parent->uID;
+	json["uID"] = uuid.id;
+	json["parentUID"] = parent != nullptr ? parent->uuid.id : -1;
 	json["name"] = name;
 	json["enable"] = enable;
 	json["isStatic"] = isStatic;
