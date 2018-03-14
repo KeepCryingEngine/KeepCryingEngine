@@ -70,12 +70,20 @@ void AudioListener::DrawUI()
 	}
 }
 
-void AudioListener::Load(const nlohmann::json & json)
+void AudioListener::Load(const nlohmann::json& json)
 {
 
 }
 
-void AudioListener::Save(nlohmann::json & json) const
+void AudioListener::Save(nlohmann::json& json) const
 {
+	/*
 
+	Relevant information:
+
+	type
+
+	*/
+
+	json["type"] = type;
 }

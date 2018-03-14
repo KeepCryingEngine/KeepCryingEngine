@@ -25,4 +25,3 @@ public:
 };
 
 #endif // !_AUDIOLISTENER_H_
-
