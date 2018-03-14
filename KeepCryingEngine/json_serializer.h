@@ -24,7 +24,4 @@ void from_json(const nlohmann::json& j, Quat& v);
 void to_json(nlohmann::json& j, const Frustum& v);
 void from_json(const nlohmann::json& j, Frustum& v);
 
-void to_json(nlohmann::json& j, const std::set<std::experimental::filesystem::path>& s);
-void from_json(const nlohmann::json& j, std::set<std::experimental::filesystem::path>& s);
-
 #endif // !_JSON_SERIALIZER_H_
