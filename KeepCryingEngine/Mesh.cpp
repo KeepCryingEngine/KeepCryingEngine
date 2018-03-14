@@ -16,6 +16,40 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &vertexBufferId);
 }
 
+void Mesh::SetPath(const std::experimental::filesystem::path & path)
+{
+	this->path = path;
+}
+
+void Mesh::SetName(const std::string & name)
+{
+	this->name = name;
+}
+
+const std::experimental::filesystem::path & Mesh::GetPath() const
+{
+	return path;
+}
+
+const std::string & Mesh::GetName() const
+{
+	return name;
+}
+
+void Mesh::Load(const nlohmann::json & json)
+{
+}
+
+void Mesh::Save(nlohmann::json & json)
+{
+	nlohmann::json mesh;
+
+	mesh["name"] = name;
+	mesh["path"] = path.string();
+
+	json.push_back(mesh);
+}
+
 const AABB & Mesh::GetAABB() const
 {
 	return aabb;

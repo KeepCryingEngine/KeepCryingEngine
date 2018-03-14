@@ -61,7 +61,7 @@ void ModuleEntity::LoadMesh(const std::experimental::filesystem::path& path)
 		vector<Mesh*> createdMeshes;
 
 		ExtractMaterialsFromScene(createdMaterials, scene, path);
-		ExtractMeshesFromScene(createdMeshes, scene);
+		ExtractMeshesFromScene(createdMeshes, scene, path);
 
 		materials.insert(materials.end(), createdMaterials.begin(), createdMaterials.end());
 		meshes.insert(meshes.end(), createdMeshes.begin(), createdMeshes.end());
@@ -90,7 +90,7 @@ void ModuleEntity::ExtractMaterialsFromScene(std::vector<Material *> &createdMat
 	}
 }
 
-void ModuleEntity::ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, const aiScene * scene) const
+void ModuleEntity::ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, const aiScene * scene, const std::experimental::filesystem::path& path) const
 {
 	createdMeshes.reserve(scene->mNumMeshes);
 	for (unsigned int meshIndex = 0; meshIndex< scene->mNumMeshes; meshIndex++)
@@ -106,6 +106,8 @@ void ModuleEntity::ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, co
 
 		Mesh* mesh = new Mesh();
 		mesh->SetMeshData(vertices, indices, bones , GL_TRIANGLES);
+		mesh->SetName(aiMesh->mName.C_Str());
+		mesh->SetPath(path);
 
 		createdMeshes.push_back(mesh);
 	}
