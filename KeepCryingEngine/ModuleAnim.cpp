@@ -4,6 +4,9 @@
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 
+#include "Application.h"
+#include "ModuleTime.h"
+
 using namespace std;
 
 ModuleAnim::ModuleAnim()
@@ -21,9 +24,9 @@ bool ModuleAnim::CleanUp()
 	return true;
 }
 
-update_status ModuleAnim::Update(float deltaTimeS, float realDeltaTimeS)
+update_status ModuleAnim::Update()
 {
-	unsigned time = (uint)(1000 * deltaTimeS);
+	unsigned time = (uint)(1000 * App->time->GetDeltaTime());
 
 	for(size_t i = 0; i < instances.size(); ++i)
 	{

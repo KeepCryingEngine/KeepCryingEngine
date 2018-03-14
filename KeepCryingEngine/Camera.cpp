@@ -36,7 +36,7 @@ void Camera::Destroy()
 	SetUpFrustum(transform->position, transform->rotation);
 } */
 
-void Camera::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+void Camera::RealUpdate()
 {
 	Transform* transform = gameObject->GetTransform();
 

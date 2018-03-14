@@ -25,7 +25,7 @@ AudioSource::~AudioSource()
 void AudioSource::Awake()
 {}
 
-void AudioSource::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+void AudioSource::RealUpdate()
 {
 	if(audioClip == nullptr)
 	{

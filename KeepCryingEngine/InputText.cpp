@@ -56,7 +56,7 @@ void InputText::SetEnable(bool value)
 	}
 }
 
-void InputText::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+void InputText::RealUpdate()
 {
 	if(onFocus)
 	{

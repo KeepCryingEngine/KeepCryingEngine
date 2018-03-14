@@ -38,7 +38,7 @@ public:
 	void Destroy() override;
 	void SetEnable(bool value)override;
 
-	void RealUpdate(float deltaTimeS, float realDeltaTimeS)override;
+	void RealUpdate()override;
 
 	void DrawUI() override;
 

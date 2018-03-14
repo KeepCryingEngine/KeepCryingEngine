@@ -50,7 +50,7 @@ void ReverbZone::Start()
 	// SetUp reverbConfig
 }
 
-void ReverbZone::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+void ReverbZone::RealUpdate()
 {
 	SetMinDistance(minDistance);
 	SetMaxDistance(maxDistance);

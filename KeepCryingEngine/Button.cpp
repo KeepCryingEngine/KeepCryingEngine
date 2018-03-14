@@ -76,7 +76,7 @@ void Button::SetEnable(bool value)
 	}
 }
 
-void Button::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+void Button::RealUpdate()
 {
 	Image* img = gameObject->GetComponent<Image>();
 	if(img != nullptr)

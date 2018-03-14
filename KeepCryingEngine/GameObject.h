@@ -8,6 +8,8 @@
 #include <json.hpp>
 
 #include "Component.h"
+#include "ENGINE_UUID.h"
+
 
 class Transform;
 
@@ -59,8 +61,13 @@ public:
 
 	void DrawUI();
 
-	void Update(float deltaTimeS, float realDeltaTimeS);
-
+	// void Awake() {}
+	// void OnEnable() {}
+	// void Start() {}
+	// void PreUpdate() {}
+	void Update();
+	// void LateUpdate() {}
+	// void OnDisable() {}
 	void OnDestroy();
 
 	void SetAABB(const AABB& newAABB);
@@ -80,6 +87,8 @@ public:
 	void Load(const nlohmann::json& json);
 	void Save(nlohmann::json& json) const;
 
+	const ENGINE_UUID& UUID() const;
+
 private:
 	Component * AddComponent(Component::Type type);
 
@@ -95,6 +104,7 @@ private:
 	bool CanAttach(const Component& component) const;
 
 private:
+	ENGINE_UUID uuid;
 	GameObject* parent = nullptr;
 
 	std::list<Component*> toStart;

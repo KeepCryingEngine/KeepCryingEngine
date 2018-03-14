@@ -20,7 +20,7 @@ public:
 
 	virtual void Awake() override;
 	virtual void Start() override;
-	virtual void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
+	virtual void RealUpdate() override;
 	virtual void Destroy() override;
 
 	void DrawUI() override;

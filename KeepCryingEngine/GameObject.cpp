@@ -151,7 +151,7 @@ void GameObject::SetStatic(bool value)
 	}
 }
 
-void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
+void GameObject::Update()
 {
 	CheckToStart();
 	CheckToDestroy();
@@ -160,7 +160,7 @@ void GameObject::Update(float deltaTimeS, float realDeltaTimeS)
 	{
 		for(Component* component : components)
 		{
-			component->Update(deltaTimeS, realDeltaTimeS);
+			component->Update();
 		}
 	}
 }
@@ -269,7 +269,7 @@ void GameObject::Load(const json& json)
 void GameObject::Save(json& json) const
 {
 	/*
-	
+
 	Relevant information:
 
 	uID
@@ -282,7 +282,7 @@ void GameObject::Save(json& json) const
 	¿?
 
 	int id; // uID
-	
+
 	*/
 
 	// json["uID"] = uID;
@@ -293,7 +293,7 @@ void GameObject::Save(json& json) const
 
 	nlohmann::json jsonComponents;
 
-	for(Component* component : components)
+	for (Component* component : components)
 	{
 		nlohmann::json jsonComponent;
 		component->Save(jsonComponent);
@@ -302,6 +302,11 @@ void GameObject::Save(json& json) const
 	}
 
 	json["components"] = jsonComponents;
+}
+
+const ENGINE_UUID & GameObject::UUID() const
+{
+	return uuid;
 }
 
 Component* GameObject::GetComponent(Component::Type type) const

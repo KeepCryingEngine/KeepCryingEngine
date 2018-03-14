@@ -23,7 +23,7 @@ public:
 	std::vector<Component::Type> GetProhibitedComponents() const override;
 	std::vector<Component::Type> GetNeededComponents() const override;
 
-	void RealUpdate(float deltaTimeS, float realDeltaTimeS) override;
+	void RealUpdate() override;
 
 	Mesh* GetMesh() const;
 	void SetMesh(Mesh* mesh);

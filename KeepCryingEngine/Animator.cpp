@@ -15,7 +15,7 @@ Animator::Animator() :
 Animator::~Animator()
 { }
 
-void Animator::RealUpdate(float deltaTimeS, float realDeltaTimeS)
+void Animator::RealUpdate()
 {
 	if(HasValidAnimationInstance())
 	{

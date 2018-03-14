@@ -154,9 +154,16 @@
     <ClCompile Include="ModuleFont.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="ReverbZone.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+=======
+    <ClCompile Include="ModuleTime.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ENGINE_UUID.cpp" />
+>>>>>>> Develop
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -334,9 +341,16 @@
     <ClInclude Include="ModuleFont.h">
       <Filter>Modules</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="ReverbZone.h">
       <Filter>Components</Filter>
     </ClInclude>
+=======
+    <ClInclude Include="ModuleTime.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ENGINE_UUID.h" />
+>>>>>>> Develop
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
