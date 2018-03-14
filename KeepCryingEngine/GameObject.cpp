@@ -13,10 +13,15 @@
 using namespace std;
 using namespace nlohmann;
 
-GameObject::GameObject(const string& name) : name(name)
+GameObject::GameObject(const string& name, bool empty) : name(name)
 {
-	id = App->scene->GetNewGameObjectId();
-	transform = AddComponent<Transform>();
+	// id = App->scene->GetNewGameObjectId();
+	
+	if(!empty)
+	{
+		transform = AddComponent<Transform>();
+	}
+
 	App->scene->AddToDinamicGameobjectList(this);
 
 	aabb.SetNegativeInfinity();
@@ -66,10 +71,10 @@ const std::vector<GameObject*>& GameObject::GetChildren() const
 	return children;
 }
 
-GameObject* GameObject::GetById(unsigned long long int gameObjectId) const
+GameObject* GameObject::GetById(int gameObjectId) const
 {
 	GameObject* gameObject = nullptr;
-	if(id == gameObjectId)
+	if(uuid.id == gameObjectId)
 	{
 		gameObject = (GameObject*)this;
 	}
@@ -104,7 +109,12 @@ const string& GameObject::GetName() const
 
 int GameObject::GetId() const
 {
-	return id;
+	return uuid.id;
+}
+
+void GameObject::SetId(int id)
+{
+	uuid.id = id;
 }
 
 const bool GameObject::IsEnabled() const
@@ -272,19 +282,32 @@ bool GameObject::IsHovereableUI() const
 	return isHovereableUI;
 }
 
-void GameObject::Load(const json& json)
+void GameObject::PreLoad(const nlohmann::json & json)
 {
+	// All except parent
+
+	uuid = ENGINE_UUID((int)json["uID"]);
 	name = json["name"].get<string>();
+	enable = json["enable"];
+	isStatic = json["isStatic"];
 
 	for(const nlohmann::json& jsonComponent : json["components"])
 	{
-		Component::Type componentType = (Component::Type)((int)jsonComponent["type"]);
+		Component::Type componentType = jsonComponent["type"];
 
-		AddComponent(componentType)->Load(jsonComponent);
+		AddComponent(componentType, false)->Load(jsonComponent);
 	}
+
+	transform = GetComponent<Transform>();
 
 	CheckIfFocuseableUI();
 	CheckIfHovereableUI();
+}
+
+void GameObject::Load(const json& json)
+{
+	// Parent
+	SetParent(*App->scene->Get(json["parentUID"]));
 }
 
 void GameObject::Save(json& json) const
@@ -381,7 +404,7 @@ std::vector<Component*> GameObject::GetComponentsInChildren(Component::Type type
 	return components;
 }
 
-Component* GameObject::AddComponent(Component::Type type)
+Component* GameObject::AddComponent(Component::Type type, bool useNeeded)
 {
 	Component* component = ComponentFabric::CreateComponent(type);
 	assert(component);
@@ -390,11 +413,14 @@ Component* GameObject::AddComponent(Component::Type type)
 	{
 		AddInternalComponent(component);
 
-		for (Component::Type neededComponent : component->GetNeededComponents())
+		if(useNeeded)
 		{
-			if (GetComponent(neededComponent) == nullptr)
+			for(Component::Type neededComponent : component->GetNeededComponents())
 			{
-				AddComponent(neededComponent);
+				if(GetComponent(neededComponent) == nullptr)
+				{
+					AddComponent(neededComponent);
+				}
 			}
 		}
 	}

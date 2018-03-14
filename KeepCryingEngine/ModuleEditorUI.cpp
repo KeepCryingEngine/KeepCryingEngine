@@ -100,12 +100,12 @@ ClickMode ModuleEditorUI::GetClickMode() const
 	return clickMode;
 }
 
-void ModuleEditorUI::SetSelectedNodeID(unsigned long long id)
+void ModuleEditorUI::SetSelectedNodeID(int id)
 {
 	selectedNodeID = id;
 }
 
-unsigned long long ModuleEditorUI::GetSelectedNode() const
+int ModuleEditorUI::GetSelectedNode() const
 {
 	return selectedNodeID;
 }
