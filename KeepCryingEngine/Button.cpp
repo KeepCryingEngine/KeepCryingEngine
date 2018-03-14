@@ -7,9 +7,16 @@
 #include "Image.h"
 #include "GameObject.h"
 #include <SDL.h>
+#include "json_serializer.h"
 
 Button::Button(): Component(Button::TYPE)
 {
+	for(int i = 0; i < (int)ButtonState::NUMBER_STATES; i++)
+	{
+		colors[i] = float4().one;
+		textures[i] = nullptr;
+		texturesPath[i] = "";
+	}
 }
 
 Button::~Button()
@@ -21,11 +28,6 @@ void Button::Awake()
 	isHovereableUI = true;
 	gameObject->SetFocuseableUI(true);
 	gameObject->SetHovereableUI(true);
-	for(int i = 0; i < (int)ButtonState::NUMBER_STATES; i++)
-	{
-		colors[i] = float4().one;
-		textures[i] = nullptr;
-	}
 }
 
 void Button::Destroy()
@@ -120,12 +122,13 @@ void Button::DrawUI()
 			gameObject->RemoveComponent(this);
 		}
 		static char textureNormalPath[252] = "Lenna.png";
-		ImGui::Text("Disabled"); ImGui::SameLine();
-		ImGui::InputText("##buttonDisabledTexture", textureNormalPath, 252); ImGui::SameLine();
+		ImGui::Text("Normal"); ImGui::SameLine();
+		ImGui::InputText("##buttonNormalTexture", textureNormalPath, 252); ImGui::SameLine();
 		if(ImGui::Button("Set Texture"))
 		{
 			std::experimental::filesystem::path path = "Assets/";
 			path /= textureNormalPath;
+			texturesPath[(unsigned int)ButtonState::DISABLED] = path;
 
 			SetTextureByPath(path, ButtonState::NORMAL);
 		}
@@ -156,6 +159,7 @@ void Button::DrawUI()
 				{
 					std::experimental::filesystem::path path = "Assets/";
 					path /= textureHoverPath;
+					texturesPath[(unsigned int)ButtonState::HOVER] = path;
 
 					SetTextureByPath(path, ButtonState::HOVER);
 				}
@@ -169,6 +173,7 @@ void Button::DrawUI()
 				{
 					std::experimental::filesystem::path path = "Assets/";
 					path /= texturePressedPath;
+					texturesPath[(unsigned int)ButtonState::PRESSED] = path;
 
 					SetTextureByPath(path, ButtonState::PRESSED);
 				}
@@ -176,12 +181,13 @@ void Button::DrawUI()
 
 				ImGui::PushID(gameObject->GetId() + 2);
 				static char textureDisabledPath[252] = "Baker_house.png";
-				ImGui::Text("Pressed"); ImGui::SameLine();
+				ImGui::Text("Disabled"); ImGui::SameLine();
 				ImGui::InputText("##buttonDisabledTexture", textureDisabledPath, 252); ImGui::SameLine();
 				if(ImGui::Button("Set Texture"))//TODO:CHANGE NAME/ID
 				{
 					std::experimental::filesystem::path path = "Assets/";
 					path /= textureDisabledPath;
+					texturesPath[(unsigned int)ButtonState::DISABLED] = path;
 
 					SetTextureByPath(path, ButtonState::DISABLED);
 				}
@@ -220,11 +226,6 @@ void Button::SetColor(float4 newColor, ButtonState state)
 	colors[(unsigned int)state] = newColor;
 }
 
-void Button::SetTextGameObject(GameObject& g)
-{
-	textGameObject = &g;
-}
-
 Texture * Button::GetTexture(ButtonState state) const
 {
 	return textures[(unsigned int) state];
@@ -235,11 +236,6 @@ float4 Button::GetColor(ButtonState state) const
 	return colors[(unsigned int)state];
 }
 
-GameObject * Button::GetTextGameObject() const
-{
-	return textGameObject;
-}
-
 void Button::Load(const nlohmann::json & json)
 {
 
@@ -247,5 +243,31 @@ void Button::Load(const nlohmann::json & json)
 
 void Button::Save(nlohmann::json & json) const
 {
+	/*
 
+	Relevant information:
+
+	type
+	state
+	transitionType
+	colors[(unsigned int)ButtonState::NUMBER_STATES];
+	texturesPath[(unsigned int)ButtonState::NUMBER_STATES];
+	*/
+
+	json["type"] = type;
+	json["state"] = state;
+	json["transitionType"] = transitionType;
+	nlohmann::json jsonColors;
+	nlohmann::json jsonPaths;
+	for(int i = 0; i < (unsigned int)ButtonState::NUMBER_STATES; i++)
+	{
+		nlohmann::json jsonColor;
+		to_json(jsonColor, colors[i]);
+		jsonColors.push_back(jsonColor);
+
+		jsonPaths.push_back(texturesPath[i].string());
+	}
+	json["colors"] = jsonColors;
+	json["paths"] = jsonPaths;
+	
 }
