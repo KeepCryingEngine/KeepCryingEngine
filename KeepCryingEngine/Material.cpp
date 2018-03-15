@@ -80,7 +80,8 @@ void Material::SetTexture(const std::experimental::filesystem::path& path)
 
 void Material::Load(const nlohmann::json& json)
 {
-
+	SetTexture(json["path"].get<string>());
+	shaderType = json["type"];
 }
 
 void Material::Save(nlohmann::json& json) const

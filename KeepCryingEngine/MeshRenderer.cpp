@@ -99,7 +99,7 @@ Material * MeshRenderer::GetMaterial() const
 
 void MeshRenderer::Load(const nlohmann::json& json)
 {
-
+	
 }
 
 void MeshRenderer::Save(nlohmann::json& json) const

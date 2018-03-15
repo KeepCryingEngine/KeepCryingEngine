@@ -238,6 +238,15 @@ float4 Button::GetColor(ButtonState state) const
 
 void Button::Load(const nlohmann::json & json)
 {
+	state = json["state"];
+	transitionType = json["transitionType"];
+	nlohmann::json jsonColors = json["colors"];
+	nlohmann::json jsonPaths = json["paths"];
+	for(int i = 0; i < (unsigned int)ButtonState::NUMBER_STATES; i++)
+	{
+		from_json(jsonColors[i], colors[i]);
+		SetTextureByPath(jsonPaths[i].get<string>(),(ButtonState)i);
+	}
 
 }
 

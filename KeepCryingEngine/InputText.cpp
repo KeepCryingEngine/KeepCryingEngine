@@ -2,6 +2,7 @@
 
 #include "Application.h"
 #include "ModuleInput.h"
+#include "ModuleScene.h"
 #include "GameObject.h"
 #include "Text.h"
 
@@ -163,15 +164,15 @@ GameObject * InputText::GetTextGameObject() const
 
 void InputText::Load(const nlohmann::json & json)
 {
-
+	passwordMode = json["passwordMode"];
+	placeHolderGameObject = App->scene->Get(json["placeHolderGameObjectID"]);
+	textGameObject = App->scene->Get(json["textGameObjectID"]);
 }
 
 void InputText::Save(nlohmann::json & json) const
 {
 	json["type"] = type;
-	json["onFocus"] = onFocus;
 	json["passwordMode"] = passwordMode;
-	json["currentTextUnderPassword"] = currentTextUnderPassword;
 	json["placeHolderGameObjectID"] = placeHolderGameObject->GetId();
 	json["textGameObjectID"] = textGameObject->GetId();
 }
