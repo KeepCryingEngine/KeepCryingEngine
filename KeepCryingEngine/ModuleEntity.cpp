@@ -76,15 +76,18 @@ void ModuleEntity::Load3DFile(const std::experimental::filesystem::path& path)
 
 Mesh* ModuleEntity::LoadMesh(const std::experimental::filesystem::path & path, const std::string & name)
 {
-	Mesh * mesh = nullptr;
+	Mesh * mesh = GetFromMeshCache(path, name);
 	
-	const aiScene * scene = aiImportFile(path.string().c_str(), aiProcess_Triangulate);
-
-	if (scene != nullptr)
+	if (mesh == nullptr)
 	{
-		mesh = ExtractNamedMeshFromScene(scene, name, path);
-	}
+		const aiScene * scene = aiImportFile(path.string().c_str(), aiProcess_Triangulate);
 
+		if (scene != nullptr)
+		{
+			mesh = ExtractNamedMeshFromScene(scene, name, path);
+		}
+	}
+	
 	return mesh;
 }
 
@@ -205,6 +208,10 @@ void ModuleEntity::SetUpCube()
 
 	cube = new Mesh();
 	cube->SetMeshData(vertices,indices, vector<Bone>(), drawMode);
+	cube->SetPath("ENGINE_DEFAULTS");
+	cube->SetName("CUBE");
+	AddMeshToCache(cube);
+	
 }
 
 void ModuleEntity::SetUpSphere()
@@ -216,6 +223,9 @@ void ModuleEntity::SetUpSphere()
 
 	sphere = new Mesh();
 	sphere->SetMeshData(vertices, indices, vector<Bone>(), drawMode);
+	sphere->SetPath("ENGINE_DEFAULTS");
+	sphere->SetName("SPHERE");
+	AddMeshToCache(sphere);
 }
 
 void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& indices, GLenum& drawMode) const
@@ -492,4 +502,21 @@ GameObject* ModuleEntity::CreateGameObjectForNode(const aiScene* scene, aiNode *
 	}
 
 	return gameObject;
+}
+
+void ModuleEntity::AddMeshToCache(Mesh * mesh)
+{
+	meshCache[mesh->GetPath().string() + mesh->GetName()] = mesh;
+}
+
+Mesh * ModuleEntity::GetFromMeshCache(const std::experimental::filesystem::path & path, const std::string & name)
+{
+	Mesh * mesh = nullptr;
+	string key = path.string() + name;
+	map<string, Mesh*>::iterator it = meshCache.find(key);
+	if (it != meshCache.end())
+	{
+		mesh = it->second;
+	}
+	return mesh;
 }

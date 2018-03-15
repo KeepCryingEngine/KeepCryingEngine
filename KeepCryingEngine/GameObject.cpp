@@ -321,7 +321,7 @@ void GameObject::Load(const json& json)
 
 	for(const nlohmann::json& jsonComponent : json["components"])
 	{
-		Component* componentTemp = GetComponentByUUID(json["uuid"].get<ENGINE_UUID>());
+		Component* componentTemp = GetComponentByUUID(jsonComponent["uuid"].get<ENGINE_UUID>());
 
 		componentTemp->Load(jsonComponent);
 	}

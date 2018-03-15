@@ -2,6 +2,7 @@
 #define _MODULEENTITY_H_
 
 #include <vector>
+#include <map>
 #include <experimental/filesystem>
 
 #include "Module.h"
@@ -47,13 +48,15 @@ private:
 	void LoadMeshRecursive(const aiScene* scene,aiNode * currentChild,GameObject* father,const std::vector<Material*>& tempMaterials, const std::vector<Mesh*>& tempMeshes);
 
 	GameObject* CreateGameObjectForNode(const aiScene* scene, aiNode * currentNode, GameObject* father, const std::vector<Material*>& materials, const std::vector<Mesh*>& meshes);
-
+	void AddMeshToCache(Mesh* mesh);
+	Mesh* GetFromMeshCache(const std::experimental::filesystem::path& path, const std::string& name);
 
 private:
 	Mesh* cube;
 	Mesh* sphere;
 	std::vector<Mesh*> meshes;
 	std::vector<Material*> materials;
+	std::map<std::string, Mesh*> meshCache;
 };
 
 #endif // !_MODULEENTITY_H_
