@@ -82,6 +82,8 @@ float3 Transform2D::GetMaxPosition() const
 
 void Transform2D::PreLoad(const nlohmann::json & json)
 {
+	Component::PreLoad(json);
+	assert(enabled);
 	cutChildren = json["cutChildren"];
 	isLocked = json["isLocked"];
 
@@ -91,13 +93,9 @@ void Transform2D::PreLoad(const nlohmann::json & json)
 	from_json(json["pivot"], pivot);
 }
 
-void Transform2D::Load(const nlohmann::json & json)
-{}
-
 void Transform2D::Save(nlohmann::json & json) const
 {
-	json["type"] = type;
-
+	Component::Save(json);
 	nlohmann::json jsonPosition;
 	to_json(jsonPosition, localPosition);
 	json["position"] = jsonPosition;

@@ -29,26 +29,3 @@ void Canvas::DrawUI()
 		}
 	}
 }
-
-void Canvas::PreLoad(const nlohmann::json & json)
-{
-	enabled = json["enabled"];
-}
-
-void Canvas::Load(const nlohmann::json & json)
-{
-}
-
-void Canvas::Save(nlohmann::json & json) const
-{
-	/*
-
-	Relevant information:
-
-	type
-
-	*/
-
-	json["type"] = type;
-	json["enabled"] = enabled;
-}

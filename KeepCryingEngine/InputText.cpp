@@ -164,7 +164,7 @@ GameObject * InputText::GetTextGameObject() const
 
 void InputText::PreLoad(const nlohmann::json & json)
 {
-	enabled = json["enabled"];
+	Component::PreLoad(json);
 	passwordMode = json["passwordMode"];
 }
 
@@ -176,8 +176,7 @@ void InputText::Load(const nlohmann::json & json)
 
 void InputText::Save(nlohmann::json & json) const
 {
-	json["type"] = type;
-	json["enabled"] = enabled;
+	Component::Save(json);
 	json["passwordMode"] = passwordMode;
 	json["placeHolderGameObjectID"] = placeHolderGameObject->GetId();
 	json["textGameObjectID"] = textGameObject->GetId();

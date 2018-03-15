@@ -110,18 +110,14 @@ Texture * Image::GetTexture() const
 
 void Image::PreLoad(const nlohmann::json & json)
 {
-	enabled = json["enabled"];
+	Component::PreLoad(json);
 	from_json(json["color"], color);
 	SetTextureByPath(json["texturePath"].get<string>());
 }
 
-void Image::Load(const nlohmann::json & json)
-{}
-
 void Image::Save(nlohmann::json & json) const
 {
-	json["type"] = type;
-	json["enabled"] = enabled;
+	Component::Save(json);
 	nlohmann::json jsonColor;
 	to_json(jsonColor, color);
 	json["color"] = jsonColor;

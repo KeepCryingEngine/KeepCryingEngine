@@ -15,10 +15,6 @@ public:
 
 	std::vector<Component::Type> GetNeededComponents() const override;
 	void DrawUI() override;
-
-	virtual void PreLoad(const nlohmann::json& json) override;
-	virtual void Load(const nlohmann::json& json) override;
-	virtual void Save(nlohmann::json& json) const override;
 };
 
 #endif // !_CANVAS_H_

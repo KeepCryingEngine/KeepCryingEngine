@@ -171,16 +171,13 @@ void ReverbZone::SetMode(int mode)
 
 void ReverbZone::PreLoad(const nlohmann::json & json)
 {
-	enabled = json["enabled"];
+	Component::PreLoad(json);
 	mode = json["mode"];
 	minDistance = json["minDistance"];
 	maxDistance = json["maxDistance"];
 
 	from_json(json["reverbConfig"], reverbConfig);
 }
-
-void ReverbZone::Load(const nlohmann::json& json)
-{}
 
 void ReverbZone::Save(nlohmann::json& json) const
 {
@@ -196,8 +193,7 @@ void ReverbZone::Save(nlohmann::json& json) const
 
 	*/
 
-	json["type"] = type;
-	json["enabled"] = enabled;
+	Component::Save(json);
 	json["mode"] = mode;
 	json["minDistance"] = minDistance;
 	json["maxDistance"] = maxDistance;

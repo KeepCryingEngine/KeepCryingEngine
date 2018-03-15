@@ -417,15 +417,14 @@ const float3 & Transform::Velocity() const
 
 void Transform::PreLoad(const nlohmann::json & json)
 {
+	Component::PreLoad(json);
+	assert(enabled);
 	from_json(json["position"], localPosition);
 	from_json(json["rotation"], localRotation);
 	from_json(json["scale"], localScale);
 
 	Recalculate();
 }
-
-void Transform::Load(const nlohmann::json& json)
-{}
 
 void Transform::Save(nlohmann::json& json) const
 {
@@ -440,7 +439,7 @@ void Transform::Save(nlohmann::json& json) const
 
 	*/
 
-	json["type"] = type;
+	Component::Save(json);
 	nlohmann::json jsonPosition;
 	to_json(jsonPosition, localPosition);
 

@@ -67,9 +67,18 @@ public:
 		return isHovereableUI;
 	}
 
-	virtual void PreLoad(const nlohmann::json& json) = 0;
-	virtual void Load(const nlohmann::json& json) = 0;
-	virtual void Save(nlohmann::json& json) const = 0;
+	virtual void PreLoad(const nlohmann::json& json)
+	{
+		uuid = json["uuid"];
+		enabled = json["enabled"];
+	}
+	virtual void Load(const nlohmann::json& json){}
+	virtual void Save(nlohmann::json& json) const
+	{
+		json["type"] = type;
+		json["uuid"] = uuid;
+		json["enabled"] = enabled;
+	}
 
 public:
 	ENGINE_UUID uuid;

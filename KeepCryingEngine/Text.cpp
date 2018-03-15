@@ -119,15 +119,12 @@ const std::string & Text::GetText() const
 
 void Text::PreLoad(const nlohmann::json & json)
 {
-	enabled = json["enabled"];
+	Component::PreLoad(json);
 	actualText = json["actualText"].get<std::string>();
 	from_json(json["color"], color);
 	size = json["size"];
 	currentFontPath = json["currentFontPath"].get<std::string>();
 }
-
-void Text::Load(const nlohmann::json & json)
-{}
 
 void Text::Save(nlohmann::json & json) const
 {
@@ -143,8 +140,7 @@ void Text::Save(nlohmann::json & json) const
 
 	*/
 
-	json["type"] = type;
-	json["enabled"] = enabled;
+	Component::Save(json);
 	json["actualText"] = actualText;
 	nlohmann::json jsonColor;
 	to_json(jsonColor, color);
