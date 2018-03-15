@@ -616,7 +616,7 @@ void ModuleScene::Restore()
 
 		for(const json& jsonGameObject : jsonData["gameObjects"])
 		{
-			Get(jsonGameObject["uID"])->Load(jsonGameObject);
+			Get(jsonGameObject["uuid"].get<ENGINE_UUID>().id)->Load(jsonGameObject);
 		}
 	}
 }

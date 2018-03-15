@@ -205,6 +205,19 @@ AABB & GameObject::GetAABB()
 	return aabb;
 }
 
+Component * GameObject::GetComponentByUUID(const ENGINE_UUID& uuid)
+{
+	Component* ret = nullptr;
+	for(Component* c : GetComponents())
+	{
+		if(c->uuid == uuid)
+		{
+			ret = c;
+		}
+	}
+	return ret;
+}
+
 bool GameObject::GetVisible() const
 {
 	return visible;
@@ -286,7 +299,7 @@ void GameObject::PreLoad(const nlohmann::json & json)
 {
 	// All except parent
 
-	uuid = ENGINE_UUID((int)json["uID"]);
+	uuid = json["uuid"];
 	name = json["name"].get<string>();
 	enable = json["enable"];
 	isStatic = json["isStatic"];
@@ -308,9 +321,9 @@ void GameObject::Load(const json& json)
 
 	for(const nlohmann::json& jsonComponent : json["components"])
 	{
-		Component::Type componentType = jsonComponent["type"];
+		Component* componentTemp = GetComponentByUUID(json["uuid"].get<ENGINE_UUID>());
 
-		AddComponent(componentType, false)->Load(jsonComponent);
+		componentTemp->Load(jsonComponent);
 	}
 }
 
@@ -329,7 +342,7 @@ void GameObject::Save(json& json) const
 
 	*/
 
-	json["uID"] = uuid.id;
+	json["uuid"] = uuid;
 	json["parentUID"] = parent != nullptr ? parent->uuid.id : -1;
 	json["name"] = name;
 	json["enable"] = enable;
@@ -456,9 +469,12 @@ void GameObject::RemoveComponent(Component * component)
 	}
 }
 
-const std::vector<Component*>& GameObject::GetComponents() const
+std::vector<Component*> GameObject::GetComponents() const
 {
-	return components;
+	vector<Component*> ret;
+	ret.insert(ret.end(),components.begin(),components.end());
+	ret.insert(ret.end(),toStart.begin(),toStart.end());
+	return ret;
 }
 
 Transform * GameObject::GetTransform() const

@@ -5,6 +5,7 @@
 #include <imgui.h>
 #include <json.hpp>
 #include "ENGINE_UUID.h"
+#include "json_serializer.h"
 
 class GameObject;
 

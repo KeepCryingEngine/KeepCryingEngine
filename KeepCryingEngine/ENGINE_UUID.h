@@ -10,6 +10,8 @@ public:
 	ENGINE_UUID(int32_t id);
 	virtual ~ENGINE_UUID();
 
+	bool operator==(const ENGINE_UUID& uuid);
+
 public:
 	uint32_t id;
 

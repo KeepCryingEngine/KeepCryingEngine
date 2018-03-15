@@ -50,7 +50,7 @@ public:
 	template <typename T>
 	T* GetComponent() const;
 
-	const std::vector<Component*>& GetComponents() const;
+	std::vector<Component*> GetComponents() const;
 
 	template <typename T>
 	std::vector<T*> GetComponents() const;
@@ -68,6 +68,8 @@ public:
 
 	void SetAABB(const AABB& newAABB);
 	AABB &GetAABB();
+
+	Component* GetComponentByUUID(const ENGINE_UUID& uuid);
 
 	bool GetVisible() const;
 	void SetVisible(bool visible);

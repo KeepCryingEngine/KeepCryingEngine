@@ -140,7 +140,7 @@ void to_json(nlohmann::json & j, const ENGINE_UUID & v)
 
 void from_json(const nlohmann::json & j, ENGINE_UUID & v)
 {
-	v = ENGINE_UUID(j["id"]);
+	v.id = j["id"];
 }
 
 void to_json(nlohmann::json & j, const TextureConfiguration & v)
