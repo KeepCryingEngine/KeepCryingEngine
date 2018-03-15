@@ -247,6 +247,7 @@ void Button::PreLoad(const nlohmann::json & json)
 	{
 		from_json(jsonColors[i], colors[i]);
 		SetTextureByPath(jsonPaths[i].get<string>(), (ButtonState)i);
+		texturesPath[i] = jsonPaths[i].get<string>();
 	}
 }
 
