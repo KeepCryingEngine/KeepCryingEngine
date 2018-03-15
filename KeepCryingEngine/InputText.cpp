@@ -162,9 +162,13 @@ GameObject * InputText::GetTextGameObject() const
 	return textGameObject;
 }
 
-void InputText::Load(const nlohmann::json & json)
+void InputText::PreLoad(const nlohmann::json & json)
 {
 	passwordMode = json["passwordMode"];
+}
+
+void InputText::Load(const nlohmann::json & json)
+{
 	placeHolderGameObject = App->scene->Get(json["placeHolderGameObjectID"]);
 	textGameObject = App->scene->Get(json["textGameObjectID"]);
 }

@@ -30,6 +30,9 @@ void Canvas::DrawUI()
 	}
 }
 
+void Canvas::PreLoad(const nlohmann::json & json)
+{}
+
 void Canvas::Load(const nlohmann::json & json)
 {
 	

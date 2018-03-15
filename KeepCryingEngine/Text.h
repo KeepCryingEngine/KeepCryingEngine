@@ -33,6 +33,7 @@ public:
 	Texture * GetTexture() const;
 	const std::string& GetText() const;
 
+	virtual void PreLoad(const nlohmann::json& json) override;
 	virtual void Load(const nlohmann::json& json) override;
 	virtual void Save(nlohmann::json& json) const override;
 

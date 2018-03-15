@@ -52,6 +52,7 @@ public:
 	Texture * GetTexture(ButtonState state) const;
 	float4 GetColor(ButtonState state)const;
 
+	virtual void PreLoad(const nlohmann::json& json) override;
 	virtual void Load(const nlohmann::json& json) override;
 	virtual void Save(nlohmann::json& json) const override;
 

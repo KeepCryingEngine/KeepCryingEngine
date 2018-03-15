@@ -67,6 +67,7 @@ public:
 		return isHovereableUI;
 	}
 
+	virtual void PreLoad(const nlohmann::json& json) = 0;
 	virtual void Load(const nlohmann::json& json) = 0;
 	virtual void Save(nlohmann::json& json) const = 0;
 

@@ -236,7 +236,7 @@ float4 Button::GetColor(ButtonState state) const
 	return colors[(unsigned int)state];
 }
 
-void Button::Load(const nlohmann::json & json)
+void Button::PreLoad(const nlohmann::json & json)
 {
 	state = json["state"];
 	transitionType = json["transitionType"];
@@ -245,10 +245,12 @@ void Button::Load(const nlohmann::json & json)
 	for(int i = 0; i < (unsigned int)ButtonState::NUMBER_STATES; i++)
 	{
 		from_json(jsonColors[i], colors[i]);
-		SetTextureByPath(jsonPaths[i].get<string>(),(ButtonState)i);
+		SetTextureByPath(jsonPaths[i].get<string>(), (ButtonState)i);
 	}
-
 }
+
+void Button::Load(const nlohmann::json & json)
+{}
 
 void Button::Save(nlohmann::json & json) const
 {

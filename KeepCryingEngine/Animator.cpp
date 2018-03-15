@@ -132,7 +132,7 @@ bool Animator::HasValidAnimationInstance() const
 	return animInstanceId != -1;
 }
 
-void Animator::Load(const nlohmann::json & json)
+void Animator::PreLoad(const nlohmann::json & json)
 {
 	currentAnimationName = json["currentAnimationName"].get<string>();
 	
@@ -141,6 +141,9 @@ void Animator::Load(const nlohmann::json & json)
 		LoadAnimInstance(j.get<string>()); //I do not agree with this - Xavi.
 	}
 }
+
+void Animator::Load(const nlohmann::json & json)
+{}
 
 void Animator::Save(nlohmann::json & json) const
 {

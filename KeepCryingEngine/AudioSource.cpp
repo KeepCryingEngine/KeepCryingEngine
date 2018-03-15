@@ -334,7 +334,7 @@ bool AudioSource::GetLoop()
 	return loop;
 }
 
-void AudioSource::Load(const nlohmann::json& json)
+void AudioSource::PreLoad(const nlohmann::json & json)
 {
 	volume = json["volume"];
 	originalFreq = json["originalFreq"];
@@ -348,6 +348,9 @@ void AudioSource::Load(const nlohmann::json& json)
 	usedAudioType = json["usedAudioType"];
 	usedChannelType = json["usedChannelType"];
 }
+
+void AudioSource::Load(const nlohmann::json& json)
+{}
 
 void AudioSource::Save(nlohmann::json& json) const
 {

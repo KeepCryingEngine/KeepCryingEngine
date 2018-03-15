@@ -295,19 +295,23 @@ void GameObject::PreLoad(const nlohmann::json & json)
 	{
 		Component::Type componentType = jsonComponent["type"];
 
-		AddComponent(componentType, false)->Load(jsonComponent);
+		AddComponent(componentType, false)->PreLoad(jsonComponent);
 	}
 
 	transform = GetComponent<Transform>();
-
-	CheckIfFocuseableUI();
-	CheckIfHovereableUI();
 }
 
 void GameObject::Load(const json& json)
 {
 	// Parent
 	SetParent(*App->scene->Get(json["parentUID"]));
+
+	for(const nlohmann::json& jsonComponent : json["components"])
+	{
+		Component::Type componentType = jsonComponent["type"];
+
+		AddComponent(componentType, false)->Load(jsonComponent);
+	}
 }
 
 void GameObject::Save(json& json) const
