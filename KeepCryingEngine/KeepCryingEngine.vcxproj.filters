@@ -1,375 +1,129 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="AudioClip.cpp" />
+    <ClCompile Include="AudioListener.cpp" />
+    <ClCompile Include="AudioSource.cpp" />
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Canvas.cpp" />
+    <ClCompile Include="ComponentFabric.cpp" />
+    <ClCompile Include="ENGINE_UUID.cpp" />
+    <ClCompile Include="external\ImGuiTextEditor\TextEditor.cpp" />
+    <ClCompile Include="external\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="external\ImGuizmo\ImSequencer.cpp" />
+    <ClCompile Include="external\ImGui\imgui.cpp" />
+    <ClCompile Include="external\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="external\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="external\ImGui\imgui_impl_sdl_gl3.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="InputText.cpp" />
+    <ClCompile Include="json_serializer.cpp" />
+    <ClCompile Include="KDTree.cpp" />
+    <ClCompile Include="KDTreeNode.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Animator.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="AssetManager.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioClip.cpp">
-      <Filter>Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioListener.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioSource.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentFabric.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="external\ImGui\imgui.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="external\ImGui\imgui_demo.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="external\ImGui\imgui_draw.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="external\ImGui\imgui_impl_sdl_gl3.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="external\ImGuizmo\ImGuizmo.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="external\ImGuizmo\ImSequencer.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="json_serializer.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="KDTree.cpp">
-      <Filter>Trees</Filter>
-    </ClCompile>
-    <ClCompile Include="KDTreeNode.cpp">
-      <Filter>Trees</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshFilter.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshRenderer.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleAnim.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleAudio.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleCamera.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleEntity.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleInput.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleRender.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleScene.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleShader.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleTexture.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleWindow.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Octree.cpp">
-      <Filter>Trees</Filter>
-    </ClCompile>
-    <ClCompile Include="OctreeNode.cpp">
-      <Filter>Trees</Filter>
-    </ClCompile>
-    <ClCompile Include="Quadtree.cpp">
-      <Filter>Trees</Filter>
-    </ClCompile>
-    <ClCompile Include="QuadtreeNode.cpp">
-      <Filter>Trees</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundsEffects.cpp">
-      <Filter>Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="external\ImGuiTextEditor\TextEditor.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="TreeNode.cpp">
-      <Filter>Trees</Filter>
-    </ClCompile>
-    <ClCompile Include="Tree.cpp">
-      <Filter>Trees</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleEditorUI.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleGameUI.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Canvas.cpp">
-      <Filter>Components\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>Components\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Text.cpp">
-      <Filter>Components\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="InputText.cpp">
-      <Filter>Components\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Image.cpp">
-      <Filter>Components\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform2D.cpp">
-      <Filter>Components\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleFont.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="ReverbZone.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-=======
-    <ClCompile Include="ModuleTime.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ENGINE_UUID.cpp" />
->>>>>>> Develop
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshFilter.cpp" />
+    <ClCompile Include="MeshRenderer.cpp" />
+    <ClCompile Include="ModuleAnim.cpp" />
+    <ClCompile Include="ModuleAudio.cpp" />
+    <ClCompile Include="ModuleCamera.cpp" />
+    <ClCompile Include="ModuleEntity.cpp" />
+    <ClCompile Include="ModuleGameUI.cpp" />
+    <ClCompile Include="ModuleFont.cpp" />
+    <ClCompile Include="ModuleInput.cpp" />
+    <ClCompile Include="ModuleRender.cpp" />
+    <ClCompile Include="ModuleScene.cpp" />
+    <ClCompile Include="ModuleShader.cpp" />
+    <ClCompile Include="ModuleTexture.cpp" />
+    <ClCompile Include="ModuleEditorUI.cpp" />
+    <ClCompile Include="ModuleTime.cpp" />
+    <ClCompile Include="ModuleWindow.cpp" />
+    <ClCompile Include="Octree.cpp" />
+    <ClCompile Include="OctreeNode.cpp" />
+    <ClCompile Include="Quadtree.cpp" />
+    <ClCompile Include="QuadtreeNode.cpp" />
+    <ClCompile Include="ReverbZone.cpp" />
+    <ClCompile Include="SoundsEffects.cpp" />
+    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Transform2D.cpp" />
+    <ClCompile Include="Tree.cpp" />
+    <ClCompile Include="TreeNode.cpp" />
+    <ClCompile Include="GridRenderer.cpp" />
+    <ClCompile Include="Billboard.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animator.h" />
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Animator.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="AssetManager.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioClip.h">
-      <Filter>Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioListener.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioSource.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Brofiler.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentFabric.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="external\devil\include\DevIL.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="external\ImGui\imconfig.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="external\ImGui\imgui.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="external\ImGui\imgui_internal.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="external\ImGuizmo\ImGuizmo.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="external\ImGuizmo\ImSequencer.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="json_serializer.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="KDTree.h">
-      <Filter>Trees</Filter>
-    </ClInclude>
-    <ClInclude Include="KDTreeNode.h">
-      <Filter>Trees</Filter>
-    </ClInclude>
-    <ClInclude Include="Globals.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="MemLeaks.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshFilter.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshRenderer.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Module.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleAnim.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleAudio.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleCamera.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleEntity.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleInput.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleRender.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleScene.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleShader.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleTexture.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleWindow.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Octree.h">
-      <Filter>Trees</Filter>
-    </ClInclude>
-    <ClInclude Include="OctreeNode.h">
-      <Filter>Trees</Filter>
-    </ClInclude>
-    <ClInclude Include="Quadtree.h">
-      <Filter>Trees</Filter>
-    </ClInclude>
-    <ClInclude Include="QuadtreeNode.h">
-      <Filter>Trees</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundsEffects.h">
-      <Filter>Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="external\ImGui\stb_rect_pack.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="external\ImGui\stb_textedit.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="external\ImGui\stb_truetype.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="external\ImGuiTextEditor\TextEditor.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="TreeNode.h">
-      <Filter>Trees</Filter>
-    </ClInclude>
-    <ClInclude Include="Tree.h">
-      <Filter>Trees</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleEditorUI.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleGameUI.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Canvas.h">
-      <Filter>Components\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Components\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Text.h">
-      <Filter>Components\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="InputText.h">
-      <Filter>Components\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Image.h">
-      <Filter>Components\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform2D.h">
-      <Filter>Components\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleFont.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="ReverbZone.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-=======
-    <ClInclude Include="ModuleTime.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
+    <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="AudioClip.h" />
+    <ClInclude Include="AudioListener.h" />
+    <ClInclude Include="AudioSource.h" />
+    <ClInclude Include="Brofiler.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Canvas.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="ComponentFabric.h" />
     <ClInclude Include="ENGINE_UUID.h" />
->>>>>>> Develop
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Components">
-      <UniqueIdentifier>{45251827-df13-417b-ac10-469bfc645a14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Modules">
-      <UniqueIdentifier>{2a276048-ae18-4be5-ae23-e69432e5ad32}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Entity">
-      <UniqueIdentifier>{314b6b21-35db-449f-b81c-8031ac2b5947}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utils">
-      <UniqueIdentifier>{7e2b397a-0f86-4b2e-a698-9788f440b23a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Trees">
-      <UniqueIdentifier>{abb59d3a-854b-4a63-b50e-9887841e2f87}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Components\UI">
-      <UniqueIdentifier>{1f8099d5-7c2e-4f82-a115-027f4563ad3b}</UniqueIdentifier>
-    </Filter>
+    <ClInclude Include="external\devil\include\DevIL.h" />
+    <ClInclude Include="external\ImGuiTextEditor\TextEditor.h" />
+    <ClInclude Include="external\ImGuizmo\ImGuizmo.h" />
+    <ClInclude Include="external\ImGuizmo\ImSequencer.h" />
+    <ClInclude Include="external\ImGui\imconfig.h" />
+    <ClInclude Include="external\ImGui\imgui.h" />
+    <ClInclude Include="external\ImGui\imgui_internal.h" />
+    <ClInclude Include="external\ImGui\stb_rect_pack.h" />
+    <ClInclude Include="external\ImGui\stb_textedit.h" />
+    <ClInclude Include="external\ImGui\stb_truetype.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Globals.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="InputText.h" />
+    <ClInclude Include="json_serializer.h" />
+    <ClInclude Include="KDTree.h" />
+    <ClInclude Include="KDTreeNode.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="MemLeaks.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshFilter.h" />
+    <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="Module.h" />
+    <ClInclude Include="ModuleAnim.h" />
+    <ClInclude Include="ModuleAudio.h" />
+    <ClInclude Include="ModuleCamera.h" />
+    <ClInclude Include="ModuleEntity.h" />
+    <ClInclude Include="ModuleGameUI.h" />
+    <ClInclude Include="ModuleFont.h" />
+    <ClInclude Include="ModuleInput.h" />
+    <ClInclude Include="ModuleRender.h" />
+    <ClInclude Include="ModuleScene.h" />
+    <ClInclude Include="ModuleShader.h" />
+    <ClInclude Include="ModuleTexture.h" />
+    <ClInclude Include="ModuleEditorUI.h" />
+    <ClInclude Include="ModuleTime.h" />
+    <ClInclude Include="ModuleWindow.h" />
+    <ClInclude Include="Octree.h" />
+    <ClInclude Include="OctreeNode.h" />
+    <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="QuadtreeNode.h" />
+    <ClInclude Include="ReverbZone.h" />
+    <ClInclude Include="SoundsEffects.h" />
+    <ClInclude Include="Text.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="Transform2D.h" />
+    <ClInclude Include="Tree.h" />
+    <ClInclude Include="TreeNode.h" />
+    <ClInclude Include="GridRenderer.h" />
+    <ClInclude Include="Billboard.h" />
   </ItemGroup>
 </Project>

@@ -18,6 +18,7 @@
 #include "Button.h"
 #include "Text.h"
 #include "InputText.h"
+#include "GridRenderer.h"
 
 Component * ComponentFabric::CreateComponent(Component::Type type)
 {
@@ -69,6 +70,9 @@ Component * ComponentFabric::CreateComponent(Component::Type type)
 			break;
 		case Component::Type::InpuText:
 			component = new InputText();
+			break;
+		case Component::Type::GridRenderer:
+			component = new GridRenderer();
 			break;
 	}
 	assert(component);

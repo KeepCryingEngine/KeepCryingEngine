@@ -27,7 +27,8 @@ public:
 		Button,
 		Text,
 		InpuText,
-		Transform2D
+		Transform2D,
+		GridRenderer
 	};
 
 	Component(Component::Type type) : enabled(true), wasEnabled(true), type(type)
