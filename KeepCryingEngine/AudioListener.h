@@ -12,7 +12,7 @@ public:
 	AudioListener();
 	~AudioListener();
 
-	void Awake() override;
+	void Start() override;
 	void Destroy() override;
 	void RealUpdate() override;
 

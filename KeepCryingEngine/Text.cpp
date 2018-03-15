@@ -11,7 +11,7 @@ Text::Text(): Component(Text::TYPE)
 Text::~Text()
 {}
 
-void Text::Awake()
+void Text::Start()
 {
 	font = App->font->LoadFont(currentFontPath, size);
 	SetTexture(actualText);

@@ -12,7 +12,7 @@ AudioListener::AudioListener():Component(AudioListener::TYPE)
 AudioListener::~AudioListener()
 {}
 
-void AudioListener::Awake()
+void AudioListener::Start()
 {
 	App->audio->EnableListener(this);
 }

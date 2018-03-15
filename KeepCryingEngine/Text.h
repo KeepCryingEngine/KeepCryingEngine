@@ -18,7 +18,7 @@ public:
 	Text();
 	~Text();
 
-	void Awake()override;
+	void Start()override;
 
 	void DrawUI() override;
 

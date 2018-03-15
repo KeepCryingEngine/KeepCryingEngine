@@ -17,7 +17,7 @@ Camera::Camera() : Component(Camera::TYPE)
 Camera::~Camera()
 { }
 
-void Camera::Awake()
+void Camera::Start()
 {
 	App->camera->EnableCamera(this);
 }

@@ -20,7 +20,7 @@ public:
 	Camera();
 	virtual ~Camera();
 
-	virtual void Awake() override;
+	virtual void Start() override;
 	// virtual void Start() override;
 	virtual void Destroy() override;
 

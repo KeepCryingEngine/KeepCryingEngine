@@ -505,14 +505,21 @@ void GameObject::DrawUI()
 
 void GameObject::CheckToStart()
 {
-	for(Component* component : toStart)
-	{
-		component->Start();
+	list<Component*>::iterator it = toStart.begin();
 
-		components.push_back(component);
+	while(it != toStart.end()){
+		if((*it)->enabled)
+		{
+			(*it)->Start();
+
+			components.push_back((*it));
+			it = toStart.erase(it);
+		}
+		else
+		{
+			it++;
+		}
 	}
-
-	toStart.clear();
 }
 
 void GameObject::CheckToDestroy()
