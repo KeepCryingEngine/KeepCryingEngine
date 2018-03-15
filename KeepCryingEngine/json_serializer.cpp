@@ -142,3 +142,25 @@ void from_json(const nlohmann::json & j, ENGINE_UUID & v)
 {
 	v = ENGINE_UUID(j["id"]);
 }
+
+void to_json(nlohmann::json & j, const TextureConfiguration & v)
+{
+	j["anisotropicFilter"] = v.anisotropicFilter;
+	j["magFilterMode"] = v.magFilterMode;
+	j["minFilterMode"] = v.minFilterMode;
+	j["mipMap"] = v.mipMap;
+	j["textureType"] = v.textureType;
+	j["wrapModeS"] = v.wrapModeS;
+	j["wrapModeT"] = v.wrapModeT;
+}
+
+void from_json(const nlohmann::json & j, TextureConfiguration & v)
+{
+	v.anisotropicFilter = j["anisotropicFilter"];
+	v.magFilterMode = j["magFilterMode"];
+	v.minFilterMode = j["minFilterMode"];
+	v.mipMap = j["mipMap"];
+	v.textureType = j["textureType"];
+	v.wrapModeS = j["wrapModeS"];
+	v.wrapModeT = j["wrapModeT"];
+}

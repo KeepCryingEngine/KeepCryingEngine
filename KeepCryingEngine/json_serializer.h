@@ -10,6 +10,7 @@
 #include <bass.h>
 #include <experimental/filesystem>
 #include "ENGINE_UUID.h"
+#include "Texture.h"
 
 void to_json(nlohmann::json& j, const float2& v);
 void from_json(const nlohmann::json& j, float2& v);
@@ -31,5 +32,8 @@ void from_json(const nlohmann::json& j, BASS_DX8_I3DL2REVERB& v);
 
 void to_json(nlohmann::json& j, const ENGINE_UUID& v);
 void from_json(const nlohmann::json& j, ENGINE_UUID& v);
+
+void to_json(nlohmann::json& j, const TextureConfiguration& v);
+void from_json(const nlohmann::json& j, TextureConfiguration& v);
 
 #endif // !_JSON_SERIALIZER_H_

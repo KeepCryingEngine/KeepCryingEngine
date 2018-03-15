@@ -41,7 +41,7 @@ void Material::DrawUI()
 			string s = "Assets/";
 			s += materialBuffer;
 		
-			SetTexture(s.c_str());
+			SetTextureByPath(s.c_str());
 		}
 		
 		ImGui::NewLine();
@@ -65,36 +65,36 @@ Texture* Material::GetTexture() const
 	return texture;
 }
 
-void Material::SetTexture(const std::experimental::filesystem::path& path)
+void Material::SetTexture(Texture * texture)
+{
+	assert(texture != nullptr);
+	App->texture->Release(this->texture);
+	this->texture = texture;
+	path = "undefinedPath";
+}
+
+void Material::SetTextureByPath(const std::experimental::filesystem::path& path)
 {
 	this->path = path;
-
 	Texture * texture = App->texture->GetAsset(path);
-	if(texture)
+	if(texture != nullptr)
 	{
 		App->texture->Release(this->texture);
-
 		this->texture = texture;
 	}
 }
 
-void Material::Load(const nlohmann::json& json)
+const std::experimental::filesystem::path & Material::GetPath() const
 {
-	SetTexture(json["path"].get<string>());
-	shaderType = json["type"];
+	return path;
 }
 
-void Material::Save(nlohmann::json& json) const
+ShaderType Material::GetShaderType() const
 {
-	/*
+	return shaderType;
+}
 
-	Relevant information:
-
-	path
-	shaderType
-
-	*/
-
-	json["path"] = path.string();
-	json["type"] = shaderType;
+void Material::SetShaderType(ShaderType shaderType)
+{
+	this->shaderType = shaderType;
 }

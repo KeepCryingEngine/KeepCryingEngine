@@ -12,6 +12,8 @@
 #include "ModuleCamera.h"
 #include "ModuleEditorUI.h"
 #include "Camera.h"
+#include "Texture.h"
+#include "json_serializer.h"
 
 MeshRenderer::MeshRenderer() : Component(MeshRenderer::TYPE)
 {
@@ -99,24 +101,24 @@ Material * MeshRenderer::GetMaterial() const
 
 void MeshRenderer::Load(const nlohmann::json& json)
 {
-	
+	Material * material = new Material();
+	material->SetShaderType(json["material"]["shaderType"]);
+	material->SetTextureByPath(json["material"]["texture"]["path"].get<std::string>());
+	material->GetTexture()->SetTextureConfiguration(json["material"]["texture"]["jsonConfiguration"]);
 }
 
 void MeshRenderer::Save(nlohmann::json& json) const
 {
-	/*
-
-	Relevant information:
-
-	type
-	material
-
-	*/
-
 	json["type"] = type;
 
 	nlohmann::json jsonMaterial;
-	material->Save(jsonMaterial);
+	jsonMaterial["shaderType"] = material->GetShaderType();
+
+	nlohmann::json jsonTexture;
+	jsonTexture["path"] = material->GetPath().string();
+	jsonTexture["jsonConfiguration"] = material->GetTexture()->GetTextureConfiguration();
+	
+	jsonMaterial["texture"] = jsonTexture;
 
 	json["material"] = jsonMaterial;
 }

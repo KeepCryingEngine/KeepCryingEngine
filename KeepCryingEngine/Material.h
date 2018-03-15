@@ -20,10 +20,11 @@ public:
 
 	GLuint GetProgramId() const;
 	Texture* GetTexture() const;
-	void SetTexture(const std::experimental::filesystem::path&);
-
-	void Load(const nlohmann::json& json);
-	void Save(nlohmann::json& json) const;
+	void SetTexture(Texture* texture);
+	void SetTextureByPath(const std::experimental::filesystem::path&);
+	const std::experimental::filesystem::path& GetPath() const;
+	ShaderType GetShaderType() const;
+	void SetShaderType(ShaderType shaderType);
 
 private:
 	std::experimental::filesystem::path path;
