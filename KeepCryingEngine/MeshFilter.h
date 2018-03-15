@@ -29,6 +29,7 @@ public:
 	void SetMesh(Mesh* mesh);
 	void SetMeshMode(MeshMode mode);
 
+	virtual void PreLoad(const nlohmann::json& json) override;
 	virtual void Load(const nlohmann::json& json) override;
 	virtual void Save(nlohmann::json& json) const override;
 

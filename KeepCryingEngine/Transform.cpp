@@ -441,7 +441,6 @@ void Transform::Save(nlohmann::json& json) const
 	*/
 
 	json["type"] = type;
-
 	nlohmann::json jsonPosition;
 	to_json(jsonPosition, localPosition);
 

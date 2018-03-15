@@ -134,6 +134,7 @@ bool Animator::HasValidAnimationInstance() const
 
 void Animator::PreLoad(const nlohmann::json & json)
 {
+	enabled = json["enabled"];
 	currentAnimationName = json["currentAnimationName"].get<string>();
 	
 	for (const nlohmann::json& j : json["paths"])
@@ -148,6 +149,7 @@ void Animator::Load(const nlohmann::json & json)
 void Animator::Save(nlohmann::json & json) const
 {
 	json["type"] = type;
+	json["enabled"] = enabled;
 	json["currentAnimationName"] = currentAnimationName;
 	json["paths"] = animationPaths;
 }

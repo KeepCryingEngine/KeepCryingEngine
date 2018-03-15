@@ -336,6 +336,7 @@ bool AudioSource::GetLoop()
 
 void AudioSource::PreLoad(const nlohmann::json & json)
 {
+	enabled = json["enabled"];
 	volume = json["volume"];
 	originalFreq = json["originalFreq"];
 	freqModifier = json["freqModifier"];
@@ -359,6 +360,7 @@ void AudioSource::Save(nlohmann::json& json) const
 	Relevant information:
 
 	type
+	enabled
 	volume
 	originalFreq
 	freqModifier
@@ -374,6 +376,7 @@ void AudioSource::Save(nlohmann::json& json) const
 	*/
 
 	json["type"] = type;
+	json["enabled"] = enabled;
 	json["volume"] = volume;
 	json["originalFreq"] = originalFreq;
 	json["freqModifier"] = freqModifier;

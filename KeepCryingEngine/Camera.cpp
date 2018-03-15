@@ -299,6 +299,7 @@ bool Camera::Intersects(const Frustum& frustum, const AABB& aabb)
 
 void Camera::PreLoad(const nlohmann::json & json)
 {
+	enabled = json["enabled"];
 	from_json(json["frustum"], frustum);
 }
 
@@ -317,7 +318,7 @@ void Camera::Save(nlohmann::json& json) const
 	*/
 
 	json["type"] = type;
-
+	json["enabled"] = enabled;
 	nlohmann::json jsonFrustum;
 	to_json(jsonFrustum, frustum);
 

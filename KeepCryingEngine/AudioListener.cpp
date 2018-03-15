@@ -71,7 +71,9 @@ void AudioListener::DrawUI()
 }
 
 void AudioListener::PreLoad(const nlohmann::json & json)
-{}
+{
+	enabled = json["enabled"];
+}
 
 void AudioListener::Load(const nlohmann::json& json)
 {}
@@ -87,4 +89,5 @@ void AudioListener::Save(nlohmann::json& json) const
 	*/
 
 	json["type"] = type;
+	json["enabled"] = enabled;
 }

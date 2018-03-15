@@ -238,6 +238,7 @@ float4 Button::GetColor(ButtonState state) const
 
 void Button::PreLoad(const nlohmann::json & json)
 {
+	enabled = json["enabled"];
 	state = json["state"];
 	transitionType = json["transitionType"];
 	nlohmann::json jsonColors = json["colors"];
@@ -259,6 +260,7 @@ void Button::Save(nlohmann::json & json) const
 	Relevant information:
 
 	type
+	enabled
 	state
 	transitionType
 	colors[(unsigned int)ButtonState::NUMBER_STATES];
@@ -266,6 +268,7 @@ void Button::Save(nlohmann::json & json) const
 	*/
 
 	json["type"] = type;
+	json["enabled"] = enabled;
 	json["state"] = state;
 	json["transitionType"] = transitionType;
 	nlohmann::json jsonColors;
