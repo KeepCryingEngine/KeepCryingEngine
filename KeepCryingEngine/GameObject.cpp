@@ -350,7 +350,7 @@ void GameObject::Save(json& json) const
 
 	nlohmann::json jsonComponents;
 
-	for (Component* component : components)
+	for (Component* component : GetComponents())
 	{
 		nlohmann::json jsonComponent;
 		component->Save(jsonComponent);
@@ -511,7 +511,7 @@ void GameObject::DrawUI()
 	
 	ImGui::NewLine();
 
-	for(Component* c : components)
+	for(Component* c : GetComponents())
 	{
 		c->DrawUI();
 	}

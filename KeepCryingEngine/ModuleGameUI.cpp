@@ -54,6 +54,11 @@ Canvas * ModuleGameUI::GetCanvas()
 	return root;
 }
 
+void ModuleGameUI::ClearCanvas()
+{
+	root = nullptr;
+}
+
 GameObject * ModuleGameUI::GetFocusGameObject()
 {
 	return focus;

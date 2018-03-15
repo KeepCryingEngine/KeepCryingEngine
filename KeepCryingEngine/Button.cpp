@@ -128,7 +128,7 @@ void Button::DrawUI()
 		{
 			std::experimental::filesystem::path path = "Assets/";
 			path /= textureNormalPath;
-			texturesPath[(unsigned int)ButtonState::DISABLED] = path;
+			texturesPath[(unsigned int)ButtonState::NORMAL] = path;
 
 			SetTextureByPath(path, ButtonState::NORMAL);
 		}

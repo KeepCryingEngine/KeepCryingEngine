@@ -116,10 +116,11 @@ void ModuleEntity::ExtractMaterialsFromScene(std::vector<Material *> &createdMat
 		scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &relativeTexturePath);
 		std::experimental::filesystem::path texturePath(baseTexturePath);
 		texturePath.append(relativeTexturePath.C_Str());
-
+		
 		Material* mat = new Material();
+		mat->SetPath(texturePath);
 		mat->SetTextureByPath(texturePath);
-
+		
 		createdMaterials.push_back(mat);
 	}
 }
