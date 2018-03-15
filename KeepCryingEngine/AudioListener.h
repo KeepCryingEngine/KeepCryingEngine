@@ -12,7 +12,7 @@ public:
 	AudioListener();
 	~AudioListener();
 
-	void Awake() override;
+	void Start() override;
 	void Destroy() override;
 	void RealUpdate() override;
 
@@ -20,6 +20,7 @@ public:
 
 	void DrawUI() override;
 
+	virtual void PreLoad(const nlohmann::json& json) override;
 	virtual void Load(const nlohmann::json& json) override;
 	virtual void Save(nlohmann::json& json) const override;
 };

@@ -11,7 +11,7 @@ Text::Text(): Component(Text::TYPE)
 Text::~Text()
 {}
 
-void Text::Awake()
+void Text::Start()
 {
 	font = App->font->LoadFont(currentFontPath, size);
 	SetTexture(actualText);
@@ -117,13 +117,16 @@ const std::string & Text::GetText() const
 	return actualText;
 }
 
-void Text::Load(const nlohmann::json & json)
+void Text::PreLoad(const nlohmann::json & json)
 {
 	actualText = json["actualText"].get<std::string>();
 	from_json(json["color"], color);
 	size = json["size"];
 	currentFontPath = json["currentFontPath"].get<std::string>();
 }
+
+void Text::Load(const nlohmann::json & json)
+{}
 
 void Text::Save(nlohmann::json & json) const
 {

@@ -108,11 +108,14 @@ Texture * Image::GetTexture() const
 	return texture;
 }
 
-void Image::Load(const nlohmann::json & json)
+void Image::PreLoad(const nlohmann::json & json)
 {
 	from_json(json["color"], color);
 	SetTextureByPath(json["texturePath"].get<string>());
 }
+
+void Image::Load(const nlohmann::json & json)
+{}
 
 void Image::Save(nlohmann::json & json) const
 {

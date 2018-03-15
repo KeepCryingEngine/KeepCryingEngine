@@ -20,7 +20,7 @@ public:
 	Camera();
 	virtual ~Camera();
 
-	virtual void Awake() override;
+	virtual void Start() override;
 	// virtual void Start() override;
 	virtual void Destroy() override;
 
@@ -67,6 +67,7 @@ public:
 
 	static bool Intersects(const Frustum& frustum, const AABB& aabb);
 
+	virtual void PreLoad(const nlohmann::json& json) override;
 	virtual void Load(const nlohmann::json& json) override;
 	virtual void Save(nlohmann::json& json) const override;
 

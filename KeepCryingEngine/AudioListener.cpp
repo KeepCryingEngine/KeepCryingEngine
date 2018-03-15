@@ -12,7 +12,7 @@ AudioListener::AudioListener():Component(AudioListener::TYPE)
 AudioListener::~AudioListener()
 {}
 
-void AudioListener::Awake()
+void AudioListener::Start()
 {
 	App->audio->EnableListener(this);
 }
@@ -70,10 +70,11 @@ void AudioListener::DrawUI()
 	}
 }
 
-void AudioListener::Load(const nlohmann::json& json)
-{
+void AudioListener::PreLoad(const nlohmann::json & json)
+{}
 
-}
+void AudioListener::Load(const nlohmann::json& json)
+{}
 
 void AudioListener::Save(nlohmann::json& json) const
 {
