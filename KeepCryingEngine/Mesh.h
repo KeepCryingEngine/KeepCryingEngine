@@ -8,7 +8,6 @@
 #include <AABB.h>
 #include <MathGeoLib.h>
 #include <assimp/anim.h>
-#include <json.hpp>
 
 #include <vector>
 
@@ -62,9 +61,6 @@ public:
 
 	const std::experimental::filesystem::path& GetPath() const;
 	const std::string& GetName() const;
-
-	void Load(const nlohmann::json& json);
-	void Save(nlohmann::json& json);
 
 private:
 	void GenerateBuffers(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices);

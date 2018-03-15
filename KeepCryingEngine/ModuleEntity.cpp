@@ -51,7 +51,7 @@ Mesh * ModuleEntity::GetSphere()
 	return sphere;
 }
 
-void ModuleEntity::LoadMesh(const std::experimental::filesystem::path& path)
+void ModuleEntity::Load3DFile(const std::experimental::filesystem::path& path)
 {
 	const aiScene * scene = aiImportFile(path.string().c_str(), aiProcess_Triangulate);
 
@@ -69,6 +69,37 @@ void ModuleEntity::LoadMesh(const std::experimental::filesystem::path& path)
 		GameObject* root = App->scene->Get(App->uiEditor->GetSelectedNode());
 		LoadMeshRecursive(scene, scene->mRootNode, root, createdMaterials, createdMeshes);
 	}
+
+	//TODO we should release scene after it has been correctly imported
+	//aiReleaseImport(scene); 
+}
+
+Mesh* ModuleEntity::LoadMesh(const std::experimental::filesystem::path & path, const std::string & name)
+{
+	Mesh * mesh = nullptr;
+	
+	const aiScene * scene = aiImportFile(path.string().c_str(), aiProcess_Triangulate);
+
+	if (scene != nullptr)
+	{
+		mesh = ExtractNamedMeshFromScene(scene, name, path);
+	}
+
+	return mesh;
+}
+
+Mesh * ModuleEntity::ExtractNamedMeshFromScene(const aiScene * scene, const std::string & name, const std::experimental::filesystem::path & path)
+{
+	for (size_t i = 0; i < scene->mNumMeshes; i++)
+	{
+		aiMesh * aiMesh = scene->mMeshes[i];
+		if (name == aiMesh->mName.C_Str())
+		{
+			return ExtractMeshFromScene(scene, aiMesh, path);
+		}
+	}
+
+	return nullptr;
 }
 
 void ModuleEntity::ExtractMaterialsFromScene(std::vector<Material *> &createdMaterials, const aiScene * scene, const std::experimental::filesystem::path & path) const
@@ -97,29 +128,35 @@ void ModuleEntity::ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, co
 	{
 		aiMesh* aiMesh = scene->mMeshes[meshIndex];
 
-		vector<Vertex> vertices;
-		vector<GLushort> indices;
-		vector<Bone> bones;
-
-		ExtractVerticesAndIndicesFromScene(scene, *aiMesh, vertices, indices);
-		ExtractBonesFromMesh(scene, *aiMesh, bones);
-
-		Mesh* mesh = new Mesh();
-		mesh->SetMeshData(vertices, indices, bones , GL_TRIANGLES);
-		mesh->SetName(aiMesh->mName.C_Str());
-		mesh->SetPath(path);
+		Mesh* mesh = ExtractMeshFromScene(scene, aiMesh, path);
 
 		createdMeshes.push_back(mesh);
 	}
 }
 
-void ModuleEntity::ExtractBonesFromMesh(const aiScene * scene, aiMesh& mesh, std::vector<Bone> &bones) const
+Mesh * ModuleEntity::ExtractMeshFromScene(const aiScene* aiScene, const aiMesh * aiMesh, const std::experimental::filesystem::path & path) const
+{
+	vector<Vertex> vertices;
+	vector<GLushort> indices;
+	vector<Bone> bones;
+
+	ExtractVerticesAndIndicesFromScene(aiScene, aiMesh, vertices, indices);
+	ExtractBonesFromMesh(aiScene, aiMesh, bones);
+
+	Mesh* mesh = new Mesh();
+	mesh->SetMeshData(vertices, indices, bones, GL_TRIANGLES);
+	mesh->SetName(aiMesh->mName.C_Str());
+	mesh->SetPath(path);
+	return mesh;
+}
+
+void ModuleEntity::ExtractBonesFromMesh(const aiScene * scene, const aiMesh* mesh, std::vector<Bone> &bones) const
 {
 	bones.clear();
-	bones.reserve(mesh.mNumBones);
-	for (unsigned int i = 0; i < mesh.mNumBones; i++)
+	bones.reserve(mesh->mNumBones);
+	for (unsigned int i = 0; i < mesh->mNumBones; i++)
 	{
-		aiBone* aiBone = mesh.mBones[i];
+		aiBone* aiBone = mesh->mBones[i];
 		Bone bone;
 		bone.name = aiBone->mName.C_Str();
 		for (unsigned weightIndex = 0; weightIndex < aiBone->mNumWeights; weightIndex++)
@@ -134,27 +171,27 @@ void ModuleEntity::ExtractBonesFromMesh(const aiScene * scene, aiMesh& mesh, std
 	}
 }
 
-void ModuleEntity::ExtractVerticesAndIndicesFromScene(const aiScene * scene, aiMesh& mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices) const
+void ModuleEntity::ExtractVerticesAndIndicesFromScene(const aiScene * scene, const aiMesh* mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices) const
 {
-	bool addNormals = mesh.HasNormals();
+	bool addNormals = mesh->HasNormals();
 	
-	for (unsigned int k = 0; k < mesh.mNumVertices; k++)
+	for (unsigned int k = 0; k < mesh->mNumVertices; k++)
 	{
 		Vertex vertex;
-		vertex.position = float3(mesh.mVertices[k].x, mesh.mVertices[k].y, mesh.mVertices[k].z);
+		vertex.position = float3(mesh->mVertices[k].x, mesh->mVertices[k].y, mesh->mVertices[k].z);
 		if(addNormals)
 		{
-			vertex.normal = float3(mesh.mNormals[k].x, mesh.mNormals[k].y, mesh.mNormals[k].z);
+			vertex.normal = float3(mesh->mNormals[k].x, mesh->mNormals[k].y, mesh->mNormals[k].z);
 		}
 		vertex.color = float4(100, 100, 100, 255);
-		vertex.uv = float2(mesh.mTextureCoords[0][k].x, mesh.mTextureCoords[0][k].y);
+		vertex.uv = float2(mesh->mTextureCoords[0][k].x, mesh->mTextureCoords[0][k].y);
 		vertices.push_back(vertex);
 	}
-	for (unsigned int k = 0; k < mesh.mNumFaces; k++)
+	for (unsigned int k = 0; k < mesh->mNumFaces; k++)
 	{
-		for (unsigned int m = 0; m < mesh.mFaces[k].mNumIndices; m++)
+		for (unsigned int m = 0; m < mesh->mFaces[k].mNumIndices; m++)
 		{
-			indices.push_back(mesh.mFaces[k].mIndices[m]);
+			indices.push_back(mesh->mFaces[k].mIndices[m]);
 		}
 	}
 }

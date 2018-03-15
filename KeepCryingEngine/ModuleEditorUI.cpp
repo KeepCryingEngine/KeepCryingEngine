@@ -184,7 +184,7 @@ void ModuleEditorUI::DrawMainMenu()
 			if (ImGui::Button("Add mesh"))
 			{
 				std::experimental::filesystem::path path(pathToMesh);
-				App->entity->LoadMesh(path);
+				App->entity->Load3DFile(path);
 			}
 
 			ImGui::EndMenu();

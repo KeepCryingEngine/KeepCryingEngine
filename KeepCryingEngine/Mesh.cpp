@@ -36,20 +36,6 @@ const std::string & Mesh::GetName() const
 	return name;
 }
 
-void Mesh::Load(const nlohmann::json & json)
-{
-}
-
-void Mesh::Save(nlohmann::json & json)
-{
-	nlohmann::json mesh;
-
-	mesh["name"] = name;
-	mesh["path"] = path.string();
-
-	json["mesh"] = mesh;
-}
-
 const AABB & Mesh::GetAABB() const
 {
 	return aabb;

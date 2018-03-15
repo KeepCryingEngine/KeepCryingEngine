@@ -25,13 +25,17 @@ public:
 
 	Mesh* GetCube();
 	Mesh* GetSphere();
-	void LoadMesh(const std::experimental::filesystem::path& path);
+	void Load3DFile(const std::experimental::filesystem::path& path);
+	Mesh* LoadMesh(const std::experimental::filesystem::path& path, const std::string& name);
 
 private:
+	Mesh* ExtractNamedMeshFromScene(const aiScene * scene, const std::string& name, const std::experimental::filesystem::path& path);
+
 	void ExtractMaterialsFromScene(std::vector<Material *> &createdMaterials, const aiScene * scene, const std::experimental::filesystem::path & path) const;
 	void ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, const aiScene * scene, const std::experimental::filesystem::path& path) const;
-	void ExtractVerticesAndIndicesFromScene(const aiScene * scene, aiMesh& mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices) const;
-	void ExtractBonesFromMesh(const aiScene * scene, aiMesh& mesh, std::vector<Bone> &bones) const;
+	Mesh* ExtractMeshFromScene(const aiScene* aiScene, const aiMesh* aiMesh, const std::experimental::filesystem::path& path) const;
+	void ExtractVerticesAndIndicesFromScene(const aiScene * scene, const aiMesh* mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices) const;
+	void ExtractBonesFromMesh(const aiScene * scene, const aiMesh* mesh, std::vector<Bone> &bones) const;
 
 	void SetUpCube();
 	void SetUpSphere();

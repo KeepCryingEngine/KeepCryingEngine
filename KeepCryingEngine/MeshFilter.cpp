@@ -133,7 +133,10 @@ void MeshFilter::SetMeshMode(MeshMode mode)
 
 void MeshFilter::Load(const nlohmann::json & json)
 {
+	std::experimental::filesystem::path path = json["mesh"]["path"].get<std::string>();
+	std::string name = json["mesh"]["name"].get<std::string>();
 
+	mesh = App->entity->LoadMesh(path, name);
 }
 
 void MeshFilter::Save(nlohmann::json & json) const
@@ -147,7 +150,13 @@ void MeshFilter::Save(nlohmann::json & json) const
 	*/
 
 	json["type"] = type;
-	mesh->Save(json);
+	
+	nlohmann::json jsonMesh;
+
+	jsonMesh["name"] = mesh->GetName();
+	jsonMesh["path"] = mesh->GetPath().string();
+
+	json["mesh"] = jsonMesh;
 }
 
 void MeshFilter::SetMesh(Mesh * mesh)
