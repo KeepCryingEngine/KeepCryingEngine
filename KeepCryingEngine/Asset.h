@@ -2,7 +2,7 @@
 #define _ASSET_H_
 
 enum class AssetType {
-	Audio,
+	AudioClip,
 	Mesh,
 	Animation,
 	Texture

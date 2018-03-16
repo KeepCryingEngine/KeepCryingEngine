@@ -2,11 +2,24 @@
 #define _AUDIO_CLIP_H
 
 #include "ModuleAudio.h"
+#include <experimental/filesystem>
+#include "Asset.h"
 
-class AudioClip
+struct AudioClipIdentifier
+{
+	AudioClipIdentifier(const std::experimental::filesystem::path& path, ChannelType channelType, AudioType audioType);
+
+	std::experimental::filesystem::path path;
+	ChannelType channelType;
+	AudioType audioType;
+
+	bool operator<(const AudioClipIdentifier& other) const;
+};
+
+class AudioClip : Asset<AudioClipIdentifier>
 {
 public:
-	AudioClip();
+	AudioClip(const AudioClipIdentifier& audioClipIdentifier);
 	virtual ~AudioClip();
 
 	MusicId id;

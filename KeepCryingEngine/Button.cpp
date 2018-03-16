@@ -1,5 +1,7 @@
 #include "Button.h"
 
+#include <string>
+
 #include "Application.h"
 #include "ModuleTexture.h"
 #include "ModuleGameUI.h"
@@ -8,6 +10,8 @@
 #include "GameObject.h"
 #include <SDL.h>
 #include "json_serializer.h"
+
+using namespace std;
 
 Button::Button(): Component(Button::TYPE)
 {

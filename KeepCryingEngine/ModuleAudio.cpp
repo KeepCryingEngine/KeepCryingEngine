@@ -118,7 +118,8 @@ AudioClip * ModuleAudio::LoadMusic(const std::experimental::filesystem::path & p
 
 	if (handle != 0)
 	{
-		audioClip = new AudioClip();
+		AudioClipIdentifier audioClipIdentifier(path, channelType, AudioType::Music);
+		audioClip = new AudioClip(audioClipIdentifier);
 		audioClip->type = AudioType::Music;
 		audioClip->channelType = channelType;
 		audioClip->musicStream = handle;
@@ -143,7 +144,8 @@ AudioClip * ModuleAudio::LoadSFX(const std::experimental::filesystem::path & pat
 	
 	if (handle != 0)
 	{
-		audioClip = new AudioClip();
+		AudioClipIdentifier audioClipIdentifier(path, channelType, AudioType::SFX);
+		audioClip = new AudioClip(audioClipIdentifier);
 		audioClip->type = AudioType::SFX;
 		audioClip->channelType = channelType;
 		audioClip->sfxSample = handle;
