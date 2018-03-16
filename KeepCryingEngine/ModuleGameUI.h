@@ -22,6 +22,7 @@ public:
 
 	void SetCanvas(Canvas& canvas);
 	Canvas* GetCanvas();
+	void ClearCanvas();
 	GameObject* GetFocusGameObject();
 	GameObject* GetHoveringGameObject();
 

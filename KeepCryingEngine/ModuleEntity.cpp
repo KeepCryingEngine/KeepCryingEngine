@@ -93,12 +93,12 @@ Mesh* ModuleEntity::LoadMesh(const std::experimental::filesystem::path & path, c
 
 Mesh * ModuleEntity::ExtractNamedMeshFromScene(const aiScene * scene, const std::string & name, const std::experimental::filesystem::path & path)
 {
-	for (size_t i = 0; i < scene->mNumMeshes; i++)
+	for (size_t meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
 	{
-		aiMesh * aiMesh = scene->mMeshes[i];
-		if (name == aiMesh->mName.C_Str())
+		aiMesh * aiMesh = scene->mMeshes[meshIndex];
+		if (name == aiMesh->mName.C_Str()+meshIndex)
 		{
-			return ExtractMeshFromScene(scene, aiMesh, path);
+			return ExtractMeshFromScene(scene, meshIndex, path);
 		}
 	}
 
@@ -116,10 +116,11 @@ void ModuleEntity::ExtractMaterialsFromScene(std::vector<Material *> &createdMat
 		scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &relativeTexturePath);
 		std::experimental::filesystem::path texturePath(baseTexturePath);
 		texturePath.append(relativeTexturePath.C_Str());
-
+		
 		Material* mat = new Material();
+		mat->SetPath(texturePath);
 		mat->SetTextureByPath(texturePath);
-
+		
 		createdMaterials.push_back(mat);
 	}
 }
@@ -127,18 +128,18 @@ void ModuleEntity::ExtractMaterialsFromScene(std::vector<Material *> &createdMat
 void ModuleEntity::ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, const aiScene * scene, const std::experimental::filesystem::path& path) const
 {
 	createdMeshes.reserve(scene->mNumMeshes);
-	for (unsigned int meshIndex = 0; meshIndex< scene->mNumMeshes; meshIndex++)
+	for (size_t meshIndex = 0; meshIndex< scene->mNumMeshes; meshIndex++)
 	{
-		aiMesh* aiMesh = scene->mMeshes[meshIndex];
-
-		Mesh* mesh = ExtractMeshFromScene(scene, aiMesh, path);
+		Mesh* mesh = ExtractMeshFromScene(scene, meshIndex, path);
 
 		createdMeshes.push_back(mesh);
 	}
 }
 
-Mesh * ModuleEntity::ExtractMeshFromScene(const aiScene* aiScene, const aiMesh * aiMesh, const std::experimental::filesystem::path & path) const
+Mesh * ModuleEntity::ExtractMeshFromScene(const aiScene* aiScene, size_t meshIndex, const std::experimental::filesystem::path & path) const
 {
+	aiMesh* aiMesh = aiScene->mMeshes[meshIndex];
+
 	vector<Vertex> vertices;
 	vector<GLushort> indices;
 	vector<Bone> bones;
@@ -148,7 +149,9 @@ Mesh * ModuleEntity::ExtractMeshFromScene(const aiScene* aiScene, const aiMesh *
 
 	Mesh* mesh = new Mesh();
 	mesh->SetMeshData(vertices, indices, bones, GL_TRIANGLES);
-	mesh->SetName(aiMesh->mName.C_Str());
+
+
+	mesh->SetName(aiMesh->mName.C_Str()+meshIndex);
 	mesh->SetPath(path);
 	return mesh;
 }
@@ -175,14 +178,12 @@ void ModuleEntity::ExtractBonesFromMesh(const aiScene * scene, const aiMesh* mes
 }
 
 void ModuleEntity::ExtractVerticesAndIndicesFromScene(const aiScene * scene, const aiMesh* mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices) const
-{
-	bool addNormals = mesh->HasNormals();
-	
+{	
 	for (unsigned int k = 0; k < mesh->mNumVertices; k++)
 	{
 		Vertex vertex;
 		vertex.position = float3(mesh->mVertices[k].x, mesh->mVertices[k].y, mesh->mVertices[k].z);
-		if(addNormals)
+		if(mesh->HasNormals())
 		{
 			vertex.normal = float3(mesh->mNormals[k].x, mesh->mNormals[k].y, mesh->mNormals[k].z);
 		}

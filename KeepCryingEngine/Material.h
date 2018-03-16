@@ -21,7 +21,8 @@ public:
 	GLuint GetProgramId() const;
 	Texture* GetTexture() const;
 	void SetTexture(Texture* texture);
-	void SetTextureByPath(const std::experimental::filesystem::path&);
+	void SetTextureByPath(const std::experimental::filesystem::path& path);
+	void SetPath(const std::experimental::filesystem::path& path);
 	const std::experimental::filesystem::path& GetPath() const;
 	ShaderType GetShaderType() const;
 	void SetShaderType(ShaderType shaderType);
