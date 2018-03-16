@@ -38,7 +38,6 @@ public:
 private:
 	void UpdateBillboards();
 	void Clear();
-
 private:
 	Material* material = nullptr;
 
@@ -46,6 +45,10 @@ private:
 	int columns = 1;
 
 	float2 size = float2::one;
+	float2 billboardSize = float2::one;
+
+	float2 randomPosition = float2::zero;
+	float randomScale = 0.0f;
 
 	int numVertices = 0;
 	int numIndices = 0;

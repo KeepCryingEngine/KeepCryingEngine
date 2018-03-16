@@ -49,7 +49,21 @@ void GridRenderer::DrawUI()
 			Build(rows, columns, size);
 		}
 
-		if(ImGui::DragFloat2("Rows", size.ptr(), 0.1f, 1, 1000000))
+		if(ImGui::DragFloat2("GridSize", size.ptr(), 0.1f, 1, 1000000))
+		{
+			Build(rows, columns, size);
+		}
+
+		if(ImGui::DragFloat2("BillboardSize", billboardSize.ptr(), 0.1f, 1, 1000000))
+		{
+			Build(rows, columns, size);
+		}
+
+		if(ImGui::DragFloat2("RadomPositionFactor", randomPosition.ptr(), 0.1f, 0, 5))
+		{
+			Build(rows, columns, size);
+		}
+		if(ImGui::DragFloat("RadomScaleFactor", &randomScale, 0.1f, 0, 5))
 		{
 			Build(rows, columns, size);
 		}
@@ -87,25 +101,38 @@ Material* GridRenderer::GetMaterial() const
 	return material;
 }
 
+float RandomFloat(float min, float max)
+{
+	return  (max - min) * ((((float)rand()) / (float)RAND_MAX)) + min;
+}
+
 void GridRenderer::Build(int rows, int columns, const float2& size)
 {
 	Clear();
 
-	billboards.reserve(rows * columns);
+	float2 cellSize = { size.x / columns, size.y / rows };
 
-	float2 bSize = { size.x / columns, size.y / rows };
+	billboards.reserve(rows * columns);
 
 	for(int r = 0; r < rows; ++r)
 	{
 		for(int c = 0; c < columns; ++c)
 		{
-			float3 bPosition = { (c * bSize.x + bSize.x / 2.0f)-size.x/2, bSize.y / 2.0f, (r * bSize.y + bSize.y / 2.0f) - size.y / 2 };
+			//RandomScale
+			float2 currentBillboardSize = billboardSize + billboardSize*RandomFloat(-randomScale,randomScale);
+			currentBillboardSize.x = max(currentBillboardSize.x,0);
+			currentBillboardSize.y = max(currentBillboardSize.y, 0);
+			//RandomPos
+			float xPos =RandomFloat(-randomPosition.x,randomPosition.x) + (c * cellSize.x + cellSize.x / 2.0f) - size.x / 2;
+			float yPos = currentBillboardSize.y / 2.0f;
+			float zPos = RandomFloat(-randomPosition.y, randomPosition.y) + (r * cellSize.y + cellSize.y / 2.0f) - size.y / 2;
+			float3 bPosition = { xPos,yPos ,zPos  };
 
 			Billboard* billboard = new Billboard();
 
 			billboard->SetLocalPosition(bPosition);
 			billboard->SetWorldPosition(bPosition + gameObject->GetTransform()->GetWorldPosition());
-			billboard->SetSize(bSize);
+			billboard->SetSize(currentBillboardSize);
 			if(App->camera->GetEnabledCamera())
 			{
 				billboard->ComputeQuadInitial(*App->camera->GetEnabledCamera(), &vertexPos, &vertexUv, &indices);
