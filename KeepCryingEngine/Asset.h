@@ -10,12 +10,16 @@ enum class AssetType {
 	Texture
 };
 
+<<<<<<< HEAD
 template <typename K>
+=======
+>>>>>>> asset
 class Asset
 {
 public:
 	
 
+<<<<<<< HEAD
 	Asset(const K& identifier, AssetType type);
 	virtual ~Asset();
 
@@ -25,6 +29,18 @@ public:
 private:
 	AssetType type;
 	K identifier;
+=======
+	Asset(const std::experimental::filesystem::path& path, AssetType type);
+	virtual ~Asset();
+
+	const std::experimental::filesystem::path& Path() const;
+	AssetType Type() const;
+
+private:
+	std::experimental::filesystem::path path;
+	AssetType type;
+
+>>>>>>> asset
 };
 
 #endif

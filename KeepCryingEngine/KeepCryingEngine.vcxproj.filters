@@ -168,7 +168,10 @@
     <ClCompile Include="Asset.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="ENGINE_UUID.cpp" />
+=======
+>>>>>>> asset
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -360,7 +363,10 @@
     <ClInclude Include="Asset.h">
       <Filter>Entities</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="ENGINE_UUID.h" />
+=======
+>>>>>>> asset
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">

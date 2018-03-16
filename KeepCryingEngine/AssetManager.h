@@ -23,11 +23,19 @@ public:
 
 protected:
 	void Register(T* asset);
+<<<<<<< HEAD
 	virtual T * Load(const K& identifier) = 0;
 	virtual void Unload(T* asset) = 0;
 
 private:
 	std::map<K, T*> assets;
+=======
+	virtual T * Load(const std::experimental::filesystem::path& path) = 0;
+	virtual void Unload(T* asset) = 0;
+
+private:
+	std::map<std::experimental::filesystem::path, T*> assets;
+>>>>>>> asset
 	std::map<T*,unsigned int> assetUsage;
 };
 

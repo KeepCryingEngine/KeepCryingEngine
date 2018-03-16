@@ -61,7 +61,11 @@ void AssetManager<K,T>::Release(T * asset)
 	if (assetUsageCounter == 0)
 	{
 		assetUsage.erase(usageIt);
+<<<<<<< HEAD
 		map<K, T*>::const_iterator assetIt = assets.find(asset->Path());
+=======
+		map<std::experimental::filesystem::path, T*>::const_iterator assetIt = assets.find(asset->Path());
+>>>>>>> asset
 		assert(assetIt != assets.cend());
 
 		Unload(asset);
@@ -75,8 +79,13 @@ size_t AssetManager<K,T>::Size() const
 	return assets.size();
 }
 
+<<<<<<< HEAD
 template <typename K, typename T>
 void AssetManager<K,T>::Register(T * asset)
+=======
+template<typename T>
+void AssetManager<T>::Register(T * asset)
+>>>>>>> asset
 {
 	assert(asset);
 	assert(assets.find(asset->Path()) == assets.end());
