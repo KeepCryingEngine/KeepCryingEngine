@@ -2,6 +2,8 @@
 
 using nlohmann::json;
 
+using namespace std;
+
 void to_json(nlohmann::json & j, const float2 & v)
 {
 	j = json{ { "x", v.x },{ "y", v.y } };
@@ -163,4 +165,18 @@ void from_json(const nlohmann::json & j, TextureConfiguration & v)
 	v.textureType = j["textureType"];
 	v.wrapModeS = j["wrapModeS"];
 	v.wrapModeT = j["wrapModeT"];
+}
+
+void to_json(nlohmann::json & j, const AudioClipIdentifier & v)
+{
+	j["path"] = v.path.string();
+	j["audioType"] = v.audioType;
+	j["channelType"] = v.channelType;
+}
+
+void from_json(const nlohmann::json & j, AudioClipIdentifier & v)
+{
+	v.path = j["path"].get<string>();
+	v.audioType = j["audioType"];
+	v.channelType = j["channelType"];
 }

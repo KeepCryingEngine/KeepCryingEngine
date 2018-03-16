@@ -11,6 +11,10 @@ AudioClip::~AudioClip()
 {
 }
 
+AudioClipIdentifier::AudioClipIdentifier()
+{
+}
+
 AudioClipIdentifier::AudioClipIdentifier(const std::experimental::filesystem::path & path, ChannelType channelType, AudioType audioType) :
 	path(path),
 	channelType(channelType),

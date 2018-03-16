@@ -29,31 +29,6 @@ bool ModuleAudio::CleanUp()
 	return true;
 }
 
-AudioClip* ModuleAudio::Load(const std::experimental::filesystem::path& path, AudioType type, ChannelType channelType)
-{
-	if(soundCache.count(path.string()))
-	{
-		return soundCache[path.string()];
-	}
-
-	AudioClip* audioClip = nullptr;
-	string extension = path.extension().string();
-
-	switch (type)
-	{
-	case AudioType::Music:
-		audioClip = LoadMusic(path, channelType);
-		break;
-	case AudioType::SFX:
-		audioClip = LoadSFX(path, channelType);
-		break;
-	}
-	
-	soundCache[path.string()] = audioClip;
-
-	return audioClip;
-}
-
 void ModuleAudio::EnableListener(AudioListener* listener)
 {
 	if(activeListener != nullptr)
@@ -102,6 +77,28 @@ const vector<AudioSource*>& ModuleAudio::GetAllAudioSources() const
 	return sceneSources;
 }
 
+AudioClip * ModuleAudio::Load(const AudioClipIdentifier & identifier)
+{
+	AudioClip* audioClip = nullptr;
+
+	switch (identifier.audioType)
+	{
+	case AudioType::Music:
+		audioClip = LoadMusic(identifier.path, identifier.channelType);
+		break;
+	case AudioType::SFX:
+		audioClip = LoadSFX(identifier.path, identifier.channelType);
+		break;
+	}
+
+	return audioClip;
+}
+
+void ModuleAudio::Unload(AudioClip * asset)
+{
+	delete asset;
+}
+
 AudioClip * ModuleAudio::LoadMusic(const std::experimental::filesystem::path & path, ChannelType channelType)
 {
 	AudioClip* audioClip = nullptr;
@@ -120,8 +117,6 @@ AudioClip * ModuleAudio::LoadMusic(const std::experimental::filesystem::path & p
 	{
 		AudioClipIdentifier audioClipIdentifier(path, channelType, AudioType::Music);
 		audioClip = new AudioClip(audioClipIdentifier);
-		audioClip->type = AudioType::Music;
-		audioClip->channelType = channelType;
 		audioClip->musicStream = handle;
 	}
 
@@ -146,8 +141,6 @@ AudioClip * ModuleAudio::LoadSFX(const std::experimental::filesystem::path & pat
 	{
 		AudioClipIdentifier audioClipIdentifier(path, channelType, AudioType::SFX);
 		audioClip = new AudioClip(audioClipIdentifier);
-		audioClip->type = AudioType::SFX;
-		audioClip->channelType = channelType;
 		audioClip->sfxSample = handle;
 	}
 

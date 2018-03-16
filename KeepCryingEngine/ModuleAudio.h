@@ -8,26 +8,14 @@
 #include <experimental/filesystem>
 
 #include "Module.h"
+#include "AssetManager.h"
+#include "AudioClip.h"
 
-class AudioClip;
 class AudioSource;
 class AudioListener;
 class SoundEffects;
 
-typedef unsigned MusicId;
-
-enum class AudioType {
-	SFX,
-	Music
-};
-
-enum class ChannelType
-{
-	Mono,
-	Stereo
-};
-
-class ModuleAudio : public Module
+class ModuleAudio : public AssetManager<AudioClipIdentifier, AudioClip>
 {
 public:
 	ModuleAudio();
@@ -35,8 +23,6 @@ public:
 
 	bool Init() override;
 	bool CleanUp() override;
-
-	AudioClip* Load(const std::experimental::filesystem::path& path, AudioType type, ChannelType channelType);
 
 	void EnableListener(AudioListener* listener);
 
@@ -49,21 +35,22 @@ public:
 
 	const std::vector<AudioSource*>& GetAllAudioSources() const;
 
+protected:
+	virtual AudioClip * Load(const AudioClipIdentifier & identifier) override;
+	virtual void Unload(AudioClip * asset) override;
+
 private:
 	AudioClip* LoadMusic(const std::experimental::filesystem::path& path, ChannelType channelType);
 	AudioClip* LoadSFX(const std::experimental::filesystem::path& path, ChannelType channelType);
 
 private:
-	std::map<std::string, AudioClip*> soundCache;
-
 	AudioListener* activeListener = nullptr;
-
 	SoundEffects* sceneEffects = nullptr;
-
 	std::vector<AudioSource*> sceneSources;
 
 	static const int DEVICE;
 	static const int FRECUENCY;
+
 };
 
 #endif // !_MODULEAUDIO_H_
