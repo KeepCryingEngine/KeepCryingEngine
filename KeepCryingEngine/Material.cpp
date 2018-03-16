@@ -68,25 +68,22 @@ Texture* Material::GetTexture() const
 void Material::SetTexture(Texture * texture)
 {
 	assert(texture != nullptr);
-	App->texture->Release(this->texture);
+	if (this->texture != nullptr)
+	{
+		App->texture->Release(this->texture);
+	}
 	this->texture = texture;
-	path = "undefinedPath";
 }
 
 void Material::SetTextureByPath(const std::experimental::filesystem::path& path)
 {
-	this->path = path;
-	Texture * texture = App->texture->GetAsset(path);
+	TextureIdentifier textureIdentifier = { path };
+	Texture * texture = App->texture->GetAsset(textureIdentifier);
 	if(texture != nullptr)
 	{
 		App->texture->Release(this->texture);
 		this->texture = texture;
 	}
-}
-
-const std::experimental::filesystem::path & Material::GetPath() const
-{
-	return path;
 }
 
 ShaderType Material::GetShaderType() const

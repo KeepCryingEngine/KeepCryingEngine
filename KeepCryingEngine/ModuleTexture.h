@@ -10,7 +10,7 @@
 #include "AssetManager.cpp"
 #include "Texture.h"
 
-class ModuleTexture : public AssetManager<Texture>
+class ModuleTexture : public AssetManager<TextureIdentifier, Texture>
 {
 public:
 	ModuleTexture();
@@ -24,12 +24,12 @@ public:
 	const std::set<std::string>& TexturePaths() const;
 
 protected:
-	Texture * Load(const std::experimental::filesystem::path& path) override;
+	Texture * Load(const TextureIdentifier& path) override;
 	void Unload(Texture* texture) override;
 
 private:
 	void SetUpCheckerTexture();
-	Texture* LoadTextureDevil(const std::experimental::filesystem::path& path, const TextureConfiguration& textureConfiguration) const;
+	Texture* LoadTextureDevil(const TextureIdentifier & textureIdentifier, const TextureConfiguration& textureConfiguration) const;
 	
 private:
 	TextureConfiguration loadingTextureConfiguration;

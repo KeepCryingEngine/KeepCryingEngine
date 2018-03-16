@@ -607,6 +607,8 @@ void ModuleScene::Restore()
 	{
 		CleanUp();
 
+		App->uiGame->ClearCanvas();
+
 		Init();
 
 		for(const json& jsonGameObject : jsonData["gameObjects"])

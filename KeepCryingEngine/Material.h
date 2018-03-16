@@ -21,13 +21,11 @@ public:
 	GLuint GetProgramId() const;
 	Texture* GetTexture() const;
 	void SetTexture(Texture* texture);
-	void SetTextureByPath(const std::experimental::filesystem::path&);
-	const std::experimental::filesystem::path& GetPath() const;
+	void SetTextureByPath(const std::experimental::filesystem::path& path);
 	ShaderType GetShaderType() const;
 	void SetShaderType(ShaderType shaderType);
 
 private:
-	std::experimental::filesystem::path path;
 	ShaderType shaderType = ShaderType::Default;
 	GLuint programId = 0;
 	Texture* texture = nullptr;

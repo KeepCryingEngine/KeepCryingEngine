@@ -64,15 +64,17 @@ void ModuleTexture::SetUpCheckerTexture()
 	textureConfiguration.wrapModeT = GL_CLAMP;
 	textureConfiguration.anisotropicFilter = true;
 
-	checkerTexture = new Texture(checkerTextureId, textureConfiguration, sizeof(checkImage));
+	std::experimental::filesystem::path path = "CHECKER_TEXTURE";
 
-	const string checkerTexturePath = "CHECKER_TEXTURE";
-	Register(checkerTexturePath, checkerTexture);
-	texturePaths.insert(checkerTexturePath);
+	TextureIdentifier textureIdentifier = { path };
+	checkerTexture = new Texture(checkerTextureId, textureConfiguration, sizeof(checkImage), textureIdentifier);
+
+	Register(checkerTexture);
+	texturePaths.insert(path.string());
 	totalSize += checkerTexture->GetSize();
 }
 
-Texture * ModuleTexture::LoadTextureDevil(const std::experimental::filesystem::path& path, const TextureConfiguration& textureConfiguration) const
+Texture * ModuleTexture::LoadTextureDevil(const TextureIdentifier & textureIdentifier, const TextureConfiguration& textureConfiguration) const
 {
 	Texture * texture = nullptr;
 
@@ -80,7 +82,7 @@ Texture * ModuleTexture::LoadTextureDevil(const std::experimental::filesystem::p
 	ilGenImages(1, &imageId);
 	ilBindImage(imageId);
 
-	if(ilLoadImage(path.string().c_str()))
+	if(ilLoadImage(textureIdentifier.path.string().c_str()))
 	{
 		ILinfo imageInfo;
 
@@ -117,7 +119,7 @@ Texture * ModuleTexture::LoadTextureDevil(const std::experimental::filesystem::p
 
 		ilDeleteImages(1, &imageId); // Because we have already copied image data into texture data we can release memory used by image.
 
-		texture = new Texture(textureId, textureConfiguration, imageInfo.SizeOfData);
+		texture = new Texture(textureId, textureConfiguration, imageInfo.SizeOfData, textureIdentifier);
 	}
 	else // If we failed to open the image file in the first place...
 	{
@@ -144,13 +146,14 @@ const set<string>& ModuleTexture::TexturePaths() const
 	return texturePaths;
 }
 
-Texture * ModuleTexture::Load(const std::experimental::filesystem::path& path)
+Texture * ModuleTexture::Load(const TextureIdentifier& textureIdentifier)
 {
-	Texture * texture = LoadTextureDevil(path, loadingTextureConfiguration);
+
+	Texture * texture = LoadTextureDevil(textureIdentifier, loadingTextureConfiguration);
 	
 	if (texture)
 	{
-		texturePaths.insert(path.string());
+		texturePaths.insert(textureIdentifier.path.string());
 		totalSize += texture->GetSize();
 	}
 
@@ -161,8 +164,7 @@ void ModuleTexture::Unload(Texture * texture)
 {
 	totalSize -= texture->GetSize();
 	
-	const string& path = GetPath(texture).string();
-	texturePaths.erase(path);
+	texturePaths.erase(texture->Identifier().path.string());
 
 	delete texture;
 }

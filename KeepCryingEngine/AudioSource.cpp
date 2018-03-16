@@ -9,6 +9,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "AudioClip.h"
+#include "json_serializer.h"
 
 using namespace std;
 
@@ -225,13 +226,29 @@ void AudioSource::OnPlayButtonPressed()
 	}
 }
 
+void AudioSource::LoadAudioClip(const AudioClipIdentifier & audioClipIdentifier)
+{
+	//TODO: Delete old audio clip if already loaded
+
+	AudioClip* audioClip = App->audio->GetAsset(audioClipIdentifier);
+	if (audioClip != nullptr)
+	{
+		BASS_ChannelStop(channel);
+
+		this->audioClip = audioClip;
+
+		//legacy code. If something stops working look at this
+		//BASS_ChannelGetAttribute(channel, BASS_ATTRIB_FREQ, &originalFreq);
+	}
+}
+
 DWORD AudioSource::GetChannelForAudio(const AudioClip* audioClip) const
 {
 	DWORD channel = 0;
 
 	if (audioClip != nullptr)
 	{
-		switch (audioClip->type)
+		switch (audioClip->Identifier().audioType)
 		{
 		case AudioType::Music:
 		{
@@ -345,33 +362,12 @@ void AudioSource::PreLoad(const nlohmann::json & json)
 	rollOffFactor = json["rollOffFactor"];
 	doplerFactor = json["doplerFactor"];
 	loop = json["loop"];
-	path = json["path"].get<string>();
-	usedAudioType = json["usedAudioType"];
-	usedChannelType = json["usedChannelType"];
+	AudioClipIdentifier audioClipIdentifier = json["audioClipIdentifier"];
+	LoadAudioClip(audioClipIdentifier);
 }
 
 void AudioSource::Save(nlohmann::json& json) const
 {
-	/*
-
-	Relevant information:
-
-	type
-	enabled
-	volume
-	originalFreq
-	freqModifier
-	minDistance
-	maxDistance
-	rollOffFactor
-	doplerFactor
-	loop
-	path
-	usedAudioType
-	usedChannelType
-
-	*/
-
 	Component::Save(json);
 	json["volume"] = volume;
 	json["originalFreq"] = originalFreq;
@@ -381,27 +377,13 @@ void AudioSource::Save(nlohmann::json& json) const
 	json["rollOffFactor"] = rollOffFactor;
 	json["doplerFactor"] = doplerFactor;
 	json["loop"] = loop;
-	json["path"] = path.string();
-	json["usedAudioType"] = usedAudioType;
-	json["usedChannelType"] = usedChannelType;
+	json["audioClipIdentifier"] = audioClip->Identifier();
 }
 
 void AudioSource::OnLoadButtonPressed(const std::experimental::filesystem::path & path)
 {
-	this->path = path;
-	usedAudioType = loadingAudioType;
-	usedChannelType = loadingChannelType;
-
-	//TODO: Delete old audio clip if already loaded
-	AudioClip* audioClip = App->audio->Load(path, loadingAudioType ,loadingChannelType);
-	if(audioClip != nullptr)
-	{
-		BASS_ChannelStop(channel);
-
-		this->audioClip = audioClip;
-
-		BASS_ChannelGetAttribute(channel, BASS_ATTRIB_FREQ, &originalFreq);
-	}
+	AudioClipIdentifier audioClipIdentifier(path, loadingChannelType, loadingAudioType);
+	LoadAudioClip(audioClipIdentifier);
 }
 
 void AudioSource::ClearChannelEffects()

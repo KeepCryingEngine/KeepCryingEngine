@@ -1,5 +1,7 @@
 #include "Button.h"
 
+#include <string>
+
 #include "Application.h"
 #include "ModuleTexture.h"
 #include "ModuleGameUI.h"
@@ -8,6 +10,8 @@
 #include "GameObject.h"
 #include <SDL.h>
 #include "json_serializer.h"
+
+using namespace std;
 
 Button::Button(): Component(Button::TYPE)
 {
@@ -128,7 +132,7 @@ void Button::DrawUI()
 		{
 			std::experimental::filesystem::path path = "Assets/";
 			path /= textureNormalPath;
-			texturesPath[(unsigned int)ButtonState::DISABLED] = path;
+			texturesPath[(unsigned int)ButtonState::NORMAL] = path;
 
 			SetTextureByPath(path, ButtonState::NORMAL);
 		}
@@ -217,8 +221,8 @@ void Button::SetTextureByPath(const std::experimental::filesystem::path & path, 
 	{
 		App->texture->Release(textures[(unsigned int)state]);
 	}
-
-	textures[(unsigned int)state] = App->texture->GetAsset(path);
+	TextureIdentifier textureIdentifier = { path };
+	textures[(unsigned int)state] = App->texture->GetAsset(textureIdentifier);
 }
 
 void Button::SetColor(float4 newColor, ButtonState state)

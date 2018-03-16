@@ -7,15 +7,15 @@
 
 #include "Module.h"
 #include "Mesh.h"
+#include "AssetManager.h"
 
 struct aiNode;
 struct aiScene;
 struct aiMesh;
 class GameObject;
 class Material;
-class Mesh;
 
-class ModuleEntity : public Module
+class ModuleEntity : public AssetManager<MeshIdentifier,Mesh>
 {
 public:
 	ModuleEntity();
@@ -27,14 +27,13 @@ public:
 	Mesh* GetCube();
 	Mesh* GetSphere();
 	void Load3DFile(const std::experimental::filesystem::path& path);
-	Mesh* LoadMesh(const std::experimental::filesystem::path& path, const std::string& name);
 
 private:
-	Mesh* ExtractNamedMeshFromScene(const aiScene * scene, const std::string& name, const std::experimental::filesystem::path& path);
+	Mesh* ExtractNamedMeshFromScene(const aiScene * scene, const MeshIdentifier & meshIdentifier);
 
 	void ExtractMaterialsFromScene(std::vector<Material *> &createdMaterials, const aiScene * scene, const std::experimental::filesystem::path & path) const;
 	void ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, const aiScene * scene, const std::experimental::filesystem::path& path) const;
-	Mesh* ExtractMeshFromScene(const aiScene* aiScene, const aiMesh* aiMesh, const std::experimental::filesystem::path& path) const;
+	Mesh* ExtractMeshFromScene(const aiScene* aiScene, size_t meshIndex, const std::experimental::filesystem::path & meshIdentifier) const;
 	void ExtractVerticesAndIndicesFromScene(const aiScene * scene, const aiMesh* mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices) const;
 	void ExtractBonesFromMesh(const aiScene * scene, const aiMesh* mesh, std::vector<Bone> &bones) const;
 
@@ -48,15 +47,18 @@ private:
 	void LoadMeshRecursive(const aiScene* scene,aiNode * currentChild,GameObject* father,const std::vector<Material*>& tempMaterials, const std::vector<Mesh*>& tempMeshes);
 
 	GameObject* CreateGameObjectForNode(const aiScene* scene, aiNode * currentNode, GameObject* father, const std::vector<Material*>& materials, const std::vector<Mesh*>& meshes);
-	void AddMeshToCache(Mesh* mesh);
-	Mesh* GetFromMeshCache(const std::experimental::filesystem::path& path, const std::string& name);
+
+protected:
+	Mesh * Load(const MeshIdentifier & identifier) override;
+	void Unload(Mesh * asset) override;
 
 private:
 	Mesh* cube;
 	Mesh* sphere;
 	std::vector<Mesh*> meshes;
 	std::vector<Material*> materials;
-	std::map<std::string, Mesh*> meshCache;
+
+	
 };
 
 #endif // !_MODULEENTITY_H_

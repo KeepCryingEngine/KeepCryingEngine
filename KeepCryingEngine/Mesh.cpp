@@ -6,7 +6,8 @@
 
 using namespace std;
 
-Mesh::Mesh()
+Mesh::Mesh(const MeshIdentifier& meshIdentifier) :
+	Asset(meshIdentifier, AssetType::Mesh)
 {
 }
 
@@ -14,26 +15,6 @@ Mesh::~Mesh()
 {
 	glDeleteBuffers(1, &indicesBufferId);
 	glDeleteBuffers(1, &vertexBufferId);
-}
-
-void Mesh::SetPath(const std::experimental::filesystem::path & path)
-{
-	this->path = path;
-}
-
-void Mesh::SetName(const std::string & name)
-{
-	this->name = name;
-}
-
-const std::experimental::filesystem::path & Mesh::GetPath() const
-{
-	return path;
-}
-
-const std::string & Mesh::GetName() const
-{
-	return name;
 }
 
 const AABB & Mesh::GetAABB() const
@@ -159,4 +140,9 @@ void Mesh::CalculateAABBForMesh(const vector<Vertex> &vertices)
 	aabb.SetNegativeInfinity();
 	aabb.Enclose(positions, vertices.size());
 	RELEASE_ARRAY(positions);
+}
+
+bool MeshIdentifier::operator<(const MeshIdentifier & other) const
+{
+	return name < other.name || (name == other.name && path.string() < other.path.string());
 }

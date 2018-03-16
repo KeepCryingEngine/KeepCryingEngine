@@ -56,6 +56,7 @@ private:
 	void OnStopButtonPressed();
 	void OnPauseButtonPressed();
 	void OnPlayButtonPressed();
+	void LoadAudioClip(const AudioClipIdentifier& audioClipIdentifier);
 
 	DWORD GetChannelForAudio(const AudioClip* audioClip) const;
 
@@ -76,13 +77,6 @@ private:
 	float rollOffFactor = 1;
 	float doplerFactor = 1;
 	bool loop = false;
-
-	std::experimental::filesystem::path path;
-
-	ChannelType usedChannelType;
-	AudioType usedAudioType;
-
-	// DWORD id = 0;
 
 	ChannelType loadingChannelType = ChannelType::Mono;
 	AudioType loadingAudioType = AudioType::SFX;

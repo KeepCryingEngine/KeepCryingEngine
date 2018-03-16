@@ -3,13 +3,8 @@
 #include "ModuleTexture.h"
 
 
-Texture::Texture(GLuint textureId) :
-	textureId(textureId)
-{
-	SetTextureConfiguration(textureConfiguration);
-}
-
-Texture::Texture(GLuint textureId, const TextureConfiguration & textureConfiguration, uint size) :
+Texture::Texture(GLuint textureId, const TextureConfiguration & textureConfiguration, uint size, const TextureIdentifier& identifier) :
+	Asset(identifier, AssetType::Texture),
 	textureId(textureId),
 	size(size)
 {
@@ -152,4 +147,9 @@ void Texture::SetTextureConfiguration(const TextureConfiguration & textureConfig
 	}
 
 	glBindTexture(textureConfiguration.textureType, 0);
+}
+
+bool TextureIdentifier::operator<(const TextureIdentifier & other) const
+{
+	return this->path < other.path;
 }

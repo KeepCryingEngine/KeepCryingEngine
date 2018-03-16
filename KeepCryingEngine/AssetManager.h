@@ -1,38 +1,123 @@
 #ifndef _ASSETMANAGER_H_
 #define _ASSETMANAGER_H_
 
-#include <map>
-#include <experimental/filesystem>
-
-
 #include "Module.h"
 
-template <typename T>
+#include <map>
+#include <experimental/filesystem>
+#include <assert.h>
+
+#include "Asset.h"
+
+
+template <typename K, typename T>
 class AssetManager : public Module
 {
+	static_assert(std::is_base_of<Asset<K>, T>::value, "T must be a child of Asset<K>");
 public:
 	AssetManager();
 	virtual ~AssetManager();
 
-	T* GetAsset(const std::experimental::filesystem::path& path);
+	T* GetAsset(const K& identifier);
 	void Subscribe(T* asset);
 
 	void Release(T* asset);
 
 	size_t Size() const;
-	const std::experimental::filesystem::path& GetPath(T* asset) const;
 
 protected:
-	void Register(const std::experimental::filesystem::path& path, T* asset);
-	virtual T * Load(const std::experimental::filesystem::path& path) = 0;
+	void Register(T* asset);
+	virtual T * Load(const K& identifier) = 0;
 	virtual void Unload(T* asset) = 0;
 
 private:
-	typename std::map<std::experimental::filesystem::path, T*>::const_iterator FindAssetIteratorByReference(T * asset) const;
-
-private:
-	std::map<std::experimental::filesystem::path, T*> assets;
+	std::map<K, T*> assets;
 	std::map<T*,unsigned int> assetUsage;
 };
+
+template <typename K, typename T>
+inline AssetManager<K, T>::AssetManager()
+{
+}
+
+template <typename K, typename T>
+inline AssetManager<K, T>::~AssetManager()
+{
+}
+
+template <typename K, typename T>
+inline T* AssetManager<K, T>::GetAsset(const K& identifier)
+{
+	T* asset = nullptr;
+	typename std::map<K, T*>::iterator assetIt = assets.find(identifier);
+	if (assetIt != assets.end())
+	{
+		asset = assetIt->second;
+		Subscribe(asset);
+	}
+	else
+	{
+		asset = Load(identifier);
+		if (asset != nullptr)
+		{
+			Register(asset);
+		}
+	}
+
+	return asset;
+}
+
+template <typename K, typename T>
+inline void AssetManager<K, T>::Subscribe(T * asset)
+{
+	assert(asset != nullptr);
+	std::map<T*, unsigned int>::iterator usageIt = assetUsage.find(asset);
+	assert(usageIt != assetUsage.end());
+	unsigned int &assetUsageCounter = usageIt->second;
+	assetUsageCounter += 1;
+}
+
+template <typename K, typename T>
+inline void AssetManager<K, T>::Release(T * asset)
+{
+	assert(asset != nullptr);
+
+	typename map<T*, unsigned int>::iterator usageIt = assetUsage.find(asset);
+	assert(usageIt != assetUsage.end());
+
+	unsigned int &assetUsageCounter = usageIt->second;
+
+	assetUsageCounter -= 1;
+
+	if (assetUsageCounter == 0)
+	{
+		assetUsage.erase(usageIt);
+		map<K, T*>::const_iterator assetIt = assets.find(asset->Identifier());
+		assert(assetIt != assets.cend());
+
+		Unload(asset);
+		assets.erase(assetIt);
+	}
+}
+
+template <typename K, typename T>
+inline size_t AssetManager<K, T>::Size() const
+{
+	return assets.size();
+}
+
+template <typename K, typename T>
+inline void AssetManager<K, T>::Register(T * asset)
+{
+	assert(asset != nullptr);
+
+	typename std::map<K, T*>::iterator assetIt = assets.find(asset->Identifier());
+
+	assert(assetIt == assets.end());
+	assert(assetUsage.find(asset) == assetUsage.end());
+
+	assets[asset->Identifier()] = asset;
+	assetUsage[asset] = 1;
+}
 
 #endif

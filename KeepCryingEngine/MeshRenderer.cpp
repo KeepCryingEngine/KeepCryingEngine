@@ -102,7 +102,6 @@ Material * MeshRenderer::GetMaterial() const
 void MeshRenderer::PreLoad(const nlohmann::json & json)
 {
 	Component::PreLoad(json);
-	Material * material = new Material();
 	material->SetShaderType(json["material"]["shaderType"]);
 	material->SetTextureByPath(json["material"]["texture"]["path"].get<std::string>());
 	material->GetTexture()->SetTextureConfiguration(json["material"]["texture"]["jsonConfiguration"]);
@@ -115,7 +114,7 @@ void MeshRenderer::Save(nlohmann::json& json) const
 	jsonMaterial["shaderType"] = material->GetShaderType();
 
 	nlohmann::json jsonTexture;
-	jsonTexture["path"] = material->GetPath().string();
+	jsonTexture["path"] = material->GetTexture()->Identifier().path.string();
 	jsonTexture["jsonConfiguration"] = material->GetTexture()->GetTextureConfiguration();
 	
 	jsonMaterial["texture"] = jsonTexture;

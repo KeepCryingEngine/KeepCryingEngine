@@ -11,6 +11,7 @@
 #include <experimental/filesystem>
 #include "ENGINE_UUID.h"
 #include "Texture.h"
+#include "AudioClip.h"
 
 void to_json(nlohmann::json& j, const float2& v);
 void from_json(const nlohmann::json& j, float2& v);
@@ -35,5 +36,8 @@ void from_json(const nlohmann::json& j, ENGINE_UUID& v);
 
 void to_json(nlohmann::json& j, const TextureConfiguration& v);
 void from_json(const nlohmann::json& j, TextureConfiguration& v);
+
+void to_json(nlohmann::json& j, const AudioClipIdentifier& v);
+void from_json(const nlohmann::json& j, AudioClipIdentifier& v);
 
 #endif // !_JSON_SERIALIZER_H_

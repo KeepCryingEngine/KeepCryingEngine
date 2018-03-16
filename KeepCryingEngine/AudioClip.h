@@ -1,17 +1,34 @@
 #ifndef _AUDIO_CLIP_H
 #define _AUDIO_CLIP_H
 
-#include "ModuleAudio.h"
+#include "Asset.h"
 
-class AudioClip
+#include <experimental/filesystem>
+
+#include <bass.h>
+
+#include "AudioStructures.h"
+
+
+struct AudioClipIdentifier
+{
+	AudioClipIdentifier();
+	AudioClipIdentifier(const std::experimental::filesystem::path& path, ChannelType channelType, AudioType audioType);
+
+	std::experimental::filesystem::path path;
+	ChannelType channelType;
+	AudioType audioType;
+
+	bool operator<(const AudioClipIdentifier& other) const;
+};
+
+class AudioClip : public Asset<AudioClipIdentifier>
 {
 public:
-	AudioClip();
+	AudioClip(const AudioClipIdentifier& audioClipIdentifier);
 	virtual ~AudioClip();
 
-	MusicId id;
-	ChannelType channelType;
-	AudioType type;
+	unsigned id;
 
 	union {
 		HSTREAM musicStream = 0;

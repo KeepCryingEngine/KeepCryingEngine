@@ -11,6 +11,8 @@
 
 #include <vector>
 
+#include "Asset.h"
+
 struct Weigth
 {
 	unsigned vertex = 0;
@@ -32,10 +34,18 @@ struct Vertex
 	float2 uv;
 };
 
-class Mesh
+struct MeshIdentifier
+{
+	std::experimental::filesystem::path path;
+	std::string name;
+
+	bool operator<(const MeshIdentifier& other) const;
+};
+
+class Mesh : public Asset<MeshIdentifier>
 {
 public:
-	Mesh();
+	Mesh(const MeshIdentifier& meshIdentifier);
 	virtual ~Mesh();
 	
 	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, const std::vector<Bone> bones, GLenum drawMode);
@@ -56,12 +66,6 @@ public:
 
 	void SetDynamicDraw(bool dynamicDraw);
 
-	void SetPath(const std::experimental::filesystem::path& path);
-	void SetName(const std::string& name);
-
-	const std::experimental::filesystem::path& GetPath() const;
-	const std::string& GetName() const;
-
 private:
 	void GenerateBuffers(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices);
 	void CalculateAABBForMesh(const std::vector<Vertex> &vertices);
@@ -81,8 +85,6 @@ private:
 	std::vector<Vertex> originalVertices;
 
 	bool dynamicDraw = false;
-	std::experimental::filesystem::path path;
-	std::string name;
 };
 
 #endif // !_MESHENTITY_H_
