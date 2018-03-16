@@ -3,6 +3,7 @@
 
 #include <float2.h>
 #include <float3.h>
+#include <GL/glew.h>
 
 class Camera;
 struct Vertex;
@@ -19,7 +20,8 @@ public:
 	void SetSize(const float2& size);
 	const float2& GetSize() const;
 
-	void ComputeQuad(const Camera& camera, Vertex* outVertices) const;
+	void ComputeQuad(const Camera& camera, std::vector<float3>* outverticesPos) const;
+	void ComputeQuadInitial(const Camera& camera, std::vector<float3>* outverticesPos, std::vector<float2>* outverticesUv,std::vector<GLushort>* indices) const;
 
 private:
 

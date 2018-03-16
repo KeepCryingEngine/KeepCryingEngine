@@ -17,6 +17,7 @@
 #include "ModuleGameUI.h"
 #include "ModuleFont.h"
 #include "ModuleTime.h"
+#include "ModuleFX.h"
 
 using namespace std;
 using nlohmann::json;
@@ -29,6 +30,7 @@ Application::Application()
 	modules.push_back(anim = new ModuleAnim());
 	modules.push_back(scene = new ModuleScene());
 	modules.push_back(renderer = new ModuleRender());
+	modules.push_back(fx = new ModuleFX());
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(uiGame = new ModuleGameUI());
 	modules.push_back(camera = new ModuleCamera());

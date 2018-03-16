@@ -361,6 +361,9 @@
     <ClInclude Include="Transform2D.h">
       <Filter>Components\UI</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleFX.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">

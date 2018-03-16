@@ -6,6 +6,7 @@
 #include "Billboard.h"
 #include "Component.h"
 
+
 class Material;
 
 class GridRenderer : public Component
@@ -16,6 +17,7 @@ public:
 	GridRenderer();
 	virtual ~GridRenderer();
 
+	void RealUpdate() override;
 	void DrawUI() override;
 
 	std::vector<Component::Type> GetProhibitedComponents() const override;
@@ -43,7 +45,16 @@ private:
 
 	float2 size = float2::zero;
 
+	int numVertices = 0;
+	int numIndices = 0;
+	GLuint vertexPosBufferId = 0;
+	GLuint vertexUvBufferId = 0;
+	GLuint indicesBufferId = 0;
+
 	std::vector<Billboard*> billboards;
+	std::vector<float3> vertexPos;
+	std::vector<float2> vertexUv;
+	std::vector<GLushort> indices;
 };
 
 #endif

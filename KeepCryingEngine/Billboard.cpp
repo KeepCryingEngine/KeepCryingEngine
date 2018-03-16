@@ -26,7 +26,10 @@ const float2& Billboard::GetSize() const
 	return size;
 }
 
-void Billboard::ComputeQuad(const Camera& camera, Vertex* outVertices) const
+void Billboard::ComputeQuad(const Camera& camera, std::vector<float3>* outverticesPos) const
 {
 
 }
+
+void Billboard::ComputeQuadInitial(const Camera & camera, std::vector<float3>* outverticesPos, std::vector<float2>* outverticesUv, std::vector<GLushort>* indices) const
+{}

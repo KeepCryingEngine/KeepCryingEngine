@@ -123,6 +123,7 @@
     <ClInclude Include="ModuleAudio.h" />
     <ClInclude Include="ModuleCamera.h" />
     <ClInclude Include="ModuleEntity.h" />
+    <ClInclude Include="ModuleFX.h" />
     <ClInclude Include="ModuleGameUI.h" />
     <ClInclude Include="ModuleFont.h" />
     <ClInclude Include="ModuleInput.h" />
