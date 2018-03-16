@@ -94,7 +94,7 @@ Texture * ModuleTexture::LoadTextureDevil(const std::experimental::filesystem::p
 
 		// Convert the image into a suitable format to work with
 		// NOTE: If your image contains alpha channel you can replace IL_RGB with IL_RGBA
-		if(!ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE))
+		if(!ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE))
 		{
 			ILenum error = ilGetError();
 			LOG_DEBUG("Image conversion failed - IL reports error: %u - %s", error, iluErrorString(error));

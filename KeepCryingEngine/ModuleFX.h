@@ -10,11 +10,11 @@
 
 struct BufferInfo
 {
+	int nVertices;
+	int nIndices;
 	GLuint vertexPosId;
 	GLuint vertexUvId;
 	GLuint indicesId;
-	int nVertices;
-	int nIndices;
 };
 
 struct DrawInfo

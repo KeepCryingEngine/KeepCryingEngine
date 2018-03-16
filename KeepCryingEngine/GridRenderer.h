@@ -17,6 +17,8 @@ public:
 	GridRenderer();
 	virtual ~GridRenderer();
 
+	void Start() override;
+
 	void RealUpdate() override;
 	void DrawUI() override;
 
@@ -28,7 +30,7 @@ public:
 	void SetMaterial(Material& material);
 	Material* GetMaterial() const;
 
-	void Build(uint rows, uint columns, const float2& size);
+	void Build(int rows, int columns, const float2& size);
 
 	virtual void PreLoad(const nlohmann::json& json) override;
 	virtual void Save(nlohmann::json& json) const override;
@@ -40,10 +42,10 @@ private:
 private:
 	Material* material = nullptr;
 
-	uint rows = 0;
-	uint columns = 0;
+	int rows = 1;
+	int columns = 1;
 
-	float2 size = float2::zero;
+	float2 size = float2::one;
 
 	int numVertices = 0;
 	int numIndices = 0;

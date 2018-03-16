@@ -30,6 +30,7 @@
 #include "Button.h"
 #include "Text.h"
 #include "InputText.h"
+#include "GridRenderer.h"
 
 using namespace std;
 
@@ -842,6 +843,10 @@ void ModuleEditorUI::DrawInspectorWindow()
 			if(ImGui::Selectable("Animator"))
 			{
 				temp->AddComponent<Animator>();
+			}
+			if(ImGui::Selectable("GridRenderer"))
+			{
+				temp->AddComponent<GridRenderer>();
 			}
 			if(ImGui::BeginMenu("Audio"))
 			{

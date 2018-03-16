@@ -14,8 +14,10 @@ public:
 	Billboard();
 	virtual ~Billboard();
 
-	void SetPosition(const float3& position);
-	const float3& GetPosition() const;
+	void SetLocalPosition(const float3& position);
+	void SetWorldPosition(const float3& position);
+	const float3& GetWorldPosition() const;
+	const float3& GetLocalPosition() const;
 
 	void SetSize(const float2& size);
 	const float2& GetSize() const;
@@ -25,8 +27,11 @@ public:
 
 private:
 
-	float3 position;
+	float3 localPosition;
+	float3 worldPosition;
 	float2 size;
+
+	
 };
 
 #endif
