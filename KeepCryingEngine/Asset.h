@@ -10,21 +10,21 @@ enum class AssetType {
 	Texture
 };
 
+template <typename K>
 class Asset
 {
 public:
 	
 
-	Asset(const std::experimental::filesystem::path& path, AssetType type);
+	Asset(const K& identifier, AssetType type);
 	virtual ~Asset();
 
-	const std::experimental::filesystem::path& Path() const;
+	const K& Identifier() const;
 	AssetType Type() const;
 
 private:
-	std::experimental::filesystem::path path;
 	AssetType type;
-
+	K identifier;
 };
 
 #endif

@@ -4,21 +4,21 @@
 
 using namespace std;
 
-template <typename T>
-AssetManager<T>::AssetManager()
+template <typename K, typename T>
+AssetManager<K,T>::AssetManager()
 {
 }
 
-template <typename T>
-AssetManager<T>::~AssetManager()
+template <typename K, typename T>
+AssetManager<K,T>::~AssetManager()
 {
 }
 
-template <typename T>
-T* AssetManager<T>::GetAsset(const std::experimental::filesystem::path& path)
+template <typename K, typename T>
+T* AssetManager<K,T>::GetAsset(const K& identifier)
 {
 	T* asset = nullptr;
-	typename map<std::experimental::filesystem::path, T*>::iterator assetIt = assets.find(path);
+	typename map<K, T*>::iterator assetIt = assets.find(identifier);
 	if (assetIt != assets.end())
 	{
 		asset = assetIt->second;
@@ -27,7 +27,7 @@ T* AssetManager<T>::GetAsset(const std::experimental::filesystem::path& path)
 	else
 	{
 		asset = Load(path);
-		if (asset)
+		if (asset != nullptr)
 		{
 			Register(asset);
 		}
@@ -36,20 +36,20 @@ T* AssetManager<T>::GetAsset(const std::experimental::filesystem::path& path)
 	return asset;
 }
 
-template<typename T>
-void AssetManager<T>::Subscribe(T * asset)
+template <typename K, typename T>
+void AssetManager<K,T>::Subscribe(T * asset)
 {
-	assert(asset);
+	assert(asset != nullptr);
 	map<T*, unsigned int>::iterator usageIt = assetUsage.find(asset);
 	assert(usageIt != assetUsage.end());
 	unsigned int &assetUsageCounter = usageIt->second;
 	assetUsageCounter += 1;
 }
 
-template<typename T>
-void AssetManager<T>::Release(T * asset)
+template <typename K, typename T>
+void AssetManager<K,T>::Release(T * asset)
 {
-	assert(asset);
+	assert(asset != nullptr);
 
 	map<T*,unsigned int>::iterator usageIt = assetUsage.find(asset);
 	assert(usageIt != assetUsage.end());
@@ -61,7 +61,7 @@ void AssetManager<T>::Release(T * asset)
 	if (assetUsageCounter == 0)
 	{
 		assetUsage.erase(usageIt);
-		map<std::experimental::filesystem::path, T*>::const_iterator assetIt = assets.find(asset->Path());
+		map<K, T*>::const_iterator assetIt = assets.find(asset->Path());
 		assert(assetIt != assets.cend());
 
 		Unload(asset);
@@ -69,14 +69,14 @@ void AssetManager<T>::Release(T * asset)
 	}
 }
 
-template<typename T>
-size_t AssetManager<T>::Size() const
+template <typename K, typename T>
+size_t AssetManager<K,T>::Size() const
 {
 	return assets.size();
 }
 
-template<typename T>
-void AssetManager<T>::Register(T * asset)
+template <typename K, typename T>
+void AssetManager<K,T>::Register(T * asset)
 {
 	assert(asset);
 	assert(assets.find(asset->Path()) == assets.end());
