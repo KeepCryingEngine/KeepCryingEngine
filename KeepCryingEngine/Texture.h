@@ -2,6 +2,7 @@
 #define _TEXTURE_H_
 
 #include <GL/glew.h>
+#include <experimental/filesystem>
 
 #include "Globals.h"
 #include "Asset.h"
@@ -16,10 +17,17 @@ struct TextureConfiguration {
 	bool anisotropicFilter = true;
 };
 
-class Texture : public Asset
+struct TextureIdentifier
+{
+	std::experimental::filesystem::path path;
+
+	bool operator<(const TextureIdentifier& other) const;
+};
+
+class Texture : public Asset<TextureIdentifier>
 {
 public:
-	Texture(GLuint textureId, const TextureConfiguration& textureConfiguration, uint size, const std::experimental::filesystem::path& path);
+	Texture(GLuint textureId, const TextureConfiguration& textureConfiguration, uint size, const TextureIdentifier& identifier);
 
 	virtual ~Texture();
 

@@ -160,5 +160,6 @@ const Texture* ModuleFont::CreateTextureFromSurface(const SDL_Surface* surface) 
 	tConfig.wrapModeT = GL_CLAMP;
 	tConfig.anisotropicFilter = true;
 
-	return new Texture(tId, tConfig, tSize);
+	TextureIdentifier textureIdentifier = { "no_path_for_a_font" };
+	return new Texture(tId, tConfig, tSize, textureIdentifier);
 }

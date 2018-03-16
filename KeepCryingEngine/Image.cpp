@@ -80,7 +80,8 @@ void Image::SetTextureByPath(const std::experimental::filesystem::path & path)
 		App->texture->Release(texture);
 	}
 
-	texture = App->texture->GetAsset(path);
+	TextureIdentifier textureIdentifier = { path };
+	texture = App->texture->GetAsset(textureIdentifier);
 	
 	if (texture != nullptr)
 	{

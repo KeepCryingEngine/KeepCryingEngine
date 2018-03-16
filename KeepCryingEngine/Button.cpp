@@ -217,8 +217,8 @@ void Button::SetTextureByPath(const std::experimental::filesystem::path & path, 
 	{
 		App->texture->Release(textures[(unsigned int)state]);
 	}
-
-	textures[(unsigned int)state] = App->texture->GetAsset(path);
+	TextureIdentifier textureIdentifier = { path };
+	textures[(unsigned int)state] = App->texture->GetAsset(textureIdentifier);
 }
 
 void Button::SetColor(float4 newColor, ButtonState state)

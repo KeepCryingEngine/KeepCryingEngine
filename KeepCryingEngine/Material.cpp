@@ -75,12 +75,13 @@ void Material::SetTexture(Texture * texture)
 
 void Material::SetTextureByPath(const std::experimental::filesystem::path& path)
 {
-	this->path = path;
-	Texture * texture = App->texture->GetAsset(path);
+	TextureIdentifier textureIdentifier = { path };
+	Texture * texture = App->texture->GetAsset(textureIdentifier);
 	if(texture != nullptr)
 	{
 		App->texture->Release(this->texture);
 		this->texture = texture;
+		this->path = path;
 	}
 }
 

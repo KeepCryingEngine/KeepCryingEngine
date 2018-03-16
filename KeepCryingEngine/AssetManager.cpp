@@ -2,11 +2,15 @@
 
 #include <assert.h>
 
+#include "Asset.h"
+
+
 using namespace std;
 
 template <typename K, typename T>
 AssetManager<K,T>::AssetManager()
 {
+	static_assert(std::is_base_of<Asset<K>, T>::value, "T must derive from Asset");
 }
 
 template <typename K, typename T>
@@ -26,7 +30,7 @@ T* AssetManager<K,T>::GetAsset(const K& identifier)
 	}
 	else
 	{
-		asset = Load(path);
+		asset = Load(identifier);
 		if (asset != nullptr)
 		{
 			Register(asset);
@@ -61,11 +65,7 @@ void AssetManager<K,T>::Release(T * asset)
 	if (assetUsageCounter == 0)
 	{
 		assetUsage.erase(usageIt);
-<<<<<<< HEAD
-		map<K, T*>::const_iterator assetIt = assets.find(asset->Path());
-=======
-		map<std::experimental::filesystem::path, T*>::const_iterator assetIt = assets.find(asset->Path());
->>>>>>> asset
+		map<K, T*>::const_iterator assetIt = assets.find(asset->Identifier());
 		assert(assetIt != assets.cend());
 
 		Unload(asset);
@@ -79,18 +79,13 @@ size_t AssetManager<K,T>::Size() const
 	return assets.size();
 }
 
-<<<<<<< HEAD
 template <typename K, typename T>
 void AssetManager<K,T>::Register(T * asset)
-=======
-template<typename T>
-void AssetManager<T>::Register(T * asset)
->>>>>>> asset
 {
-	assert(asset);
-	assert(assets.find(asset->Path()) == assets.end());
+	assert(asset != nullptr);
+	assert(assets.find(asset->Identifier()) == assets.end());
 	assert(assetUsage.find(asset) == assetUsage.end());
 
-	assets[asset->Path()] = asset;
+	assets[asset->Identifier()] = asset;
 	assetUsage[asset] = 1;
 }

@@ -1,8 +1,6 @@
 #ifndef _ASSET_H_
 #define _ASSET_H_
 
-#include <experimental/filesystem>
-
 enum class AssetType {
 	Audio,
 	Mesh,
@@ -10,16 +8,10 @@ enum class AssetType {
 	Texture
 };
 
-<<<<<<< HEAD
 template <typename K>
-=======
->>>>>>> asset
 class Asset
 {
 public:
-	
-
-<<<<<<< HEAD
 	Asset(const K& identifier, AssetType type);
 	virtual ~Asset();
 
@@ -29,18 +21,31 @@ public:
 private:
 	AssetType type;
 	K identifier;
-=======
-	Asset(const std::experimental::filesystem::path& path, AssetType type);
-	virtual ~Asset();
 
-	const std::experimental::filesystem::path& Path() const;
-	AssetType Type() const;
-
-private:
-	std::experimental::filesystem::path path;
-	AssetType type;
-
->>>>>>> asset
 };
+
+template <typename K>
+inline Asset<K>::Asset(const K& identifier, AssetType type) :
+	identifier(identifier),
+	type(type)
+{
+}
+
+template <typename K>
+inline Asset<K>::~Asset()
+{
+}
+
+template<typename K>
+inline const K & Asset<K>::Identifier() const
+{
+	return identifier;
+}
+
+template <typename K>
+inline AssetType Asset<K>::Type() const
+{
+	return type;
+}
 
 #endif
