@@ -171,6 +171,9 @@
     <ClCompile Include="Transform2D.cpp">
       <Filter>Components\UI</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleFX.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h" />
