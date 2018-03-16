@@ -173,11 +173,35 @@ void GridRenderer::Build(int rows, int columns, const float2& size)
 
 void GridRenderer::PreLoad(const nlohmann::json& json)
 {
-
+	
 }
 
 void GridRenderer::Save(nlohmann::json& json) const
 {
+	/*Material* material = nullptr;
+
+	int rows = 1;
+	int columns = 1;
+
+	float2 size = float2::one;
+	float2 billboardSize = float2::one;
+
+	float2 randomPosition = float2::zero;
+	float randomScale = 0.0f;*/
+
+	Component::Save(json);
+	json["rows"] = rows;
+	json["columns"] = columns;
+	nlohmann::json jsonSize;
+	to_json(jsonSize,size);
+	json["size"] = jsonSize;
+	nlohmann::json jsonBillboardSize;
+	to_json(jsonBillboardSize,billboardSize);
+	json["billboardSize"] = jsonBillboardSize;
+	nlohmann::json jsonRandomPosition;
+	to_json(jsonRandomPosition,randomPosition);
+	json["randomPosition"] = jsonRandomPosition;
+	json["randomScale"] = randomScale;
 
 }
 
