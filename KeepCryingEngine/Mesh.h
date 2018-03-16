@@ -42,7 +42,7 @@ struct MeshIdentifier
 	bool operator<(const MeshIdentifier& other) const;
 };
 
-class Mesh : Asset<MeshIdentifier>
+class Mesh : public Asset<MeshIdentifier>
 {
 public:
 	Mesh(const MeshIdentifier& meshIdentifier);

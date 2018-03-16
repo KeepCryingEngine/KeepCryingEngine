@@ -81,7 +81,7 @@ Mesh * ModuleEntity::ExtractNamedMeshFromScene(const aiScene * scene, const Mesh
 		aiMesh * aiMesh = scene->mMeshes[meshIndex];
 		if (meshIdentifier.name == aiMesh->mName.C_Str()+meshIndex)
 		{
-			return ExtractMeshFromScene(scene, meshIndex, path);
+			return ExtractMeshFromScene(scene, meshIndex, meshIdentifier.path);
 		}
 	}
 
@@ -131,7 +131,7 @@ Mesh * ModuleEntity::ExtractMeshFromScene(const aiScene* aiScene, size_t meshInd
 
 	string meshName = aiMesh->mName.C_Str() + meshIndex;
 	MeshIdentifier meshIdentifier = { path, meshName };
-	Mesh* mesh = new Mesh(path);
+	Mesh* mesh = new Mesh(meshIdentifier);
 	mesh->SetMeshData(vertices, indices, bones, GL_TRIANGLES);
 
 	return mesh;
@@ -191,8 +191,7 @@ void ModuleEntity::SetUpCube()
 	MeshIdentifier meshIdentifier = { "ENGINE_DEFAULTS", "CUBE" };
 	cube = new Mesh(meshIdentifier);
 	cube->SetMeshData(vertices,indices, vector<Bone>(), drawMode);
-	AddMeshToCache(cube);
-	
+	Register(cube);
 }
 
 void ModuleEntity::SetUpSphere()
@@ -205,7 +204,7 @@ void ModuleEntity::SetUpSphere()
 	MeshIdentifier meshIdentifier = { "ENGINE_DEFAULTS", "SPHERE" };
 	sphere = new Mesh(meshIdentifier);
 	sphere->SetMeshData(vertices, indices, vector<Bone>(), drawMode);
-	AddMeshToCache(sphere);
+	Register(sphere);
 }
 
 void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& indices, GLenum& drawMode) const
@@ -499,13 +498,5 @@ Mesh * ModuleEntity::Load(const MeshIdentifier & identifier)
 
 void ModuleEntity::Unload(Mesh * asset)
 {
-}
-
-T * ModuleEntity::Load(const K & identifier)
-{
-	return nullptr;
-}
-
-void ModuleEntity::Unload(T * asset)
-{
+	delete asset;
 }

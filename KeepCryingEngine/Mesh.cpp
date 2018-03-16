@@ -144,5 +144,5 @@ void Mesh::CalculateAABBForMesh(const vector<Vertex> &vertices)
 
 bool MeshIdentifier::operator<(const MeshIdentifier & other) const
 {
-	return path < other.path && name < other.name;
+	return name < other.name || (name == other.name && path.string() < other.path.string());
 }

@@ -7,6 +7,7 @@
 
 #include "Module.h"
 #include "Mesh.h"
+#include "AssetManager.h"
 
 struct aiNode;
 struct aiScene;
