@@ -74,29 +74,12 @@ void ModuleEntity::Load3DFile(const std::experimental::filesystem::path& path)
 	//aiReleaseImport(scene); 
 }
 
-Mesh* ModuleEntity::LoadMesh(const std::experimental::filesystem::path & path, const std::string & name)
-{
-	Mesh * mesh = GetFromMeshCache(path, name);
-	
-	if (mesh == nullptr)
-	{
-		const aiScene * scene = aiImportFile(path.string().c_str(), aiProcess_Triangulate);
-
-		if (scene != nullptr)
-		{
-			mesh = ExtractNamedMeshFromScene(scene, name, path);
-		}
-	}
-	
-	return mesh;
-}
-
-Mesh * ModuleEntity::ExtractNamedMeshFromScene(const aiScene * scene, const std::string & name, const std::experimental::filesystem::path & path)
+Mesh * ModuleEntity::ExtractNamedMeshFromScene(const aiScene * scene, const MeshIdentifier & meshIdentifier)
 {
 	for (size_t meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
 	{
 		aiMesh * aiMesh = scene->mMeshes[meshIndex];
-		if (name == aiMesh->mName.C_Str()+meshIndex)
+		if (meshIdentifier.name == aiMesh->mName.C_Str()+meshIndex)
 		{
 			return ExtractMeshFromScene(scene, meshIndex, path);
 		}
@@ -146,12 +129,11 @@ Mesh * ModuleEntity::ExtractMeshFromScene(const aiScene* aiScene, size_t meshInd
 	ExtractVerticesAndIndicesFromScene(aiScene, aiMesh, vertices, indices);
 	ExtractBonesFromMesh(aiScene, aiMesh, bones);
 
-	Mesh* mesh = new Mesh();
+	string meshName = aiMesh->mName.C_Str() + meshIndex;
+	MeshIdentifier meshIdentifier = { path, meshName };
+	Mesh* mesh = new Mesh(path);
 	mesh->SetMeshData(vertices, indices, bones, GL_TRIANGLES);
 
-
-	mesh->SetName(aiMesh->mName.C_Str()+meshIndex);
-	mesh->SetPath(path);
 	return mesh;
 }
 
@@ -206,10 +188,9 @@ void ModuleEntity::SetUpCube()
 	GLenum drawMode;
 	GetCubeMeshData(vertices, indices, drawMode);
 
-	cube = new Mesh();
+	MeshIdentifier meshIdentifier = { "ENGINE_DEFAULTS", "CUBE" };
+	cube = new Mesh(meshIdentifier);
 	cube->SetMeshData(vertices,indices, vector<Bone>(), drawMode);
-	cube->SetPath("ENGINE_DEFAULTS");
-	cube->SetName("CUBE");
 	AddMeshToCache(cube);
 	
 }
@@ -221,10 +202,9 @@ void ModuleEntity::SetUpSphere()
 	GLenum drawMode;
 	GetSphereMeshData(vertices, indices, drawMode);
 
-	sphere = new Mesh();
+	MeshIdentifier meshIdentifier = { "ENGINE_DEFAULTS", "SPHERE" };
+	sphere = new Mesh(meshIdentifier);
 	sphere->SetMeshData(vertices, indices, vector<Bone>(), drawMode);
-	sphere->SetPath("ENGINE_DEFAULTS");
-	sphere->SetName("SPHERE");
 	AddMeshToCache(sphere);
 }
 
@@ -504,19 +484,28 @@ GameObject* ModuleEntity::CreateGameObjectForNode(const aiScene* scene, aiNode *
 	return gameObject;
 }
 
-void ModuleEntity::AddMeshToCache(Mesh * mesh)
-{
-	meshCache[mesh->GetPath().string() + mesh->GetName()] = mesh;
-}
-
-Mesh * ModuleEntity::GetFromMeshCache(const std::experimental::filesystem::path & path, const std::string & name)
+Mesh * ModuleEntity::Load(const MeshIdentifier & identifier)
 {
 	Mesh * mesh = nullptr;
-	string key = path.string() + name;
-	map<string, Mesh*>::iterator it = meshCache.find(key);
-	if (it != meshCache.end())
+	const aiScene * scene = aiImportFile(identifier.path.string().c_str(), aiProcess_Triangulate);
+
+	if (scene != nullptr)
 	{
-		mesh = it->second;
+		mesh = ExtractNamedMeshFromScene(scene, identifier);
 	}
+	
 	return mesh;
+}
+
+void ModuleEntity::Unload(Mesh * asset)
+{
+}
+
+T * ModuleEntity::Load(const K & identifier)
+{
+	return nullptr;
+}
+
+void ModuleEntity::Unload(T * asset)
+{
 }
