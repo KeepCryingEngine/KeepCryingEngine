@@ -173,7 +173,17 @@ void GridRenderer::Build(int rows, int columns, const float2& size)
 
 void GridRenderer::PreLoad(const nlohmann::json& json)
 {
-	
+	Component::PreLoad(json);
+	rows = json["rows"];
+	columns = json["columns"];
+	from_json(json["size"],size);
+	from_json(json["billboardSize"],billboardSize);
+	from_json(json["randomPosition"],randomPosition);
+	randomScale = json["randomScale"];
+
+	material->SetShaderType(json["material"]["shaderType"]);
+	material->SetTextureByPath(json["material"]["texture"]["path"].get<std::string>());
+	material->GetTexture()->SetTextureConfiguration(json["material"]["texture"]["jsonConfiguration"]);
 }
 
 void GridRenderer::Save(nlohmann::json& json) const
@@ -202,6 +212,17 @@ void GridRenderer::Save(nlohmann::json& json) const
 	to_json(jsonRandomPosition,randomPosition);
 	json["randomPosition"] = jsonRandomPosition;
 	json["randomScale"] = randomScale;
+
+	nlohmann::json jsonMaterial;
+	jsonMaterial["shaderType"] = material->GetShaderType();
+
+	nlohmann::json jsonTexture;
+	jsonTexture["path"] = material->GetTexture()->Identifier().path.string();
+	jsonTexture["jsonConfiguration"] = material->GetTexture()->GetTextureConfiguration();
+
+	jsonMaterial["texture"] = jsonTexture;
+
+	json["material"] = jsonMaterial;
 
 }
 
