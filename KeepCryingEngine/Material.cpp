@@ -20,8 +20,7 @@ Material::Material()
 Material::Material(const Material & mat) :
 	shaderType(mat.shaderType),
 	programId(mat.programId),
-	texture(mat.texture),
-	path(mat.path)
+	texture(mat.texture)
 {
 	App->texture->Subscribe(texture);
 }
@@ -69,9 +68,11 @@ Texture* Material::GetTexture() const
 void Material::SetTexture(Texture * texture)
 {
 	assert(texture != nullptr);
-	App->texture->Release(this->texture);
+	if (this->texture != nullptr)
+	{
+		App->texture->Release(this->texture);
+	}
 	this->texture = texture;
-	path = "undefinedPath";
 }
 
 void Material::SetTextureByPath(const std::experimental::filesystem::path& path)
@@ -82,18 +83,7 @@ void Material::SetTextureByPath(const std::experimental::filesystem::path& path)
 	{
 		App->texture->Release(this->texture);
 		this->texture = texture;
-		this->path = path;
 	}
-}
-
-void Material::SetPath(const std::experimental::filesystem::path& path)
-{
-	this->path = path;
-}
-
-const std::experimental::filesystem::path & Material::GetPath() const
-{
-	return path;
 }
 
 ShaderType Material::GetShaderType() const

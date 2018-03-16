@@ -118,7 +118,6 @@ void ModuleEntity::ExtractMaterialsFromScene(std::vector<Material *> &createdMat
 		texturePath.append(relativeTexturePath.C_Str());
 		
 		Material* mat = new Material();
-		mat->SetPath(texturePath);
 		mat->SetTextureByPath(texturePath);
 		
 		createdMaterials.push_back(mat);
