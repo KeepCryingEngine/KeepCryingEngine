@@ -34,7 +34,7 @@ public:
 	virtual void Save(nlohmann::json& json) const override;
 
 private:
-
+	void UpdateBillboards();
 	void Clear();
 
 private:
