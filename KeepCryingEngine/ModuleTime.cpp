@@ -97,3 +97,8 @@ void ModuleTime::SetTimeScale(float timeScale)
 {
 	this->timeScale = fmaxf(fminf(timeScale, 1.0f), 0.0f);
 }
+
+TimeState ModuleTime::GetCurrentState() const
+{
+	return state;
+}

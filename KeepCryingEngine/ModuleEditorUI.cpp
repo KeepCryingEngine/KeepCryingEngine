@@ -416,18 +416,34 @@ void ModuleEditorUI::SetAllParameters()
 
 void ModuleEditorUI::DrawEditorControler()
 {
-	if(ImGui::Button("Play"))
+	if(App->time->GetCurrentState() != TimeState::STOPED)
 	{
-		App->Play();
-	} ImGui::SameLine();
-	if(ImGui::Button("Pause"))
-	{
-		App->Pause();
-	} ImGui::SameLine();
-	if(ImGui::Button("Stop"))
-	{
-		App->Stop();
+		if(ImGui::Button("Stop"))
+		{
+			App->scene->Restore();
+			App->Stop();
+		} ImGui::SameLine();
+
+		if(ImGui::Button("Pause"))
+		{
+			App->Pause();
+		}
 	}
+	else
+	{
+		if(ImGui::Button("Play"))
+		{
+			App->scene->Save();
+			App->Play();
+		} ImGui::SameLine();
+
+		if(ImGui::Button("Pause"))
+		{
+
+		}
+	}
+
+	
 
 	float tempScale = App->time->GetTimeScale();
 	if(ImGui::DragFloat("Time Scale",&tempScale,0.01f,0.0f,1.0f))

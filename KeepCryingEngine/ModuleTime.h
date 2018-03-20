@@ -33,6 +33,8 @@ public:
 
 	void SetTimeScale(float timeScale);
 
+	TimeState GetCurrentState() const;
+
 private:
 	float frameCount = 0;
 	float time = 0;
