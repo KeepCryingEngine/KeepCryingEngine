@@ -75,8 +75,11 @@ public:
 	std::vector<RayCastHit> RayCastAll(const float3& origin, const float3& direction, float maxDistance) const;
 	void AddToDinamicGameobjectList(GameObject* gameobject);
 
-	void Save();
 	void Restore();
+	void LoadFromFile(const char* fileName);
+
+	void Save();
+	void SaveToFile(const char* fileName) const;
 
 private:
 	GameObject* AddEmptyEmpty(GameObject& parent, const char* name = "EmptyEmpty");
@@ -103,7 +106,11 @@ private:
 
 	void DrawHierarchy(GameObject* gameObject) const;
 
-	void SaveRecursive(GameObject* gameObject, nlohmann::json& data);
+	void SaveRecursive(GameObject* gameObject, nlohmann::json& data) const;
+
+	void LoadScene(const nlohmann::json& jsonScene);
+
+	void SaveScene(nlohmann::json& jsonScene) const;
 
 private:
 	GameObject* root = nullptr;

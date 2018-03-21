@@ -582,45 +582,55 @@ void ModuleScene::AddToDinamicGameobjectList(GameObject* gameobject)
 	dGameobjects.push_back(gameobject);
 }
 
-void ModuleScene::Save()
-{
-	jsonData.clear();
-
-	json jsonGameObjects;
-	SaveRecursive(root, jsonGameObjects);
-
-	jsonData["gameObjects"] = jsonGameObjects;
-	
-	// more scene stuff ...
-
-	validJsonData = true;
-
-	// test, save data
-
-	ofstream file("Assets/Scene.json");
-	file << jsonData;
-}
-
 void ModuleScene::Restore()
 {
 	if(validJsonData)
 	{
-		CleanUp();
-
-		App->uiGame->ClearCanvas();
-
-		Init();
-
-		for(const json& jsonGameObject : jsonData["gameObjects"])
-		{
-			AddEmptyEmpty(*root)->PreLoad(jsonGameObject);
-		}
-
-		for(const json& jsonGameObject : jsonData["gameObjects"])
-		{
-			Get(jsonGameObject["uuid"].get<ENGINE_UUID>().id)->Load(jsonGameObject);
-		}
+		LoadScene(jsonData);
 	}
+}
+
+void ModuleScene::LoadFromFile(const char* fileName)
+{
+	json jsonScene;
+
+	string path = "Assets/Scenes/";
+	path += fileName;
+	path += ".scene";
+
+	ifstream file(path);
+
+	if(!file.is_open())
+	{
+		return;
+	}
+
+	file >> jsonScene;
+	file.close();
+
+	LoadScene(jsonScene);
+}
+
+void ModuleScene::Save()
+{
+	SaveScene(jsonData);
+
+	validJsonData = true;
+}
+
+void ModuleScene::SaveToFile(const char* fileName) const
+{
+	json jsonScene;
+
+	SaveScene(jsonScene);
+
+	string path = "Assets/Scenes/";
+	path += fileName;
+	path += ".scene";
+
+	ofstream file(path);
+	file << jsonScene;
+	file.close();
 }
 
 bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
@@ -824,7 +834,7 @@ void ModuleScene::DrawHierarchy(GameObject* gameObject) const
 	}
 }
 
-void ModuleScene::SaveRecursive(GameObject* gameObject, nlohmann::json& data)
+void ModuleScene::SaveRecursive(GameObject* gameObject, nlohmann::json& data) const
 {
 	if(gameObject != root)
 	{
@@ -838,4 +848,35 @@ void ModuleScene::SaveRecursive(GameObject* gameObject, nlohmann::json& data)
 	{
 		SaveRecursive(child, data);
 	}
+}
+
+void ModuleScene::LoadScene(const nlohmann::json& jsonScene)
+{
+	CleanUp();
+
+	App->uiGame->ClearCanvas();
+
+	Init();
+
+	for(const json& jsonGameObject : jsonScene["gameObjects"])
+	{
+		AddEmptyEmpty(*root)->PreLoad(jsonGameObject);
+	}
+
+	for(const json& jsonGameObject : jsonScene["gameObjects"])
+	{
+		Get(jsonGameObject["uuid"].get<ENGINE_UUID>().id)->Load(jsonGameObject);
+	}
+}
+
+void ModuleScene::SaveScene(nlohmann::json& jsonScene) const
+{
+	jsonScene.clear();
+
+	json jsonGameObjects;
+	SaveRecursive(root, jsonGameObjects);
+
+	jsonScene["gameObjects"] = jsonGameObjects;
+
+	// more scene stuff ...
 }

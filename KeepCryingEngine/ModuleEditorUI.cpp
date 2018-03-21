@@ -131,14 +131,20 @@ void ModuleEditorUI::DrawMainMenu()
 	{
 		if(ImGui::BeginMenu("Scene"))
 		{
+			static char sceneName[180] = "Scene";
+
+			ImGui::InputText("##SceneName", sceneName, sizeof(sceneName));
+
 			if(ImGui::Button("Save"))
 			{
-				App->scene->Save();
+				App->scene->SaveToFile(sceneName);
 			}
 
-			if(ImGui::Button("Restore"))
+			ImGui::SameLine();
+
+			if(ImGui::Button("Load"))
 			{
-				App->scene->Restore();
+				App->scene->LoadFromFile(sceneName);
 			}
 
 			ImGui::EndMenu();
