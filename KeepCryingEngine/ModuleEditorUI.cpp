@@ -416,37 +416,59 @@ void ModuleEditorUI::SetAllParameters()
 
 void ModuleEditorUI::DrawEditorControler()
 {
-	if(App->time->GetCurrentState() != TimeState::STOPED)
+	switch(App->time->GetCurrentState())
 	{
-		if(ImGui::Button("Stop"))
-		{
-			App->scene->Restore();
-			App->Stop();
-		} ImGui::SameLine();
+		case TimeState::PLAYING:
+			// Show Pause & Stop
 
-		if(ImGui::Button("Pause"))
-		{
-			App->Pause();
-		}
+			if(ImGui::Button("Pause"))
+			{
+				App->Pause();
+			}
+
+			ImGui::SameLine();
+
+			if(ImGui::Button("Stop"))
+			{
+				App->scene->Restore();
+				App->Stop();
+			}
+
+			break;
+
+		case TimeState::PAUSED:
+			// Show Unpause & Stop
+
+			if(ImGui::Button("Unpause"))
+			{
+				App->Play();
+			}
+			
+			ImGui::SameLine();
+
+			if(ImGui::Button("Stop"))
+			{
+				App->scene->Restore();
+				App->Stop();
+			}
+
+			break;
+
+		case TimeState::STOPED:
+			// Show Play
+
+			if(ImGui::Button("Play"))
+			{
+				App->scene->Save();
+				App->Play();
+			}
+
+			break;
 	}
-	else
-	{
-		if(ImGui::Button("Play"))
-		{
-			App->scene->Save();
-			App->Play();
-		} ImGui::SameLine();
-
-		if(ImGui::Button("Pause"))
-		{
-
-		}
-	}
-
-	
 
 	float tempScale = App->time->GetTimeScale();
-	if(ImGui::DragFloat("Time Scale",&tempScale,0.01f,0.0f,1.0f))
+
+	if(ImGui::DragFloat("Time Scale", &tempScale, 0.01f, 0.0f, 1.0f))
 	{
 		App->time->SetTimeScale(tempScale);
 	}
