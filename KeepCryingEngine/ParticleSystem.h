@@ -9,6 +9,7 @@ struct Particle
 	float3 position;
 	float3 velocity;
 	int lifetime;
+	Billboard* billboard;
 };
 
 class Material;
@@ -41,12 +42,10 @@ private:
 private:
 	typedef std::vector<Particle> ParticlePool;
 	typedef std::vector<unsigned> ParticleList;
-	typedef std::vector<Billboard> BillboardList;
 
 	ParticlePool particles;
 	ParticleList alive;
 	ParticleList dead;
-	BillboardList billboards;
 
 	unsigned maxParticles = 0;
 	float2 emitArea = float2::zero;
@@ -64,8 +63,8 @@ private:
 	GLuint vertexUvBufferId = 0;
 	GLuint indicesBufferId = 0;
 
-	std::vector<float3> vertices;
-	std::vector<float2> textCoords;
+	std::vector<float3> vertexPos;
+	std::vector<float2> vertexUv;
 	std::vector<GLushort> indices;
 };
 

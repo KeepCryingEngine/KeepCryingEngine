@@ -77,8 +77,6 @@ void ParticleSystem::SetMaxParticles(unsigned maxParticles)
 	{
 		dead.push_back(i);
 	}
-
-	billboards.resize(maxParticles);
 }
 
 void ParticleSystem::SetMaterial(Material& material)
@@ -124,6 +122,36 @@ void ParticleSystem::Update(const Camera& camera)
 	{
 		accumElapsed = 0;
 	}
+
+	for(ParticleList::iterator it = alive.begin(); it != alive.end(); ++it)
+	{
+		particles[(*it)].billboard->ComputeQuadInitial(camera,&vertexPos,&vertexUv,&indices);
+	}
+
+	numVertices = vertexUv.size();
+	numIndices = indices.size();
+
+	//Generate Vertex Pos buffer
+	const float3 * vertexPosPointer = &vertexPos[0];
+	glGenBuffers(1, &vertexPosBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexPosBufferId);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * numVertices, vertexPosPointer, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	//Generate Vertex Uv buffer
+	const float2 * vertexUvPointer = &vertexUv[0];
+	glGenBuffers(1, &vertexUvBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexUvBufferId);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float2) * numVertices, vertexUvPointer, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	//Generate Indices buffer
+	const GLushort* indicesPointer = &indices[0];
+	glGenBuffers(1, &indicesBufferId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * numIndices, indicesPointer, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 }
 
 void ParticleSystem::Render()
@@ -137,10 +165,9 @@ void ParticleSystem::Clear()
 	particles.clear();
 	alive.clear();
 	dead.clear();
-	billboards.clear();
 
-	vertices.clear();
-	textCoords.clear();
+	vertexPos.clear();
+	vertexUv.clear();
 	indices.clear();
 }
 
@@ -159,6 +186,13 @@ bool ParticleSystem::CreateParticle()
 		particle.position = position;
 		particle.velocity = -float3::unitY;
 		particle.lifetime = fallingTime;
+
+		Billboard* tempBilboard = new Billboard();
+		tempBilboard->SetLocalPosition(float3(0, 0.5f * fallingHeight,0));//TODO: change
+		tempBilboard->SetWorldPosition(position);
+		tempBilboard->SetSize(particleSize);
+
+		particle.billboard = tempBilboard;
 	}
 
 	return false;
