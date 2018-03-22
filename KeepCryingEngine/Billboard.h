@@ -26,12 +26,9 @@ public:
 	void ComputeQuadInitial(const Camera& camera, std::vector<float3>* outverticesPos, std::vector<float2>* outverticesUv,std::vector<GLushort>* indices) const;
 
 private:
-
 	float3 localPosition;
 	float3 worldPosition;
 	float2 size;
-
-	
 };
 
 #endif

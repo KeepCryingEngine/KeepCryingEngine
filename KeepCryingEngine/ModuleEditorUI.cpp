@@ -31,6 +31,7 @@
 #include "Text.h"
 #include "InputText.h"
 #include "GridRenderer.h"
+#include "ParticleSystem.h"
 
 using namespace std;
 
@@ -876,7 +877,7 @@ void ModuleEditorUI::DrawInspectorWindow()
 		if(ImGui::BeginMenu("Add"))
 		{
 			static int selectedComponent = 0;
-			if(ImGui::Selectable("MeshRenderer"))
+			if(ImGui::Selectable("Mesh Renderer"))
 			{
 				temp->AddComponent<MeshRenderer>();
 			}
@@ -888,9 +889,13 @@ void ModuleEditorUI::DrawInspectorWindow()
 			{
 				temp->AddComponent<Animator>();
 			}
-			if(ImGui::Selectable("GridRenderer"))
+			if(ImGui::Selectable("Grid Renderer"))
 			{
 				temp->AddComponent<GridRenderer>();
+			}
+			if(ImGui::Selectable("Particle System"))
+			{
+				temp->AddComponent<ParticleSystem>();
 			}
 			if(ImGui::BeginMenu("Audio"))
 			{

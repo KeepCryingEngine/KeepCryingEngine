@@ -28,7 +28,8 @@ public:
 		Text,
 		InpuText,
 		Transform2D,
-		GridRenderer
+		GridRenderer,
+		ParticleSystem
 	};
 
 	Component(Component::Type type) : enabled(true), wasEnabled(true), type(type)
