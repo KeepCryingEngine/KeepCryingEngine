@@ -2,6 +2,7 @@
 #define _GLOBALS_H_
 
 #include "MemLeaks.h"
+#include <stdlib.h>
 
 #define LOG_DEBUG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
 
@@ -37,6 +38,11 @@ inline void RELEASE_ARRAY(T*& x)
 		delete[] x;
 		x = nullptr;
 	}
+}
+
+inline float RandomFloat(float min, float max)
+{
+	return  (max - min) * ((((float)rand()) / (float)RAND_MAX)) + min;
 }
 
 // Configuration -----------

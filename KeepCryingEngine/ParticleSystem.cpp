@@ -127,7 +127,7 @@ void ParticleSystem::Update(const Camera& camera)
 
 	for(unsigned i = 0; i < times; ++i)
 	{
-		CreateParticle();
+		CreateParticle(camera);
 	}
 
 	if(times > 0)
@@ -198,12 +198,13 @@ void ParticleSystem::ClearBuffers()
 	glDeleteBuffers(1, &indicesBufferId);
 }
 
-bool ParticleSystem::CreateParticle()
+bool ParticleSystem::CreateParticle(const Camera& camera)
 {
 	if(!dead.empty())
 	{
+		//float3 position = camera.GetFrustum().pos;
 		float3 position = gameObject->GetTransform()->GetWorldPosition();
-		position.y += 0.5f * fallingHeight;
+		float3 localPos = float3(RandomFloat(-emitArea.x, emitArea.x), 0.5f * fallingHeight, RandomFloat(-emitArea.y, emitArea.y));
 
 		unsigned index = dead.back();
 		dead.pop_back();
@@ -211,12 +212,12 @@ bool ParticleSystem::CreateParticle()
 		alive.push_back(index);
 		Particle& particle = particles[index];
 
-		particle.position = position;
+		particle.position = position + localPos;
 		particle.velocity = float3(0,-fallingHeight/fallingTime,0);
 		particle.lifetime = fallingTime;
 
 		Billboard* tempBilboard = new Billboard();
-		tempBilboard->SetLocalPosition(float3(0, 0.5f * fallingHeight,0));//TODO: change
+		tempBilboard->SetLocalPosition(localPos);
 		tempBilboard->SetWorldPosition(position);
 		tempBilboard->SetSize(particleSize);
 

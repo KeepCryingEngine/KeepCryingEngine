@@ -39,7 +39,7 @@ private:
 
 	void ClearBuffers();
 
-	bool CreateParticle();
+	bool CreateParticle(const Camera& camera);
 
 private:
 	typedef std::vector<Particle> ParticlePool;

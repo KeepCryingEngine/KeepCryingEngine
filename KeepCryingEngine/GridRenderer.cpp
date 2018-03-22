@@ -101,11 +101,6 @@ Material* GridRenderer::GetMaterial() const
 	return material;
 }
 
-float RandomFloat(float min, float max)
-{
-	return  (max - min) * ((((float)rand()) / (float)RAND_MAX)) + min;
-}
-
 void GridRenderer::Build(int rows, int columns, const float2& size)
 {
 	Clear();
