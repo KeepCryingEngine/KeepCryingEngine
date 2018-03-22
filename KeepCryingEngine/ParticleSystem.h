@@ -8,7 +8,7 @@ struct Particle
 {
 	float3 position;
 	float3 velocity;
-	int lifetime;
+	float lifetime;
 	Billboard* billboard;
 };
 
@@ -37,6 +37,8 @@ private:
 
 	void Clear();
 
+	void ClearBuffers();
+
 	bool CreateParticle();
 
 private:
@@ -47,13 +49,13 @@ private:
 	ParticleList alive;
 	ParticleList dead;
 
-	unsigned maxParticles = 0;
-	float2 emitArea = float2::zero;
-	unsigned fallingTime = 0;
-	unsigned accumElapsed = 0;
-	unsigned accumElapsedTotal = 0;
-	float fallingHeight = 0.0f;
-	float2 particleSize = float2::zero;
+	unsigned maxParticles = 1000;
+	float2 emitArea = float2::one;
+	float fallingTime = 1;
+	float accumElapsed = 0;
+	float accumElapsedTotal = 0;
+	float fallingHeight = 1.0f;
+	float2 particleSize = float2::one;
 
 	Material* material = nullptr;
 

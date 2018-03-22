@@ -10,6 +10,8 @@
 ParticleSystem::ParticleSystem() : Component(ParticleSystem::TYPE)
 {
 	material = new Material();
+	accumElapsedTotal = 1000*fallingTime / maxParticles;
+	SetMaxParticles(maxParticles);
 }
 
 ParticleSystem::~ParticleSystem()
@@ -19,7 +21,14 @@ ParticleSystem::~ParticleSystem()
 
 void ParticleSystem::RealUpdate()
 {
-	Update(*App->camera->camera);
+	if(App->camera->GetEnabledCamera() != nullptr)
+	{
+		Update(*App->camera->GetEnabledCamera());
+	}
+	else
+	{
+		Update(*App->camera->camera);
+	}	
 	Render();
 }
 
@@ -36,23 +45,23 @@ void ParticleSystem::DrawUI()
 			gameObject->RemoveComponent(this);
 		}
 
-		if(ImGui::DragInt("Max particles", reinterpret_cast<int*>(&maxParticles), 0.1f, 0, 1000000))
+		if(ImGui::DragInt("Max particles", reinterpret_cast<int*>(&maxParticles), 1, 0, 1000000))
 		{
-			accumElapsedTotal = (unsigned)((float)maxParticles / (float)fallingTime);
+			accumElapsedTotal = 1000 * fallingTime / maxParticles;
 
 			SetMaxParticles(maxParticles);
 		}
 
 		ImGui::DragFloat2("Emit area", emitArea.ptr(), 0.1f, 0.0f, 1000000.0f);
 
-		if(ImGui::DragInt("Falling time", reinterpret_cast<int*>(&fallingTime), 0.1f, 0, 1000000))
+		if(ImGui::DragFloat("Falling time", &fallingTime, 0.1f, 0.1, 1000000))
 		{
-			accumElapsedTotal = (unsigned)((float)maxParticles / (float)fallingTime);
+			accumElapsedTotal = 1000 * fallingTime / maxParticles;
 		}
 
-		ImGui::DragFloat("Falling height", &fallingHeight, 0.1f, 0.0f, 1000000);
+		ImGui::DragFloat("Falling height", &fallingHeight, 0.1f, 0.1f, 1000000);
 
-		ImGui::DragFloat2("Particle size", particleSize.ptr(), 0.1f, 0.0f, 1000000.0f);
+		ImGui::DragFloat2("Particle size", particleSize.ptr(), 0.1f, 0.1f, 1000000.0f);
 
 		if(material)
 		{
@@ -97,15 +106,18 @@ void ParticleSystem::Update(const Camera& camera)
 	{
 		Particle& particle = particles[*it];
 
-		particle.lifetime -= timeMs;
+		particle.lifetime -= timeS;
 
 		if(particle.lifetime > 0)
 		{
 			particle.position += timeS * particle.velocity;
+			particle.billboard->SetLocalPosition(particle.billboard->GetLocalPosition() + timeS * particle.velocity);
+			particle.billboard->SetWorldPosition(particle.position);
 			++it;
 		}
 		else
 		{
+			RELEASE(particles[(*it)].billboard);
 			dead.push_back(*it);
 			it = alive.erase(it);
 		}
@@ -123,6 +135,8 @@ void ParticleSystem::Update(const Camera& camera)
 		accumElapsed = 0;
 	}
 
+	ClearBuffers();
+
 	for(ParticleList::iterator it = alive.begin(); it != alive.end(); ++it)
 	{
 		particles[(*it)].billboard->ComputeQuadInitial(camera,&vertexPos,&vertexUv,&indices);
@@ -130,27 +144,29 @@ void ParticleSystem::Update(const Camera& camera)
 
 	numVertices = vertexUv.size();
 	numIndices = indices.size();
+	if(numVertices > 0)
+	{
+		//Generate Vertex Pos buffer
+		const float3 * vertexPosPointer = &vertexPos[0];
+		glGenBuffers(1, &vertexPosBufferId);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexPosBufferId);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * numVertices, vertexPosPointer, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	//Generate Vertex Pos buffer
-	const float3 * vertexPosPointer = &vertexPos[0];
-	glGenBuffers(1, &vertexPosBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexPosBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * numVertices, vertexPosPointer, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//Generate Vertex Uv buffer
+		const float2 * vertexUvPointer = &vertexUv[0];
+		glGenBuffers(1, &vertexUvBufferId);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexUvBufferId);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float2) * numVertices, vertexUvPointer, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	//Generate Vertex Uv buffer
-	const float2 * vertexUvPointer = &vertexUv[0];
-	glGenBuffers(1, &vertexUvBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexUvBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float2) * numVertices, vertexUvPointer, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	//Generate Indices buffer
-	const GLushort* indicesPointer = &indices[0];
-	glGenBuffers(1, &indicesBufferId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * numIndices, indicesPointer, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		//Generate Indices buffer
+		const GLushort* indicesPointer = &indices[0];
+		glGenBuffers(1, &indicesBufferId);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * numIndices, indicesPointer, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
 
 }
 
@@ -171,6 +187,17 @@ void ParticleSystem::Clear()
 	indices.clear();
 }
 
+void ParticleSystem::ClearBuffers()
+{
+	vertexPos.clear();
+	vertexUv.clear();
+	indices.clear();
+
+	glDeleteBuffers(1, &vertexPosBufferId);
+	glDeleteBuffers(1, &vertexUvBufferId);
+	glDeleteBuffers(1, &indicesBufferId);
+}
+
 bool ParticleSystem::CreateParticle()
 {
 	if(!dead.empty())
@@ -181,10 +208,11 @@ bool ParticleSystem::CreateParticle()
 		unsigned index = dead.back();
 		dead.pop_back();
 
+		alive.push_back(index);
 		Particle& particle = particles[index];
 
 		particle.position = position;
-		particle.velocity = -float3::unitY;
+		particle.velocity = float3(0,-fallingHeight/fallingTime,0);
 		particle.lifetime = fallingTime;
 
 		Billboard* tempBilboard = new Billboard();
