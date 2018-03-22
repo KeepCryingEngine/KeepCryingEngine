@@ -175,7 +175,9 @@
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="Asset.cpp" />
-    <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h" />
@@ -373,7 +375,9 @@
     <ClInclude Include="AudioStructures.h">
       <Filter>Entities</Filter>
     </ClInclude>
-    <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
