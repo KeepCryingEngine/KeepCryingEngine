@@ -11,7 +11,7 @@ using namespace std;
 
 Camera::Camera() : Component(Camera::TYPE)
 {
-	SetUpFrustum(float3::zero, Quat::identity);
+	SetUpCamera();
 }
 
 Camera::~Camera()
@@ -29,12 +29,6 @@ void Camera::Destroy()
 		App->camera->EnableCamera(nullptr);
 	}
 }
-
-/* void Camera::Start()
-{
-	Transform* transform = gameObject->GetTransform();
-	SetUpFrustum(transform->position, transform->rotation);
-} */
 
 void Camera::RealUpdate()
 {
@@ -129,12 +123,9 @@ int Camera::GetNumberOfPoints() const
 	return numberOfPoints;
 }
 
-void Camera::SetUpFrustum(const float3& position, const Quat& rotation, float nearPlaneDistance, float farPlaneDistance, float fov)
+void Camera::SetUpCamera(float nearPlaneDistance, float farPlaneDistance, float fov)
 {
 	frustum.type = PerspectiveFrustum;
-	frustum.pos = position; // float3(0, 1, -10);
-	frustum.front = rotation.Mul(float3::unitZ); // float3::unitZ;
-	frustum.up = rotation.Mul(float3::unitY); // float3::unitY;
 	frustum.nearPlaneDistance = nearPlaneDistance;
 	frustum.farPlaneDistance = farPlaneDistance;
 	frustum.verticalFov = DegToRad(fov);

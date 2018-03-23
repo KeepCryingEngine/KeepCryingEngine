@@ -17,42 +17,43 @@ class Camera : public Component
 public:
 	static const Component::Type TYPE = Component::Type::Camera;
 
+	static bool Intersects(const Frustum& frustum, const AABB& aabb);
+
 	Camera();
 	virtual ~Camera();
 
-	virtual void Start() override;
-	// virtual void Start() override;
-	virtual void Destroy() override;
-
-	virtual void SetEnable(bool setEnable);
-
+	void Start() override;
 	void RealUpdate() override;
+	void Destroy() override;
+	void SetEnable(bool setEnable) override;
 
-	void SetFOV(float radians);
-	void SetAspectRatio(float aspect);
-	void SetNearPlane(float distance);
-	void SetFarPlane(float distance);
-
-	const Frustum& GetFrustum() const;
-
-	float GetFOV() const;
-	float GetAspectRatio() const;
-	float GetNearPlane() const;
-	float GetFarPlane() const;
-	float4x4 GetViewMatrix() const;
-	float4x4 GetProyectionMatrix() const;
-	uint GetFrustumBufferId() const;
-	uint GetFrustumIndicesId() const;
-	int GetNumberOfPoints()const;
-	
-	void SetUpFrustum(const float3& position = float3::zero, const Quat& rotation = Quat::identity, float nearPlaneDistance = 0.1f, float farPlaneDistance = 50.0f, float fov = 60.0f);
+	std::vector<Component::Type> GetNeededComponents() const override;
+	std::vector<Component::Type> GetProhibitedComponents() const override;
 
 	void DrawUI() override;
 
-	virtual std::vector<Component::Type> GetNeededComponents() const override;
-	virtual std::vector<Component::Type> GetProhibitedComponents() const override;
+	void SetUpCamera(float nearPlaneDistance = 0.1f, float farPlaneDistance = 50.0f, float fov = 60.0f);
+	const Frustum& GetFrustum() const;
 
-	static bool Intersects(const Frustum& frustum, const AABB& aabb);
+	float4x4 GetViewMatrix() const;
+	float4x4 GetProyectionMatrix() const;
+
+	float GetFOV() const;
+	void SetFOV(float radians);
+
+	float GetAspectRatio() const;
+	void SetAspectRatio(float aspect);
+
+	float GetNearPlane() const;
+	void SetNearPlane(float distance);
+
+	float GetFarPlane() const;
+	void SetFarPlane(float distance);
+
+	//editor frustrum drawing
+	uint GetFrustumBufferId() const;
+	uint GetFrustumIndicesId() const;
+	int GetNumberOfPoints()const;
 
 	virtual void PreLoad(const nlohmann::json& json) override;
 	virtual void Save(nlohmann::json& json) const override;
@@ -66,6 +67,7 @@ private:
 	uint frustumBufferId = 0;
 	uint frustumIndicesId = 0;
 	int numberOfPoints;
+
 };
 
 #endif

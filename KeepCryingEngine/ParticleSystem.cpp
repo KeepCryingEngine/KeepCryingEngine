@@ -56,12 +56,12 @@ void ParticleSystem::DrawUI()
 
 		ImGui::DragFloat2("Emit area", emitArea.ptr(), 0.1f, 0.0f, 1000000.0f);
 
-		if(ImGui::DragFloat("Falling time", &fallingTime, 0.1f, 0.1, 1000000))
+		if(ImGui::DragFloat("Falling time", &fallingTime, 0.1f, 0.1f, 1000000.0f))
 		{
 			accumElapsedTotal = 1000 * fallingTime / maxParticles;
 		}
 
-		ImGui::DragFloat("Falling height", &fallingHeight, 0.1f, 0.1f, 1000000);
+		ImGui::DragFloat("Falling height", &fallingHeight, 0.1f, 0.1f, 1000000.0f);
 
 		ImGui::DragFloat2("Particle size", particleSize.ptr(), 0.1f, 0.1f, 1000000.0f);
 

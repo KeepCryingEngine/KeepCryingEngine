@@ -7,6 +7,7 @@
 
 class Camera;
 class GameObject;
+class Transform;
 
 class ModuleCamera : public Module
 {
@@ -54,7 +55,8 @@ private:
 	void ScenePick();
 
 public:
-	GameObject* gameObjectCamera = nullptr;
+	GameObject* cameraGameObject = nullptr;
+	Transform* cameraTransform = nullptr;
 	Camera * camera = nullptr;
 
 private:
