@@ -25,7 +25,8 @@ bool ModuleCamera::Init()
 	cameraGameObject = new GameObject("Editor Camera");
 	cameraTransform = cameraGameObject->GetComponent<Transform>();
 	camera = cameraGameObject->AddComponent<Camera>();
-	
+	camera->SetIgnoreFrustumRendering(true);
+
 	//init camera
 	cameraTransform->SetWorldPosition(float3(0, 1, -10));
 	cameraTransform->SetWorldRotation(Quat::FromEulerXYZ(0, 0, 0));
@@ -40,7 +41,7 @@ update_status ModuleCamera::Update()
 	Orbit();
 	Movement();
 
-	cameraGameObject->Update();
+	camera->Update();
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -366,6 +367,8 @@ float3 ModuleCamera::GetWASDQEInput() const
 
 void ModuleCamera::EnableCamera(Camera* camera)
 {
+	if(this->camera == camera) return;
+
 	if(enabledCamera != nullptr)
 	{
 		enabledCamera->enabled = false;
