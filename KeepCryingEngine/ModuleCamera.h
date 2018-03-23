@@ -57,6 +57,7 @@ private:
 
 	float CalculateShiftDeltaMultiplier() const;
 	float3 GetWASDQEInput() const;
+	float2 GetArrowKeysInput() const;
 
 public:
 	GameObject* cameraGameObject = nullptr;

@@ -153,8 +153,7 @@ void Transform::SetLocalRotation(const Quat & rotation)
 	if(!gameObject->IsStatic())
 	{
 		SetDirty();
-		localRotation = rotation;
-		localRotation.Normalize();
+		localRotation = rotation.Normalized();
 	}
 }
 
@@ -224,7 +223,8 @@ void Transform::SetWorldRotation(const Quat & rotation)
 	if(!gameObject->IsStatic())
 	{
 		SetDirty();
-		localRotation = rotation.Mul(ParentWorldRotation().Inverted());
+		localRotation = rotation.Normalized().Mul(ParentWorldRotation().Inverted());
+		localRotation.Normalize();
 	}
 }
 
@@ -255,24 +255,44 @@ void Transform::Recalculate()
 	SetDirty();
 }
 
-void Transform::Translate(const float3 & value, bool world)
+void Transform::Translate(const float3 & position, Space space)
 {
 	SetDirty();
-	if(world)
+	if(space == Space::World)
 	{
-		localPosition += GetWorldRotation().Inverted().Mul(value);
+		SetWorldPosition(GetWorldPosition() + position);
 	}
-	else
+	else // spce == Space::Self
 	{
-		localPosition += value;
+		SetLocalPosition(localPosition + position);
 	}
 }
 
-void Transform::LookAt(const float3 & worldPos)
+void Transform::Rotate(const Quat & rotation, Space space)
 {
-	float3 targetDirection = (worldPos - GetWorldPosition()).Normalized();
-	Quat rot = Quat::LookAt(Forward(),targetDirection,Up(),float3::unitY);
-	SetWorldRotation(rot);
+	SetDirty();
+	if (space == Space::World)
+	{
+		SetWorldRotation(GetWorldRotation().Mul(rotation));
+	}
+	else // spce == Space::Self
+	{
+		SetLocalRotation(localRotation.Mul(rotation));
+	}
+}
+
+void Transform::LookAt(const float3 & position)
+{
+	float3 lookAtDirectionNormalized = (position - GetWorldPosition()).Normalized();
+
+	Quat lookAtRotation = Quat::LookAt(
+		Forward(),
+		lookAtDirectionNormalized,
+		Up(),
+		float3::unitY
+	);
+
+	Rotate(lookAtRotation, Space::World);
 }
 
 void Transform::Decompose(const float4x4 & matrix, float3 & position, Quat & rotation, float3 & scale) const

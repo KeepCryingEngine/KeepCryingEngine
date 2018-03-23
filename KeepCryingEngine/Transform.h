@@ -7,6 +7,11 @@
 #include <float4x4.h>
 #include <Quat.h>
 
+enum class Space {
+	World,
+	Self
+};
+
 class Transform : public Component
 {
 public:
@@ -46,7 +51,8 @@ public:
 
 	void Recalculate();
 
-	void Translate(const float3& value,bool world = false);
+	void Translate(const float3& value, Space space = Space::Self);
+	void Rotate(const Quat& rotation, Space space = Space::Self);
 
 	void LookAt(const float3& worldPos);
 
