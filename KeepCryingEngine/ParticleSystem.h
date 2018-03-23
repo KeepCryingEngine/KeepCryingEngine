@@ -25,6 +25,9 @@ public:
 
 	void DrawUI() override;
 
+	virtual void PreLoad(const nlohmann::json& json) override;
+	virtual void Save(nlohmann::json& json) const override;
+
 private:
 	void SetMaxParticles(unsigned maxParticles);
 
