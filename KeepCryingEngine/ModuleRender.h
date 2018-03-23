@@ -46,6 +46,8 @@ public:
 
 	void DrawCube(const float3& offset, const float3& color, float radius) const;
 
+	void DrawRectangularBox(const float3& position, const float3& rotation, const float3& scale, const float3& color, float w, float h, float d) const;
+
 	void DrawSphere(const float3& offset, const float3& color, float radius) const;
 
 private:
