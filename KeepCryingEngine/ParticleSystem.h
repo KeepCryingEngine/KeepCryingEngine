@@ -6,7 +6,6 @@
 
 struct Particle
 {
-	float3 position;
 	float3 velocity;
 	float lifetime;
 	Billboard* billboard;
@@ -33,7 +32,7 @@ private:
 
 	void Update(const Camera& camera);
 
-	void Render();
+	void Render(const Camera& camera);
 
 	void Clear();
 

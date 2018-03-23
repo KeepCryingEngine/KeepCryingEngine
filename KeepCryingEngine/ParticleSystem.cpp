@@ -24,12 +24,14 @@ void ParticleSystem::RealUpdate()
 	if(App->camera->GetEnabledCamera() != nullptr)
 	{
 		Update(*App->camera->GetEnabledCamera());
+		Render(*App->camera->GetEnabledCamera());
 	}
 	else
 	{
 		Update(*App->camera->camera);
+		Render(*App->camera->camera);
 	}	
-	Render();
+
 }
 
 void ParticleSystem::DrawUI()
@@ -110,9 +112,8 @@ void ParticleSystem::Update(const Camera& camera)
 
 		if(particle.lifetime > 0)
 		{
-			particle.position += timeS * particle.velocity;
 			particle.billboard->SetLocalPosition(particle.billboard->GetLocalPosition() + timeS * particle.velocity);
-			particle.billboard->SetWorldPosition(particle.position);
+			particle.billboard->SetWorldPosition(particle.billboard->GetWorldPosition() + timeS * particle.velocity);
 			++it;
 		}
 		else
@@ -170,10 +171,10 @@ void ParticleSystem::Update(const Camera& camera)
 
 }
 
-void ParticleSystem::Render()
+void ParticleSystem::Render(const Camera& camera)
 {
 	BufferInfo temp = { numVertices, numIndices, vertexPosBufferId, vertexUvBufferId, indicesBufferId };
-	App->fx->AddToDraw(*material, *gameObject->GetTransform(), temp);
+	App->fx->AddToDraw(*material, *camera.gameObject->GetTransform(), temp);
 }
 
 void ParticleSystem::Clear()
@@ -202,8 +203,8 @@ bool ParticleSystem::CreateParticle(const Camera& camera)
 {
 	if(!dead.empty())
 	{
-		//float3 position = camera.GetFrustum().pos;
-		float3 position = gameObject->GetTransform()->GetWorldPosition();
+		float3 position = camera.GetPosition();
+		//float3 position = gameObject->GetTransform()->GetWorldPosition();
 		float3 localPos = float3(RandomFloat(-emitArea.x, emitArea.x), 0.5f * fallingHeight, RandomFloat(-emitArea.y, emitArea.y));
 
 		unsigned index = dead.back();
@@ -212,16 +213,16 @@ bool ParticleSystem::CreateParticle(const Camera& camera)
 		alive.push_back(index);
 		Particle& particle = particles[index];
 
-		particle.position = position + localPos;
 		particle.velocity = float3(0,-fallingHeight/fallingTime,0);
 		particle.lifetime = fallingTime;
 
 		Billboard* tempBilboard = new Billboard();
 		tempBilboard->SetLocalPosition(localPos);
-		tempBilboard->SetWorldPosition(position);
+		tempBilboard->SetWorldPosition(position + localPos);
 		tempBilboard->SetSize(particleSize);
 
 		particle.billboard = tempBilboard;
+		return true;
 	}
 
 	return false;

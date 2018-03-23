@@ -7,6 +7,7 @@
 #include "ModuleScene.h"
 #include "ModuleEditorUI.h"
 #include "ModuleTime.h"
+#include "GameObject.h"
 
 const float ModuleCamera::SHIFT_MULTIPLIER = 10.0f;
 const float ModuleCamera::WHEEL_FORCE = 10.0f;
@@ -20,7 +21,8 @@ ModuleCamera::~ModuleCamera()
 
 bool ModuleCamera::Init()
 {
-	camera = new Camera();
+	gameObjectCamera = new GameObject("Editor Camera");
+	camera = gameObjectCamera->AddComponent<Camera>();
 	camera->SetUpFrustum(float3(0, 1, -10), Quat::identity, 0.1f, 300.0f);
 
 	return true;

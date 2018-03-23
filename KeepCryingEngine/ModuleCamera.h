@@ -53,7 +53,8 @@ private:
 	void ScenePick();
 
 public:
-	Camera* camera = nullptr;
+	GameObject* gameObjectCamera = nullptr;
+	Camera * camera = nullptr;
 
 private:
 	float movementSpeed = 10.0f;
