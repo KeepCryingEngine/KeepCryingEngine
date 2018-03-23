@@ -34,6 +34,8 @@ private:
 
 	void Render(const Camera& camera);
 
+	void RenderBox(const Camera& camera);
+
 	void Clear();
 
 	void ClearBuffers();

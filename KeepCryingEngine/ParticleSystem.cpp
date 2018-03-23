@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "ModuleFX.h"
 #include "GameObject.h"
+#include "ModuleRender.h"
 
 ParticleSystem::ParticleSystem() : Component(ParticleSystem::TYPE)
 {
@@ -124,7 +125,7 @@ void ParticleSystem::Update(const Camera& camera)
 		}
 	}
 
-	unsigned times = accumElapsed / accumElapsedTotal;
+	unsigned times = (unsigned)(accumElapsed / accumElapsedTotal);
 
 	for(unsigned i = 0; i < times; ++i)
 	{
@@ -173,8 +174,20 @@ void ParticleSystem::Update(const Camera& camera)
 
 void ParticleSystem::Render(const Camera& camera)
 {
+	RenderBox(camera);
+
 	BufferInfo temp = { numVertices, numIndices, vertexPosBufferId, vertexUvBufferId, indicesBufferId };
 	App->fx->AddToDraw(*material, *camera.gameObject->GetTransform(), temp);
+}
+
+void ParticleSystem::RenderBox(const Camera& camera)
+{
+	const float3& position = camera.gameObject->GetTransform()->GetWorldPosition();
+	float3 rotation = camera.gameObject->GetTransform()->GetWorldRotation().ToEulerXYZ();
+	const float3& scale = camera.gameObject->GetTransform()->GetWorldScale();
+	float3 color { 255, 0, 0 };
+
+	App->renderer->DrawRectangularBox(position, rotation, scale, color, emitArea.x, fallingHeight, emitArea.y);
 }
 
 void ParticleSystem::Clear()

@@ -321,6 +321,84 @@ void ModuleRender::DrawCube(const float3& offset, const float3& color, float rad
 	glPopMatrix();
 }
 
+void ModuleRender::DrawRectangularBox(const float3& position, const float3& rotation, const float3& scale, const float3& color, float w, float h, float d) const
+{
+	// IMPROVE
+
+	float lineWidth;
+
+	glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+
+	float3 positions[8] =
+	{
+		float3(-w, -h, -d),
+		float3(w, -h, -d),
+		float3(w, h, -d),
+		float3(-w, h, -d),
+
+		float3(-w, -h, d),
+		float3(w, -h, d),
+		float3(w, h, d),
+		float3(-w, h, d)
+	};
+
+	glPushMatrix();
+
+	glLineWidth(3.0f);
+
+	glColor3f(color.x, color.y, color.z);
+
+	glTranslatef(position.x, position.y, position.z);
+
+	glRotatef(RadToDeg(rotation.x), 1.0f, 0.0f, 0.0f);
+	glRotatef(RadToDeg(rotation.y), 0.0f, 1.0f, 0.0f);
+	glRotatef(RadToDeg(rotation.z), 0.0f, 0.0f, 1.0f);
+
+	glScalef(scale.x, scale.y, scale.z);
+
+	glBegin(GL_LINE_STRIP);
+
+	glVertex3f(positions[0].x, positions[0].y, positions[0].z);
+	glVertex3f(positions[1].x, positions[1].y, positions[1].z);
+	glVertex3f(positions[2].x, positions[2].y, positions[2].z);
+	glVertex3f(positions[3].x, positions[3].y, positions[3].z);
+	glVertex3f(positions[0].x, positions[0].y, positions[0].z);
+
+	glEnd();
+
+	glBegin(GL_LINE_STRIP);
+
+	glVertex3f(positions[4].x, positions[4].y, positions[4].z);
+	glVertex3f(positions[5].x, positions[5].y, positions[5].z);
+	glVertex3f(positions[6].x, positions[6].y, positions[6].z);
+	glVertex3f(positions[7].x, positions[7].y, positions[7].z);
+	glVertex3f(positions[4].x, positions[4].y, positions[4].z);
+
+	glEnd();
+
+	glBegin(GL_LINES);
+
+	glVertex3f(positions[0].x, positions[0].y, positions[0].z);
+	glVertex3f(positions[4].x, positions[4].y, positions[4].z);
+
+	glVertex3f(positions[1].x, positions[1].y, positions[1].z);
+	glVertex3f(positions[5].x, positions[5].y, positions[5].z);
+
+	glVertex3f(positions[3].x, positions[3].y, positions[3].z);
+	glVertex3f(positions[7].x, positions[7].y, positions[7].z);
+
+	glVertex3f(positions[2].x, positions[2].y, positions[2].z);
+	glVertex3f(positions[6].x, positions[6].y, positions[6].z);
+
+	glEnd();
+
+	glEnd();
+
+	glLineWidth(lineWidth);
+
+	glPopMatrix();
+}
+
 void ModuleRender::DrawSphere(const float3& offset, const float3& color, float radius) const
 {
 	// IMPROVE
