@@ -54,11 +54,6 @@ void Camera::RealUpdate()
 	App->renderer->DrawFrustum(*this);
 }
 
-void Camera::Translate(const float3& offset)
-{
-	frustum.Translate(offset);
-}
-
 void Camera::SetFOV(float radians)
 {
 	frustum.horizontalFov = ComputeHorizontalFov(radians, frustum.AspectRatio());
@@ -84,11 +79,6 @@ void Camera::SetFarPlane(float distance)
 	SetUpFrustumBuffer();
 }
 
-void Camera::SetPosition(const float3& position)
-{
-	frustum.pos = position;
-}
-
 const Frustum& Camera::GetFrustum() const
 {
 	return frustum;
@@ -112,52 +102,6 @@ float Camera::GetNearPlane() const
 float Camera::GetFarPlane() const
 {
 	return frustum.farPlaneDistance;
-}
-
-const float3& Camera::GetPosition() const
-{
-	return frustum.pos;
-}
-
-const float3& Camera::GetFrontVector() const
-{
-	return frustum.front;
-}
-
-void Camera::SetUpVector(const float3& upVector)
-{
-	frustum.up = upVector;
-}
-
-void Camera::SetFrontVector(const float3& frontVector)
-{
-	frustum.front = frontVector;
-}
-
-const float3& Camera::GetUpVector() const
-{
-	return frustum.up;
-}
-
-float3 Camera::GetSideVector() const
-{
-	return frustum.WorldRight();
-	// return Cross(frustum.front, frustum.up);
-}
-
-void Camera::LookAt(const float3& point)
-{
-	float3 lookAtDirectionNormalized = (point - frustum.pos).Normalized();
-
-	Quat lookAtRotation = Quat::LookAt(
-		frustum.front,
-		lookAtDirectionNormalized,
-		frustum.up,
-		float3::unitY
-	);
-
-	frustum.front = lookAtRotation.Mul(frustum.front);
-	frustum.up = lookAtRotation.Mul(frustum.up);
 }
 
 float4x4 Camera::GetViewMatrix() const

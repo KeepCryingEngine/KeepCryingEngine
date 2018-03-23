@@ -54,10 +54,6 @@ bool ModuleEditorUI::Start()
 	farPlane = App->camera->camera->GetFarPlane();
 	aspectRatio = App->camera->camera->GetAspectRatio();
 	verticalFOV = App->camera->camera->GetFOV();
-	position = App->camera->camera->GetPosition();
-	up = App->camera->camera->GetUpVector();
-	front = App->camera->camera->GetFrontVector();
-	side = App->camera->camera->GetSideVector();
 	movementSpeed = App->camera->GetMoveSpeed();
 	rotationSpeed = App->camera->GetRotationSpeed();
 	dragSpeed = App->camera->GetDragSpeed();
@@ -690,17 +686,7 @@ void ModuleEditorUI::DrawCameraWindow()
 {
 	ImGui::Begin("Camera Controls", &cameraWindow, ImGuiWindowFlags_MenuBar);
 	ImGui::CloseCurrentPopup();
-	ImGui::InputFloat3("Front", front.ptr(), 2);
-	front = App->camera->camera->GetFrontVector();
-	ImGui::InputFloat3("Up", up.ptr(), 2);
-	up = App->camera->camera->GetUpVector();
-	ImGui::InputFloat3("Side", side.ptr(), 2);
-	side = App->camera->camera->GetSideVector();
-	ImGui::InputFloat3("Position", position.ptr(), 2);
 
-	ImGui::NewLine();
-
-	position = App->camera->camera->GetPosition();
 	ImGui::DragFloat("Near plane", &nearPlane, 0.01f, 0.01f, 2.0f, "%.2f");
 	App->camera->camera->SetNearPlane(nearPlane);
 	ImGui::DragFloat("Far plane", &farPlane, 2.0f, 10.0f, 1000.0f, "%.2f");

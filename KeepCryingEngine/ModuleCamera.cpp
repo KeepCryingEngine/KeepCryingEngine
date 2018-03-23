@@ -8,6 +8,7 @@
 #include "ModuleEditorUI.h"
 #include "ModuleTime.h"
 #include "GameObject.h"
+#include "Transform.h"
 
 const float ModuleCamera::SHIFT_MULTIPLIER = 10.0f;
 const float ModuleCamera::WHEEL_FORCE = 10.0f;
@@ -30,10 +31,10 @@ bool ModuleCamera::Init()
 
 update_status ModuleCamera::Update()
 {
-	if(App->input->GetKey(SDL_SCANCODE_I) == KeyState::KEY_DOWN)
+	/*if(App->input->GetKey(SDL_SCANCODE_I) == KeyState::KEY_DOWN)
 	{
 		camera->SetUpFrustum(float3(0, 1, -10), Quat::identity);
-	}
+	}*/
 
 	float shiftDeltaMultiplier = App->time->GetEditorDeltaTime();
 
@@ -191,12 +192,10 @@ void ModuleCamera::MovementMouseDrag(float shiftDeltaMultiplier)
 
 	translateVector.x *= -1.0f;
 
-	float3 upMovement = translateVector.y * camera->GetUpVector(); // frustum.up;
-	float3 rightMovement = translateVector.x * camera->GetSideVector(); // frustum.WorldRight();
+	float3 upMovement = translateVector.y * gameObjectCamera->GetTransform()->Up(); // frustum.up;
+	float3 rightMovement = translateVector.x * gameObjectCamera->GetTransform()->Right(); // frustum.WorldRight();
 
-	camera->Translate(upMovement + rightMovement);
-
-	// frustum.Translate(upMovement + rightMovement);
+	gameObjectCamera->GetTransform()->Translate(upMovement + rightMovement);
 }
 
 void ModuleCamera::RotateMouseOrbit(float deltaTimeS)
@@ -204,10 +203,10 @@ void ModuleCamera::RotateMouseOrbit(float deltaTimeS)
 	//It rotate around a point "x" at distance "y" in front direction, "y" value increases with zoom out, and decreases with zoom in
 	if(zoomAmount > 1.0f)
 	{
-		float3 orbitCenter = camera->GetPosition() + (camera->GetFrontVector() * zoomAmount);
+		float3 orbitCenter = gameObjectCamera->GetTransform()->GetLocalPosition() + (gameObjectCamera->GetTransform()->Forward() * zoomAmount);
 		App->renderer->DrawCross(orbitCenter, zoomAmount);
 		MovementMouseDrag(deltaTimeS * zoomAmount / ORBIT_FORCE_REDUCTION);
-		camera->LookAt(orbitCenter);
+		gameObjectCamera->GetTransform()->LookAt(orbitCenter);
 	}
 	else
 	{
@@ -227,8 +226,7 @@ void ModuleCamera::MovementMouseZoom(float shiftDeltaMultiplier)
 	zoomAmount -= movementTemp;
 	if(zoomAmount >= 0.0f)
 	{
-		camera->Translate(camera->GetFrontVector() * movementTemp);
-		// frustum.Translate(frustum.front * movementTemp);
+		gameObjectCamera->GetTransform()->Translate(gameObjectCamera->GetTransform()->Forward() * movementTemp);
 	}
 	else
 	{
@@ -243,8 +241,7 @@ void ModuleCamera::MovementWheelZoom(float shiftDeltaMultiplier)
 
 	if(zoomAmount >= 0.0f)
 	{
-		camera->Translate(camera->GetFrontVector() * movementTemp);
-		// frustum.Translate(frustum.front * movementTemp);
+		gameObjectCamera->GetTransform()->Translate(gameObjectCamera->GetTransform()->Forward() * movementTemp);
 	}
 	else
 	{
@@ -260,31 +257,28 @@ void ModuleCamera::RotateMouseRotation(float deltaTimeS)
 
 	motionVector.x *= -1.0f;
 
-	Quat rotation = Quat::identity;
+	Quat rotation = gameObjectCamera->GetTransform()->GetLocalRotation();
 	float movementDeltaOrbitSpeed = movementOrbitSpeed * deltaTimeS;
 
 	if(motionVector.y > 0.0f)
 	{
-		if(camera->GetFrontVector().y < 1.0f - movementDeltaOrbitSpeed)
+		if(gameObjectCamera->GetTransform()->Forward().y < 1.0f - movementDeltaOrbitSpeed)
 		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.y * camera->GetSideVector(), movementDeltaOrbitSpeed));
+			rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.y * gameObjectCamera->GetTransform()->Right(), movementDeltaOrbitSpeed));
 		}
 	}
 	else if(motionVector.y < 0.0f)
 	{
-		if(camera->GetFrontVector().y > movementDeltaOrbitSpeed - 1.0f)
+		if(gameObjectCamera->GetTransform()->Forward().y > movementDeltaOrbitSpeed - 1.0f)
 		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.y * camera->GetSideVector(), movementDeltaOrbitSpeed));
+			rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.y * gameObjectCamera->GetTransform()->Right(), movementDeltaOrbitSpeed));
 		}
 	}
 
 	rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.x * float3::unitY, movementDeltaOrbitSpeed));
 
-	camera->SetUpVector(rotation.Mul(camera->GetUpVector()).Normalized());
-	camera->SetFrontVector(rotation.Mul(camera->GetFrontVector()).Normalized());
 
-	// frustum.up = rotation.Mul(frustum.up);
-	// frustum.front = rotation.Mul(frustum.front);
+	gameObjectCamera->GetTransform()->SetLocalRotation(rotation.Normalized());
 }
 
 void ModuleCamera::MovementKeyBoard(float shiftDeltaMultiplier)
@@ -293,56 +287,55 @@ void ModuleCamera::MovementKeyBoard(float shiftDeltaMultiplier)
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_Q))
 	{
-		translateVector += camera->GetUpVector();
+		translateVector += gameObjectCamera->GetTransform()->Up();
 	}
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_E))
 	{
-		translateVector -= camera->GetUpVector();
+		translateVector -= gameObjectCamera->GetTransform()->Up();
 	}
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_W))
 	{
-		translateVector += camera->GetFrontVector();
+		translateVector += gameObjectCamera->GetTransform()->Forward();
 	}
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_S))
 	{
-		translateVector -= camera->GetFrontVector();
+		translateVector -= gameObjectCamera->GetTransform()->Forward();
 	}
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_D))
 	{
-		translateVector += camera->GetSideVector();
+		translateVector += gameObjectCamera->GetTransform()->Right();
 	}
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_A))
 	{
-		translateVector -= camera->GetSideVector();
+		translateVector -= gameObjectCamera->GetTransform()->Right();
 	}
 
-	camera->Translate(translateVector * movementSpeed * shiftDeltaMultiplier);
-	// frustum.Translate(translateVector * movementSpeed * shiftDeltaMultiplier);
+	gameObjectCamera->GetTransform()->Translate(translateVector * movementSpeed * shiftDeltaMultiplier);
 }
 
 void ModuleCamera::RotateKeyboard(float deltaTimeS)
 {
-	Quat rotation = Quat::identity;
+	Quat rotation = gameObjectCamera->GetTransform()->GetLocalRotation();
 	float rotationDeltaSpeed = rotationSpeed * deltaTimeS;
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_UP))
 	{
-		if(camera->GetFrontVector().y < 1.0f - rotationDeltaSpeed)
+		if(gameObjectCamera->GetTransform()->Forward().y < 1.0f - rotationDeltaSpeed)
 		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(camera->GetSideVector(), rotationDeltaSpeed));
+			rotation = rotation.Mul(Quat::RotateAxisAngle(gameObjectCamera->GetTransform()->Right(), rotationDeltaSpeed));
 		}
 	}
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_DOWN))
 	{
-		if(camera->GetFrontVector().y > rotationDeltaSpeed - 1.0f)
+		if(gameObjectCamera->GetTransform()->Forward().y > rotationDeltaSpeed - 1.0f)
 		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(camera->GetSideVector(), -rotationDeltaSpeed));
+			rotation = rotation.Mul(Quat::RotateAxisAngle(gameObjectCamera->GetTransform()->Right(), -rotationDeltaSpeed));
 		}
 	}
 
@@ -356,11 +349,7 @@ void ModuleCamera::RotateKeyboard(float deltaTimeS)
 		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, -rotationDeltaSpeed));
 	}
 
-	camera->SetUpVector(rotation.Mul(camera->GetUpVector()).Normalized());
-	camera->SetFrontVector(rotation.Mul(camera->GetFrontVector()).Normalized());
-
-	// frustum.up = rotation.Mul(frustum.up);
-	// frustum.front = rotation.Mul(frustum.front);
+	gameObjectCamera->GetTransform()->SetLocalRotation(rotation.Normalized());
 }
 
 void ModuleCamera::ScenePick()

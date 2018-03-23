@@ -107,10 +107,6 @@ private:
 	float aspectRatio = 0.0f;
 	float nearPlane = 0.1f;
 	float farPlane = 50.0f;
-	float3 position = { 0.0f, 0.0f, 0.0f };
-	float3 up = { 0.0f, 0.0f, 0.0f };
-	float3 front = { 0.0f, 0.0f, 0.0f };
-	float3 side = { 0.0f, 0.0f, 0.0f };
 	float clearColor[3] = { 0.0f, 0.0f, 0.0f };
 
 	float fogDensity = 1.0f;

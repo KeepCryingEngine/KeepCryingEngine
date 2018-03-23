@@ -255,6 +255,26 @@ void Transform::Recalculate()
 	SetDirty();
 }
 
+void Transform::Translate(const float3 & value, bool world)
+{
+	SetDirty();
+	if(world)
+	{
+		localPosition += GetWorldRotation().Inverted().Mul(value);
+	}
+	else
+	{
+		localPosition += value;
+	}
+}
+
+void Transform::LookAt(const float3 & worldPos)
+{
+	float3 targetDirection = (worldPos - GetWorldPosition()).Normalized();
+	Quat rot = Quat::LookAt(Forward(),targetDirection,Up(),float3::unitY);
+	SetWorldRotation(rot);
+}
+
 void Transform::Decompose(const float4x4 & matrix, float3 & position, Quat & rotation, float3 & scale) const
 {
 	// Math Geo Lib decomposition

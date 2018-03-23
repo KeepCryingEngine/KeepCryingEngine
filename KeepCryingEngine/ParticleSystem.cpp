@@ -203,7 +203,7 @@ bool ParticleSystem::CreateParticle(const Camera& camera)
 {
 	if(!dead.empty())
 	{
-		float3 position = camera.GetPosition();
+		float3 position = camera.gameObject->GetTransform()->GetWorldPosition();
 		//float3 position = gameObject->GetTransform()->GetWorldPosition();
 		float3 localPos = float3(RandomFloat(-emitArea.x, emitArea.x), 0.5f * fallingHeight, RandomFloat(-emitArea.y, emitArea.y));
 

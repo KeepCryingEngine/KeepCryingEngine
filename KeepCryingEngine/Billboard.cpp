@@ -42,7 +42,7 @@ const float2& Billboard::GetSize() const
 
 void Billboard::ComputeQuad(const Camera& camera, std::vector<float3>* outverticesPos) const
 {
-	float3 n = (camera.GetPosition() - worldPosition).Normalized();
+	float3 n = (camera.gameObject->GetTransform()->GetWorldPosition() - worldPosition).Normalized();
 	float3 u = float3::unitY;
 
 	float3 r = n.Cross(u);

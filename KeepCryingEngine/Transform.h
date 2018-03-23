@@ -46,6 +46,10 @@ public:
 
 	void Recalculate();
 
+	void Translate(const float3& value,bool world = false);
+
+	void LookAt(const float3& worldPos);
+
 	const float3& Up() const;
 	const float3& Forward() const;
 	const float3& Right() const;

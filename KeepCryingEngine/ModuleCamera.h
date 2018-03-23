@@ -6,6 +6,7 @@
 #include "Module.h"
 
 class Camera;
+class GameObject;
 
 class ModuleCamera : public Module
 {
