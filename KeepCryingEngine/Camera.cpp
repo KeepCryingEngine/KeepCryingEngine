@@ -45,7 +45,10 @@ void Camera::RealUpdate()
 
 	// LOG_DEBUG("%s", frustum.pos.ToString().c_str());
 
-	App->renderer->DrawFrustum(*this);
+	if(!ignoreFrustumRendering)
+	{
+		App->renderer->DrawFrustum(*this);
+	}
 }
 
 void Camera::SetFOV(float radians)
@@ -145,6 +148,11 @@ void Camera::SetEnable(bool setEnable)
 	}
 
 	App->camera->EnableCamera(enabled ? this : nullptr);
+}
+
+void Camera::SetIgnoreFrustumRendering(bool ignoreFrustumRendering)
+{
+	this->ignoreFrustumRendering = ignoreFrustumRendering;
 }
 
 void Camera::DrawUI()
@@ -295,6 +303,9 @@ void Camera::SetUpFrustumBuffer()
 		vertex[i].pos = points[i];
 		vertex[i].color = float4(255.0f, 0.0f, 0.0f, 255.0f);
 	}
+
+	glDeleteBuffers(1, &frustumBufferId);
+	glDeleteBuffers(1, &frustumIndicesId);
 
 	glGenBuffers(1, (GLuint*) &(frustumBufferId));
 	glBindBuffer(GL_ARRAY_BUFFER, frustumBufferId);

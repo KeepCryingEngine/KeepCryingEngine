@@ -59,7 +59,10 @@ update_status ModuleScene::Update()
 		AddCube(*root)->AddComponent<AudioSource>();
 	}
 
-	DrawHierarchy(Get(App->uiEditor->GetSelectedNode()));
+	if(App->uiEditor->GetDebugMode())
+	{
+		DrawHierarchy(Get(App->uiEditor->GetSelectedNode()));
+	}
 
 	if(!App->uiEditor->GetFrustumCulling())
 	{

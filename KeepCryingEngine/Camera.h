@@ -27,6 +27,8 @@ public:
 	void Destroy() override;
 	void SetEnable(bool setEnable) override;
 
+	void SetIgnoreFrustumRendering(bool ignoreFrustumRendering);
+
 	std::vector<Component::Type> GetNeededComponents() const override;
 	std::vector<Component::Type> GetProhibitedComponents() const override;
 
@@ -63,6 +65,8 @@ private:
 	void SetUpFrustumBuffer();
 
 private:
+	bool ignoreFrustumRendering = false;
+
 	Frustum frustum;
 	uint frustumBufferId = 0;
 	uint frustumIndicesId = 0;

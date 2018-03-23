@@ -11,7 +11,7 @@
 ParticleSystem::ParticleSystem() : Component(ParticleSystem::TYPE)
 {
 	material = new Material();
-	accumElapsedTotal = 1000*fallingTime / maxParticles;
+	accumElapsedTotal = fallingTime / maxParticles;
 	SetMaxParticles(maxParticles);
 }
 
@@ -50,7 +50,7 @@ void ParticleSystem::DrawUI()
 
 		if(ImGui::DragInt("Max particles", reinterpret_cast<int*>(&maxParticles), 1, 0, 1000000))
 		{
-			accumElapsedTotal = 1000 * fallingTime / maxParticles;
+			accumElapsedTotal = fallingTime / maxParticles;
 
 			SetMaxParticles(maxParticles);
 		}
@@ -59,7 +59,7 @@ void ParticleSystem::DrawUI()
 
 		if(ImGui::DragFloat("Falling time", &fallingTime, 0.1f, 0.1f, 1000000.0f))
 		{
-			accumElapsedTotal = 1000 * fallingTime / maxParticles;
+			accumElapsedTotal = fallingTime / maxParticles;
 		}
 
 		ImGui::DragFloat("Falling height", &fallingHeight, 0.1f, 0.1f, 1000000.0f);
@@ -71,6 +71,68 @@ void ParticleSystem::DrawUI()
 			material->DrawUI();
 		}
 	}
+}
+
+void ParticleSystem::PreLoad(const nlohmann::json& json)
+{
+	Component::PreLoad(json);
+
+	maxParticles = json["maxParticles"];
+	from_json(json["emitArea"], emitArea);
+	fallingTime = json["fallingTime"];
+	accumElapsedTotal = json["accumElapsedTotal"];
+	fallingHeight = json["fallingHeight"];
+	from_json(json["particleSize"], particleSize);
+
+	material->SetShaderType(json["material"]["shaderType"]);
+	material->SetTextureByPath(json["material"]["texture"]["path"].get<std::string>());
+	material->GetTexture()->SetTextureConfiguration(json["material"]["texture"]["jsonConfiguration"]);
+}
+
+void ParticleSystem::Save(nlohmann::json& json) const
+{
+	/*
+
+	Relevant information:
+
+	maxParticles
+	emitArea
+	fallingTime
+	accumElapsedTotal
+	fallingHeight
+	particleSize
+	material
+
+	*/
+
+	Component::Save(json);
+
+	json["maxParticles"] = maxParticles;
+
+	nlohmann::json jsonEmitArea;
+	to_json(jsonEmitArea, emitArea);
+
+	json["emitArea"] = jsonEmitArea;
+
+	json["fallingTime"] = fallingTime;
+	json["accumElapsedTotal"] = accumElapsedTotal;
+	json["fallingHeight"] = fallingHeight;
+
+	nlohmann::json jsonParticleSize;
+	to_json(jsonParticleSize, particleSize);
+
+	json["particleSize"] = jsonParticleSize;
+
+	nlohmann::json jsonMaterial;
+	jsonMaterial["shaderType"] = material->GetShaderType();
+
+	nlohmann::json jsonTexture;
+	jsonTexture["path"] = material->GetTexture()->Identifier().path.string();
+	jsonTexture["jsonConfiguration"] = material->GetTexture()->GetTextureConfiguration();
+
+	jsonMaterial["texture"] = jsonTexture;
+
+	json["material"] = jsonMaterial;
 }
 
 void ParticleSystem::SetMaxParticles(unsigned maxParticles)
@@ -99,9 +161,8 @@ void ParticleSystem::SetMaterial(Material& material)
 void ParticleSystem::Update(const Camera& camera)
 {
 	float timeS = App->time->GetDeltaTime();
-	int timeMs = (int)(1000 * timeS);
 
-	accumElapsed += timeMs;
+	accumElapsed += timeS;
 
 	ParticleList::iterator it = alive.begin();
 
@@ -129,7 +190,10 @@ void ParticleSystem::Update(const Camera& camera)
 
 	for(unsigned i = 0; i < times; ++i)
 	{
-		CreateParticle(camera);
+		if(!CreateParticle(camera))
+		{
+			break;
+		}
 	}
 
 	if(times > 0)
@@ -187,7 +251,7 @@ void ParticleSystem::RenderBox(const Camera& camera)
 	const float3& scale = camera.gameObject->GetTransform()->GetWorldScale();
 	float3 color { 255, 0, 0 };
 
-	App->renderer->DrawRectangularBox(position, rotation, scale, color, emitArea.x, fallingHeight, emitArea.y);
+	App->renderer->DrawRectangularBox(position, rotation, scale, color, emitArea.x, 0.5f * fallingHeight, emitArea.y);
 }
 
 void ParticleSystem::Clear()
