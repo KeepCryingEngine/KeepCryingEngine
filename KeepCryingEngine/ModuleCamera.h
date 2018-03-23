@@ -19,40 +19,44 @@ public:
 	update_status Update() override;
 	bool CleanUp() override;
 
+	void EnableCamera(Camera* camera);
+	Camera* GetEnabledCamera() const;
+	const LineSegment & GetLastRay()const;
+	
 	float GetMoveSpeed() const;
-	float GetRotationSpeed() const;
-	float GetDragSpeed() const;
-	float GetOrbitSpeed() const;
-	float GetZoomSpeed() const;
-
 	void SetMoveSpeed(float speed);
+
+	float GetRotationSpeed() const;
 	void SetRotationSpeed(float speed);
+
+	float GetDragSpeed() const;
 	void SetDragSpeed(float speed);
+
+	float GetOrbitSpeed() const;
 	void SetOrbitSpeed(float speed);
+
+	float GetZoomSpeed() const;
 	void SetZoomSpeed(float speed);
 
-	void EnableCamera(Camera* camera);
-
-	Camera* GetEnabledCamera() const;
-
-	const LineSegment & GetLastRay()const;
-
 private:
-	void Rotation(float deltaTimeS);
-	void Movement(float shiftDeltaMultiplier);
+	void Rotation();
+	void Movement();
 
-	void MovementMouse(float shiftDeltaMultiplier);
+	void MovementMouse();
 	void MovementMouseDrag(float shiftDeltaMultiplier);
 	void MovementMouseZoom(float shiftDeltaMultiplier);
 	void MovementWheelZoom(float shiftDeltaMultiplier);
-	void RotateMouse(float deltaTimeS);
-	void RotateMouseOrbit(float deltaTimeS);
-	void RotateMouseRotation(float deltaTimeS);
+	void Orbit();
+	void OrbitMouse();
+	void RotationMouse();
 
-	void MovementKeyBoard(float shiftDeltaMultiplier);
-	void RotateKeyboard(float deltaTimeS);
+	void MovementKeyBoard();
+	void RotationKeyboard();
 
 	void ScenePick();
+
+	float CalculateShiftDeltaMultiplier() const;
+	float3 GetWASDQEInput() const;
 
 public:
 	GameObject* cameraGameObject = nullptr;

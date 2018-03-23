@@ -28,6 +28,7 @@ bool ModuleCamera::Init()
 	
 	//init camera
 	cameraTransform->SetWorldPosition(float3(0, 1, -10));
+	cameraTransform->SetWorldRotation(Quat::FromEulerXYZ(0, 0, 0));
 	camera->SetUpCamera(0.1f, 300.0f, 60.0f);
 
 	return true;
@@ -35,21 +36,9 @@ bool ModuleCamera::Init()
 
 update_status ModuleCamera::Update()
 {
-	/*if(App->input->GetKey(SDL_SCANCODE_I) == KeyState::KEY_DOWN)
-	{
-		camera->SetUpFrustum(float3(0, 1, -10), Quat::identity);
-	}*/
-
-	float shiftDeltaMultiplier = App->time->GetEditorDeltaTime();
-
-	if(App->input->GetKeyPressed(SDL_SCANCODE_LSHIFT) || App->input->GetKeyPressed(SDL_SCANCODE_RSHIFT))
-	{
-		shiftDeltaMultiplier *= SHIFT_MULTIPLIER;
-	}
-
-	Rotation(App->time->GetEditorDeltaTime());
-
-	Movement(shiftDeltaMultiplier);
+	Rotation();
+	Orbit();
+	Movement();
 
 	cameraGameObject->Update();
 
@@ -113,44 +102,40 @@ void ModuleCamera::SetZoomSpeed(float speed)
 	movementZoomSpeed = speed;
 }
 
-void ModuleCamera::Rotation(float deltaTimeS)
+void ModuleCamera::Rotation()
 {
-	RotateKeyboard(deltaTimeS);
-	RotateMouse(deltaTimeS);
+	RotationKeyboard();
 
 	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) && !(App->input->GetKeyPressed(SDL_SCANCODE_LALT) || App->input->GetKeyPressed(SDL_SCANCODE_RALT)))
 	{
-		RotateMouseRotation(deltaTimeS);
+		RotationMouse();
 	}
-	
 }
 
-void ModuleCamera::Movement(float shiftDeltaMultiplier)
-{
-	MovementMouse(shiftDeltaMultiplier);
+void ModuleCamera::Movement()
+{	
+	MovementMouse();
 
 	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT))
 	{
-		MovementKeyBoard(shiftDeltaMultiplier);
+		MovementKeyBoard();
 	}
 }
 
-void ModuleCamera::RotateMouse(float deltaTimeS)
+void ModuleCamera::Orbit()
 {
 	bool leftPressed = App->input->GetMouseButtonDown(SDL_BUTTON_LEFT);
 	bool altPressed = App->input->GetKeyPressed(SDL_SCANCODE_LALT) || App->input->GetKeyPressed(SDL_SCANCODE_RALT);
 
-	if(altPressed)
+	if(altPressed && leftPressed)
 	{
-		if(leftPressed)
-		{
-			RotateMouseOrbit(deltaTimeS);
-		}
+		OrbitMouse();
 	}
 }
 
-void ModuleCamera::MovementMouse(float shiftDeltaMultiplier)
+void ModuleCamera::MovementMouse()
 {
+	float shiftDeltaMultiplier = CalculateShiftDeltaMultiplier();
 	bool leftPressed = App->input->GetMouseButtonDown(SDL_BUTTON_LEFT);
 	bool rightPressed = App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT);
 	bool altPressed = App->input->GetKeyPressed(SDL_SCANCODE_LALT) || App->input->GetKeyPressed(SDL_SCANCODE_RALT);
@@ -192,31 +177,29 @@ void ModuleCamera::MovementMouse(float shiftDeltaMultiplier)
 
 void ModuleCamera::MovementMouseDrag(float shiftDeltaMultiplier)
 {
-	float2 translateVector = App->input->GetMouseMotion();
-
-	translateVector *= movementDragSpeed * shiftDeltaMultiplier;
-
+	float2 input = App->input->GetMouseMotion();
+	float2 translateVector = input * movementDragSpeed * shiftDeltaMultiplier;
 	translateVector.x *= -1.0f;
 
-	float3 upMovement = translateVector.y * cameraTransform->Up(); // frustum.up;
-	float3 rightMovement = translateVector.x * cameraTransform->Right(); // frustum.WorldRight();
+	float3 upMovement = translateVector.y * cameraTransform->Up();
+	float3 rightMovement = translateVector.x * cameraTransform->Right();
 
 	cameraTransform->Translate(upMovement + rightMovement);
 }
 
-void ModuleCamera::RotateMouseOrbit(float deltaTimeS)
+void ModuleCamera::OrbitMouse()
 {
-	//It rotate around a point "x" at distance "y" in front direction, "y" value increases with zoom out, and decreases with zoom in
+	//It rotates around a point "x" at distance "y" in front direction, "y" value increases with zoom out, and decreases with zoom in
 	if(zoomAmount > 1.0f)
 	{
-		float3 orbitCenter = cameraTransform->GetLocalPosition() + (cameraTransform->Forward() * zoomAmount);
+		float3 orbitCenter = cameraTransform->GetWorldPosition() + (cameraTransform->Forward() * zoomAmount);
 		App->renderer->DrawCross(orbitCenter, zoomAmount);
-		MovementMouseDrag(deltaTimeS * zoomAmount / ORBIT_FORCE_REDUCTION);
+		MovementMouseDrag(App->time->GetEditorDeltaTime() * zoomAmount / ORBIT_FORCE_REDUCTION);
 		cameraTransform->LookAt(orbitCenter);
 	}
 	else
 	{
-		RotateMouseRotation(deltaTimeS);
+		RotationMouse();
 	}
 }
 
@@ -255,79 +238,33 @@ void ModuleCamera::MovementWheelZoom(float shiftDeltaMultiplier)
 	}
 }
 
-void ModuleCamera::RotateMouseRotation(float deltaTimeS)
+void ModuleCamera::RotationMouse()
 {
-	float2 motionVector = App->input->GetMouseMotion();
+	float movementDeltaOrbitSpeed = movementOrbitSpeed * App->time->GetEditorDeltaTime();
 
-	motionVector *= movementDragSpeed * deltaTimeS;
-
+	float2 mouseInput = App->input->GetMouseMotion();
+	float2 motionVector = mouseInput * movementDragSpeed * App->time->GetEditorDeltaTime();
 	motionVector.x *= -1.0f;
 
-	Quat rotation = cameraTransform->GetLocalRotation();
-	float movementDeltaOrbitSpeed = movementOrbitSpeed * deltaTimeS;
+	Quat rotation = cameraTransform->GetWorldRotation();
 
-	if(motionVector.y > 0.0f)
-	{
-		if(cameraTransform->Forward().y < 1.0f - movementDeltaOrbitSpeed)
-		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.y * cameraTransform->Right(), movementDeltaOrbitSpeed));
-		}
-	}
-	else if(motionVector.y < 0.0f)
-	{
-		if(cameraTransform->Forward().y > movementDeltaOrbitSpeed - 1.0f)
-		{
-			rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.y * cameraTransform->Right(), movementDeltaOrbitSpeed));
-		}
-	}
+	rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.y * cameraTransform->Right(), movementDeltaOrbitSpeed));
+	rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.x * cameraTransform->Up(), movementDeltaOrbitSpeed));
 
-	rotation = rotation.Mul(Quat::RotateAxisAngle(motionVector.x * float3::unitY, movementDeltaOrbitSpeed));
-
-
-	cameraTransform->SetLocalRotation(rotation.Normalized());
+	cameraTransform->SetWorldRotation(rotation.Normalized());
 }
 
-void ModuleCamera::MovementKeyBoard(float shiftDeltaMultiplier)
+void ModuleCamera::MovementKeyBoard()
 {
-	float3 translateVector = float3::zero;
-
-	if(App->input->GetKeyPressed(SDL_SCANCODE_Q))
-	{
-		translateVector += cameraTransform->Up();
-	}
-
-	if(App->input->GetKeyPressed(SDL_SCANCODE_E))
-	{
-		translateVector -= cameraTransform->Up();
-	}
-
-	if(App->input->GetKeyPressed(SDL_SCANCODE_W))
-	{
-		translateVector += cameraTransform->Forward();
-	}
-
-	if(App->input->GetKeyPressed(SDL_SCANCODE_S))
-	{
-		translateVector -= cameraTransform->Forward();
-	}
-
-	if(App->input->GetKeyPressed(SDL_SCANCODE_D))
-	{
-		translateVector += cameraTransform->Right();
-	}
-
-	if(App->input->GetKeyPressed(SDL_SCANCODE_A))
-	{
-		translateVector -= cameraTransform->Right();
-	}
-
-	cameraTransform->Translate(translateVector * movementSpeed * shiftDeltaMultiplier);
+	float3 input = GetWASDQEInput();
+	float3 translateVector = input.x * cameraTransform->Right() + input.y * cameraTransform->Up() + input.z * cameraTransform->Forward();
+	cameraTransform->Translate(translateVector * movementSpeed * CalculateShiftDeltaMultiplier());
 }
 
-void ModuleCamera::RotateKeyboard(float deltaTimeS)
+void ModuleCamera::RotationKeyboard()
 {
-	Quat rotation = cameraTransform->GetLocalRotation();
-	float rotationDeltaSpeed = rotationSpeed * deltaTimeS;
+	Quat rotation = cameraTransform->GetWorldRotation();
+	float rotationDeltaSpeed = rotationSpeed * App->time->GetEditorDeltaTime();
 
 	if(App->input->GetKeyPressed(SDL_SCANCODE_UP))
 	{
@@ -355,7 +292,7 @@ void ModuleCamera::RotateKeyboard(float deltaTimeS)
 		rotation = rotation.Mul(Quat::RotateAxisAngle(float3::unitY, -rotationDeltaSpeed));
 	}
 
-	cameraTransform->SetLocalRotation(rotation.Normalized());
+	cameraTransform->SetWorldRotation(rotation.Normalized());
 }
 
 void ModuleCamera::ScenePick()
@@ -379,6 +316,52 @@ void ModuleCamera::ScenePick()
 		App->uiEditor->CloseInspectorWindow();
 		App->uiEditor->SetSelectedNodeID(0);
 	}
+}
+
+float ModuleCamera::CalculateShiftDeltaMultiplier() const
+{
+	float shiftDeltaMultiplier = App->time->GetEditorDeltaTime();
+
+	if (App->input->GetKeyPressed(SDL_SCANCODE_LSHIFT) || App->input->GetKeyPressed(SDL_SCANCODE_RSHIFT))
+	{
+		shiftDeltaMultiplier *= SHIFT_MULTIPLIER;
+	}
+
+	return shiftDeltaMultiplier;
+}
+
+float3 ModuleCamera::GetWASDQEInput() const
+{
+	float3 input = float3::zero;
+	
+	if (App->input->GetKeyPressed(SDL_SCANCODE_D))
+	{
+		input.x += 1;
+	}
+	if (App->input->GetKeyPressed(SDL_SCANCODE_A))
+	{
+		input.x += -1;
+	}
+	
+	if (App->input->GetKeyPressed(SDL_SCANCODE_E))
+	{
+		input.y += 1;
+	}
+	if (App->input->GetKeyPressed(SDL_SCANCODE_Q))
+	{
+		input.y += -1;
+	}
+
+	if (App->input->GetKeyPressed(SDL_SCANCODE_W))
+	{
+		input.z += 1;
+	}
+	if (App->input->GetKeyPressed(SDL_SCANCODE_S))
+	{
+		input.z += -1;
+	}
+
+	return input;
 }
 
 void ModuleCamera::EnableCamera(Camera* camera)
