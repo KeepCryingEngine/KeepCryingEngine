@@ -61,6 +61,9 @@ private:
 	float fallingHeight = 1.0f;
 	float2 particleSize = float2::one;
 
+	float3 lastFrameCameraPos = float3::zero;
+	float3 lastFrameCameraRot = float3::zero;
+
 	Material* material = nullptr;
 
 	int numVertices = 0;

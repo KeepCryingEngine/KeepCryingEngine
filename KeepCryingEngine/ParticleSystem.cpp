@@ -160,6 +160,9 @@ void ParticleSystem::SetMaterial(Material& material)
 
 void ParticleSystem::Update(const Camera& camera)
 {
+	//TODO: VERIFY
+	gameObject->GetTransform()->SetWorldPosition(camera.gameObject->GetTransform()->GetWorldPosition());
+
 	float timeS = App->time->GetDeltaTime();
 
 	accumElapsed += timeS;
@@ -174,8 +177,9 @@ void ParticleSystem::Update(const Camera& camera)
 
 		if(particle.lifetime > 0)
 		{
-			particle.billboard->SetLocalPosition(particle.billboard->GetLocalPosition() + timeS * particle.velocity);
-			particle.billboard->SetWorldPosition(particle.billboard->GetWorldPosition() + timeS * particle.velocity);
+			float3 camMovement = camera.gameObject->GetTransform()->GetWorldPosition() - lastFrameCameraPos;
+			particle.billboard->SetLocalPosition((particle.billboard->GetLocalPosition() - camMovement) + timeS * particle.velocity);
+			particle.billboard->SetWorldPosition((particle.billboard->GetWorldPosition() -camMovement) + timeS * particle.velocity);
 			++it;
 		}
 		else
@@ -185,6 +189,8 @@ void ParticleSystem::Update(const Camera& camera)
 			it = alive.erase(it);
 		}
 	}
+
+	lastFrameCameraPos = camera.gameObject->GetTransform()->GetWorldPosition();
 
 	unsigned times = (unsigned)(accumElapsed / accumElapsedTotal);
 
@@ -241,14 +247,14 @@ void ParticleSystem::Render(const Camera& camera)
 	RenderBox(camera);
 
 	BufferInfo temp = { numVertices, numIndices, vertexPosBufferId, vertexUvBufferId, indicesBufferId };
-	App->fx->AddToDraw(*material, *camera.gameObject->GetTransform(), temp);
+	App->fx->AddToDraw(*material, *gameObject->GetTransform(), temp);
 }
 
 void ParticleSystem::RenderBox(const Camera& camera)
 {
-	const float3& position = camera.gameObject->GetTransform()->GetWorldPosition();
-	float3 rotation = camera.gameObject->GetTransform()->GetWorldRotation().ToEulerXYZ();
-	const float3& scale = camera.gameObject->GetTransform()->GetWorldScale();
+	const float3& position = gameObject->GetTransform()->GetWorldPosition();
+	float3 rotation = gameObject->GetTransform()->GetWorldRotation().ToEulerXYZ();
+	const float3& scale = gameObject->GetTransform()->GetWorldScale();
 	float3 color { 255, 0, 0 };
 
 	App->renderer->DrawRectangularBox(position, rotation, scale, color, emitArea.x, 0.5f * fallingHeight, emitArea.y);
