@@ -32,18 +32,14 @@ void Camera::Destroy()
 
 void Camera::RealUpdate()
 {
-	Transform* transform = gameObject->GetTransform();
+	Transform* transform = gameObject->GetTransform();	
 
-	const float3& worldPosition = transform->GetWorldPosition();
+	frustum.pos = transform->GetWorldPosition();
+
 	const Quat& worldRotation = transform->GetWorldRotation();
-	
-	// LOG_DEBUG("%s", position.ToString().c_str());
-
-	frustum.pos = worldPosition;
 	frustum.front = worldRotation.Mul(float3::unitZ);
 	frustum.up = worldRotation.Mul(float3::unitY);
 
-	// LOG_DEBUG("%s", frustum.pos.ToString().c_str());
 
 	if(!ignoreFrustumRendering)
 	{
@@ -132,6 +128,9 @@ void Camera::SetUpCamera(float nearPlaneDistance, float farPlaneDistance, float 
 	frustum.nearPlaneDistance = nearPlaneDistance;
 	frustum.farPlaneDistance = farPlaneDistance;
 	frustum.verticalFov = DegToRad(fov);
+	frustum.pos = float3::zero;
+	frustum.front = float3::unitZ;
+	frustum.up = float3::unitY;
 	frustum.horizontalFov = ComputeHorizontalFov(frustum.verticalFov, (float)App->configuration.screenWidth/(float)App->configuration.screenHeight);
 	SetUpFrustumBuffer();
 }
@@ -248,15 +247,6 @@ void Camera::PreLoad(const nlohmann::json & json)
 
 void Camera::Save(nlohmann::json& json) const
 {
-	/*
-
-	Relevant information:
-
-	type
-	frustum
-
-	*/
-
 	Component::Save(json);
 	nlohmann::json jsonFrustum;
 	to_json(jsonFrustum, frustum);
@@ -272,10 +262,9 @@ float Camera::ComputeHorizontalFov(float verticalFovRad, float aspect) const
 void Camera::SetUpFrustumBuffer()
 {
 	float3 tempPos = frustum.pos;
-	frustum.pos = float3(0, 0, 0);
+	frustum.pos = float3::zero;
 	float3 points[8];
 	frustum.GetCornerPoints(points);
-	assert(points);
 
 	frustum.pos = tempPos;
 
