@@ -28,6 +28,9 @@ Transform::Transform() :
 Transform::~Transform()
 { }
 
+#include "ModuleInput.h"
+#include <SDL.h>
+
 void Transform::DrawUI()
 {
 	if(!gameObject->IsStatic()){
@@ -46,10 +49,17 @@ void Transform::DrawUI()
 			}
 
 			//Rotation
-			if(ImGui::DragFloat3(" Rotation", eulerLocalRotation.ptr(), 0.1f))
+			eulerLocalRotation = RadToDeg(localRotation.ToEulerXYZ());
+			float3 newAngles = eulerLocalRotation;
+			if(ImGui::DragFloat3(" Rotation", newAngles.ptr(), 0.1f))
 			{
-				float3 radAngles = DegToRad(eulerLocalRotation);
-				SetLocalRotation(Quat::FromEulerXYZ(radAngles.x, radAngles.y, radAngles.z));
+				float3 delta = newAngles - eulerLocalRotation;
+				float3 radDeltaAngles = DegToRad(delta);
+				Rotate(Quat::RotateAxisAngle(Right(), radDeltaAngles.x));
+				Rotate(Quat::RotateAxisAngle(Up(), radDeltaAngles.y));
+				Rotate(Quat::RotateAxisAngle(Forward(), radDeltaAngles.z));
+
+				//Rotate(Quat::FromEulerXYZ(radDeltaAngles.x, radDeltaAngles.y, radDeltaAngles.z));
 			}
 
 			//Scale
@@ -65,32 +75,34 @@ void Transform::DrawUI()
 			}
 
 			//DEBUG WORLD SETTERS
-			ImGui::DragFloat3(" Current World Position", float3(worldPosition).ptr(), 0);
-			static float3 newWorldPosition = float3::zero;
-			ImGui::DragFloat3(" New World Position", newWorldPosition.ptr(), 0.1f);
-			if (ImGui::Button("Set World Position"))
+			if (ImGui::CollapsingHeader("DebugTransform"))
 			{
-				SetWorldPosition(newWorldPosition);
+				ImGui::DragFloat3(" Current World Position", float3(worldPosition).ptr(), 0);
+				static float3 newWorldPosition = float3::zero;
+				ImGui::DragFloat3(" New World Position", newWorldPosition.ptr(), 0.1f);
+				if (ImGui::Button("Set World Position"))
+				{
+					SetWorldPosition(newWorldPosition);
+				}
+
+
+				ImGui::DragFloat3(" Current World Rotation", RadToDeg(worldRotation.ToEulerXYZ()).ptr(), 0);
+				static float3 newWorldRotation = float3::zero;
+				ImGui::DragFloat3(" New World Rotation", newWorldRotation.ptr(), 0.1f);
+				if (ImGui::Button("Set World Rotation"))
+				{
+					float3 radAngles = DegToRad(newWorldRotation);
+					SetWorldRotation(Quat::FromEulerXYZ(radAngles.x, radAngles.y, radAngles.z));
+				}
+
+				ImGui::DragFloat3(" Current World Scale", float3(worldScale).ptr(), 0);
+				static float3 newWorldScale = float3::one;
+				ImGui::DragFloat3(" New World Scale", newWorldScale.ptr(), 0.1f);
+				if (ImGui::Button("Set World Scale"))
+				{
+					SetWorldScale(newWorldScale);
+				}
 			}
-
-
-			ImGui::DragFloat3(" Current World Rotation", RadToDeg(worldRotation.ToEulerXYZ()).ptr(), 0);
-			static float3 newWorldRotation = float3::zero;
-			ImGui::DragFloat3(" New World Rotation", newWorldRotation.ptr(), 0.1f);
-			if (ImGui::Button("Set World Rotation"))
-			{
-				float3 radAngles = DegToRad(newWorldRotation);
-				SetWorldRotation(Quat::FromEulerXYZ(radAngles.x, radAngles.y, radAngles.z));
-			}
-
-			ImGui::DragFloat3(" Current World Scale", float3(worldScale).ptr(), 0);
-			static float3 newWorldScale = float3::one;
-			ImGui::DragFloat3(" New World Scale", newWorldScale.ptr(), 0.1f);
-			if (ImGui::Button("Set World Scale"))
-			{
-				SetWorldScale(newWorldScale);
-			}
-
 		}
 	}
 }
@@ -213,8 +225,6 @@ void Transform::SetWorldPosition(const float3 & position)
 		SetDirty();
 
 		localPosition = position - ParentWorldPosition();
-		/*float3 worldPositionDelta = position - worldPosition;
-		localPosition = localPosition + worldPositionDelta;*/
 	}
 }
 
@@ -255,29 +265,33 @@ void Transform::Recalculate()
 	SetDirty();
 }
 
-void Transform::Translate(const float3 & position, Space space)
+void Transform::Translate(const float3 & translation, Space space)
 {
-	SetDirty();
-	if(space == Space::World)
-	{
-		SetWorldPosition(GetWorldPosition() + position);
-	}
-	else // spce == Space::Self
-	{
-		SetLocalPosition(localPosition + position);
+	if (!translation.Equals(float3::zero)) {
+		SetDirty();
+		if (space == Space::World)
+		{
+			SetWorldPosition(GetWorldPosition() + translation);
+		}
+		else // spce == Space::Self
+		{
+			SetLocalPosition(localPosition + translation);
+		}
 	}
 }
 
 void Transform::Rotate(const Quat & rotation, Space space)
 {
-	SetDirty();
-	if (space == Space::World)
-	{
-		SetWorldRotation(GetWorldRotation().Mul(rotation));
-	}
-	else // spce == Space::Self
-	{
-		SetLocalRotation(localRotation.Mul(rotation));
+	if (!rotation.Equals(Quat::identity)) {
+		SetDirty();
+		if (space == Space::World)
+		{
+			SetWorldRotation(rotation.Mul(GetWorldRotation()));
+		}
+		else // spce == Space::Self
+		{
+			SetLocalRotation(rotation.Mul(localRotation));
+		}
 	}
 }
 
@@ -468,17 +482,6 @@ void Transform::PreLoad(const nlohmann::json & json)
 
 void Transform::Save(nlohmann::json& json) const
 {
-	/*
-
-	Relevant information:
-
-	type
-	localPosition
-	localRotation
-	localScale
-
-	*/
-
 	Component::Save(json);
 	nlohmann::json jsonPosition;
 	to_json(jsonPosition, localPosition);

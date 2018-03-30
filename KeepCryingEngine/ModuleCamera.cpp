@@ -236,11 +236,12 @@ void ModuleCamera::RotationMouse()
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) && !(App->input->GetKeyPressed(SDL_SCANCODE_LALT) || App->input->GetKeyPressed(SDL_SCANCODE_RALT)))
 	{
 		float2 mouseInput = App->input->GetMouseMotion();
-		float2 eulerRotation = mouseInput * movementOrbitSpeed * movementDragSpeed * App->time->GetEditorDeltaTime() * App->time->GetEditorDeltaTime();
-		eulerRotation.y *= -1;
 
-		Quat rotation = Quat::FromEulerXYZ(eulerRotation.y, eulerRotation.x, 0);
-		cameraTransform->Rotate(rotation.Normalized());
+		float2 degEulerRotation = mouseInput * movementOrbitSpeed * movementDragSpeed * App->time->GetEditorDeltaTime();
+		degEulerRotation.y *= -1;
+
+		cameraTransform->Rotate(Quat::RotateAxisAngle(float3::unitY, DegToRad(degEulerRotation.x)), Space::World);
+		cameraTransform->Rotate(Quat::RotateAxisAngle(cameraTransform->Right(), DegToRad(degEulerRotation.y)));
 	}
 }
 
@@ -249,8 +250,7 @@ void ModuleCamera::MovementKeyBoard()
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT))
 	{
 		float3 input = GetWASDQEInput();
-		float3 translateVector = input.x * cameraTransform->Right() + input.y * cameraTransform->Up() + input.z * cameraTransform->Forward();
-		translateVector.x *= -1;
+		float3 translateVector = input.x * -cameraTransform->Right() + input.y * cameraTransform->Up() + input.z * cameraTransform->Forward();
 		cameraTransform->Translate(translateVector * movementSpeed * CalculateShiftDeltaMultiplier());
 	}
 }
@@ -258,11 +258,11 @@ void ModuleCamera::MovementKeyBoard()
 void ModuleCamera::RotationKeyboard()
 {
 	float2 keyboardInput = GetArrowKeysInput();
-	float2 eulerRotation = keyboardInput * movementOrbitSpeed * movementDragSpeed * App->time->GetEditorDeltaTime() * App->time->GetEditorDeltaTime();
-	eulerRotation.y *= -1;
+	float2 degEulerRotation = 4 * keyboardInput * movementOrbitSpeed * movementDragSpeed * App->time->GetEditorDeltaTime();
+	degEulerRotation.y *= -1;
 
-	Quat rotation = Quat::FromEulerXYZ(eulerRotation.y, eulerRotation.x, 0);
-	cameraTransform->Rotate(rotation.Normalized());
+	cameraTransform->Rotate(Quat::RotateAxisAngle(float3::unitY, DegToRad(degEulerRotation.x)), Space::World);
+	cameraTransform->Rotate(Quat::RotateAxisAngle(cameraTransform->Right(), DegToRad(degEulerRotation.y)));
 }
 
 void ModuleCamera::ScenePick()
