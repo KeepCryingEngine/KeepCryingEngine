@@ -66,7 +66,7 @@ public:
 
 private:
 	float movementSpeed = 10.0f;
-	float rotationSpeed = 2.0f;
+	float rotationSpeed = 5.0f;
 	float movementDragSpeed = 3.0f;
 	float movementOrbitSpeed = 3.0f;
 	float movementZoomSpeed = 3.0f;
@@ -80,6 +80,7 @@ private:
 	static const float SHIFT_MULTIPLIER;
 	static const float WHEEL_FORCE;
 	static const float ORBIT_FORCE_REDUCTION;
+	static const float KEYBOARD_ROTATION_SPEED_MULTIPLIER;
 };
 
 #endif // !_MODULECAMERA_H_

@@ -13,6 +13,7 @@
 const float ModuleCamera::SHIFT_MULTIPLIER = 10.0f;
 const float ModuleCamera::WHEEL_FORCE = 10.0f;
 const float ModuleCamera::ORBIT_FORCE_REDUCTION = 10.0f;
+const float ModuleCamera::KEYBOARD_ROTATION_SPEED_MULTIPLIER = 4;
 
 ModuleCamera::ModuleCamera()
 { }
@@ -172,7 +173,6 @@ void ModuleCamera::MovementMouseDrag(float shiftDeltaMultiplier)
 {
 	float2 input = App->input->GetMouseMotion();
 	float2 translateVector = input * movementDragSpeed * shiftDeltaMultiplier;
-	translateVector.x *= -1.0f;
 
 	float3 upMovement = translateVector.y * cameraTransform->Up();
 	float3 rightMovement = translateVector.x * cameraTransform->Right();
@@ -187,7 +187,7 @@ void ModuleCamera::OrbitMouse()
 	{
 		float3 orbitCenter = cameraTransform->GetWorldPosition() + (cameraTransform->Forward() * zoomAmount);
 		App->renderer->DrawCross(orbitCenter, zoomAmount);
-		MovementMouseDrag(App->time->GetEditorDeltaTime() * zoomAmount / ORBIT_FORCE_REDUCTION);
+		MovementMouseDrag(movementOrbitSpeed * App->time->GetEditorDeltaTime() * zoomAmount / ORBIT_FORCE_REDUCTION);
 		cameraTransform->LookAt(orbitCenter);
 	}
 	else
@@ -237,8 +237,8 @@ void ModuleCamera::RotationMouse()
 	{
 		float2 mouseInput = App->input->GetMouseMotion();
 
-		float2 degEulerRotation = mouseInput * movementOrbitSpeed * movementDragSpeed * App->time->GetEditorDeltaTime();
-		degEulerRotation.y *= -1;
+		float2 degEulerRotation = mouseInput * rotationSpeed * App->time->GetEditorDeltaTime();
+		degEulerRotation *= -1;
 
 		cameraTransform->Rotate(Quat::RotateAxisAngle(float3::unitY, DegToRad(degEulerRotation.x)), Space::World);
 		cameraTransform->Rotate(Quat::RotateAxisAngle(cameraTransform->Right(), DegToRad(degEulerRotation.y)));
@@ -258,8 +258,8 @@ void ModuleCamera::MovementKeyBoard()
 void ModuleCamera::RotationKeyboard()
 {
 	float2 keyboardInput = GetArrowKeysInput();
-	float2 degEulerRotation = 4 * keyboardInput * movementOrbitSpeed * movementDragSpeed * App->time->GetEditorDeltaTime();
-	degEulerRotation.y *= -1;
+	float2 degEulerRotation = KEYBOARD_ROTATION_SPEED_MULTIPLIER * keyboardInput * rotationSpeed * App->time->GetEditorDeltaTime();
+	degEulerRotation *= -1;
 
 	cameraTransform->Rotate(Quat::RotateAxisAngle(float3::unitY, DegToRad(degEulerRotation.x)), Space::World);
 	cameraTransform->Rotate(Quat::RotateAxisAngle(cameraTransform->Right(), DegToRad(degEulerRotation.y)));
