@@ -22,6 +22,10 @@ public:
 
 	const Texture* RenderFromText(const TTF_Font* font, const std::string& message, const SDL_Color& color, int minWrapW = 200) const;
 
+	const Texture* RenderFromText(const TTF_Font* font, const std::string& message, const SDL_Color& color, float& width, float& height , int minWrapW = 200) const;
+
+	void GetSizeFromString(const TTF_Font* font, const std::string& message, int& width, int& height)const;
+
 private:
 	const Texture* CreateTextureFromSurface(const SDL_Surface* surface) const;
 

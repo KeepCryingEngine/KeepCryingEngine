@@ -117,12 +117,17 @@ void GameObject::SetId(int id)
 	uuid.id = id;
 }
 
-const bool GameObject::IsEnabled() const
+bool GameObject::IsEnabled() const
 {
 	return enable;
 }
 
-const bool GameObject::IsStatic() const
+void GameObject::SetEnabled(bool value)
+{
+	enable = value;
+}
+
+bool GameObject::IsStatic() const
 {
 	return isStatic;
 }

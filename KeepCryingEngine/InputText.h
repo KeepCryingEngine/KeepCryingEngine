@@ -27,6 +27,7 @@ public:
 	std::vector<Component::Type> GetNeededComponents() const override;
 	void SetPlaceHolderGameObject(GameObject& g);
 	void SetTextGameObject(GameObject& g);
+	void SetCursorGameObject(GameObject& g);
 	void SetPasswordMode(bool value);
 
 	bool GetPasswordMode() const;
@@ -38,11 +39,17 @@ public:
 	virtual void Save(nlohmann::json& json) const override;
 
 private:
+	void ManageCursor();
+	void ShiftCursor();
+	void NormalCursor();
+
+private:
 	bool onFocus = false;
 	bool passwordMode = false;
 	std::string currentTextUnderPassword;
 	GameObject * placeHolderGameObject;
 	GameObject * textGameObject;
+	GameObject * cursorGameObject;
 	bool dirtyText = true;
 };
 

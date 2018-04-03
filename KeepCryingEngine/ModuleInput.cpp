@@ -417,9 +417,19 @@ const std::string ModuleInput::GetShiftedText()
 	}
 }
 
-int ModuleInput::GetActualTextPos()
+bool ModuleInput::GetIsShifting() const
+{
+	return isShifting;
+}
+
+int ModuleInput::GetActualTextPos() const
 {
 	return actualTextPos;
+}
+
+int ModuleInput::GetShiftInitialTextPos()const
+{
+	return shiftInitialTextPos;
 }
 
 const float2& ModuleInput::GetMouseMotion() const

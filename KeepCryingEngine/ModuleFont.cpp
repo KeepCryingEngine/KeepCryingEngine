@@ -99,6 +99,66 @@ const Texture* ModuleFont::RenderFromText(const TTF_Font* font, const string& me
 	return tFont;
 }
 
+const Texture * ModuleFont::RenderFromText(const TTF_Font * font, const std::string & message, const SDL_Color & color, float & width, float & height, int minWrapW) const
+{
+	if(font == nullptr)
+	{
+		return nullptr;
+	}
+
+	SDL_Surface* sFont;
+
+	if(minWrapW >= 0)
+	{
+		int wrapLongestWordW = 0;
+
+		vector<string> words;
+		split(message, ' ', words);
+
+		for(const string& word : words)
+		{
+			int w;
+			TTF_SizeText((TTF_Font*)font, word.c_str(), &w, nullptr);
+
+			if(w > wrapLongestWordW)
+			{
+				wrapLongestWordW = w;
+			}
+		}
+
+		int wrapLength = max(minWrapW, wrapLongestWordW);
+
+		sFont = TTF_RenderText_Blended_Wrapped((TTF_Font*)font, message.c_str(), color, wrapLength);
+	}
+	else
+	{
+		sFont = TTF_RenderText_Blended((TTF_Font*)font, message.c_str(), color);
+	}
+
+	const Texture* tFont = CreateTextureFromSurface(sFont);
+	if(sFont != nullptr)
+	{
+		height = sFont->h;
+		width = sFont->w;
+	}
+	else
+	{
+		height = 0;
+		width = 0;
+	}
+
+	SDL_FreeSurface(sFont);
+
+	return tFont;
+}
+
+void ModuleFont::GetSizeFromString(const TTF_Font* font, const std::string & message, int & width, int & height) const
+{
+	TTF_SizeText((TTF_Font*)font, message.c_str(), &width, &height);
+}
+
+
+
 const Texture* ModuleFont::CreateTextureFromSurface(const SDL_Surface* surface) const
 {
 	if(surface == nullptr)

@@ -143,7 +143,9 @@ public:
 	const std::string& GetCurrentText();
 	bool IsShifting()const;
 	const std::string GetShiftedText();
-	int GetActualTextPos();
+	int GetActualTextPos() const;
+	int GetShiftInitialTextPos()const;
+	bool GetIsShifting()const;
 
 private:
 	bool windowEvents[(uint)EventWindow::WE_COUNT];

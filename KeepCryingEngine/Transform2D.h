@@ -20,6 +20,7 @@ public:
 	
 	void SetLocalPosition(const float3& position);
 	void SetWorldPosition(const float3& position);
+	void SetSize(const float2& size);
 
 	float2 GetSize() const;
 	float3 GetMinPosition() const;

@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "ModuleFont.h"
 #include "json_serializer.h"
+#include "Transform2D.h"
 
 Text::Text(): Component(Text::TYPE)
 {}
@@ -55,6 +56,9 @@ void Text::DrawUI()
 
 			SetFont(path);
 		}
+
+		ImGui::Checkbox("AdaptSizeToText", &adaptSize);
+
 		if(ImGui::DragFloat4("Color", color.ptr(), 1.0f, 0.0f, 255.0f))
 		{
 			SetColor(color);
@@ -64,6 +68,11 @@ void Text::DrawUI()
 			SetSize(size);
 		}
 	}
+}
+
+void Text::AdaptSize(const float2& newSize)
+{
+	gameObject->GetComponent<Transform2D>()->SetSize(newSize);
 }
 
 void Text::SetText(const std::string & newText)
@@ -77,7 +86,14 @@ void Text::SetText(const std::string & newText)
 
 void Text::SetTexture(const std::string & text)
 {
-	texture =(Texture*) App->font->RenderFromText(font, text, SDL_Color{(Uint8)color.x, (Uint8)color.y, (Uint8)color.z, (Uint8)color.w });
+	float height = 0.0f;
+	float width = 0.0f;
+	texture =(Texture*) App->font->RenderFromText(font, text, SDL_Color{(Uint8)color.x, (Uint8)color.y, (Uint8)color.z, (Uint8)color.w },width,height,-1);
+	textureSize = float2(width,height);
+	if(adaptSize)
+	{
+		AdaptSize(textureSize);
+	}
 }
 
 void Text::SetColor(float4 color)
@@ -117,6 +133,16 @@ const std::string & Text::GetText() const
 	return actualText;
 }
 
+const TTF_Font * Text::GetFont() const
+{
+	return font;
+}
+
+const float2 & Text::GetTextureSize() const
+{
+	return textureSize;
+}
+
 void Text::PreLoad(const nlohmann::json & json)
 {
 	Component::PreLoad(json);
@@ -124,6 +150,7 @@ void Text::PreLoad(const nlohmann::json & json)
 	from_json(json["color"], color);
 	size = json["size"];
 	currentFontPath = json["currentFontPath"].get<std::string>();
+	adaptSize = json["adaptSize"];
 }
 
 void Text::Save(nlohmann::json & json) const
@@ -147,6 +174,7 @@ void Text::Save(nlohmann::json & json) const
 	json["color"] = jsonColor;
 	json["size"] = size;
 	json["currentFontPath"] = currentFontPath.string();
+	json["adaptSize"] = adaptSize;
 }
 
 void Text::UpdateFont()

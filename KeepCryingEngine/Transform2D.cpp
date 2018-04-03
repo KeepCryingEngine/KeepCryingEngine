@@ -63,6 +63,11 @@ void Transform2D::SetWorldPosition(const float3 & position)
 	}
 }
 
+void Transform2D::SetSize(const float2 & size)
+{
+	this->size = size;
+}
+
 float2 Transform2D::GetSize() const
 {
 	return size;

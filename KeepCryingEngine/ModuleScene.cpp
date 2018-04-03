@@ -54,11 +54,6 @@ update_status ModuleScene::PreUpdate()
 
 update_status ModuleScene::Update()
 {
-	if (App->input->GetKey(SDL_SCANCODE_1) == KeyState::KEY_DOWN)
-	{
-		AddCube(*root)->AddComponent<AudioSource>();
-	}
-
 	if(App->uiEditor->GetDebugMode())
 	{
 		DrawHierarchy(Get(App->uiEditor->GetSelectedNode()));
@@ -359,6 +354,8 @@ GameObject * ModuleScene::AddInputText(GameObject & parent)
 	InputText* tempInput = gameObject->AddComponent<InputText>();
 	tempInput->SetPlaceHolderGameObject(*AddText(*gameObject));//Add text in a sub-object
 	tempInput->SetTextGameObject(*AddText(*gameObject));//Add text in a sub-object
+	tempInput->SetCursorGameObject(*AddImage(*gameObject));//Add Image in a sub-object
+
 	return gameObject;
 }
 

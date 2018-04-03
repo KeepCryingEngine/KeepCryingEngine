@@ -37,8 +37,10 @@ public:
 
 	void SetId(int id);
 
-	const bool IsEnabled() const;
-	const bool IsStatic() const;
+	bool IsEnabled() const;
+	void SetEnabled(bool value);
+
+	bool IsStatic() const;
 
 	void SetStatic(bool value);
 

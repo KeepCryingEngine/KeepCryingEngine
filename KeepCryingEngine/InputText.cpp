@@ -5,6 +5,9 @@
 #include "ModuleScene.h"
 #include "GameObject.h"
 #include "Text.h"
+#include "ModuleFont.h"
+#include "Transform2D.h"
+#include "Image.h"
 
 InputText::InputText():Component(InputText::TYPE)
 {}
@@ -59,13 +62,16 @@ void InputText::SetEnable(bool value)
 
 void InputText::RealUpdate()
 {
+	cursorGameObject->SetEnabled(onFocus);
 	if(onFocus)
 	{
 		currentTextUnderPassword = App->input->GetCurrentText();
 		textGameObject->GetComponent<Text>()->SetText(currentTextUnderPassword);
+
+		ManageCursor();
 	}
 	else
-	{
+	{		
 		dirtyText = true;
 	}
 
@@ -142,6 +148,12 @@ void InputText::SetTextGameObject(GameObject & g)
 	textGameObject = &g;
 }
 
+void InputText::SetCursorGameObject(GameObject & g)
+{
+	cursorGameObject = &g;
+	g.GetComponent<Image>()->SetTextureByPath("Assets/Cursor.png");
+}
+
 void InputText::SetPasswordMode(bool value)
 {
 	passwordMode = value;
@@ -172,6 +184,7 @@ void InputText::Load(const nlohmann::json & json)
 {
 	placeHolderGameObject = App->scene->Get(json["placeHolderGameObjectID"]);
 	textGameObject = App->scene->Get(json["textGameObjectID"]);
+	cursorGameObject = App->scene->Get(json["cursorGameObjectID"]);
 }
 
 void InputText::Save(nlohmann::json & json) const
@@ -180,4 +193,61 @@ void InputText::Save(nlohmann::json & json) const
 	json["passwordMode"] = passwordMode;
 	json["placeHolderGameObjectID"] = placeHolderGameObject->GetId();
 	json["textGameObjectID"] = textGameObject->GetId();
+	json["cursorGameObjectID"] = cursorGameObject->GetId();
+}
+
+void InputText::ManageCursor()
+{
+	if(App->input->IsShifting())
+	{
+		ShiftCursor();
+	}
+	else
+	{
+		NormalCursor();
+	}
+	
+}
+
+void InputText::ShiftCursor()
+{
+	int cursor0 = App->input->GetActualTextPos();
+	int cursor1 = App->input->GetShiftInitialTextPos();
+	int leftCursor = min(cursor0,cursor1);
+	int rightCursor = max(cursor0,cursor1);
+
+	Text* tempText = textGameObject->GetComponent<Text>();
+	int sizeX = 0;
+	int sizeY = 0;
+	App->font->GetSizeFromString(tempText->GetFont(), tempText->GetText().substr(leftCursor, rightCursor-leftCursor), sizeX, sizeY);
+	int width = 0;
+	int height = 0;
+	App->font->GetSizeFromString(tempText->GetFont(), tempText->GetText().substr(0, leftCursor), width, height);
+
+	float3 pos = textGameObject->GetComponent<Transform2D>()->GetWorldPosition();
+	pos.x -= tempText->GetTextureSize().x / 2.0f;
+	pos.x += width;
+	pos.x += sizeX / 2.0f;
+
+	Transform2D* cursorTransform = cursorGameObject->GetComponent<Transform2D>();
+	cursorTransform->SetWorldPosition(pos);
+	float h = tempText->GetTextureSize().y * 1.25f;
+	cursorTransform->SetSize(float2(sizeX, h));
+
+}
+
+void InputText::NormalCursor()
+{
+	int cursor = App->input->GetActualTextPos();
+	Text* tempText = textGameObject->GetComponent<Text>();
+	int width = 0;
+	int height = 0;
+	App->font->GetSizeFromString(tempText->GetFont(), tempText->GetText().substr(0, cursor), width, height);
+	float3 pos = textGameObject->GetComponent<Transform2D>()->GetWorldPosition();
+	pos.x -= tempText->GetTextureSize().x / 2.0f;
+	pos.x += width;
+	Transform2D* cursorTransform = cursorGameObject->GetComponent<Transform2D>();
+	cursorTransform->SetWorldPosition(pos);
+	float h = tempText->GetTextureSize().y * 1.25f;
+	cursorTransform->SetSize(float2(h*0.1f, h));
 }
