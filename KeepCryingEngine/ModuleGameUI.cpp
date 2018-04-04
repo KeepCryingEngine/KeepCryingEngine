@@ -409,12 +409,15 @@ void ModuleGameUI::UpdateText(Text * text)
 	// Draw a textured quad
 	float3 min = transform->GetMinPosition();
 	float3 max = transform->GetMaxPosition();
+
+	float2 minCoord = text->GetBottomTextCoordPoint();
+	float2 maxCoord = text->GetTopTextCoordPoint();
 	glBegin(GL_QUADS);
 
-	glTexCoord2f(0, 0); glVertex3f(min.x, min.y, min.z);
-	glTexCoord2f(1, 0);  glVertex3f(max.x, min.y, min.z);
-	glTexCoord2f(1, 1); glVertex3f(max.x, max.y, min.z);
-	glTexCoord2f(0, 1); glVertex3f(min.x, max.y, min.z);
+	glTexCoord2f(minCoord.x, minCoord.y); glVertex3f(min.x, min.y, min.z);
+	glTexCoord2f(maxCoord.x, minCoord.y);  glVertex3f(max.x, min.y, min.z);
+	glTexCoord2f(maxCoord.x, maxCoord.y); glVertex3f(max.x, max.y, min.z);
+	glTexCoord2f(minCoord.x, maxCoord.y); glVertex3f(min.x, max.y, min.z);
 	glEnd();
 
 	glBindTexture(GL_TEXTURE_2D, 0);

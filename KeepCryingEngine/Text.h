@@ -22,7 +22,7 @@ public:
 
 	void DrawUI() override;
 
-	void AdaptSize(const float2& newSize);
+	void ForcedUpdate() override;
 
 	std::vector<Component::Type> GetNeededComponents() const override;
 	void SetText(const std::string& newText);
@@ -36,9 +36,15 @@ public:
 	const std::string& GetText() const;
 	const TTF_Font* GetFont() const;
 	const float2& GetTextureSize()const;
+	const float2& GetTopTextCoordPoint()const;
+	const float2& GetBottomTextCoordPoint()const;
 
 	virtual void PreLoad(const nlohmann::json& json) override;
 	virtual void Save(nlohmann::json& json) const override;
+
+private:
+	void AdaptSize(const float2& newSize);
+	void AdaptTextCoords(const float2& newSize);
 
 private:
 	void UpdateFont();
@@ -51,6 +57,8 @@ private:
 	int size = 20;
 	bool adaptSize = true;
 	float2 textureSize = float2::zero;
+	float2 topTextCoordPoint = float2::one;
+	float2 bottomTextCoordPoint = float2::one;
 	std::experimental::filesystem::path currentFontPath = "Assets/Fonts/arial.ttf";
 };
 

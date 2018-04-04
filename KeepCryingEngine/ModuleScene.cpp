@@ -345,7 +345,7 @@ GameObject * ModuleScene::AddInputText(GameObject & parent)
 		break;
 		case uiState::FATHER_CANVAS:
 		{
-			gameObject = AddEmpty(parent, "Text");
+			gameObject = AddEmpty(parent, "InputText");
 		}
 		break;
 	}

@@ -42,6 +42,7 @@ private:
 	void ManageCursor();
 	void ShiftCursor();
 	void NormalCursor();
+	void ManagePlaceHolder();
 
 private:
 	bool onFocus = false;

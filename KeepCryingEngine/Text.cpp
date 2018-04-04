@@ -70,9 +70,26 @@ void Text::DrawUI()
 	}
 }
 
+void Text::ForcedUpdate()
+{
+	UpdateFont();
+}
+
 void Text::AdaptSize(const float2& newSize)
 {
 	gameObject->GetComponent<Transform2D>()->SetSize(newSize);
+	topTextCoordPoint = float2::one;
+	bottomTextCoordPoint = float2::zero;
+}
+
+void Text::AdaptTextCoords(const float2 & newSize)
+{
+	float2 size = gameObject->GetComponent<Transform2D>()->GetSize();
+	topTextCoordPoint.x = size.x / newSize.x;
+	topTextCoordPoint.y = 1;
+
+	bottomTextCoordPoint.x = 0;
+	bottomTextCoordPoint.y = -size.y / newSize.y;
 }
 
 void Text::SetText(const std::string & newText)
@@ -93,6 +110,10 @@ void Text::SetTexture(const std::string & text)
 	if(adaptSize)
 	{
 		AdaptSize(textureSize);
+	}
+	else
+	{
+		AdaptTextCoords(textureSize);
 	}
 }
 
@@ -141,6 +162,16 @@ const TTF_Font * Text::GetFont() const
 const float2 & Text::GetTextureSize() const
 {
 	return textureSize;
+}
+
+const float2 & Text::GetTopTextCoordPoint() const
+{
+	return topTextCoordPoint;
+}
+
+const float2 & Text::GetBottomTextCoordPoint() const
+{
+	return bottomTextCoordPoint;
 }
 
 void Text::PreLoad(const nlohmann::json & json)

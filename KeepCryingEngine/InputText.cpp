@@ -63,6 +63,8 @@ void InputText::SetEnable(bool value)
 void InputText::RealUpdate()
 {
 	cursorGameObject->SetEnabled(onFocus);
+	ManagePlaceHolder();
+
 	if(onFocus)
 	{
 		currentTextUnderPassword = App->input->GetCurrentText();
@@ -92,14 +94,6 @@ void InputText::RealUpdate()
 		}
 	}
 
-	if(textGameObject->GetComponent<Text>()->GetText() == "")
-	{
-		placeHolderGameObject->GetComponent<Text>()->enabled = true;
-	}
-	else
-	{
-		placeHolderGameObject->GetComponent<Text>()->enabled = false;
-	}
 	onFocus = false;
 }
 
@@ -119,7 +113,7 @@ void InputText::DrawUI()
 			gameObject->RemoveComponent(this);
 		}
 		
-		if(ImGui::Checkbox("Active", &passwordMode))
+		if(ImGui::Checkbox("Password", &passwordMode))
 		{
 			SetPasswordMode(passwordMode);
 		}
@@ -250,4 +244,16 @@ void InputText::NormalCursor()
 	cursorTransform->SetWorldPosition(pos);
 	float h = tempText->GetTextureSize().y * 1.25f;
 	cursorTransform->SetSize(float2(h*0.1f, h));
+}
+
+void InputText::ManagePlaceHolder()
+{
+	if(textGameObject->GetComponent<Text>()->GetText() == "" && !onFocus)
+	{
+		placeHolderGameObject->GetComponent<Text>()->enabled = true;
+	}
+	else
+	{
+		placeHolderGameObject->GetComponent<Text>()->enabled = false;
+	}
 }

@@ -31,7 +31,13 @@ void Transform2D::DrawUI()
 		ImGui::SameLine();
 		ImGui::PopID();
 		ImGui::DragFloat3(" Position", localPosition.ptr(), 0.1f);
-		ImGui::DragFloat2(" Size", size.ptr(), 0.1f);
+		if(ImGui::DragFloat2(" Size", size.ptr(), 0.1f))
+		{
+			for(Component* c : gameObject->GetComponents())
+			{
+				c->ForcedUpdate();
+			}
+		}
 		ImGui::DragFloat2(" Pivot", pivot.ptr(), 0.1f);
 		ImGui::DragFloat2(" Anchor", anchor.ptr(), 0.1f);
 	}

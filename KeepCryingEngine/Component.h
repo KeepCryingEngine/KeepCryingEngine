@@ -40,6 +40,8 @@ public:
 	virtual void Start(){};
 	virtual void Destroy(){};
 
+	virtual void ForcedUpdate(){};//Used to update a component when another thing like draw ui from transform needs to reload something on component
+	//Example: transform2D needs to update text when size is changed
 	virtual void Update()
 	{
 		if(enabled)

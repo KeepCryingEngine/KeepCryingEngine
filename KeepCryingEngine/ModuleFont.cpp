@@ -143,8 +143,10 @@ const Texture * ModuleFont::RenderFromText(const TTF_Font * font, const std::str
 	}
 	else
 	{
-		height = 0;
 		width = 0;
+		int tempHeight= 0;
+		TTF_SizeText((TTF_Font*)font, "", nullptr, &tempHeight);
+		height = tempHeight;
 	}
 
 	SDL_FreeSurface(sFont);
