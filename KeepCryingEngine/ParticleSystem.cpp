@@ -7,6 +7,7 @@
 #include "ModuleFX.h"
 #include "GameObject.h"
 #include "ModuleRender.h"
+#include "ModuleScene.h"
 
 ParticleSystem::ParticleSystem() : Component(ParticleSystem::TYPE)
 {
@@ -160,9 +161,6 @@ void ParticleSystem::SetMaterial(Material& material)
 
 void ParticleSystem::Update(const Camera& camera)
 {
-	//TODO: VERIFY
-	gameObject->GetTransform()->SetWorldPosition(camera.gameObject->GetTransform()->GetWorldPosition());
-
 	float timeS = App->time->GetDeltaTime();
 
 	accumElapsed += timeS;
@@ -177,9 +175,8 @@ void ParticleSystem::Update(const Camera& camera)
 
 		if(particle.lifetime > 0)
 		{
-			float3 camMovement = camera.gameObject->GetTransform()->GetWorldPosition() - lastFrameCameraPos;
-			particle.billboard->SetLocalPosition((particle.billboard->GetLocalPosition() - camMovement) + timeS * particle.velocity);
-			particle.billboard->SetWorldPosition((particle.billboard->GetWorldPosition() -camMovement) + timeS * particle.velocity);
+			particle.billboard->SetLocalPosition(particle.billboard->GetLocalPosition() + timeS * particle.velocity);
+			particle.billboard->SetWorldPosition(particle.billboard->GetWorldPosition() + timeS * particle.velocity);
 			++it;
 		}
 		else
@@ -189,8 +186,6 @@ void ParticleSystem::Update(const Camera& camera)
 			it = alive.erase(it);
 		}
 	}
-
-	lastFrameCameraPos = camera.gameObject->GetTransform()->GetWorldPosition();
 
 	unsigned times = (unsigned)(accumElapsed / accumElapsedTotal);
 
@@ -247,7 +242,7 @@ void ParticleSystem::Render(const Camera& camera)
 	RenderBox(camera);
 
 	BufferInfo temp = { numVertices, numIndices, vertexPosBufferId, vertexUvBufferId, indicesBufferId };
-	App->fx->AddToDraw(*material, *gameObject->GetTransform(), temp);
+	App->fx->AddToDraw(*material, *App->scene->GetRoot()->GetTransform(), temp);
 }
 
 void ParticleSystem::RenderBox(const Camera& camera)
@@ -286,8 +281,7 @@ bool ParticleSystem::CreateParticle(const Camera& camera)
 {
 	if(!dead.empty())
 	{
-		float3 position = camera.gameObject->GetTransform()->GetWorldPosition();
-		//float3 position = gameObject->GetTransform()->GetWorldPosition();
+		float3 position = gameObject->GetTransform()->GetWorldPosition();
 		float3 localPos = float3(RandomFloat(-emitArea.x, emitArea.x), 0.5f * fallingHeight, RandomFloat(-emitArea.y, emitArea.y));
 
 		unsigned index = dead.back();
@@ -300,7 +294,7 @@ bool ParticleSystem::CreateParticle(const Camera& camera)
 		particle.lifetime = fallingTime;
 
 		Billboard* tempBilboard = new Billboard();
-		tempBilboard->SetLocalPosition(localPos);
+		tempBilboard->SetLocalPosition(position + localPos);
 		tempBilboard->SetWorldPosition(position + localPos);
 		tempBilboard->SetSize(particleSize);
 
