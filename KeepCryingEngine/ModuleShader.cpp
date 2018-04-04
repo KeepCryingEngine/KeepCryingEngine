@@ -181,7 +181,7 @@ void ModuleShader::SetUpDepthShader()
 
 void ModuleShader::SetUpDiffuseShader()
 {
-	uint vertexId = AddShaderPath("Assets/Shaders/diffuseVertexShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShaderPath("Assets/Shaders/diffuseFragmentShader.frag", GL_FRAGMENT_SHADER);
+	uint vertexId = AddShaderPath("Assets/Shaders/lightningVertexShader.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShaderPath("Assets/Shaders/lightningFragmentShader.frag", GL_FRAGMENT_SHADER);
 	diffuseShaderId = AddProgram({ vertexId, fragmentId });
 }
