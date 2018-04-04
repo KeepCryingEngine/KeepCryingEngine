@@ -488,6 +488,18 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	GLint transformUniformId = glGetUniformLocation(progId, "transform");
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, drawInfo.transform.GetModelMatrix().Transposed().ptr());
 
+	GLint rotation = glGetUniformLocation(progId, "rotation");
+	if (rotation != -1)
+	{
+		glUniformMatrix4fv(rotation, 1, GL_FALSE, drawInfo.transform.GetWorldRotation().ToFloat4x4().Transposed().ptr());
+	}
+
+	GLint lightSourcePosition = glGetUniformLocation(progId, "lightSourcePosition");
+	if (lightSourcePosition != -1)
+	{
+		glUniform3f(lightSourcePosition, -100, 0, 0);
+	}
+
 	GLint light = glGetUniformLocation(progId, "lightDir");
 	if (light != -1)
 	{
@@ -498,6 +510,14 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	if(camera != -1 && App->camera->GetEnabledCamera() != nullptr)
 	{
 		glUniformMatrix4fv(camera, 1, GL_FALSE, App->camera->GetEnabledCamera()->GetViewMatrix().ptr());
+	}
+
+	//TODO: USE ENABLED CAMERA!!!
+	GLint cameraPosition = glGetUniformLocation(progId, "cameraPosition");
+	if (cameraPosition != -1)
+	{
+		float3 cPos = App->camera->camera->gameObject->GetTransform()->GetWorldPosition();
+		glUniform3f(cameraPosition, cPos.x, cPos.y, cPos.z);
 	}
 
 	GLint cameraFar = glGetUniformLocation(progId, "actualCameraFar");

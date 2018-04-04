@@ -47,7 +47,7 @@ void Material::DrawUI()
 		ImGui::NewLine();
 		
 		int tmpShaderMode = (int)shaderType;
-		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Cartoon\0Color\0Depth"))
+		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Cartoon\0Color\0Depth\0Diffuse"))
 		{
 			shaderType = (ShaderType)tmpShaderMode;
 			programId = App->shader->GetShaderId(shaderType);

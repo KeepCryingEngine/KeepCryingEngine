@@ -11,7 +11,8 @@ enum class ShaderType {
 	Default,
 	Cartoon,
 	Color,
-	Depth
+	Depth,
+	Diffuse
 };
 
 class ModuleShader : public Module
@@ -36,12 +37,14 @@ private:
 	void SetUpDefaultShader();
 	void SetUpCartoonShader();
 	void SetUpDepthShader();
+	void SetUpDiffuseShader();
 
 private:
 	GLuint cartoonShaderId = 0;
 	GLuint defaultShaderId = 0;
 	GLuint colorShaderId = 0;
 	GLuint depthShaderId = 0;
+	GLuint diffuseShaderId = 0;
 };
 
 #endif

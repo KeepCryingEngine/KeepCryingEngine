@@ -53,7 +53,7 @@ Mesh * ModuleEntity::GetSphere()
 
 void ModuleEntity::Load3DFile(const std::experimental::filesystem::path& path)
 {
-	const aiScene * scene = aiImportFile(path.string().c_str(), aiProcess_Triangulate);
+	const aiScene * scene = aiImportFile(path.string().c_str(), aiProcess_Triangulate | aiProcess_GenSmoothNormals);
 
 	if (scene != nullptr)
 	{
@@ -486,7 +486,7 @@ GameObject* ModuleEntity::CreateGameObjectForNode(const aiScene* scene, aiNode *
 Mesh * ModuleEntity::Load(const MeshIdentifier & identifier)
 {
 	Mesh * mesh = nullptr;
-	const aiScene * scene = aiImportFile(identifier.path.string().c_str(), aiProcess_Triangulate);
+	const aiScene * scene = aiImportFile(identifier.path.string().c_str(), aiProcess_Triangulate | aiProcess_GenSmoothNormals);
 
 	if (scene != nullptr)
 	{

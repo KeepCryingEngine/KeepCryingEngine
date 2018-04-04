@@ -17,6 +17,7 @@ bool ModuleShader::Init()
 	SetUpDepthShader();
 	SetUpDefaultShader();
 	SetUpCartoonShader();
+	SetUpDiffuseShader();
 
 	return true;
 }
@@ -111,6 +112,11 @@ GLuint ModuleShader::GetShaderId(ShaderType shaderType) const
 		shaderId = depthShaderId;
 	}
 		break;
+	case ShaderType::Diffuse:
+	{
+		shaderId = diffuseShaderId;
+	}
+		break;
 	default:
 		assert(false);
 	}
@@ -171,4 +177,11 @@ void ModuleShader::SetUpDepthShader()
 	uint vertexId = AddShaderPath("Assets/Shaders/cameraShader.vert", GL_VERTEX_SHADER);
 	uint fragmentId = AddShaderPath("Assets/Shaders/depthShader.frag", GL_FRAGMENT_SHADER);
 	depthShaderId = AddProgram({ vertexId, fragmentId });
+}
+
+void ModuleShader::SetUpDiffuseShader()
+{
+	uint vertexId = AddShaderPath("Assets/Shaders/diffuseVertexShader.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShaderPath("Assets/Shaders/diffuseFragmentShader.frag", GL_FRAGMENT_SHADER);
+	diffuseShaderId = AddProgram({ vertexId, fragmentId });
 }
