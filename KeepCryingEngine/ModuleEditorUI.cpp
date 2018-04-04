@@ -608,6 +608,10 @@ void ModuleEditorUI::CallWindows()
 	{
 		DrawEditorControler();
 	}
+	if(performanceInfoWindow)
+	{
+		DrawPerformanceInfoWindow();
+	}
 }
 
 void ModuleEditorUI::CallGuizmo()
@@ -1002,6 +1006,15 @@ void ModuleEditorUI::DrawLoadedTexturesInfoWindow()
 	}
 
 	ImGui::Unindent();
+
+	ImGui::End();
+}
+
+void ModuleEditorUI::DrawPerformanceInfoWindow()
+{
+	ImGui::Begin("Performance Information", &performanceInfoWindow, ImGuiWindowFlags_MenuBar);
+
+	ImGui::Text("Fps: %i, Ms: %i", (int)(1.0f / App->time->GetDeltaTime()), (int)(1000.0f * App->time->GetDeltaTime()));
 
 	ImGui::End();
 }
