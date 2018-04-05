@@ -1012,9 +1012,11 @@ void ModuleEditorUI::DrawLoadedTexturesInfoWindow()
 
 void ModuleEditorUI::DrawPerformanceInfoWindow()
 {
+	float timeS = App->time->GetDeltaTime();
+
 	ImGui::Begin("Performance Information", &performanceInfoWindow, ImGuiWindowFlags_MenuBar);
 
-	ImGui::Text("Fps: %i, Ms: %i", (int)(1.0f / App->time->GetDeltaTime()), (int)(1000.0f * App->time->GetDeltaTime()));
+	ImGui::Text("Fps: %i, Ms: %i", (int)(1.0f / timeS), (int)(1000.0f * timeS));
 
 	ImGui::End();
 }
