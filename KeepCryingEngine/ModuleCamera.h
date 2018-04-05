@@ -87,7 +87,7 @@ private:
 	LineSegment lastRay;
 
 	Camera* enabledCamera = nullptr;
-	Camera* modeCamera = nullptr;
+	Camera** modeCamera = nullptr;
 
 	std::vector<Camera*> allCameras;
 

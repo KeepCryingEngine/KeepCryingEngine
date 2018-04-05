@@ -30,7 +30,7 @@ bool ModuleCamera::Init()
 	camera = cameraGameObject->AddComponent<Camera>();
 	camera->SetIgnoreFrustumRendering(true);
 
-	modeCamera = camera;
+	modeCamera = &camera;
 
 	//init camera
 	cameraTransform->SetWorldPosition(float3(0, 1, -10));
@@ -63,12 +63,12 @@ bool ModuleCamera::CleanUp()
 
 void ModuleCamera::Play()
 {
-	modeCamera = enabledCamera;
+	modeCamera = &enabledCamera;
 }
 
 void ModuleCamera::Stop()
 {
-	modeCamera = camera;
+	modeCamera = &camera;
 }
 
 void ModuleCamera::Subscribe(Camera * c)
@@ -422,7 +422,7 @@ Camera* ModuleCamera::GetEnabledCamera() const
 
 Camera * ModuleCamera::GetPlayOrEditorCamera() const
 {
-	return modeCamera;
+	return *modeCamera;
 }
 
 const LineSegment & ModuleCamera::GetLastRay() const

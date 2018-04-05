@@ -103,23 +103,27 @@ update_status ModuleRender::PreUpdate()
 
 update_status ModuleRender::Update()
 {
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(App->camera->GetPlayOrEditorCamera()->GetProyectionMatrix().ptr());
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
-
-	if(App->state == TimeState::STOPED)
+	Camera* cam = App->camera->GetPlayOrEditorCamera();
+	if(cam != nullptr)
 	{
-		DrawGrid();
-	}
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(cam->GetProyectionMatrix().ptr());
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(cam->GetViewMatrix().ptr());
 
-	DrawGeometry();
+		if(App->state == TimeState::STOPED)
+		{
+			DrawGrid();
+		}
+
+		DrawGeometry();
+
+		if(App->uiEditor->GetDebugMode())
+		{
+			DrawLastRay();
+		}
+	}
 	drawBuffer.clear();
-
-	if(App->uiEditor->GetDebugMode())
-	{
-		DrawLastRay();
-	}
 
 	return update_status::UPDATE_CONTINUE;
 }
