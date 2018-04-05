@@ -109,7 +109,10 @@ update_status ModuleInput::PreUpdate()
 					//case SDL_WINDOWEVENT_LEAVE:
 					case SDL_WINDOWEVENT_RESIZED:
 						SDL_GetWindowSize(App->window->window, &App->configuration.screenWidth, &App->configuration.screenHeight);
-						App->camera->GetPlayOrEditorCamera()->SetAspectRatio((float)App->configuration.screenWidth/(float)App->configuration.screenHeight);
+						for(Camera* c : App->camera->GetAllCameras())
+						{
+							c->SetAspectRatio((float)App->configuration.screenWidth / (float)App->configuration.screenHeight);
+						}
 						break;
 
 					case SDL_WINDOWEVENT_HIDDEN:

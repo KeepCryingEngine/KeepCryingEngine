@@ -2,8 +2,10 @@
 #define _MODULECAMERA_H_
 
 #include <MathGeoLib.h>
+#include <vector>
 
 #include "Module.h"
+
 
 class Camera;
 class GameObject;
@@ -21,6 +23,11 @@ public:
 
 	void Play() override;
 	void Stop() override;
+
+	void Subscribe(Camera* c);
+	void UnSubscribe(Camera* c);
+
+	std::vector<Camera*> GetAllCameras() const;
 
 	void EnableCamera(Camera* camera);
 	Camera* GetEnabledCamera() const;
@@ -81,6 +88,8 @@ private:
 
 	Camera* enabledCamera = nullptr;
 	Camera* modeCamera = nullptr;
+
+	std::vector<Camera*> allCameras;
 
 	static const float SHIFT_MULTIPLIER;
 	static const float WHEEL_FORCE;

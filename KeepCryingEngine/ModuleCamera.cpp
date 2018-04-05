@@ -1,5 +1,7 @@
 #include "ModuleCamera.h"
 
+#include <algorithm>
+
 #include "Camera.h"
 #include "Application.h"
 #include "ModuleInput.h"
@@ -67,6 +69,28 @@ void ModuleCamera::Play()
 void ModuleCamera::Stop()
 {
 	modeCamera = camera;
+}
+
+void ModuleCamera::Subscribe(Camera * c)
+{
+	if(find(allCameras.begin(), allCameras.end(), c) == allCameras.end())
+	{
+		allCameras.push_back(c);
+	}
+}
+
+void ModuleCamera::UnSubscribe(Camera * c)
+{
+	std::vector<Camera*>::iterator it = find(allCameras.begin(), allCameras.end(), c);
+	if(it != allCameras.end())
+	{
+		allCameras.erase(it);
+	}
+}
+
+std::vector<Camera*> ModuleCamera::GetAllCameras() const
+{
+	return allCameras;
 }
 
 float ModuleCamera::GetMoveSpeed() const

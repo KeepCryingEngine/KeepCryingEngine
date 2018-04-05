@@ -12,6 +12,7 @@ using namespace std;
 Camera::Camera() : Component(Camera::TYPE)
 {
 	SetUpCamera();
+	App->camera->Subscribe(this);
 }
 
 Camera::~Camera()
