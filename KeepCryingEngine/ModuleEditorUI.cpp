@@ -419,7 +419,7 @@ void ModuleEditorUI::SetAllParameters()
 
 void ModuleEditorUI::DrawEditorControler()
 {
-	switch(App->time->GetCurrentState())
+	switch(App->state)
 	{
 		case TimeState::PLAYING:
 			// Show Pause & Stop
@@ -1014,7 +1014,7 @@ void ModuleEditorUI::DrawPerformanceInfoWindow()
 {
 	ImGui::Begin("Performance Information", &performanceInfoWindow, ImGuiWindowFlags_MenuBar);
 
-	if(App->time->GetCurrentState() == TimeState::PLAYING)
+	if(App->state == TimeState::PLAYING)
 	{
 		float timeS = App->time->GetDeltaTime();
 

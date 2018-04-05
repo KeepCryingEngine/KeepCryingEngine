@@ -28,6 +28,8 @@ bool ModuleCamera::Init()
 	camera = cameraGameObject->AddComponent<Camera>();
 	camera->SetIgnoreFrustumRendering(true);
 
+	modeCamera = camera;
+
 	//init camera
 	cameraTransform->SetWorldPosition(float3(0, 1, -10));
 	cameraTransform->SetWorldRotation(Quat::FromEulerXYZ(0, 0, 0));
@@ -38,11 +40,14 @@ bool ModuleCamera::Init()
 
 update_status ModuleCamera::Update()
 {
-	Rotation();
-	Orbit();
-	Movement();
+	if(App->state == TimeState::STOPED)
+	{
+		Rotation();
+		Orbit();
+		Movement();
 
-	camera->Update();
+		camera->Update();
+	}
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -52,6 +57,16 @@ bool ModuleCamera::CleanUp()
 	RELEASE(camera);
 
 	return true;
+}
+
+void ModuleCamera::Play()
+{
+	modeCamera = enabledCamera;
+}
+
+void ModuleCamera::Stop()
+{
+	modeCamera = camera;
 }
 
 float ModuleCamera::GetMoveSpeed() const
@@ -379,6 +394,11 @@ void ModuleCamera::EnableCamera(Camera* camera)
 Camera* ModuleCamera::GetEnabledCamera() const
 {
 	return enabledCamera;
+}
+
+Camera * ModuleCamera::GetPlayOrEditorCamera() const
+{
+	return modeCamera;
 }
 
 const LineSegment & ModuleCamera::GetLastRay() const

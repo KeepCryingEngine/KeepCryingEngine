@@ -19,8 +19,12 @@ public:
 	update_status Update() override;
 	bool CleanUp() override;
 
+	void Play() override;
+	void Stop() override;
+
 	void EnableCamera(Camera* camera);
 	Camera* GetEnabledCamera() const;
+	Camera* GetPlayOrEditorCamera() const;
 	const LineSegment & GetLastRay()const;
 	
 	float GetMoveSpeed() const;
@@ -76,6 +80,7 @@ private:
 	LineSegment lastRay;
 
 	Camera* enabledCamera = nullptr;
+	Camera* modeCamera = nullptr;
 
 	static const float SHIFT_MULTIPLIER;
 	static const float WHEEL_FORCE;

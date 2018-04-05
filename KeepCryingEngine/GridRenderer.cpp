@@ -128,14 +128,7 @@ void GridRenderer::Build(int rows, int columns, const float2& size)
 			billboard->SetLocalPosition(bPosition);
 			billboard->SetWorldPosition(bPosition + gameObject->GetTransform()->GetWorldPosition());
 			billboard->SetSize(currentBillboardSize);
-			if(App->camera->GetEnabledCamera())
-			{
-				billboard->ComputeQuadInitial(*App->camera->GetEnabledCamera(), &vertexPos, &vertexUv, &indices);
-			}
-			else
-			{
-				billboard->ComputeQuadInitial(*App->camera->camera, &vertexPos, &vertexUv, &indices);
-			}
+			billboard->ComputeQuadInitial(*App->camera->GetPlayOrEditorCamera(), &vertexPos, &vertexUv, &indices);
 			
 			billboards.push_back(billboard);
 		}
@@ -228,14 +221,7 @@ void GridRenderer::UpdateBillboards()
 	for(Billboard* b : billboards)
 	{
 		b->SetWorldPosition(b->GetLocalPosition() + gameObject->GetTransform()->GetWorldPosition());
-		if(App->camera->GetEnabledCamera())
-		{
-			b->ComputeQuad(*App->camera->GetEnabledCamera(), &vertexPos);
-		}
-		else
-		{
-			b->ComputeQuad(*App->camera->camera, &vertexPos);
-		}
+		b->ComputeQuad(*App->camera->GetPlayOrEditorCamera(), &vertexPos);
 	}
 	glDeleteBuffers(1, &vertexPosBufferId);
 

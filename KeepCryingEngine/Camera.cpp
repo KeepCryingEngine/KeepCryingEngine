@@ -41,7 +41,7 @@ void Camera::RealUpdate()
 	frustum.up = worldRotation.Mul(float3::unitY);
 
 
-	if(!ignoreFrustumRendering)
+	if(!ignoreFrustumRendering && App->state == TimeState::STOPED)
 	{
 		App->renderer->DrawFrustum(*this);
 	}

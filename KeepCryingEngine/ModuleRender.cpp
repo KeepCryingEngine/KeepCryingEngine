@@ -104,11 +104,14 @@ update_status ModuleRender::PreUpdate()
 update_status ModuleRender::Update()
 {
 	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(App->camera->camera->GetProyectionMatrix().ptr());
+	glLoadMatrixf(App->camera->GetPlayOrEditorCamera()->GetProyectionMatrix().ptr());
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->camera->GetViewMatrix().ptr());
+	glLoadMatrixf(App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
 
-	DrawGrid();
+	if(App->state == TimeState::STOPED)
+	{
+		DrawGrid();
+	}
 
 	DrawGeometry();
 	drawBuffer.clear();
@@ -480,10 +483,10 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
 
 	GLint modelView = glGetUniformLocation(progId, "model_view");
-	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->camera->GetViewMatrix().ptr());
+	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
 
 	GLint proyection = glGetUniformLocation(progId, "projection");
-	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
+	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetProyectionMatrix().ptr());
 
 	GLint transformUniformId = glGetUniformLocation(progId, "transform");
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, drawInfo.transform.GetModelMatrix().Transposed().ptr());
