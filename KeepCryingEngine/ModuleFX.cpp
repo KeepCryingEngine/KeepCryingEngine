@@ -14,13 +14,16 @@ ModuleFX::~ModuleFX()
 
 update_status ModuleFX::Update()
 {
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.1f);
-	for(const DrawInfo& drawInfo : effectsToDraw)
+	if(App->camera->GetPlayOrEditorCamera() != nullptr)
 	{
-		Draw(drawInfo);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0.1f);
+		for(const DrawInfo& drawInfo : effectsToDraw)
+		{
+			Draw(drawInfo);
+		}
+		glDisable(GL_ALPHA_TEST);
 	}
-	glDisable(GL_ALPHA_TEST);
 	effectsToDraw.clear();
 
 	return update_status::UPDATE_CONTINUE;

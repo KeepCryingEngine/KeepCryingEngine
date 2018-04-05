@@ -23,8 +23,12 @@ ParticleSystem::~ParticleSystem()
 
 void ParticleSystem::RealUpdate()
 {
-		Update(*App->camera->GetPlayOrEditorCamera());
-		Render(*App->camera->GetPlayOrEditorCamera());
+	Camera* cam = App->camera->GetPlayOrEditorCamera();
+	if(cam != nullptr)
+	{
+		Update(*cam);
+		Render(*cam);
+	}
 }
 
 void ParticleSystem::DrawUI()

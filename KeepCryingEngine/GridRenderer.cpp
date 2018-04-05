@@ -217,20 +217,23 @@ void GridRenderer::Save(nlohmann::json& json) const
 void GridRenderer::UpdateBillboards()
 {
 	vertexPos.clear();
-
-	for(Billboard* b : billboards)
+	Camera* cam = App->camera->GetPlayOrEditorCamera();
+	if(cam != nullptr)
 	{
-		b->SetWorldPosition(b->GetLocalPosition() + gameObject->GetTransform()->GetWorldPosition());
-		b->ComputeQuad(*App->camera->GetPlayOrEditorCamera(), &vertexPos);
-	}
-	glDeleteBuffers(1, &vertexPosBufferId);
+		for(Billboard* b : billboards)
+		{
+			b->SetWorldPosition(b->GetLocalPosition() + gameObject->GetTransform()->GetWorldPosition());
+			b->ComputeQuad(*cam, &vertexPos);
+		}
+		glDeleteBuffers(1, &vertexPosBufferId);
 
-	//Generate Vertex Pos buffer
-	const float3 * vertexPosPointer = &vertexPos[0];
-	glGenBuffers(1, &vertexPosBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexPosBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * numVertices, vertexPosPointer, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//Generate Vertex Pos buffer
+		const float3 * vertexPosPointer = &vertexPos[0];
+		glGenBuffers(1, &vertexPosBufferId);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexPosBufferId);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * numVertices, vertexPosPointer, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
 }
 
 void GridRenderer::Clear()
