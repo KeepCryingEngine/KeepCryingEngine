@@ -61,7 +61,7 @@ void Billboard::ComputeQuad(const Camera& camera, std::vector<float3>* outvertic
 
 }
 
-void Billboard::ComputeQuadInitial(const Camera & camera, std::vector<float3>* outverticesPos, std::vector<float2>* outverticesUv, std::vector<GLushort>* indices) const
+void Billboard::ComputeQuadInitial(const Camera& camera, std::vector<float3>* outverticesPos, std::vector<float2>* outverticesUv, std::vector<GLushort>* indices) const
 {
 	ComputeQuad(camera,outverticesPos);
 

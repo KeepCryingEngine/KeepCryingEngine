@@ -128,14 +128,7 @@ void GridRenderer::Build(int rows, int columns, const float2& size)
 			billboard->SetLocalPosition(bPosition);
 			billboard->SetWorldPosition(bPosition + gameObject->GetTransform()->GetWorldPosition());
 			billboard->SetSize(currentBillboardSize);
-			if(App->camera->GetEnabledCamera())
-			{
-				billboard->ComputeQuadInitial(*App->camera->GetEnabledCamera(), &vertexPos, &vertexUv, &indices);
-			}
-			else
-			{
-				billboard->ComputeQuadInitial(*App->camera->camera, &vertexPos, &vertexUv, &indices);
-			}
+			billboard->ComputeQuadInitial(*App->camera->GetPlayOrEditorCamera(), &vertexPos, &vertexUv, &indices);
 			
 			billboards.push_back(billboard);
 		}
@@ -224,27 +217,23 @@ void GridRenderer::Save(nlohmann::json& json) const
 void GridRenderer::UpdateBillboards()
 {
 	vertexPos.clear();
-
-	for(Billboard* b : billboards)
+	Camera* cam = App->camera->GetPlayOrEditorCamera();
+	if(cam != nullptr)
 	{
-		b->SetWorldPosition(b->GetLocalPosition() + gameObject->GetTransform()->GetWorldPosition());
-		if(App->camera->GetEnabledCamera())
+		for(Billboard* b : billboards)
 		{
-			b->ComputeQuad(*App->camera->GetEnabledCamera(), &vertexPos);
+			b->SetWorldPosition(b->GetLocalPosition() + gameObject->GetTransform()->GetWorldPosition());
+			b->ComputeQuad(*cam, &vertexPos);
 		}
-		else
-		{
-			b->ComputeQuad(*App->camera->camera, &vertexPos);
-		}
-	}
-	glDeleteBuffers(1, &vertexPosBufferId);
+		glDeleteBuffers(1, &vertexPosBufferId);
 
-	//Generate Vertex Pos buffer
-	const float3 * vertexPosPointer = &vertexPos[0];
-	glGenBuffers(1, &vertexPosBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexPosBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * numVertices, vertexPosPointer, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//Generate Vertex Pos buffer
+		const float3 * vertexPosPointer = &vertexPos[0];
+		glGenBuffers(1, &vertexPosBufferId);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexPosBufferId);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * numVertices, vertexPosPointer, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
 }
 
 void GridRenderer::Clear()

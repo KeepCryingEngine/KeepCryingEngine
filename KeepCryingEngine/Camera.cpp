@@ -12,6 +12,7 @@ using namespace std;
 Camera::Camera() : Component(Camera::TYPE)
 {
 	SetUpCamera();
+	App->camera->Subscribe(this);
 }
 
 Camera::~Camera()
@@ -41,7 +42,7 @@ void Camera::RealUpdate()
 	frustum.up = worldRotation.Mul(float3::unitY);
 
 
-	if(!ignoreFrustumRendering)
+	if(!ignoreFrustumRendering && App->state == TimeState::STOPED)
 	{
 		App->renderer->DrawFrustum(*this);
 	}

@@ -14,13 +14,16 @@ ModuleFX::~ModuleFX()
 
 update_status ModuleFX::Update()
 {
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.1f);
-	for(const DrawInfo& drawInfo : effectsToDraw)
+	if(App->camera->GetPlayOrEditorCamera() != nullptr)
 	{
-		Draw(drawInfo);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0.1f);
+		for(const DrawInfo& drawInfo : effectsToDraw)
+		{
+			Draw(drawInfo);
+		}
+		glDisable(GL_ALPHA_TEST);
 	}
-	glDisable(GL_ALPHA_TEST);
 	effectsToDraw.clear();
 
 	return update_status::UPDATE_CONTINUE;
@@ -57,10 +60,10 @@ void ModuleFX::Draw(const DrawInfo & drawInfo)
 
 
 	GLint modelView = glGetUniformLocation(progId, "model_view");
-	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->camera->GetViewMatrix().ptr());
+	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
 
 	GLint proyection = glGetUniformLocation(progId, "projection");
-	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
+	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetProyectionMatrix().ptr());
 
 	GLint transformUniformId = glGetUniformLocation(progId, "transform");
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, drawInfo.transform.GetModelMatrix().Transposed().ptr());

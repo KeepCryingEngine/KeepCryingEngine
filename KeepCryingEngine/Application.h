@@ -22,6 +22,14 @@ class ModuleFont;
 class ModuleTime;
 class ModuleFX;
 
+
+enum class TimeState
+{
+	STOPED,
+	PAUSED,
+	PLAYING
+};
+
 class Application
 {
 public:
@@ -56,6 +64,8 @@ public:
 	ModuleFont* font = nullptr;
 	ModuleTime* time = nullptr;
 	ModuleFX* fx = nullptr;
+
+	TimeState state = TimeState::STOPED;
 
 	// Cargar información desde json
 	// Tamaño pantalla, nombre, fps, etc

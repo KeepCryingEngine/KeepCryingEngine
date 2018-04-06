@@ -3,13 +3,6 @@
 
 #include "Module.h"
 
-enum class TimeState
-{
-	STOPED,
-	PAUSED,
-	PLAYING
-};
-
 class ModuleTime : public Module
 {
 public:
@@ -33,8 +26,6 @@ public:
 
 	void SetTimeScale(float timeScale);
 
-	TimeState GetCurrentState() const;
-
 private:
 	float frameCount = 0;
 	float time = 0;
@@ -44,8 +35,6 @@ private:
 	float realTimeDeltaTime = 0;
 
 	float editorDeltaTime = 0;
-
-	TimeState state = TimeState::STOPED;
 
 	uint lastTimeMs = 0;
 };

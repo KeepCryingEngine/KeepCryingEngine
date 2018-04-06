@@ -17,7 +17,7 @@ update_status ModuleTime::Update()
 	editorDeltaTime = (currentTimeMs - lastTimeMs) / 1000.0f;
 	editorDeltaTime = fminf(editorDeltaTime, App->configuration.maxRealDeltaTimeS);
 
-	if(state == TimeState::PLAYING)
+	if(App->state == TimeState::PLAYING)
 	{
 		realTimeDeltaTime = editorDeltaTime;
 		deltaTime = timeScale * realTimeDeltaTime;	
@@ -35,27 +35,29 @@ update_status ModuleTime::Update()
 
 void ModuleTime::Play()
 {
-	if(state == TimeState::STOPED)
+	if(App->state == TimeState::STOPED)
 	{
 		time = 0;
 		realTimeSinceStartup = 0;
 	}
 
-	state = TimeState::PLAYING;
+	App->state = TimeState::PLAYING;
 }
 
 void ModuleTime::Pause()
 {
 	deltaTime = 0;
 	realTimeDeltaTime = 0;
-	state = TimeState::PAUSED;
+
+	App->state = TimeState::PAUSED;
 }
 
 void ModuleTime::Stop()
 {
 	deltaTime = 0;
 	realTimeDeltaTime = 0;
-	state = TimeState::STOPED;
+
+	App->state = TimeState::STOPED;
 }
 
 float ModuleTime::GetFrameCount() const
@@ -96,9 +98,4 @@ float ModuleTime::GetEditorDeltaTime() const
 void ModuleTime::SetTimeScale(float timeScale)
 {
 	this->timeScale = fmaxf(fminf(timeScale, 1.0f), 0.0f);
-}
-
-TimeState ModuleTime::GetCurrentState() const
-{
-	return state;
 }

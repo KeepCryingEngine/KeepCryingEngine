@@ -419,7 +419,7 @@ void ModuleEditorUI::SetAllParameters()
 
 void ModuleEditorUI::DrawEditorControler()
 {
-	switch(App->time->GetCurrentState())
+	switch(App->state)
 	{
 		case TimeState::PLAYING:
 			// Show Pause & Stop
@@ -607,6 +607,10 @@ void ModuleEditorUI::CallWindows()
 	if(editorControler)
 	{
 		DrawEditorControler();
+	}
+	if(performanceInfoWindow)
+	{
+		DrawPerformanceInfoWindow();
 	}
 }
 
@@ -1002,6 +1006,24 @@ void ModuleEditorUI::DrawLoadedTexturesInfoWindow()
 	}
 
 	ImGui::Unindent();
+
+	ImGui::End();
+}
+
+void ModuleEditorUI::DrawPerformanceInfoWindow()
+{
+	ImGui::Begin("Performance Information", &performanceInfoWindow, ImGuiWindowFlags_MenuBar);
+
+	if(App->state == TimeState::PLAYING)
+	{
+		float timeS = App->time->GetDeltaTime();
+
+		ImGui::Text("Fps: %i, Ms: %i", (int)(1.0f / timeS), (int)(1000.0f * timeS));
+	}
+	else
+	{
+		ImGui::Text("Fps: -, Ms: -");
+	}
 
 	ImGui::End();
 }

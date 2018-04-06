@@ -103,20 +103,27 @@ update_status ModuleRender::PreUpdate()
 
 update_status ModuleRender::Update()
 {
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(App->camera->camera->GetProyectionMatrix().ptr());
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->camera->GetViewMatrix().ptr());
-
-	DrawGrid();
-
-	DrawGeometry();
-	drawBuffer.clear();
-
-	if(App->uiEditor->GetDebugMode())
+	Camera* cam = App->camera->GetPlayOrEditorCamera();
+	if(cam != nullptr)
 	{
-		DrawLastRay();
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(cam->GetProyectionMatrix().ptr());
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(cam->GetViewMatrix().ptr());
+
+		if(App->state == TimeState::STOPED)
+		{
+			DrawGrid();
+		}
+
+		DrawGeometry();
+
+		if(App->uiEditor->GetDebugMode())
+		{
+			DrawLastRay();
+		}
 	}
+	drawBuffer.clear();
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -324,112 +331,116 @@ void ModuleRender::DrawCube(const float3& offset, const float3& color, float rad
 void ModuleRender::DrawRectangularBox(const float3& position, const float3& rotation, const float3& scale, const float3& color, float w, float h, float d) const
 {
 	// IMPROVE
-
-	float lineWidth;
-
-	glGetFloatv(GL_LINE_WIDTH, &lineWidth);
-
-	float3 positions[8] =
+	if(App->state == TimeState::STOPED)
 	{
-		float3(-w, -h, -d),
-		float3(w, -h, -d),
-		float3(w, h, -d),
-		float3(-w, h, -d),
+		float lineWidth;
 
-		float3(-w, -h, d),
-		float3(w, -h, d),
-		float3(w, h, d),
-		float3(-w, h, d)
-	};
+		glGetFloatv(GL_LINE_WIDTH, &lineWidth);
 
-	glPushMatrix();
+		float3 positions[8] =
+		{
+			float3(-w, -h, -d),
+			float3(w, -h, -d),
+			float3(w, h, -d),
+			float3(-w, h, -d),
 
-	glLineWidth(3.0f);
+			float3(-w, -h, d),
+			float3(w, -h, d),
+			float3(w, h, d),
+			float3(-w, h, d)
+		};
 
-	glColor3f(color.x, color.y, color.z);
+		glPushMatrix();
 
-	glTranslatef(position.x, position.y, position.z);
+		glLineWidth(3.0f);
 
-	glRotatef(RadToDeg(rotation.x), 1.0f, 0.0f, 0.0f);
-	glRotatef(RadToDeg(rotation.y), 0.0f, 1.0f, 0.0f);
-	glRotatef(RadToDeg(rotation.z), 0.0f, 0.0f, 1.0f);
+		glColor3f(color.x, color.y, color.z);
 
-	glScalef(scale.x, scale.y, scale.z);
+		glTranslatef(position.x, position.y, position.z);
 
-	glBegin(GL_LINE_STRIP);
+		glRotatef(RadToDeg(rotation.x), 1.0f, 0.0f, 0.0f);
+		glRotatef(RadToDeg(rotation.y), 0.0f, 1.0f, 0.0f);
+		glRotatef(RadToDeg(rotation.z), 0.0f, 0.0f, 1.0f);
 
-	glVertex3f(positions[0].x, positions[0].y, positions[0].z);
-	glVertex3f(positions[1].x, positions[1].y, positions[1].z);
-	glVertex3f(positions[2].x, positions[2].y, positions[2].z);
-	glVertex3f(positions[3].x, positions[3].y, positions[3].z);
-	glVertex3f(positions[0].x, positions[0].y, positions[0].z);
+		glScalef(scale.x, scale.y, scale.z);
 
-	glEnd();
+		glBegin(GL_LINE_STRIP);
 
-	glBegin(GL_LINE_STRIP);
+		glVertex3f(positions[0].x, positions[0].y, positions[0].z);
+		glVertex3f(positions[1].x, positions[1].y, positions[1].z);
+		glVertex3f(positions[2].x, positions[2].y, positions[2].z);
+		glVertex3f(positions[3].x, positions[3].y, positions[3].z);
+		glVertex3f(positions[0].x, positions[0].y, positions[0].z);
 
-	glVertex3f(positions[4].x, positions[4].y, positions[4].z);
-	glVertex3f(positions[5].x, positions[5].y, positions[5].z);
-	glVertex3f(positions[6].x, positions[6].y, positions[6].z);
-	glVertex3f(positions[7].x, positions[7].y, positions[7].z);
-	glVertex3f(positions[4].x, positions[4].y, positions[4].z);
+		glEnd();
 
-	glEnd();
+		glBegin(GL_LINE_STRIP);
 
-	glBegin(GL_LINES);
+		glVertex3f(positions[4].x, positions[4].y, positions[4].z);
+		glVertex3f(positions[5].x, positions[5].y, positions[5].z);
+		glVertex3f(positions[6].x, positions[6].y, positions[6].z);
+		glVertex3f(positions[7].x, positions[7].y, positions[7].z);
+		glVertex3f(positions[4].x, positions[4].y, positions[4].z);
 
-	glVertex3f(positions[0].x, positions[0].y, positions[0].z);
-	glVertex3f(positions[4].x, positions[4].y, positions[4].z);
+		glEnd();
 
-	glVertex3f(positions[1].x, positions[1].y, positions[1].z);
-	glVertex3f(positions[5].x, positions[5].y, positions[5].z);
+		glBegin(GL_LINES);
 
-	glVertex3f(positions[3].x, positions[3].y, positions[3].z);
-	glVertex3f(positions[7].x, positions[7].y, positions[7].z);
+		glVertex3f(positions[0].x, positions[0].y, positions[0].z);
+		glVertex3f(positions[4].x, positions[4].y, positions[4].z);
 
-	glVertex3f(positions[2].x, positions[2].y, positions[2].z);
-	glVertex3f(positions[6].x, positions[6].y, positions[6].z);
+		glVertex3f(positions[1].x, positions[1].y, positions[1].z);
+		glVertex3f(positions[5].x, positions[5].y, positions[5].z);
 
-	glEnd();
+		glVertex3f(positions[3].x, positions[3].y, positions[3].z);
+		glVertex3f(positions[7].x, positions[7].y, positions[7].z);
 
-	glEnd();
+		glVertex3f(positions[2].x, positions[2].y, positions[2].z);
+		glVertex3f(positions[6].x, positions[6].y, positions[6].z);
 
-	glLineWidth(lineWidth);
+		glEnd();
 
-	glPopMatrix();
+		glEnd();
+
+		glLineWidth(lineWidth);
+
+		glPopMatrix();
+	}
 }
 
 void ModuleRender::DrawSphere(const float3& offset, const float3& color, float radius) const
 {
 	// IMPROVE
-
-	const Mesh* sphere = App->entity->GetSphere();
-
-	float pointSize;
-
-	glGetFloatv(GL_POINT_SIZE, &pointSize);
-
-	glPushMatrix();
-
-	glPointSize(3.0f);
-
-	glColor3f(color.x, color.y, color.z);
-
-	glTranslatef(offset.x, offset.y, offset.z);
-
-	glBegin(GL_POINTS);
-
-	for(Vertex vertex : sphere->GetVertices())
+	if(App->state == TimeState::STOPED)
 	{
-		float3 position = radius * vertex.position;
-		glVertex3f(position.x, position.y, position.z);
+		const Mesh* sphere = App->entity->GetSphere();
+
+		float pointSize;
+
+		glGetFloatv(GL_POINT_SIZE, &pointSize);
+
+		glPushMatrix();
+
+		glPointSize(3.0f);
+
+		glColor3f(color.x, color.y, color.z);
+
+		glTranslatef(offset.x, offset.y, offset.z);
+
+		glBegin(GL_POINTS);
+
+		for(Vertex vertex : sphere->GetVertices())
+		{
+			float3 position = radius * vertex.position;
+			glVertex3f(position.x, position.y, position.z);
+		}
+
+		glEnd();
+
+		glPointSize(pointSize);
+
+		glPopMatrix();
 	}
-
-	glEnd();
-
-	glPointSize(pointSize);
-
-	glPopMatrix();
 }
 
 void ModuleRender::SetUpLight() const
@@ -480,10 +491,10 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
 
 	GLint modelView = glGetUniformLocation(progId, "model_view");
-	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->camera->GetViewMatrix().ptr());
+	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
 
 	GLint proyection = glGetUniformLocation(progId, "projection");
-	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
+	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetProyectionMatrix().ptr());
 
 	GLint transformUniformId = glGetUniformLocation(progId, "transform");
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, drawInfo.transform.GetModelMatrix().Transposed().ptr());
@@ -516,7 +527,8 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	GLint cameraPosition = glGetUniformLocation(progId, "cameraPosition");
 	if (cameraPosition != -1)
 	{
-		float3 cPos = App->camera->camera->gameObject->GetTransform()->GetWorldPosition();
+		//float3 cPos = App->camera->camera->gameObject->GetTransform()->GetWorldPosition();
+		float3 cPos = App->camera->GetPlayOrEditorCamera()->gameObject->GetTransform()->GetWorldPosition();
 		glUniform3f(cameraPosition, cPos.x, cPos.y, cPos.z);
 	}
 

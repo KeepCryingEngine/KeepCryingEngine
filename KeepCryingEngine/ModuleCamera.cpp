@@ -1,5 +1,7 @@
 #include "ModuleCamera.h"
 
+#include <algorithm>
+
 #include "Camera.h"
 #include "Application.h"
 #include "ModuleInput.h"
@@ -28,6 +30,8 @@ bool ModuleCamera::Init()
 	camera = cameraGameObject->AddComponent<Camera>();
 	camera->SetIgnoreFrustumRendering(true);
 
+	modeCamera = &camera;
+
 	//init camera
 	cameraTransform->SetWorldPosition(float3(0, 1, -10));
 	cameraTransform->SetWorldRotation(Quat::FromEulerXYZ(0, 0, 0));
@@ -38,11 +42,14 @@ bool ModuleCamera::Init()
 
 update_status ModuleCamera::Update()
 {
-	Rotation();
-	Orbit();
-	Movement();
+	if(App->state == TimeState::STOPED)
+	{
+		Rotation();
+		Orbit();
+		Movement();
 
-	camera->Update();
+		camera->Update();
+	}
 
 	return update_status::UPDATE_CONTINUE;
 }
@@ -52,6 +59,38 @@ bool ModuleCamera::CleanUp()
 	RELEASE(camera);
 
 	return true;
+}
+
+void ModuleCamera::Play()
+{
+	modeCamera = &enabledCamera;
+}
+
+void ModuleCamera::Stop()
+{
+	modeCamera = &camera;
+}
+
+void ModuleCamera::Subscribe(Camera * c)
+{
+	if(find(allCameras.begin(), allCameras.end(), c) == allCameras.end())
+	{
+		allCameras.push_back(c);
+	}
+}
+
+void ModuleCamera::UnSubscribe(Camera * c)
+{
+	std::vector<Camera*>::iterator it = find(allCameras.begin(), allCameras.end(), c);
+	if(it != allCameras.end())
+	{
+		allCameras.erase(it);
+	}
+}
+
+std::vector<Camera*> ModuleCamera::GetAllCameras() const
+{
+	return allCameras;
 }
 
 float ModuleCamera::GetMoveSpeed() const
@@ -379,6 +418,11 @@ void ModuleCamera::EnableCamera(Camera* camera)
 Camera* ModuleCamera::GetEnabledCamera() const
 {
 	return enabledCamera;
+}
+
+Camera * ModuleCamera::GetPlayOrEditorCamera() const
+{
+	return *modeCamera;
 }
 
 const LineSegment & ModuleCamera::GetLastRay() const
