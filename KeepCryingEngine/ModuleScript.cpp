@@ -26,12 +26,11 @@ bool ModuleScript::Init()
 	}
 
 	//Open a assembly in the domain
-	assembly = mono_domain_assembly_open(domain, "./Library/ConsoleApp1.dll");
+	assembly = mono_domain_assembly_open(domain, "./Library/Scripts.dll");
 	if (domain == nullptr)
 	{
 		return false;
 	}
-
 
 	//Get a image from the assembly
 	MonoImage* image = mono_assembly_get_image(assembly);
@@ -44,7 +43,7 @@ bool ModuleScript::Init()
 
 	//Get the class
 	MonoClass* programClass;
-	programClass = mono_class_from_name(image, "", "Program");
+	programClass = mono_class_from_name(image, "", "Test");
 	if (!programClass)
 	{
 		std::cout << "mono_class_from_name failed" << std::endl;
@@ -67,7 +66,7 @@ bool ModuleScript::Init()
 
 	//Build a method description object
 	MonoMethodDesc* updateMethod;
-	const char* BarkMethodDescStr = "Program:Update()";
+	const char* BarkMethodDescStr = "Test:TestMethod()";
 	updateMethod = mono_method_desc_new(BarkMethodDescStr, NULL);
 	if (!updateMethod)
 	{
