@@ -143,6 +143,7 @@
     <ClInclude Include="Quadtree.h" />
     <ClInclude Include="QuadtreeNode.h" />
     <ClInclude Include="ReverbZone.h" />
+    <ClInclude Include="Script.h" />
     <ClInclude Include="SoundsEffects.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
@@ -207,6 +208,7 @@
     <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="QuadtreeNode.cpp" />
     <ClCompile Include="ReverbZone.cpp" />
+    <ClCompile Include="Script.cpp" />
     <ClCompile Include="SoundsEffects.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Texture.cpp" />

@@ -5,6 +5,8 @@
 #include <iostream>
 #include <mono/metadata/debug-helpers.h>
 
+#include "Script.h"
+
 #include "Application.h"
 #include "ModuleScene.h"
 #include "GameObject.h"
@@ -21,49 +23,34 @@ ModuleScript::~ModuleScript()
 {
 }
 
+void AddAllInternalMehtods()
+{
+	mono_add_internal_call("Transform::Translate", Transform_Translate);
+}
+
 bool ModuleScript::Init()
 {
 	mono_set_dirs("../external/Mono/lib", "../external/Mono/etc");
 
 	domain = mono_jit_init("Domain_Name");
-	if (domain == nullptr) 
-	{
-		return false;
-	}
+	assert(domain != nullptr);
 
-	//Open a assembly in the domain
 	assembly = mono_domain_assembly_open(domain, "./Library/Scripts.dll");
-	if (domain == nullptr)
-	{
-		return false;
-	}
+	assert(assembly != nullptr);
 
-	//Get a image from the assembly
 	image = mono_assembly_get_image(assembly);
-	if (!image)
-	{
-		std::cout << "mono_assembly_get_image failed" << std::endl;
-		system("pause");
-		return 1;
-	}
+	assert(image != nullptr);
 
-	
+	AddAllInternalMehtods();
 
 	return true;
 }
 
-bool ModuleScript::Start()
-{
-	//Get the class
-	MonoClass* programClass;
-	programClass = mono_class_from_name(image, "", "Test");
-	if (!programClass)
-	{
-		std::cout << "mono_class_from_name failed" << std::endl;
-		system("pause");
-		return 1;
-	}
 
+
+bool ModuleScript::Start()
+{	
+	/*
 	//Create a instance of the class
 	MonoObject* programInstance;
 	programInstance = mono_object_new(domain, programClass);
@@ -77,28 +64,6 @@ bool ModuleScript::Start()
 	//Call its default constructor
 	mono_runtime_object_init(programInstance);
 
-	//Build a method description object
-	/*MonoMethodDesc* updateMethod;
-	const char* BarkMethodDescStr = "Test:TestMethod(IntPtr)";
-	updateMethod = mono_method_desc_new(BarkMethodDescStr, NULL);
-	if (!updateMethod)
-	{
-		std::cout << "mono_method_desc_new failed" << std::endl;
-		system("pause");
-		return 1;
-	}*/
-
-	//Search the method in the image
-	MonoMethod* method = mono_class_get_method_from_name(programClass, "TestMethod", 1);
-	//method = mono_method_desc_search_in_image(updateMethod, image);
-	if (!method)
-	{
-		std::cout << "mono_method_desc_search_in_image failed" << std::endl;
-		system("pause");
-		return 1;
-	}
-
-	mono_add_internal_call("Transform::Translate", Transform_Translate);
 	
 	GameObject * gameobject = App->scene->AddEmpty(*App->scene->GetRoot(), "MAGICK");
 	Transform * transform = gameobject->GetTransform();
@@ -114,15 +79,63 @@ bool ModuleScript::Start()
 	std::cout << "Running the method: " << std::endl;
 	mono_runtime_invoke(method, programInstance, args, nullptr);
 
-	std::cout << transform->GetWorldPosition().x << std::endl;
+	std::cout << transform->GetWorldPosition().x << std::endl;*/
+	return true;
 }
 
 update_status ModuleScript::Update()
 {
-	return update_status();
+	for (Script * script : scripts)
+	{
+		UpdateScript(script);
+	}
+
+	return update_status::UPDATE_CONTINUE;
 }
 
 bool ModuleScript::CleanUp()
 {
-	return false;
+	mono_jit_cleanup(domain);
+
+	return true;
+}
+
+void ModuleScript::UpdateScript(Script* script)
+{
+	MonoObject * monoObject = script->GetScriptInstance();
+	if (monoObject != nullptr)
+	{
+		mono_runtime_invoke(script->GetUpdateMethod(), monoObject, nullptr, nullptr);
+	}
+}
+
+void ModuleScript::Subscribe(Script* script)
+{
+	scripts.insert(script);
+}
+
+void ModuleScript::Unsubscribe(Script* script)
+{
+	scripts.erase(script);
+}
+
+void ModuleScript::SetClassToScript(Script & script, const std::string &className)
+{
+	MonoClass * scriptClass = mono_class_from_name(image, "", className.c_str());
+	if (scriptClass != nullptr)
+	{
+		MonoMethod* updateMethod = mono_class_get_method_from_name(scriptClass, "Update", 0);
+		assert(updateMethod != nullptr);
+		script.SetUpdateMethod(updateMethod);
+
+
+		MonoObject* instance = mono_object_new(domain, scriptClass);
+		assert(instance != nullptr);
+		mono_runtime_object_init(instance);
+		script.SetScriptInstance(instance);
+	}
+	else 
+	{
+		LOG_DEBUG("CLASS NOT FOUND");
+	}
 }

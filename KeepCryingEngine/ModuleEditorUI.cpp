@@ -23,6 +23,7 @@
 #include "ModuleAnim.h"
 #include "Animator.h"
 #include "MeshRenderer.h"
+#include "Script.h"
 #include "ReverbZone.h"
 #include "ModuleGameUI.h"
 #include "Canvas.h"
@@ -866,7 +867,10 @@ void ModuleEditorUI::DrawInspectorWindow()
 	{
 		if(ImGui::BeginMenu("Add"))
 		{
-			static int selectedComponent = 0;
+			if (ImGui::Selectable("Script"))
+			{
+				temp->AddComponent<Script>();
+			}
 			if(ImGui::Selectable("Mesh Renderer"))
 			{
 				temp->AddComponent<MeshRenderer>();

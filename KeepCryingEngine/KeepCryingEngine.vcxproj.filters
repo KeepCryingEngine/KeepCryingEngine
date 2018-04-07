@@ -181,6 +181,7 @@
     <ClCompile Include="ModuleScript.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="Script.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h" />
@@ -384,6 +385,7 @@
     <ClInclude Include="ModuleScript.h">
       <Filter>Modules</Filter>
     </ClInclude>
+    <ClInclude Include="Script.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
