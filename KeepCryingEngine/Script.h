@@ -27,6 +27,8 @@ public:
 	void SetUpdateMethod(MonoMethod * updateMethod);
 	MonoMethod * GetUpdateMethod() const;
 
+	void AddField(MonoClassField* field);
+
 private:
 	void DrawField(MonoClassField* field);
 

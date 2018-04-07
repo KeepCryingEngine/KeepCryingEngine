@@ -81,16 +81,6 @@ void ModuleScript::Unsubscribe(Script* script)
 	scripts.erase(script);
 }
 
-void output_properties(MonoClass* klass) {
-	MonoProperty *prop;
-	void * iter = NULL;
-
-	while ((prop = mono_class_get_properties(klass, &iter))) {
-		LOG_DEBUG("Property: %s, flags 0x%x\n", mono_property_get_name(prop),
-			mono_property_get_flags(prop));
-	}
-}
-
 void output_fields(MonoClass* klass) {
 	MonoClassField *field;
 	void * iter = NULL;
@@ -117,14 +107,29 @@ void ModuleScript::SetClassToScript(Script & script, const std::string &classNam
 		script.SetUpdateMethod(updateMethod);
 
 		
-		output_fields(scriptClass);
-		output_properties(scriptClass);
+		//output_fields(scriptClass);
+
+		MonoClassField *field;
+		void * iter = NULL;
+
+		while((field = mono_class_get_fields(scriptClass, &iter)))
+		{
+			script.AddField(field);
+		}
 
 		MonoObject* instance = mono_object_new(domain, scriptClass);
 		assert(instance != nullptr);
 		mono_runtime_object_init(instance);
 		script.SetScriptInstance(instance);
 
+		//Set gameobject where the script is placed
+		MonoMethod* initMethod = mono_class_get_method_from_name(scriptClass, "InitMonoBehaviour", 1);
+		assert(initMethod != nullptr); //TODO, arreglar esto, no encuentra la funcion de init
+
+		void* args[1];
+		args[0] = &script.gameObject;
+
+		mono_runtime_invoke(initMethod, instance, args, nullptr);
 	}
 	else 
 	{

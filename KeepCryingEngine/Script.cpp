@@ -3,6 +3,12 @@
 #include "Application.h"
 #include "ModuleScript.h"
 
+#include <mono/jit/jit.h>
+#include <mono/metadata/object.h>
+#include <mono/metadata/environment.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/debug-helpers.h>
+
 using namespace std;
 
 Script::Script() : Component(TYPE)
@@ -39,7 +45,47 @@ void Script::DrawField(MonoClassField* field)
 {
 	MonoType * monoType = mono_field_get_type(field);
 	char * typeName = mono_type_get_name(monoType);
-	LOG_DEBUG("%s", typeName);
+	if(strcmp(typeName,"System.Int32") == 0)//Int
+	{
+		int value = 0;
+		mono_field_get_value(instance, field, (void*)&value );
+		const char * label = mono_field_get_name(field);
+		ImGui::DragInt(label,&value);
+	}
+	if(strcmp(typeName, "System.Single") == 0)//float
+	{
+		float value = 0;
+		mono_field_get_value(instance, field, (void*)&value);
+		const char * label = mono_field_get_name(field);
+		ImGui::DragFloat(label,&value);
+	}
+	if(strcmp(typeName, "System.Boolean") == 0)//Bool
+	{
+		bool value = false;
+		mono_field_get_value(instance, field, (void*)&value);
+		const char * label = mono_field_get_name(field);
+		ImGui::Checkbox(label,&value);
+	}
+	//if(strcmp(typeName, "System.Char") == 0)//Char
+	//{
+	//	static char value = 'A';
+	//	mono_field_get_value(instance, field, (void*)&value);
+	//	const char * label = mono_field_get_name(field);
+	//	ImGui::InputText(label,&value,1);
+	//}
+	if(strcmp(typeName, "System.String") == 0)//String
+	{
+		static char value[256];
+		MonoString * tempVal;
+		mono_field_get_value(instance, field, (void*)&tempVal);
+		strcpy(value,mono_string_to_utf8(tempVal));
+		const char * label = mono_field_get_name(field);
+		ImGui::InputText(label, value, 256);
+	}
+	if(strcmp(typeName, "KeepCryingEngine.GameObject") == 0)//Gameobject
+	{
+
+	}
 }
 
 
@@ -61,4 +107,9 @@ void Script::SetUpdateMethod(MonoMethod * updateMethod)
 MonoMethod * Script::GetUpdateMethod() const
 {
 	return updateMethod;
+}
+
+void Script::AddField(MonoClassField * field)
+{
+	fields.insert(field);
 }
