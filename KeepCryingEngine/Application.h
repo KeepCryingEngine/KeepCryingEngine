@@ -22,6 +22,7 @@ class ModuleFont;
 class ModuleTime;
 class ModuleFX;
 class ModuleScript;
+class ModuleLog;
 
 
 enum class TimeState
@@ -66,6 +67,7 @@ public:
 	ModuleTime* time = nullptr;
 	ModuleFX* fx = nullptr;
 	ModuleScript * script = nullptr;
+	ModuleLog* log = nullptr;
 
 	TimeState state = TimeState::STOPED;
 

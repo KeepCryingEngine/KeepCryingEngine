@@ -129,6 +129,7 @@
     <ClInclude Include="ModuleGameUI.h" />
     <ClInclude Include="ModuleFont.h" />
     <ClInclude Include="ModuleInput.h" />
+    <ClInclude Include="ModuleLog.h" />
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleScene.h" />
     <ClInclude Include="ModuleScript.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="ModuleGameUI.cpp" />
     <ClCompile Include="ModuleFont.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
+    <ClCompile Include="ModuleLog.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
     <ClCompile Include="ModuleScript.cpp" />

@@ -90,11 +90,11 @@ private:
 	bool shaderEditorWindow = false;
 	bool hierarchyWindow = true;
 	bool inspectorWindow = false;
-	bool generateGameObjectWindow = true;
-	bool spacePartitioningWindow = true;
-	bool loadedTexturesInfoWindow = true;
+	bool generateGameObjectWindow = false;
+	bool spacePartitioningWindow = false;
+	bool loadedTexturesInfoWindow = false;
 	bool editorControler = true;
-	bool performanceInfoWindow = true;
+	bool performanceInfoWindow = false;
 
 	//Editor click
 	ClickMode clickMode = ClickMode::Pick;
