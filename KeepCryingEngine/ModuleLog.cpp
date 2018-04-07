@@ -76,7 +76,7 @@ ModuleLog::ModuleLog()
 ModuleLog::~ModuleLog()
 {}
 
-update_status ModuleLog::Update()
+bool ModuleLog::Start() 
 {
 	static ConsoleLog cLog;
 
@@ -85,6 +85,11 @@ update_status ModuleLog::Update()
 		editorConsole = &cLog;
 	}
 
+	return true;
+}
+
+update_status ModuleLog::Update()
+{
 	if (consoleDraw)
 	{
 		editorConsole->Draw("Editor Console");
@@ -125,4 +130,18 @@ void ModuleLog::Log(const char* logMessage, logType lt)
 bool ModuleLog::CleanUp()
 {
 	return true;
+}
+
+//------------------------------------------------------
+
+#include <mono/jit/jit.h>
+#include <mono/metadata/object.h>
+#include <mono/metadata/environment.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/debug-helpers.h>
+
+void Log_Hooker(MonoString * message, logType type)
+{
+	char * logMessage = mono_string_to_utf8(message);
+	App->log->Log(logMessage, type);
 }

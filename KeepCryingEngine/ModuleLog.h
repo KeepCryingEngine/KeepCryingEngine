@@ -18,6 +18,8 @@ public:
 	ModuleLog();
 	~ModuleLog();
 
+	bool Start() override;
+
 	update_status Update() override;
 	bool CleanUp() override;
 	
@@ -29,6 +31,16 @@ private:
 	ConsoleLog * editorConsole = nullptr;
 	bool consoleDraw = true;
 };
+
+//--------------------------------
+
+#include <mono/jit/jit.h>
+#include <mono/metadata/object.h>
+#include <mono/metadata/environment.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/debug-helpers.h>
+
+void Log_Hooker(MonoString * monoString, logType lt);
 
 #endif // !_MODULELOG_H_
 

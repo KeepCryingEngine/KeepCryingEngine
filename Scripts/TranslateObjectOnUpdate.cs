@@ -6,6 +6,7 @@ public class TranslateObjectOnUpdate : Component
 
     public override void Update()
     {
-        System.Console.WriteLine(i++);
+        Debug.Log(i.ToString());
+        i++;
     }
 }
