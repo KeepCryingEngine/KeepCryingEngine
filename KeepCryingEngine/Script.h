@@ -7,6 +7,7 @@
 #include <mono/metadata/assembly.h>
 
 #include <string>
+#include <set>
 
 class Script :
 	public Component
@@ -27,10 +28,14 @@ public:
 	MonoMethod * GetUpdateMethod() const;
 
 private:
+	void DrawField(MonoClassField* field);
+
+private:
 	std::string className;
 	MonoObject * instance = nullptr;
 	MonoMethod * updateMethod = nullptr;
 
+	std::set<MonoClassField*> fields;
 };
 
 #endif

@@ -52,8 +52,16 @@ update_status ModuleScene::PreUpdate()
 	return update_status::UPDATE_CONTINUE;
 }
 
+#include "Application.h"
+#include "Script.h"
+
 update_status ModuleScene::Update()
 {
+	if (App->input->GetKey(SDL_SCANCODE_1) == KeyState::KEY_DOWN) 
+	{
+		App->scene->AddEmpty(*App->scene->GetRoot(), "Script")->AddComponent<Script>();
+	}
+
 	if(App->uiEditor->GetDebugMode())
 	{
 		DrawHierarchy(Get(App->uiEditor->GetSelectedNode()));

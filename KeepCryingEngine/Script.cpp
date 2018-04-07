@@ -3,6 +3,8 @@
 #include "Application.h"
 #include "ModuleScript.h"
 
+using namespace std;
+
 Script::Script() : Component(TYPE)
 {
 	App->script->Subscribe(this);
@@ -25,7 +27,19 @@ void Script::DrawUI()
 			className = classNameCString;
 			App->script->SetClassToScript(*this, className);
 		}
+
+		for (MonoClassField* field : fields)
+		{
+			DrawField(field);
+		}
 	}
+}
+
+void Script::DrawField(MonoClassField* field)
+{
+	MonoType * monoType = mono_field_get_type(field);
+	char * typeName = mono_type_get_name(monoType);
+	LOG_DEBUG("%s", typeName);
 }
 
 

@@ -7,12 +7,10 @@
 
 #include "Script.h"
 
-#include "Application.h"
-#include "ModuleScene.h"
-#include "GameObject.h"
+
+//Hooks
 #include "Transform.h"
-#include "float3.h"
-#include <iostream>
+#include "ModuleLog.h"
 
 ModuleScript::ModuleScript()
 {
@@ -26,6 +24,7 @@ ModuleScript::~ModuleScript()
 void AddAllInternalMehtods()
 {
 	mono_add_internal_call("Transform::Translate", Transform_Translate);
+	mono_add_internal_call("Debug::Log", Log_Hooker);
 }
 
 bool ModuleScript::Init()
@@ -43,43 +42,6 @@ bool ModuleScript::Init()
 
 	AddAllInternalMehtods();
 
-	return true;
-}
-
-
-
-bool ModuleScript::Start()
-{	
-	/*
-	//Create a instance of the class
-	MonoObject* programInstance;
-	programInstance = mono_object_new(domain, programClass);
-	if (!programInstance)
-	{
-		std::cout << "mono_object_new failed" << std::endl;
-		system("pause");
-		return 1;
-	}
-
-	//Call its default constructor
-	mono_runtime_object_init(programInstance);
-
-	
-	GameObject * gameobject = App->scene->AddEmpty(*App->scene->GetRoot(), "MAGICK");
-	Transform * transform = gameobject->GetTransform();
-		
-	void* args[1];
-	args[0] = &transform; // Esto le pasa un puntero del puntero porque lo que queremos pasar es el puntero del transform y no el transform en si
-	
-	std::cout << "c++ " << transform << std::endl;
-
-	std::cout << transform->GetWorldPosition().x << std::endl;
-
-	//Run the method
-	std::cout << "Running the method: " << std::endl;
-	mono_runtime_invoke(method, programInstance, args, nullptr);
-
-	std::cout << transform->GetWorldPosition().x << std::endl;*/
 	return true;
 }
 
@@ -119,6 +81,32 @@ void ModuleScript::Unsubscribe(Script* script)
 	scripts.erase(script);
 }
 
+void output_properties(MonoClass* klass) {
+	MonoProperty *prop;
+	void * iter = NULL;
+
+	while ((prop = mono_class_get_properties(klass, &iter))) {
+		LOG_DEBUG("Property: %s, flags 0x%x\n", mono_property_get_name(prop),
+			mono_property_get_flags(prop));
+	}
+}
+
+void output_fields(MonoClass* klass) {
+	MonoClassField *field;
+	void * iter = NULL;
+
+	while ((field = mono_class_get_fields(klass, &iter))) {
+		MonoType * monoType = mono_field_get_type(field);
+		char * typeName = mono_type_get_name(monoType);
+		LOG_DEBUG("%s", typeName);
+
+		LOG_DEBUG("%i", mono_type_get_type(monoType));
+
+		LOG_DEBUG("Field: %s, flags 0x%x\n", mono_field_get_name(field),
+			mono_field_get_flags(field));
+	}
+}
+
 void ModuleScript::SetClassToScript(Script & script, const std::string &className)
 {
 	MonoClass * scriptClass = mono_class_from_name(image, "", className.c_str());
@@ -128,11 +116,15 @@ void ModuleScript::SetClassToScript(Script & script, const std::string &classNam
 		assert(updateMethod != nullptr);
 		script.SetUpdateMethod(updateMethod);
 
+		
+		output_fields(scriptClass);
+		output_properties(scriptClass);
 
 		MonoObject* instance = mono_object_new(domain, scriptClass);
 		assert(instance != nullptr);
 		mono_runtime_object_init(instance);
 		script.SetScriptInstance(instance);
+
 	}
 	else 
 	{
