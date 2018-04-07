@@ -225,8 +225,8 @@ void InputText::ShiftCursor()
 
 	Transform2D* cursorTransform = cursorGameObject->GetComponent<Transform2D>();
 	cursorTransform->SetWorldPosition(pos);
-	float h = tempText->GetTextureSize().y * 1.25f;
-	cursorTransform->SetSize(float2(sizeX, h));
+	float textureHeight = tempText->GetTextureSize().y * 1.25f;
+	cursorTransform->SetSize(float2((float)sizeX, textureHeight));
 
 }
 
