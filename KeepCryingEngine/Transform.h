@@ -105,4 +105,6 @@ private:
 
 };
 
+void Transform_Translate(Transform * transform, float x, float y, float z);
+
 #endif // !_TRANSFORM_H_

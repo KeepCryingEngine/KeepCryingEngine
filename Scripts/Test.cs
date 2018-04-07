@@ -5,10 +5,11 @@ using System.Text;
 
 class Test
 {
-    void TestMethod()
+    public void TestMethod(Int32 transform)
     {
-        System.Console.WriteLine("IT FUCNAspodlñkqwekjqwkelñqwjelñqwe");
-        CPLUSPLUS.
+       Transform t = new Transform(transform);
+
+       t.Translate(1, 0, 0);
     }
 }
 

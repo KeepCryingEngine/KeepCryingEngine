@@ -12,6 +12,7 @@ public:
 	virtual ~ModuleScript();
 
 	bool Init() override;
+	bool Start() override;
 	update_status Update() override;
 	bool CleanUp() override;
 
