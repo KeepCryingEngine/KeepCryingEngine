@@ -51,6 +51,7 @@
     <Compile Include="InstanceManager.cs" />
     <Compile Include="InstantiateOnPressedKey.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Time.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="TranslateObjectOnUpdate.cs" />
   </ItemGroup>

@@ -166,7 +166,7 @@ void Script::DrawField(MonoClassField* field)
 	{
 		float value = 0;
 		mono_field_get_value(instance, field, &value);
-		if(ImGui::DragFloat(label, &value))
+		if(ImGui::DragFloat(label, &value,0.1f))
 		{
 			mono_field_set_value(instance, field, &value);
 		}

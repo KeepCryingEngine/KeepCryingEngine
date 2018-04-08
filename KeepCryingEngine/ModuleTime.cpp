@@ -99,3 +99,13 @@ void ModuleTime::SetTimeScale(float timeScale)
 {
 	this->timeScale = fmaxf(fminf(timeScale, 1.0f), 0.0f);
 }
+
+float ModuleTime_GetDeltaTimeInternal()
+{
+	return App->time->GetDeltaTime();
+}
+
+float ModuleTime_GetRealDeltaTimeInternal()
+{
+	return App->time->GetRealTimeDeltaTime();
+}

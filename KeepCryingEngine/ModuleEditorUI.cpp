@@ -781,7 +781,10 @@ void ModuleEditorUI::DrawHierarchyWindow()
 {
 	ImGui::Begin("Game Object Hierarchy", &hierarchyWindow);
 
-	CallGuizmo();
+	if(App->state == TimeState::STOPED)
+	{
+		CallGuizmo();
+	}
 
 	ImGui::Separator();
 

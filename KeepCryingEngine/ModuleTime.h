@@ -39,5 +39,8 @@ private:
 	uint lastTimeMs = 0;
 };
 
+float ModuleTime_GetDeltaTimeInternal();
+float ModuleTime_GetRealDeltaTimeInternal();
+
 #endif // !_MODULETIME_H_
 

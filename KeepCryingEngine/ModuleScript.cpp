@@ -15,6 +15,7 @@
 #include "GameObject.h"
 #include "ModuleInput.h"
 #include "ModuleScene.h"
+#include "ModuleTime.h"
 
 ModuleScript::ModuleScript()
 {
@@ -32,6 +33,8 @@ void AddAllInternalMehtods()
 	mono_add_internal_call("KeepCryingEngine.GameObject::GetTransform",GameObject_GetTransform);
 	mono_add_internal_call("KeepCryingEngine.Input::GetKeyInternal",ModuleInput_GetKey);
 	mono_add_internal_call("KeepCryingEngine.InstanceManager::InstantiateCubeInternal", ModuleScene_InstantiateCubeInternal);
+	mono_add_internal_call("KeepCryingEngine.Time::GetDeltaTimeInternal",ModuleTime_GetDeltaTimeInternal);
+	mono_add_internal_call("KeepCryingEngine.Time::GetRealDeltaTimeInternal", ModuleTime_GetRealDeltaTimeInternal);
 }
 
 bool ModuleScript::Init()

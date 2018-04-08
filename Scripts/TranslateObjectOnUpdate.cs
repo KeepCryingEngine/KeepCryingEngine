@@ -11,6 +11,6 @@ public class TranslateObjectOnUpdate : Component
 
     public override void Update()
     {
-        gameObject.GetTransform().Translate(movimiento, 0,0);
+        gameObject.GetTransform().Translate(movimientoSexyFloat * Time.GetDeltaTime(), 0,0);
     }
 }
