@@ -12,6 +12,8 @@
 #include "Transform.h"
 #include "ModuleLog.h"
 #include "GameObject.h"
+#include "ModuleInput.h"
+#include "ModuleScene.h"
 
 ModuleScript::ModuleScript()
 {
@@ -27,6 +29,8 @@ void AddAllInternalMehtods()
 	mono_add_internal_call("KeepCryingEngine.Transform::Translate", Transform_Translate);
 	mono_add_internal_call("KeepCryingEngine.Debug::Log", Log_Hooker);
 	mono_add_internal_call("KeepCryingEngine.GameObject::GetTransform",GameObject_GetTransform);
+	mono_add_internal_call("KeepCryingEngine.Input::GetKeyInternal",ModuleInput_GetKey);
+	mono_add_internal_call("KeepCryingEngine.InstanceManager::InstantiateCubeInternal", ModuleScene_InstantiateCubeInternal);
 }
 
 bool ModuleScript::Init()

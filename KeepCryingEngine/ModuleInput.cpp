@@ -439,3 +439,8 @@ const float2& ModuleInput::GetMouseMotion() const
 {
 	return mouse_motion;
 }
+
+KeyState ModuleInput_GetKey(int key)
+{
+	return App->input->GetKey(key + SDL_SCANCODE_A);
+}

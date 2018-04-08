@@ -888,3 +888,8 @@ void ModuleScene::SaveScene(nlohmann::json& jsonScene) const
 
 	// more scene stuff ...
 }
+
+int32_t ModuleScene_InstantiateCubeInternal()
+{
+	return reinterpret_cast<int32_t>(App->scene->AddCube(*App->scene->GetRoot()));
+}

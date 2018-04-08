@@ -162,4 +162,6 @@ private:
 	bool isShifting = false;
 };
 
+KeyState ModuleInput_GetKey(int key);
+
 #endif // !_MODULEINPUT_H_
