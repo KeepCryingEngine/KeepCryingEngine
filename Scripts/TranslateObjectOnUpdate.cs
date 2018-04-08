@@ -11,7 +11,6 @@ public class TranslateObjectOnUpdate : Component
 
     public override void Update()
     {
-        //Debug.Log(movimiento.ToString());
-        gameObject.transform.Translate(1,0,0);
+        gameObject.GetTransform().Translate(movimiento, 0,0);
     }
 }

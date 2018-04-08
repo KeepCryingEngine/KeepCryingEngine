@@ -10,6 +10,8 @@
 #include "Component.h"
 #include "ENGINE_UUID.h"
 
+
+
 class Transform;
 
 class GameObject
@@ -168,5 +170,8 @@ inline std::vector<T*> GameObject::GetComponentsInChildren() const
 
 	return tComponents;
 }
+//------------------------------------------------------------
+
+int32_t GameObject_GetTransform(GameObject* g);
 
 #endif

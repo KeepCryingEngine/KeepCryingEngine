@@ -14,9 +14,7 @@ namespace KeepCryingEngine
 
         public void Translate(float x, float y, float z)
         {
-            Console.Write("Before");
             Translate(cPtr, x, y, z);
-            Console.Write("After");
         }
 
 

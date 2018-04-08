@@ -11,6 +11,7 @@
 //Hooks
 #include "Transform.h"
 #include "ModuleLog.h"
+#include "GameObject.h"
 
 ModuleScript::ModuleScript()
 {
@@ -23,8 +24,9 @@ ModuleScript::~ModuleScript()
 
 void AddAllInternalMehtods()
 {
-	mono_add_internal_call("Transform::Translate", Transform_Translate);
-	mono_add_internal_call("Debug::Log", Log_Hooker);
+	mono_add_internal_call("KeepCryingEngine.Transform::Translate", Transform_Translate);
+	mono_add_internal_call("KeepCryingEngine.Debug::Log", Log_Hooker);
+	mono_add_internal_call("KeepCryingEngine.GameObject::GetTransform",GameObject_GetTransform);
 }
 
 bool ModuleScript::Init()
@@ -123,7 +125,9 @@ void ModuleScript::SetClassToScript(Script & script, const std::string &classNam
 		script.SetScriptInstance(instance);
 
 		//Set gameobject where the script is placed
-		MonoMethod* initMethod = mono_class_get_method_from_name(scriptClass, "InitMonoBehaviour", 1);
+		MonoClass * componentClass = mono_class_from_name(image, "KeepCryingEngine", "Component");
+		assert(componentClass != nullptr);
+		MonoMethod* initMethod = mono_class_get_method_from_name(componentClass, "InitMonoBehaviour", 1);
 		assert(initMethod != nullptr); //TODO, arreglar esto, no encuentra la funcion de init
 
 		void* args[1];

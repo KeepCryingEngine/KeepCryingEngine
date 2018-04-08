@@ -48,23 +48,32 @@ void Script::DrawField(MonoClassField* field)
 	if(strcmp(typeName,"System.Int32") == 0)//Int
 	{
 		int value = 0;
-		mono_field_get_value(instance, field, (void*)&value );
+		mono_field_get_value(instance, field, &value );
 		const char * label = mono_field_get_name(field);
-		ImGui::DragInt(label,&value);
+		if(ImGui::DragInt(label, &value))
+		{
+			mono_field_set_value(instance,field,&value);
+		}
 	}
 	if(strcmp(typeName, "System.Single") == 0)//float
 	{
 		float value = 0;
-		mono_field_get_value(instance, field, (void*)&value);
+		mono_field_get_value(instance, field, &value);
 		const char * label = mono_field_get_name(field);
-		ImGui::DragFloat(label,&value);
+		if(ImGui::DragFloat(label, &value))
+		{
+			mono_field_set_value(instance, field, &value);
+		}
 	}
 	if(strcmp(typeName, "System.Boolean") == 0)//Bool
 	{
 		bool value = false;
-		mono_field_get_value(instance, field, (void*)&value);
+		mono_field_get_value(instance, field, &value);
 		const char * label = mono_field_get_name(field);
-		ImGui::Checkbox(label,&value);
+		if(ImGui::Checkbox(label, &value))
+		{
+			mono_field_set_value(instance, field, &value);
+		}
 	}
 	//if(strcmp(typeName, "System.Char") == 0)//Char
 	//{
@@ -77,10 +86,14 @@ void Script::DrawField(MonoClassField* field)
 	{
 		static char value[256];
 		MonoString * tempVal;
-		mono_field_get_value(instance, field, (void*)&tempVal);
+		mono_field_get_value(instance, field, &tempVal);
 		strcpy(value,mono_string_to_utf8(tempVal));
 		const char * label = mono_field_get_name(field);
-		ImGui::InputText(label, value, 256);
+		if(ImGui::InputText(label, value, 256))
+		{
+			tempVal = mono_string_new_wrapper(value);
+			mono_field_set_value(instance, field, tempVal);
+		}
 	}
 	if(strcmp(typeName, "KeepCryingEngine.GameObject") == 0)//Gameobject
 	{

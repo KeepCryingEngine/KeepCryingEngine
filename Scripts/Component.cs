@@ -1,12 +1,14 @@
-﻿namespace KeepCryingEngine
+﻿using System;
+
+namespace KeepCryingEngine
 {
     public class Component
     {
         public GameObject gameObject;
 
-        public void InitMonoBehaviour(GameObject gameObject)
+        public void InitMonoBehaviour(Int32 gameObjectId)
         {
-            this.gameObject = gameObject;
+            this.gameObject = new GameObject(gameObjectId);
         }
 
         public virtual void Awake() { }
