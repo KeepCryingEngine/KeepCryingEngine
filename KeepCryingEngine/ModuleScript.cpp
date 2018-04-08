@@ -6,6 +6,7 @@
 #include <mono/metadata/debug-helpers.h>
 
 #include "Script.h"
+#include "Application.h"
 
 
 //Hooks
@@ -53,9 +54,12 @@ bool ModuleScript::Init()
 
 update_status ModuleScript::Update()
 {
-	for (Script * script : scripts)
+	if(App->state == TimeState::PLAYING)
 	{
-		UpdateScript(script);
+		for(Script * script : scripts)
+		{
+			UpdateScript(script);
+		}
 	}
 
 	return update_status::UPDATE_CONTINUE;

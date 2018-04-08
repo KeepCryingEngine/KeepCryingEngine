@@ -4,7 +4,7 @@ public class TranslateObjectOnUpdate : Component
 {
     public int movimiento;
     public float movimientoSexyFloat;
-    public bool patataNarapñples;
+    public bool patataNipples;
     public string charMamon = "Blanc";
 
     public GameObject juegoInutil;

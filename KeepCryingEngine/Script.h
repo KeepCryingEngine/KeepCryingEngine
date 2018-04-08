@@ -20,6 +20,8 @@ public:
 
 	void DrawUI() override;
 
+	virtual void PreLoad(const nlohmann::json& json) override;
+	virtual void Save(nlohmann::json& json) const override;
 
 	void SetScriptInstance(MonoObject * scriptInstance);
 	MonoObject * GetScriptInstance() const;
@@ -31,9 +33,11 @@ public:
 
 private:
 	void DrawField(MonoClassField* field);
+	nlohmann::json FieldToJson(MonoClassField* field)const;
+	void JsonToField(const nlohmann::json& json);
 
 private:
-	std::string className;
+	std::string className = "";
 	MonoObject * instance = nullptr;
 	MonoMethod * updateMethod = nullptr;
 
