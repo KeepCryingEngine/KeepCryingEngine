@@ -1,6 +1,7 @@
 #include "Script.h"
 
 #include "Application.h"
+#include "GameObject.h"
 #include "ModuleScript.h"
 
 #include <mono/jit/jit.h>
@@ -25,6 +26,11 @@ void Script::DrawUI()
 {
 	if (ImGui::CollapsingHeader("Script"))
 	{
+		if(ImGui::Button("Delete Component"))
+		{
+			gameObject->RemoveComponent(this);
+		}
+
 		static char classNameCString[180] = "TranslateObjectOnUpdate";
 		ImGui::InputText("##Class", classNameCString, sizeof(classNameCString));
 
