@@ -187,6 +187,9 @@
     <ClCompile Include="Script.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleRecast.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h" />
@@ -395,6 +398,9 @@
     </ClInclude>
     <ClInclude Include="Script.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleRecast.h">
+      <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

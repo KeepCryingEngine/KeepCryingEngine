@@ -34,6 +34,7 @@
 #include "InputText.h"
 #include "GridRenderer.h"
 #include "ParticleSystem.h"
+#include "ModuleRecast.h"
 
 using namespace std;
 
@@ -238,6 +239,11 @@ void ModuleEditorUI::DrawMainMenu()
 			glFogf(GL_FOG_DENSITY, fogDensity);
 			glFogfv(GL_FOG_COLOR, color);
 			ImGui::EndMenu();
+		}
+
+		if(ImGui::BeginMenu("Recast"))
+		{
+			DrawRecastMenu();
 		}
 
 		if (ImGui::BeginMenu("Light"))
@@ -1227,4 +1233,73 @@ void ModuleEditorUI::DrawAboutMenu()
 		ShellExecute(nullptr, TEXT("open"), TEXT("https://github.com/KeepCryingEngine/KeepCryingEngine/blob/master/LICENSE"), nullptr, nullptr, 0);
 	}
 	ImGui::Unindent();
+}
+
+void ModuleEditorUI::DrawRecastMenu()
+{
+	float cellSize = App->recast->GetCellSize();
+	if(ImGui::DragFloat("CellSize", &cellSize))
+	{
+		App->recast->SetCellSize(cellSize);
+	}
+	float cellHeight = App->recast->GetCellHeight();
+	if(ImGui::DragFloat("CellHeight",&cellHeight))
+	{
+		App->recast->SetCellHeight(cellHeight);
+	}
+	float agentHeight = App->recast->GetAgentHeight();
+	if(ImGui::DragFloat("AgentHeight", &agentHeight))
+	{
+		App->recast->SetAgentHeight(agentHeight);
+	}
+	float agentRadius = App->recast->GetAgentRadius();
+	if(ImGui::DragFloat("AgentRadius", &agentRadius))
+	{
+		App->recast->SetAgentRadius(agentRadius);
+	}
+	float agentMaxClimb = App->recast->GetAgentMaxClimb();
+	if(ImGui::DragFloat("AgentMaxClimb", &agentMaxClimb))
+	{
+		App->recast->SetAgentMaxClimb(agentMaxClimb);
+	}
+	float agentMaxSlope = App->recast->GetAgentMaxSlope();
+	if(ImGui::DragFloat("AgentMaxSlope", &agentMaxSlope))
+	{
+		App->recast->SetAgentMaxSlope(agentMaxSlope);
+	}
+	float regionMinSize = App->recast->GetRegionMinSize();
+	if(ImGui::DragFloat("RegionMinSize", &regionMinSize))
+	{
+		App->recast->SetRegionMinSize(regionMinSize);
+	}
+	float regionMergeSize = App->recast->GetRegionMergeSize();
+	if(ImGui::DragFloat("RegionMergeSize", &regionMergeSize))
+	{
+		App->recast->SetRegionMergeSize(regionMergeSize);
+	}
+	float edgeMaxLen = App->recast->GetEdgeMaxLen();
+	if(ImGui::DragFloat("EdgeMaxLen", &edgeMaxLen))
+	{
+		App->recast->SetEdgeMaxLen(edgeMaxLen);
+	}
+	float edgeMaxError = App->recast->GetEdgeMaxError();
+	if(ImGui::DragFloat("EdgeMaxError", &edgeMaxError))
+	{
+		App->recast->SetEdgeMaxError(edgeMaxError);
+	}
+	float vertsPerPoly = App->recast->GetVertsPerPoly();
+	if(ImGui::DragFloat("VertsPerPoly", &vertsPerPoly))
+	{
+		App->recast->SetVertsPerPoly(vertsPerPoly);
+	}
+	float detailSampleDist = App->recast->GetDetailSampleDist();
+	if(ImGui::DragFloat("DetailSampleDist", &detailSampleDist))
+	{
+		App->recast->SetDetailSampleDist(detailSampleDist);
+	}
+	float detailSampleMaxError = App->recast->GetDetailSampleMaxError();
+	if(ImGui::DragFloat("DetailSampleMaxError", &detailSampleMaxError))
+	{
+		App->recast->SetDetailSampleMaxError(detailSampleMaxError);
+	}
 }

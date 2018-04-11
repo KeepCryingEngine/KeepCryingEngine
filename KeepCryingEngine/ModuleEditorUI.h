@@ -42,6 +42,7 @@ private:
 	void DrawEditorControler();
 	void DrawMainMenu();
 	void DrawAboutMenu();
+	void DrawRecastMenu();
 	void DrawCameraWindow();
 	void DrawSpeedWindow();
 	void DrawShaderWindow();

@@ -20,6 +20,7 @@
 #include "ModuleFX.h"
 #include "ModuleScript.h"
 #include "ModuleLog.h"
+#include "ModuleRecast.h"
 
 using namespace std;
 using nlohmann::json;
@@ -41,8 +42,9 @@ Application::Application()
 	modules.push_back(audio = new ModuleAudio());
 	modules.push_back(font = new ModuleFont());
 	modules.push_back(script = new ModuleScript());
-	modules.push_back(entity = new ModuleEntity());//After Renderer, it needs access to buffer on init
 	modules.push_back(log = new ModuleLog());
+	modules.push_back(recast = new ModuleRecast());
+	modules.push_back(entity = new ModuleEntity());//After Renderer, it needs access to buffer on init
 }
 
 Application::~Application()
