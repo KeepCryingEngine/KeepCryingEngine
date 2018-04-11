@@ -43,6 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BehaviourTree\BehaviourTreeStatus.cs" />
+    <Compile Include="BehaviourTree\Nodes\BehaviourTreeDecoratorNodes.cs" />
+    <Compile Include="BehaviourTree\BehaviourTreeBuilder.cs" />
+    <Compile Include="BehaviourTree\DataContext.cs" />
+    <Compile Include="BehaviourTree\BehaviourTreeNode.cs" />
+    <Compile Include="BehaviourTree\Nodes\BehaviourTreeLeafNodes.cs" />
+    <Compile Include="BehaviourTree\Nodes\BehaviourTreeCompositeNodes.cs" />
     <Compile Include="CPLUSPLUS.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="Component.cs" />
