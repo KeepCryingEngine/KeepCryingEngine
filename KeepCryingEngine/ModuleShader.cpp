@@ -13,34 +13,42 @@ ModuleShader::~ModuleShader()
 
 bool ModuleShader::Init()
 {
-	SetUpColorProgram();
+	/* SetUpColorProgram();
 	SetUpDepthShader();
 	SetUpDefaultShader();
 	SetUpCartoonShader();
-	SetUpDiffuseShader();
+	SetUpDiffuseShader(); */
+
+	SetUpUberShader();
 
 	return true;
 }
 
-uint ModuleShader::AddShaderPath(const char * path, GLenum shaderType)
+uint ModuleShader::AddShaderPath(const char * path, GLenum shaderType, const char* defines)
 {
 	uint id = 0;
 	ifstream t(path);
 	if(t.good())
 	{
 		string str((istreambuf_iterator<char>(t)), istreambuf_iterator<char>());
-		id = AddShader(str.c_str(), shaderType);
+		id = AddShader(str.c_str(), shaderType, defines);
 	}
 
 	t.close();
 	return id;
 }
 
-uint ModuleShader::AddShader(const char* source, GLenum shaderType)
+uint ModuleShader::AddShader(const char* source, GLenum shaderType, const char* defines)
 {
+	string definesAndSource = "#version 330 core\n";
+	definesAndSource += defines;
+	definesAndSource += source;
+
+	const char* charDefinesAndSource = definesAndSource.c_str();
+
 	GLuint shaderId = glCreateShader(shaderType);
 
-	glShaderSource(shaderId, 1, &source, nullptr);
+	glShaderSource(shaderId, 1, &charDefinesAndSource, nullptr);
 	glCompileShader(shaderId);
 
 	GLint success;
@@ -86,7 +94,7 @@ uint ModuleShader::AddProgram(initializer_list<uint> shaders)
 	return shaderProgramId;
 }
 
-GLuint ModuleShader::GetShaderId(ShaderType shaderType) const
+/* GLuint ModuleShader::GetShaderId(ShaderType shaderType) const
 {
 	GLuint shaderId = 0;
 	switch (shaderType) 
@@ -122,14 +130,23 @@ GLuint ModuleShader::GetShaderId(ShaderType shaderType) const
 	}
 
 	return shaderId;
+} */
+
+GLuint ModuleShader::GetProgramId(int flags, const std::string& name) const
+{
+	map<pair<int, string>, GLuint>::const_iterator it = shaders.find(make_pair(flags, name));
+
+	assert(it != shaders.end());
+
+	return it->second;
 }
 
-void ModuleShader::SetUpColorProgram()
+/* void ModuleShader::SetUpColorProgram()
 {
 	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
 	uint fragmentId = AddShaderPath("Assets/Shaders/colorFragment.frag", GL_FRAGMENT_SHADER);
 	colorShaderId = AddProgram({ vertexId, fragmentId });
-}
+} */
 
 uint ModuleShader::AddProgram(const list<uint>& shaders)
 {
@@ -158,30 +175,56 @@ uint ModuleShader::AddProgram(const list<uint>& shaders)
 	return shaderProgramId;
 }
 
-void ModuleShader::SetUpDefaultShader()
+/* void ModuleShader::SetUpDefaultShader()
 {
 	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
 	uint fragmentId = AddShaderPath("Assets/Shaders/textureFragment.frag", GL_FRAGMENT_SHADER);
 	defaultShaderId = AddProgram({ vertexId, fragmentId });
-}
+} */
 
-void ModuleShader::SetUpCartoonShader()
+/* void ModuleShader::SetUpCartoonShader()
 {
 	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
 	uint fragmentId = AddShaderPath("Assets/Shaders/cartoon.frag", GL_FRAGMENT_SHADER);
 	cartoonShaderId = AddProgram({ vertexId, fragmentId });
-}
+} */
 
-void ModuleShader::SetUpDepthShader()
+/* void ModuleShader::SetUpDepthShader()
 {
 	uint vertexId = AddShaderPath("Assets/Shaders/cameraShader.vert", GL_VERTEX_SHADER);
 	uint fragmentId = AddShaderPath("Assets/Shaders/depthShader.frag", GL_FRAGMENT_SHADER);
 	depthShaderId = AddProgram({ vertexId, fragmentId });
-}
+} */
 
-void ModuleShader::SetUpDiffuseShader()
+/* void ModuleShader::SetUpDiffuseShader()
 {
 	uint vertexId = AddShaderPath("Assets/Shaders/lightningVertexShader.vert", GL_VERTEX_SHADER);
 	uint fragmentId = AddShaderPath("Assets/Shaders/lightningFragmentShader.frag", GL_FRAGMENT_SHADER);
 	diffuseShaderId = AddProgram({ vertexId, fragmentId });
+} */
+
+void ModuleShader::SetUpDefaultShader()
+{
+	uint vertexId = AddShaderPath("Assets/Shaders/vertex.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShaderPath("Assets/Shaders/fragment.frag", GL_FRAGMENT_SHADER);
+
+	int program = AddProgram({ vertexId, fragmentId });
+
+	shaders[make_pair(DEFAULT, "UberShader")] = program;
+}
+
+void ModuleShader::SetUpLightningShader()
+{
+	uint vertexId = AddShaderPath("Assets/Shaders/vertex.vert", GL_VERTEX_SHADER, "#define LIGHTNING\n");
+	uint fragmentId = AddShaderPath("Assets/Shaders/fragment.frag", GL_FRAGMENT_SHADER, "#define LIGHTNING\n");
+
+	int program = AddProgram({ vertexId, fragmentId });
+
+	shaders[make_pair(LIGHTNING, "UberShader")] = program;
+}
+
+void ModuleShader::SetUpUberShader()
+{
+	SetUpDefaultShader();
+	SetUpLightningShader();
 }

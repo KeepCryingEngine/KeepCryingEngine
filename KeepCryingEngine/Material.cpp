@@ -14,7 +14,7 @@ using namespace std;
 Material::Material()
 {
 	texture = App->texture->GetCheckerTexture();
-	programId = App->shader->GetShaderId(ShaderType::Default);
+	programId = App->shader->GetProgramId(DEFAULT, "UberShader");
 }
 
 Material::Material(const Material & mat) :
@@ -47,11 +47,34 @@ void Material::DrawUI()
 		ImGui::NewLine();
 		
 		int tmpShaderMode = (int)shaderType;
+		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Lightning"))
+		{
+			int flags = 0;
+			string name = "";
+
+			shaderType = (ShaderType)tmpShaderMode;
+
+			switch(shaderType)
+			{
+				case ShaderType::Default:
+					flags |= DEFAULT;
+					name = "UberShader";
+					break;
+				case ShaderType::Lightning:
+					flags |= LIGHTNING;
+					name = "UberShader";
+					break;
+			}
+
+			programId = App->shader->GetProgramId(flags, name);
+		}
+
+		/* int tmpShaderMode = (int)shaderType;
 		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Cartoon\0Color\0Depth\0Diffuse"))
 		{
 			shaderType = (ShaderType)tmpShaderMode;
 			programId = App->shader->GetShaderId(shaderType);
-		}
+		} */
 	}
 }
 
