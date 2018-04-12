@@ -523,11 +523,9 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 		glUniformMatrix4fv(camera, 1, GL_FALSE, App->camera->GetEnabledCamera()->GetViewMatrix().ptr());
 	}
 
-	//TODO: USE ENABLED CAMERA!!!
 	GLint cameraPosition = glGetUniformLocation(progId, "cameraPosition");
 	if (cameraPosition != -1)
 	{
-		//float3 cPos = App->camera->camera->gameObject->GetTransform()->GetWorldPosition();
 		float3 cPos = App->camera->GetPlayOrEditorCamera()->gameObject->GetTransform()->GetWorldPosition();
 		glUniform3f(cameraPosition, cPos.x, cPos.y, cPos.z);
 	}

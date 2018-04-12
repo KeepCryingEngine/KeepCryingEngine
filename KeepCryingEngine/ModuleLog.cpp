@@ -15,7 +15,11 @@ struct ConsoleLog
 	ImVector<int>       LineOffsets;        // Index to lines offset
 	bool                ScrollToBottom;
 
-	void    Clear() { Buf.clear(); LineOffsets.clear(); }
+	void    Clear() 
+	{ 
+		Buf.clear(); 
+		LineOffsets.clear(); 
+	}
 
 	void    AddLog(const char* fmt, ...) IM_FMTARGS(2)
 	{
@@ -37,8 +41,6 @@ struct ConsoleLog
 		if (ImGui::Button("Clear")) Clear();
 		ImGui::SameLine();
 		bool copy = ImGui::Button("Copy");
-		ImGui::SameLine();
-		if (ImGui::Button("PutSomething")) AddLog("Potato");
 		ImGui::SameLine();
 		Filter.Draw("Filter", -100.0f);
 		ImGui::Separator();
