@@ -9,6 +9,7 @@
 
 #include "Application.h"
 #include "ModuleTime.h"
+#include "ModuleLog.h"
 #include "ModuleEntity.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
@@ -23,6 +24,7 @@
 #include "ModuleAnim.h"
 #include "Animator.h"
 #include "MeshRenderer.h"
+#include "Script.h"
 #include "ReverbZone.h"
 #include "ModuleGameUI.h"
 #include "Canvas.h"
@@ -154,7 +156,17 @@ void ModuleEditorUI::DrawMainMenu()
 				hierarchyWindow ^= 1;
 			}
 
-			if(ImGui::BeginMenu("Control Panel"))
+			if (ImGui::Selectable("Console"))
+			{
+				App->log->ToggleConsole();
+			}
+
+			if (ImGui::Selectable("Editor Controler"))
+			{
+				editorControler ^= 1;
+			}
+
+			if(ImGui::BeginMenu("Utils"))
 			{
 				if(ImGui::Selectable("Camera"))
 				{
@@ -168,12 +180,21 @@ void ModuleEditorUI::DrawMainMenu()
 				{
 					spacePartitioningWindow ^= 1;
 				}
+				if(ImGui::Selectable("Texture Info"))
+				{
+					loadedTexturesInfoWindow ^= 1;
+				}
+				if(ImGui::Selectable("Performance Control"))
+				{
+					performanceInfoWindow ^= 1;
+				}
+				if (ImGui::Selectable("Debug Object Generation"))
+				{
+					generateGameObjectWindow ^= 1;
+				}
 				ImGui::EndMenu();
 			}
-			if(ImGui::Selectable("Editor Controler"))
-			{
-				editorControler ^= 1;
-			}
+
 			ImGui::EndMenu();
 		}
 
@@ -760,7 +781,10 @@ void ModuleEditorUI::DrawHierarchyWindow()
 {
 	ImGui::Begin("Game Object Hierarchy", &hierarchyWindow);
 
-	CallGuizmo();
+	if(App->state == TimeState::STOPED)
+	{
+		CallGuizmo();
+	}
 
 	ImGui::Separator();
 
@@ -866,7 +890,10 @@ void ModuleEditorUI::DrawInspectorWindow()
 	{
 		if(ImGui::BeginMenu("Add"))
 		{
-			static int selectedComponent = 0;
+			if (ImGui::Selectable("Script"))
+			{
+				temp->AddComponent<Script>();
+			}
 			if(ImGui::Selectable("Mesh Renderer"))
 			{
 				temp->AddComponent<MeshRenderer>();
@@ -951,7 +978,7 @@ void ModuleEditorUI::DrawInspectorWindow()
 
 void ModuleEditorUI::DrawGenerateGameObjectWindow()
 {
-	ImGui::Begin("Generate GameObject Controls", &generateGameObjectWindow, ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("Debug Object Generation", &generateGameObjectWindow, ImGuiWindowFlags_MenuBar);
 
 	static int generateGameObjectWindowCount = 100;
 	ImGui::DragInt("Count", &generateGameObjectWindowCount);

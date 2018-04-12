@@ -596,3 +596,8 @@ bool GameObject::CanAttach(const Component& component) const
 
 	RELEASE(component);
 } */
+
+int32_t GameObject_GetTransform(GameObject * g)
+{
+	return reinterpret_cast<int32_t>(g->GetTransform());
+}

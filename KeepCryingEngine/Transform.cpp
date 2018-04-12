@@ -498,3 +498,10 @@ void Transform::Save(nlohmann::json& json) const
 	
 	json["scale"] = jsonScale;
 }
+
+//---------------------------------------
+
+void Transform_Translate(Transform * transform, float x, float y, float z)
+{
+	transform->Translate(float3(x, y, z));
+}

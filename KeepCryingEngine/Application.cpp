@@ -18,6 +18,8 @@
 #include "ModuleFont.h"
 #include "ModuleTime.h"
 #include "ModuleFX.h"
+#include "ModuleScript.h"
+#include "ModuleLog.h"
 
 using namespace std;
 using nlohmann::json;
@@ -37,8 +39,10 @@ Application::Application()
 	modules.push_back(shader = new ModuleShader());
 	modules.push_back(texture = new ModuleTexture());
 	modules.push_back(audio = new ModuleAudio());
-	modules.push_back(entity = new ModuleEntity());//After Renderer, it needs access to buffer on init
 	modules.push_back(font = new ModuleFont());
+	modules.push_back(script = new ModuleScript());
+	modules.push_back(entity = new ModuleEntity());//After Renderer, it needs access to buffer on init
+	modules.push_back(log = new ModuleLog());
 }
 
 Application::~Application()

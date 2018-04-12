@@ -20,6 +20,7 @@
 #include "InputText.h"
 #include "GridRenderer.h"
 #include "ParticleSystem.h"
+#include "Script.h"
 
 Component * ComponentFabric::CreateComponent(Component::Type type)
 {
@@ -77,6 +78,9 @@ Component * ComponentFabric::CreateComponent(Component::Type type)
 			break;
 		case Component::Type::ParticleSystem:
 			component = new ParticleSystem();
+			break;
+		case Component::Type::Script:
+			component = new Script();
 			break;
 	}
 	assert(component);

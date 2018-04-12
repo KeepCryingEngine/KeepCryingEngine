@@ -149,4 +149,6 @@ private:
 	std::vector<GameObject*> dGameobjects;
 };
 
+int32_t ModuleScene_InstantiateCubeInternal();
+
 #endif // !_MODULESCENE_H_

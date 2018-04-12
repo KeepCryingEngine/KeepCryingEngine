@@ -138,15 +138,15 @@ const Texture * ModuleFont::RenderFromText(const TTF_Font * font, const std::str
 	const Texture* tFont = CreateTextureFromSurface(sFont);
 	if(sFont != nullptr)
 	{
-		height = sFont->h;
-		width = sFont->w;
+		height = (float)sFont->h;
+		width = (float)sFont->w;
 	}
 	else
 	{
 		width = 0;
-		int tempHeight= 0;
-		TTF_SizeText((TTF_Font*)font, "", nullptr, &tempHeight);
-		height = tempHeight;
+		int heightAsInt= 0;
+		TTF_SizeText((TTF_Font*)font, "", nullptr, &heightAsInt);
+		height = (float)heightAsInt;
 	}
 
 	SDL_FreeSurface(sFont);
