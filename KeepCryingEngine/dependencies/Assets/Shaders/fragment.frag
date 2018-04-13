@@ -1,7 +1,6 @@
-#undef LIGHTNING
-#define LIGHTNING
-
+in vec4 ourColor;
 in vec2 TexCoord;
+in vec3 Normal;
 
 #ifdef LIGHTNING
 
@@ -20,6 +19,12 @@ uniform mat4 transform;
 uniform mat4 rotation;
 uniform vec3 lightSourcePosition;
 uniform vec3 cameraPosition;
+
+#endif
+
+#ifdef CARTOON
+
+uniform vec3 lightDir;
 
 #endif
 
@@ -53,4 +58,24 @@ void main()
 	
 	color = ((diffuse * texture2D(ourTexture, TexCoord)) + specular) + ambientLight;
 #endif
+
+#ifdef CARTOON
+
+	float intensity;
+	intensity = dot(Normal,lightDir);
+
+	if (intensity > 0.90)
+		color = vec4(1.0,1.0,1.0,1.0);
+	else if (intensity > 0.75)
+		color = vec4(0.8,0.8,0.8,1.0);
+	else if (intensity > 0.55)
+		color = vec4(0.6,0.6,0.6,1.0);
+	else if (intensity > 0.25)
+		color = vec4(0.4,0.4,0.4,1.0);
+	else
+		color = vec4(0.2,0.2,0.2,1.0);
+
+	color = color * texture2D(ourTexture,TexCoord);
+#endif
+
 }

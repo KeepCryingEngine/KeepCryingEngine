@@ -223,8 +223,19 @@ void ModuleShader::SetUpLightningShader()
 	shaders[make_pair(LIGHTNING, "UberShader")] = program;
 }
 
+void ModuleShader::SetUpCartoonShader()
+{
+	uint vertexId = AddShaderPath("Assets/Shaders/vertex.vert", GL_VERTEX_SHADER, "#define CARTOON\n");
+	uint fragmentId = AddShaderPath("Assets/Shaders/fragment.frag", GL_FRAGMENT_SHADER, "#define CARTOON\n");
+	
+	int program = AddProgram({ vertexId, fragmentId });
+
+	shaders[make_pair(CARTOON, "UberShader")] = program;
+}
+
 void ModuleShader::SetUpUberShader()
 {
 	SetUpDefaultShader();
 	SetUpLightningShader();
+	SetUpCartoonShader();
 }

@@ -19,11 +19,13 @@
 enum class ShaderType
 {
 	Default,
-	Lightning
+	Lightning,
+	Cartoon
 };
 
 const int DEFAULT = 0;
 const int LIGHTNING = 1 << 0;
+const int CARTOON = 2 << 0;
 
 class ModuleShader : public Module
 {
@@ -49,12 +51,13 @@ private:
 
 	/* void SetUpColorProgram();
 	void SetUpDefaultShader();
-	void SetUpCartoonShader();
+	
 	void SetUpDepthShader();
 	void SetUpDiffuseShader(); */
 
 	void SetUpDefaultShader();
 	void SetUpLightningShader();
+	void SetUpCartoonShader();
 
 	void SetUpUberShader();
 
