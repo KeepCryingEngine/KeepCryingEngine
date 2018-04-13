@@ -141,13 +141,6 @@ GLuint ModuleShader::GetProgramId(int flags, const std::string& name) const
 	return it->second;
 }
 
-/* void ModuleShader::SetUpColorProgram()
-{
-	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShaderPath("Assets/Shaders/colorFragment.frag", GL_FRAGMENT_SHADER);
-	colorShaderId = AddProgram({ vertexId, fragmentId });
-} */
-
 uint ModuleShader::AddProgram(const list<uint>& shaders)
 {
 	GLuint shaderProgramId = glCreateProgram();
@@ -174,34 +167,6 @@ uint ModuleShader::AddProgram(const list<uint>& shaders)
 
 	return shaderProgramId;
 }
-
-/* void ModuleShader::SetUpDefaultShader()
-{
-	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShaderPath("Assets/Shaders/textureFragment.frag", GL_FRAGMENT_SHADER);
-	defaultShaderId = AddProgram({ vertexId, fragmentId });
-} */
-
-/* void ModuleShader::SetUpCartoonShader()
-{
-	uint vertexId = AddShaderPath("Assets/Shaders/vertexShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShaderPath("Assets/Shaders/cartoon.frag", GL_FRAGMENT_SHADER);
-	cartoonShaderId = AddProgram({ vertexId, fragmentId });
-} */
-
-/* void ModuleShader::SetUpDepthShader()
-{
-	uint vertexId = AddShaderPath("Assets/Shaders/cameraShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShaderPath("Assets/Shaders/depthShader.frag", GL_FRAGMENT_SHADER);
-	depthShaderId = AddProgram({ vertexId, fragmentId });
-} */
-
-/* void ModuleShader::SetUpDiffuseShader()
-{
-	uint vertexId = AddShaderPath("Assets/Shaders/lightningVertexShader.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShaderPath("Assets/Shaders/lightningFragmentShader.frag", GL_FRAGMENT_SHADER);
-	diffuseShaderId = AddProgram({ vertexId, fragmentId });
-} */
 
 void ModuleShader::SetUpDefaultShader()
 {
@@ -243,10 +208,21 @@ void ModuleShader::SetUpDepthShader()
 	shaders[make_pair(DEPTH, "UberShader")] = program;
 }
 
+void ModuleShader::SetUpColorProgram()
+{
+	uint vertexId = AddShaderPath("Assets/Shaders/vertex.vert", GL_VERTEX_SHADER, "#define COLOR\n");
+	uint fragmentId = AddShaderPath("Assets/Shaders/fragment.frag", GL_FRAGMENT_SHADER, "#define COLOR\n");
+	
+	int program = AddProgram({ vertexId, fragmentId });
+
+	shaders[make_pair(COLOR, "UberShader")] = program;
+}
+
 void ModuleShader::SetUpUberShader()
 {
 	SetUpDefaultShader();
 	SetUpLightningShader();
 	SetUpCartoonShader();
 	SetUpDepthShader();
+	SetUpColorProgram();
 }

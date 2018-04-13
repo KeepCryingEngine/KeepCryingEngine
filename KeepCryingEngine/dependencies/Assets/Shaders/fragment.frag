@@ -91,4 +91,10 @@ void main()
 
 #endif
 
+#ifdef COLOR
+
+	color = ourColor;
+
+#endif
+
 }

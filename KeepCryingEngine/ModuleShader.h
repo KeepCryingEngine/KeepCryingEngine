@@ -8,26 +8,20 @@
 
 #include "Module.h"
 
-/* enum class ShaderType {
-	Default,
-	Cartoon,
-	Color,
-	Depth,
-	Diffuse
-}; */
-
 enum class ShaderType
 {
 	Default,
 	Lightning,
 	Cartoon,
-	Depth
+	Depth,
+	Color
 };
 
 const int DEFAULT = 0;
 const int LIGHTNING = 1 << 0;
 const int CARTOON = 2 << 0;
 const int DEPTH = 3 << 0;
+const int COLOR = 4 << 0;
 
 class ModuleShader : public Module
 {
@@ -47,32 +41,15 @@ private:
 	uint AddProgram(const std::list<uint>& shaders);
 	uint AddProgram(std::initializer_list<uint> shaders);
 
-	// GLuint GetShaderId(ShaderType shaderType) const;
-
-// private:
-
-	/* void SetUpColorProgram();
-	
-
-	void SetUpDiffuseShader(); */
-
 	void SetUpDefaultShader();
 	void SetUpLightningShader();
 	void SetUpCartoonShader();
 	void SetUpDepthShader();
+	void SetUpColorProgram();
 
 	void SetUpUberShader();
 
 private:
-
-	/* GLuint cartoonShaderId = 0;
-	GLuint defaultShaderId = 0;
-	GLuint colorShaderId = 0;
-	GLuint depthShaderId = 0;
-	GLuint diffuseShaderId = 0;
-
-	GLuint uberShaderId = 0; */
-
 	std::map<std::pair<int, std::string>, GLuint> shaders;
 };
 

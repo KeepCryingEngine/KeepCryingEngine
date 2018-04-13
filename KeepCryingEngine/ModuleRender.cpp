@@ -217,8 +217,7 @@ void ModuleRender::DrawFrustum(Camera & camera)
 
 	glLineWidth(1.0f);
 
-	// uint progId = App->shader->GetShaderId(ShaderType::Color);
-	uint progId = App->shader->GetProgramId(DEFAULT, "UberShader");
+	uint progId = App->shader->GetProgramId(COLOR, "UberShader");
 	glUseProgram(progId);
 
 	glBindBuffer(GL_ARRAY_BUFFER, camera.GetFrustumBufferId());
