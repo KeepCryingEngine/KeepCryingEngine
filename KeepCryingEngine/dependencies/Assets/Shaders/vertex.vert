@@ -19,6 +19,7 @@ uniform mat4 actualCameraModelView;
 #ifdef LIGHTNING
 
 out vec3 vertexPosition;
+out vec3 vertexNormal;
 
 #endif
 
@@ -47,6 +48,7 @@ void main()
 #ifdef LIGHTNING
 
 	vertexPosition = position;
+	vertexNormal = normal;
 
 #endif
 }
