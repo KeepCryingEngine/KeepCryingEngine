@@ -233,9 +233,20 @@ void ModuleShader::SetUpCartoonShader()
 	shaders[make_pair(CARTOON, "UberShader")] = program;
 }
 
+void ModuleShader::SetUpDepthShader()
+{
+	uint vertexId = AddShaderPath("Assets/Shaders/vertex.vert", GL_VERTEX_SHADER, "#define DEPTH\n");
+	uint fragmentId = AddShaderPath("Assets/Shaders/fragment.frag", GL_FRAGMENT_SHADER, "#define DEPTH\n");
+	
+	int program = AddProgram({ vertexId, fragmentId });
+
+	shaders[make_pair(DEPTH, "UberShader")] = program;
+}
+
 void ModuleShader::SetUpUberShader()
 {
 	SetUpDefaultShader();
 	SetUpLightningShader();
 	SetUpCartoonShader();
+	SetUpDepthShader();
 }

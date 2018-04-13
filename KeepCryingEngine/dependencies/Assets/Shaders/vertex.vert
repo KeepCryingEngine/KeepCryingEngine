@@ -7,11 +7,21 @@ out vec4 ourColor;
 out vec2 TexCoord;
 out vec3 Normal;
 
+
+#ifdef DEPTH
+
+out vec4 relativeCameraPos;
+uniform mat4 actualCameraModelView;
+
+#endif
+
+
 #ifdef LIGHTNING
 
 out vec3 vertexPosition;
 
 #endif
+
 
 uniform mat4 projection;
 uniform mat4 model_view;
@@ -25,7 +35,15 @@ void main()
 	mat3 normalMatrix = mat3(transform);
 	normalMatrix = inverse(normalMatrix);
 	Normal = normalize(normal * normalMatrix);
+
+
+#ifdef DEPTH
+
+	relativeCameraPos = actualCameraModelView * transform * vec4(position, 1.0f);
+
+#endif
 	
+
 #ifdef LIGHTNING
 
 	vertexPosition = position;

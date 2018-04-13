@@ -20,12 +20,14 @@ enum class ShaderType
 {
 	Default,
 	Lightning,
-	Cartoon
+	Cartoon,
+	Depth
 };
 
 const int DEFAULT = 0;
 const int LIGHTNING = 1 << 0;
 const int CARTOON = 2 << 0;
+const int DEPTH = 3 << 0;
 
 class ModuleShader : public Module
 {
@@ -50,14 +52,14 @@ private:
 // private:
 
 	/* void SetUpColorProgram();
-	void SetUpDefaultShader();
 	
-	void SetUpDepthShader();
+
 	void SetUpDiffuseShader(); */
 
 	void SetUpDefaultShader();
 	void SetUpLightningShader();
 	void SetUpCartoonShader();
+	void SetUpDepthShader();
 
 	void SetUpUberShader();
 

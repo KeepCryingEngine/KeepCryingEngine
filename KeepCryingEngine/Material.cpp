@@ -47,7 +47,7 @@ void Material::DrawUI()
 		ImGui::NewLine();
 		
 		int tmpShaderMode = (int)shaderType;
-		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Lightning\0Cartoon"))
+		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Lightning\0Cartoon\0Depth"))
 		{
 			int flags = 0;
 			string name = "";
@@ -66,6 +66,10 @@ void Material::DrawUI()
 					break;
 				case ShaderType::Cartoon:
 					flags |= CARTOON;
+					name = "UberShader";
+					break;
+				case ShaderType::Depth:
+					flags |= DEPTH;
 					name = "UberShader";
 					break;
 			}

@@ -2,18 +2,23 @@ in vec4 ourColor;
 in vec2 TexCoord;
 in vec3 Normal;
 
-#ifdef LIGHTNING
-
-in vec3 vertexPosition;
-in vec3 vertexNormal;
-
-#endif
-
 out vec4 color;
 
 uniform sampler2D ourTexture;
 
+
+#ifdef DEPTH
+
+in vec4 relativeCameraPos;
+uniform float actualCameraFar;
+
+#endif
+
+
 #ifdef LIGHTNING
+
+in vec3 vertexPosition;
+in vec3 vertexNormal;
 
 uniform mat4 transform;
 uniform mat4 rotation;
@@ -76,6 +81,14 @@ void main()
 		color = vec4(0.2,0.2,0.2,1.0);
 
 	color = color * texture2D(ourTexture,TexCoord);
+#endif
+
+#ifdef DEPTH
+
+	float depth = -relativeCameraPos.z/actualCameraFar;
+	color = vec4(depth, depth, depth, 1.0);
+	color = color * texture2D(ourTexture,TexCoord);
+
 #endif
 
 }
