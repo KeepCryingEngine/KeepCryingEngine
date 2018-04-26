@@ -13,6 +13,8 @@
 #include "Mesh.h"
 #include "Animator.h"
 #include "ModuleTime.h"
+#include "MeshRenderer.h"
+#include "Material.h"
 
 using namespace std;
 
@@ -45,7 +47,8 @@ update_status ModuleAnim::Update()
 	{
 		if(animator->HasValidAnimationInstance())
 		{
-			DoVertexSkinning(animator->gameObject);
+			/*DoVertexSkinning(animator->gameObject);*/
+			CalculateAndLoadMatrixGPU(animator->gameObject);
 		}
 	}
 
@@ -434,4 +437,70 @@ aiQuaternion ModuleAnim::Lerp(const aiQuaternion & first, const aiQuaternion & s
 	result.Normalize();
 
 	return result;
+}
+
+void ModuleAnim::CalculateAndLoadMatrixGPU(GameObject * root) const
+{
+	vector<MeshFilter*> meshFilters = root->GetParent()->GetComponentsInChildren<MeshFilter>();
+	for(MeshFilter* meshFilter : meshFilters)
+	{
+		Mesh* mesh = meshFilter->GetMesh();
+		//vector<Vertex> vertices = mesh->GetOriginalVertices();
+
+		//for(Vertex& vertex : vertices)
+		//{
+		//	vertex.position = float3::zero;
+		//}
+
+		float4x4 palete[MAX_BONES];
+		for(int i = 0; i < MAX_BONES; ++i)
+		{
+			palete[i] = float4x4::identity;
+		}
+
+
+		for(int i = 0; i<mesh->GetBones().size;++i)
+		{
+			const Bone& bone = mesh->GetBones()[i];
+			float3x4 rootGameObjectMatrix = root->GetTransform()->GetModelMatrix().Float3x4Part();
+			GameObject* boneGameObject = root->GetChildByName(bone.name);
+
+			if(boneGameObject == nullptr)
+			{
+				return;
+			}
+
+			Transform* boneTransform = boneGameObject->GetTransform();
+			float3x4 boneMatrixToRoot = boneTransform->GetModelMatrix().Float3x4Part();
+
+			float3 scaleCorrection = float3::one.Div(rootGameObjectMatrix.GetScale());
+
+			aiMatrix4x4 aiBind = bone.bind;
+			float3x4 bondBindInvertedMatrix
+			(
+				(float)aiBind.a1, (float)aiBind.a2, (float)aiBind.a3, (float)aiBind.a4,
+				(float)aiBind.b1, (float)aiBind.b2, (float)aiBind.b3, (float)aiBind.b4,
+				(float)aiBind.c1, (float)aiBind.c2, (float)aiBind.c3, (float)aiBind.c4
+				// (float)aiBind.d1, (float)aiBind.d2, (float)aiBind.d3, (float)aiBind.d4
+			);
+
+			float3x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix;
+			palete[i] = palete[i] * transformation;//TODO: verify correct mult
+		}
+
+		GLuint progId = root->GetComponent<MeshRenderer>()->GetMaterial()->GetProgramId;
+
+		//indices
+		glEnableVertexAttribArray(4);
+		glBindBuffer(GL_ARRAY_BUFFER, mesh->GetBoneIndicesBufferId());
+		glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, 0, (void*)0);
+		//weights
+		glEnableVertexAttribArray(5);
+		glBindBuffer(GL_ARRAY_BUFFER, mesh->GetBoneWeightsBufferId());
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		//Palete
+		GLint paleteId = glGetUniformLocation(progId, "palete");
+		glUniformMatrix4fv(paleteId, 1, GL_FALSE, palete->ptr());
+
+	}
 }

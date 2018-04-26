@@ -11,6 +11,8 @@
 
 #include "Module.h"
 
+#define MAX_BONES 800
+
 struct Bone;
 class Mesh;
 class GameObject;
@@ -76,6 +78,8 @@ private:
 	aiVector3D Lerp(const aiVector3D& first, const aiVector3D& second, float lambda) const;
 
 	aiQuaternion Lerp(const aiQuaternion& first, const aiQuaternion& second, float lambda) const;
+
+	void CalculateAndLoadMatrixGPU(GameObject * root) const;
 
 private:
 	AnimMap animations;

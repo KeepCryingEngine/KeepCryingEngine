@@ -14,7 +14,8 @@ enum class ShaderType
 	Lightning,
 	Cartoon,
 	Depth,
-	Color
+	Color,
+	Rigging
 };
 
 const int DEFAULT = 0;
@@ -22,6 +23,7 @@ const int LIGHTNING = 1 << 0;
 const int CARTOON = 2 << 0;
 const int DEPTH = 3 << 0;
 const int COLOR = 4 << 0;
+const int RIGGING = 5 << 0;
 
 class ModuleShader : public Module
 {
@@ -46,6 +48,7 @@ private:
 	void SetUpCartoonShader();
 	void SetUpDepthShader();
 	void SetUpColorProgram();
+	void SetUpRiggingProgram();
 
 	void SetUpUberShader();
 

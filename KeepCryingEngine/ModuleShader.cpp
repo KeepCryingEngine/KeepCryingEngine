@@ -13,12 +13,6 @@ ModuleShader::~ModuleShader()
 
 bool ModuleShader::Init()
 {
-	/* SetUpColorProgram();
-	SetUpDepthShader();
-	SetUpDefaultShader();
-	SetUpCartoonShader();
-	SetUpDiffuseShader(); */
-
 	SetUpUberShader();
 
 	return true;
@@ -218,6 +212,16 @@ void ModuleShader::SetUpColorProgram()
 	shaders[make_pair(COLOR, "UberShader")] = program;
 }
 
+void ModuleShader::SetUpRiggingProgram()
+{
+	uint vertexId = AddShaderPath("Assets/Shaders/vertex.vert", GL_VERTEX_SHADER, "#define RIGGING\n");
+	uint fragmentId = AddShaderPath("Assets/Shaders/fragment.frag", GL_FRAGMENT_SHADER, "#define RIGGING\n");
+
+	int program = AddProgram({ vertexId, fragmentId });
+
+	shaders[make_pair(RIGGING, "UberShader")] = program;
+}
+
 void ModuleShader::SetUpUberShader()
 {
 	SetUpDefaultShader();
@@ -225,4 +229,5 @@ void ModuleShader::SetUpUberShader()
 	SetUpCartoonShader();
 	SetUpDepthShader();
 	SetUpColorProgram();
+	SetUpRiggingProgram();
 }

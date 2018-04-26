@@ -76,6 +76,10 @@ void Material::DrawUI()
 					flags |= COLOR;
 					name = "UberShader";
 					break;
+				case ShaderType::Rigging:
+					flags |= RIGGING;
+					name = "UberShader";
+					break;
 			}
 
 			programId = App->shader->GetProgramId(flags, name);
