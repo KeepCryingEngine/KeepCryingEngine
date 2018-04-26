@@ -3,6 +3,15 @@ layout (location = 1) in vec4 color;
 layout (location = 2) in vec2 texCoord;
 layout (location = 3) in vec3 normal;
 
+#ifdef RIGGING
+layout (location = 4) in ivec4 bone_indices;
+layout (location = 5) in vec4 bone_weights;
+
+#define MAX_BONES 800
+
+#endif
+
+
 out vec4 ourColor;
 out vec2 TexCoord;
 out vec3 Normal;
@@ -28,6 +37,10 @@ uniform mat4 projection;
 uniform mat4 model_view;
 uniform mat4 transform;
 
+#ifdef RIGGING
+uniform mat4 palete[MAX_BONES];
+#endif
+
 void main()
 {
 	gl_Position = projection * model_view * transform * vec4(position, 1.0f);
@@ -37,6 +50,18 @@ void main()
 	normalMatrix = inverse(normalMatrix);
 	Normal = normalize(normal * normalMatrix);
 
+#ifdef RIGGING
+
+	mat4 skin_transform = palette[bone_indices[0]]*bone_weights[0]+palette[bone_indices[1]]*bone_weights[1]+ palette[bone_indices[2]]*bone_weights[2]+palette[bone_indices[3]]*bone_weights[3];
+	vec3 vertex_position = vec3(skin_transform*vec4(position, 1));
+	vec3 vertex_normal = vec3(skin_transform*vec4(normal, 0));
+//TODO: VERIFY
+gl_Position = projection * model_view * transform * vec4(vertex_position, 1.0f);
+
+Normal = projection * model_view * vec4(vertex_normal, 1.0f);
+
+
+#endif
 
 #ifdef DEPTH
 
