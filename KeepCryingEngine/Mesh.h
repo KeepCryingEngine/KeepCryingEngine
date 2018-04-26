@@ -48,7 +48,7 @@ public:
 	Mesh(const MeshIdentifier& meshIdentifier);
 	virtual ~Mesh();
 	
-	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, const std::vector<Bone> bones, GLenum drawMode);
+	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, const std::vector<Bone>& bones, GLenum drawMode);
 
 	const AABB& GetAABB() const;
 	GLuint GetVertexBufferId() const;

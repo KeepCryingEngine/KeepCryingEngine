@@ -459,7 +459,7 @@ void ModuleAnim::CalculateAndLoadMatrixGPU(GameObject * root) const
 		}
 
 
-		for(int i = 0; i<mesh->GetBones().size;++i)
+		for(size_t i = 0; i<mesh->GetBones().size();++i)
 		{
 			const Bone& bone = mesh->GetBones()[i];
 			float3x4 rootGameObjectMatrix = root->GetTransform()->GetModelMatrix().Float3x4Part();
@@ -488,7 +488,7 @@ void ModuleAnim::CalculateAndLoadMatrixGPU(GameObject * root) const
 			palete[i] = palete[i] * transformation;//TODO: verify correct mult
 		}
 
-		GLuint progId = root->GetComponent<MeshRenderer>()->GetMaterial()->GetProgramId;
+		GLuint progId = root->GetComponent<MeshRenderer>()->GetMaterial()->GetProgramId();
 
 		//indices
 		glEnableVertexAttribArray(4);
