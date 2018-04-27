@@ -7,7 +7,7 @@ layout (location = 3) in vec3 normal;
 layout (location = 4) in ivec4 bone_indices;
 layout (location = 5) in vec4 bone_weights;
 
-#define MAX_BONES 800
+#define MAX_BONES 253
 
 #endif
 
@@ -38,7 +38,7 @@ uniform mat4 model_view;
 uniform mat4 transform;
 
 #ifdef RIGGING
-uniform mat4 palete[MAX_BONES];
+uniform mat4 palette[MAX_BONES];
 #endif
 
 void main()
@@ -58,8 +58,7 @@ void main()
 //TODO: VERIFY
 gl_Position = projection * model_view * transform * vec4(vertex_position, 1.0f);
 
-Normal = projection * model_view * vec4(vertex_normal, 1.0f);
-
+Normal = vec3(projection * model_view * vec4(vertex_normal, 1.0f));
 
 #endif
 

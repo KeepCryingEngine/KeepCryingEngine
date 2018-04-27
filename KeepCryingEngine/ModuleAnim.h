@@ -11,7 +11,7 @@
 
 #include "Module.h"
 
-#define MAX_BONES 800
+#define MAX_BONES 253
 
 struct Bone;
 class Mesh;

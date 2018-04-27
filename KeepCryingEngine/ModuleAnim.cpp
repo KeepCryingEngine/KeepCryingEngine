@@ -462,7 +462,6 @@ void ModuleAnim::CalculateAndLoadMatrixGPU(GameObject * root) const
 		for(size_t i = 0; i<mesh->GetBones().size();++i)
 		{
 			const Bone& bone = mesh->GetBones()[i];
-			float3x4 rootGameObjectMatrix = root->GetTransform()->GetModelMatrix().Float3x4Part();
 			GameObject* boneGameObject = root->GetChildByName(bone.name);
 
 			if(boneGameObject == nullptr)
@@ -472,8 +471,6 @@ void ModuleAnim::CalculateAndLoadMatrixGPU(GameObject * root) const
 
 			Transform* boneTransform = boneGameObject->GetTransform();
 			float3x4 boneMatrixToRoot = boneTransform->GetModelMatrix().Float3x4Part();
-
-			float3 scaleCorrection = float3::one.Div(rootGameObjectMatrix.GetScale());
 
 			aiMatrix4x4 aiBind = bone.bind;
 			float3x4 bondBindInvertedMatrix
@@ -488,7 +485,7 @@ void ModuleAnim::CalculateAndLoadMatrixGPU(GameObject * root) const
 			palete[i] = palete[i] * transformation;//TODO: verify correct mult
 		}
 
-		GLuint progId = root->GetComponent<MeshRenderer>()->GetMaterial()->GetProgramId();
+		GLuint progId = meshFilter->gameObject->GetComponent<MeshRenderer>()->GetMaterial()->GetProgramId();
 
 		//indices
 		glEnableVertexAttribArray(4);
@@ -499,7 +496,7 @@ void ModuleAnim::CalculateAndLoadMatrixGPU(GameObject * root) const
 		glBindBuffer(GL_ARRAY_BUFFER, mesh->GetBoneWeightsBufferId());
 		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
 		//Palete
-		GLint paleteId = glGetUniformLocation(progId, "palete");
+		GLint paleteId = glGetUniformLocation(progId, "palette");
 		glUniformMatrix4fv(paleteId, 1, GL_FALSE, palete->ptr());
 
 	}
