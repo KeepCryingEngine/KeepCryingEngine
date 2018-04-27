@@ -443,8 +443,6 @@ aiQuaternion ModuleAnim::Lerp(const aiQuaternion & first, const aiQuaternion & s
 
 void ModuleAnim::CalculateAndLoadMatrixGPU(GameObject * root) const
 {
-	return;
-
 	vector<MeshFilter*> meshFilters = root->GetParent()->GetComponentsInChildren<MeshFilter>();
 	for(MeshFilter* meshFilter : meshFilters)
 	{
