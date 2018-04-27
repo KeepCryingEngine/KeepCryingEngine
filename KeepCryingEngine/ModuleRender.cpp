@@ -18,6 +18,7 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "ModuleScene.h"
 
 const float3 ModuleRender::LIGHT_DIR = { -1.0,1.0,0.0 };
 
@@ -460,6 +461,43 @@ void ModuleRender::DrawGeometry()
 	}
 }
 
+void lala(Mesh* mesh, float4x4 palete[])
+{
+	int MAX_BONES = 100;
+
+	// float4x4 palete[MAX_BONES];
+	for(int i = 0; i < MAX_BONES; ++i)
+	{
+		palete[i] = float4x4::identity;
+	}
+
+	for(size_t i = 0; i<mesh->GetBones().size(); ++i)
+	{
+		const Bone& bone = mesh->GetBones()[i];
+		GameObject* boneGameObject = App->scene->GetRoot()->GetChildByName(bone.name);
+
+		if(boneGameObject == nullptr)
+		{
+			return;
+		}
+
+		Transform* boneTransform = boneGameObject->GetTransform();
+		float3x4 boneMatrixToRoot = boneTransform->GetModelMatrix().Float3x4Part();
+
+		aiMatrix4x4 aiBind = bone.bind;
+		float3x4 bondBindInvertedMatrix
+		(
+			(float)aiBind.a1, (float)aiBind.a2, (float)aiBind.a3, (float)aiBind.a4,
+			(float)aiBind.b1, (float)aiBind.b2, (float)aiBind.b3, (float)aiBind.b4,
+			(float)aiBind.c1, (float)aiBind.c2, (float)aiBind.c3, (float)aiBind.c4
+			// (float)aiBind.d1, (float)aiBind.d2, (float)aiBind.d3, (float)aiBind.d4
+		);
+
+		float3x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix;
+		palete[i] = palete[i] * transformation;//TODO: verify correct mult
+	}
+}
+
 void ModuleRender::Draw(const DrawInfo & drawInfo)
 {
 	GLuint progId = drawInfo.material.GetProgramId();
@@ -489,6 +527,28 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	//normal
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
+
+	// ...
+
+	//indices
+	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneIndicesBufferId());
+
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, 0, (void*)0);
+	//weights
+	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneWeightsBufferId());
+
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	float4x4 palete[100];
+	lala(&drawInfo.mesh, palete);
+
+	//Palete
+	GLint paleteId = glGetUniformLocation(progId, "palette");
+	glUniformMatrix4fv(paleteId, 1, GL_FALSE, palete->ptr());
+
+	// ...
 
 	GLint modelView = glGetUniformLocation(progId, "model_view");
 	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
@@ -546,6 +606,8 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
 	glDisableVertexAttribArray(3);
+	glDisableVertexAttribArray(4);
+	glDisableVertexAttribArray(5);
 
 	glUseProgram(0);
 }

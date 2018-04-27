@@ -45,10 +45,12 @@ update_status ModuleAnim::Update()
 	vector<Animator*> animators = App->scene->GetRoot()->GetComponentsInChildren<Animator>();
 	for (Animator* animator : animators)
 	{
+		CalculateAndLoadMatrixGPU(animator->gameObject);
+
 		if(animator->HasValidAnimationInstance())
 		{
 			/*DoVertexSkinning(animator->gameObject);*/
-			CalculateAndLoadMatrixGPU(animator->gameObject);
+			// CalculateAndLoadMatrixGPU(animator->gameObject);
 		}
 	}
 
@@ -441,6 +443,8 @@ aiQuaternion ModuleAnim::Lerp(const aiQuaternion & first, const aiQuaternion & s
 
 void ModuleAnim::CalculateAndLoadMatrixGPU(GameObject * root) const
 {
+	return;
+
 	vector<MeshFilter*> meshFilters = root->GetParent()->GetComponentsInChildren<MeshFilter>();
 	for(MeshFilter* meshFilter : meshFilters)
 	{
@@ -487,6 +491,8 @@ void ModuleAnim::CalculateAndLoadMatrixGPU(GameObject * root) const
 
 		GLuint progId = meshFilter->gameObject->GetComponent<MeshRenderer>()->GetMaterial()->GetProgramId();
 
+		glUseProgram(progId);
+
 		//indices
 		glEnableVertexAttribArray(4);
 		glBindBuffer(GL_ARRAY_BUFFER, mesh->GetBoneIndicesBufferId());
@@ -499,5 +505,9 @@ void ModuleAnim::CalculateAndLoadMatrixGPU(GameObject * root) const
 		GLint paleteId = glGetUniformLocation(progId, "palette");
 		glUniformMatrix4fv(paleteId, 1, GL_FALSE, palete->ptr());
 
+		glDisableVertexAttribArray(4);
+		glDisableVertexAttribArray(5);
+
+		glUseProgram(0);
 	}
 }

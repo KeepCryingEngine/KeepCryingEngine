@@ -83,18 +83,38 @@ void Mesh::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& i
 
 	if(!bones.empty())
 	{
+		for(size_t i = 0; i < bIndices.size(); ++i)
+		{
+			while(bIndices[i].size() < 4)
+			{
+				bIndices[i].push_back(0);
+			}
+
+			assert(bIndices[i].size() == 4);
+		}
+
+		for(size_t i = 0; i < bWeights.size(); ++i)
+		{
+			while(bWeights[i].size() < 4)
+			{
+				bWeights[i].push_back(0.0f);
+			}
+
+			assert(bWeights[i].size() == 4);
+		}
+
 		//Generate Vertex buffer
 		const int * boneIndicesPointer = &bIndices[0][0];
 		glGenBuffers(1, &boneIndicesBufferId);
 		glBindBuffer(GL_ARRAY_BUFFER, boneIndicesBufferId);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(int) * 4, boneIndicesPointer, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GL_INT) * 4 * bIndices.size(), boneIndicesPointer, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		//Generate Vertex buffer
 		const float * boneWeightsPointer = &bWeights[0][0];
 		glGenBuffers(1, &boneWeightsBufferId);
 		glBindBuffer(GL_ARRAY_BUFFER, boneWeightsBufferId);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4, boneWeightsPointer, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT) * 4 * bWeights.size(), boneWeightsPointer, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
