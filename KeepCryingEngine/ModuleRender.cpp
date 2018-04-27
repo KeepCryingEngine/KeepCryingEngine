@@ -530,23 +530,26 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 
 	// ...
 
-	//indices
-	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneIndicesBufferId());
+	if(!drawInfo.mesh.GetBones().empty())
+	{
+		//indices
+		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneIndicesBufferId());
 
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, 0, (void*)0);
-	//weights
-	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneWeightsBufferId());
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, 0, (void*)0);
+		//weights
+		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneWeightsBufferId());
 
-	glEnableVertexAttribArray(5);
-	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-	float4x4 palete[100];
-	lala(&drawInfo.mesh, palete);
+		float4x4 palete[100];
+		lala(&drawInfo.mesh, palete);
 
-	//Palete
-	GLint paleteId = glGetUniformLocation(progId, "palette");
-	glUniformMatrix4fv(paleteId, 1, GL_FALSE, palete->ptr());
+		//Palete
+		GLint paleteId = glGetUniformLocation(progId, "palette");
+		glUniformMatrix4fv(paleteId, 1, GL_FALSE, palete->ptr());
+	}
 
 	// ...
 

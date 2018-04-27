@@ -3,8 +3,6 @@ layout (location = 1) in vec4 color;
 layout (location = 2) in vec2 texCoord;
 layout (location = 3) in vec3 normal;
 
-#define RIGGING
-
 #ifdef RIGGING
 layout (location = 4) in ivec4 bone_indices;
 layout (location = 5) in vec4 bone_weights;
