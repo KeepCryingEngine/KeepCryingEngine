@@ -68,6 +68,8 @@ public:
 
 	float GetPercent(AnimInstanceId id) const;
 
+	float4x4* GetPalette(const GameObject* gameObject, const Mesh* mesh);
+
 private:
 	bool GetTransform(AnimInstance* animInstance, const char* channel, aiVector3D& position, aiQuaternion& rotation) const;
 	void DoVertexSkinning(GameObject * root);
@@ -79,12 +81,15 @@ private:
 
 	aiQuaternion Lerp(const aiQuaternion& first, const aiQuaternion& second, float lambda) const;
 
-	void CalculateAndLoadMatrixGPU(GameObject * root) const;
+	void ComputePalette(const GameObject* bonesRoot);
+
+	void ComputePalette(const GameObject* bonesRoot, const Mesh* mesh, float4x4 palette[]) const;
 
 private:
 	AnimMap animations;
 	InstanceList instances;
 	HoleList holes;
+	std::map<std::pair<const GameObject*, const Mesh*>, float4x4*> storedPalettes;
 };
 
 #endif // !_MODULEANIM_H_

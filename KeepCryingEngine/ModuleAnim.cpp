@@ -30,6 +30,13 @@ bool ModuleAnim::CleanUp()
 	instances.clear();
 	animations.clear();
 
+	for(map<pair<const GameObject*, const Mesh*>, float4x4*>::iterator it = storedPalettes.begin(); it != storedPalettes.end(); ++it)
+	{
+		free(it->second);
+	}
+
+	storedPalettes.clear();
+
 	return true;
 }
 
@@ -43,15 +50,9 @@ update_status ModuleAnim::Update()
 	}
 
 	vector<Animator*> animators = App->scene->GetRoot()->GetComponentsInChildren<Animator>();
-	for (Animator* animator : animators)
+	for(Animator* animator : animators)
 	{
-		CalculateAndLoadMatrixGPU(animator->gameObject);
-
-		if(animator->HasValidAnimationInstance())
-		{
-			/*DoVertexSkinning(animator->gameObject);*/
-			// CalculateAndLoadMatrixGPU(animator->gameObject);
-		}
+		ComputePalette(animator->gameObject);
 	}
 
 	return update_status::UPDATE_CONTINUE;
@@ -259,6 +260,27 @@ float ModuleAnim::GetPercent(AnimInstanceId id) const
 	return percent;
 }
 
+float4x4* ModuleAnim::GetPalette(const GameObject* gameObject, const Mesh* mesh)
+{
+	pair<const GameObject*, const Mesh*> storedPalettePair = make_pair(gameObject, mesh);
+
+	map<pair<const GameObject*, const Mesh*>, float4x4*>::iterator it = storedPalettes.find(storedPalettePair);
+
+	if(it == storedPalettes.end())
+	{
+		float4x4* palette = (float4x4*)malloc(MAX_BONES * sizeof(float4x4));
+
+		for(int i = 0; i < MAX_BONES; ++i)
+		{
+			palette[i] = float4x4::identity;
+		}
+
+		storedPalettes[storedPalettePair] = palette;
+	}
+
+	return storedPalettes.at(storedPalettePair);
+}
+
 bool ModuleAnim::GetTransform(AnimInstance* animInstance, const char * channel, aiVector3D & position, aiQuaternion & rotation) const
 {
 	if(animInstance == nullptr)
@@ -441,71 +463,46 @@ aiQuaternion ModuleAnim::Lerp(const aiQuaternion & first, const aiQuaternion & s
 	return result;
 }
 
-void ModuleAnim::CalculateAndLoadMatrixGPU(GameObject * root) const
+void ModuleAnim::ComputePalette(const GameObject* bonesRoot)
 {
-	vector<MeshFilter*> meshFilters = root->GetParent()->GetComponentsInChildren<MeshFilter>();
-	for(MeshFilter* meshFilter : meshFilters)
+	vector<MeshFilter*> meshFilterList = bonesRoot->GetParent()->GetComponentsInChildren<MeshFilter>();
+
+	for(MeshFilter* meshFilter : meshFilterList)
 	{
-		Mesh* mesh = meshFilter->GetMesh();
-		//vector<Vertex> vertices = mesh->GetOriginalVertices();
+		const Mesh* mesh = meshFilter->GetMesh();
 
-		//for(Vertex& vertex : vertices)
-		//{
-		//	vertex.position = float3::zero;
-		//}
+		float4x4* palette = GetPalette(meshFilter->gameObject, mesh);
 
-		float4x4 palete[MAX_BONES];
-		for(int i = 0; i < MAX_BONES; ++i)
+		ComputePalette(bonesRoot, mesh, palette);
+	}
+}
+
+void ModuleAnim::ComputePalette(const GameObject* bonesRoot, const Mesh* mesh, float4x4 palette[]) const
+{
+	assert(MAX_BONES >= mesh->GetBones().size());
+
+	for(size_t i = 0; i < mesh->GetBones().size(); ++i)
+	{
+		const Bone& bone = mesh->GetBones()[i];
+		GameObject* boneGameObject = bonesRoot->GetChildByName(bone.name);
+
+		if(boneGameObject == nullptr)
 		{
-			palete[i] = float4x4::identity;
+			return;
 		}
 
+		Transform* boneTransform = boneGameObject->GetTransform();
+		float3x4 boneMatrixToRoot = boneTransform->GetModelMatrix().Float3x4Part();
 
-		for(size_t i = 0; i<mesh->GetBones().size();++i)
-		{
-			const Bone& bone = mesh->GetBones()[i];
-			GameObject* boneGameObject = root->GetChildByName(bone.name);
+		aiMatrix4x4 aiBind = bone.bind;
+		float3x4 bondBindInvertedMatrix
+		(
+			(float)aiBind.a1, (float)aiBind.a2, (float)aiBind.a3, (float)aiBind.a4,
+			(float)aiBind.b1, (float)aiBind.b2, (float)aiBind.b3, (float)aiBind.b4,
+			(float)aiBind.c1, (float)aiBind.c2, (float)aiBind.c3, (float)aiBind.c4
+		);
 
-			if(boneGameObject == nullptr)
-			{
-				return;
-			}
-
-			Transform* boneTransform = boneGameObject->GetTransform();
-			float3x4 boneMatrixToRoot = boneTransform->GetModelMatrix().Float3x4Part();
-
-			aiMatrix4x4 aiBind = bone.bind;
-			float3x4 bondBindInvertedMatrix
-			(
-				(float)aiBind.a1, (float)aiBind.a2, (float)aiBind.a3, (float)aiBind.a4,
-				(float)aiBind.b1, (float)aiBind.b2, (float)aiBind.b3, (float)aiBind.b4,
-				(float)aiBind.c1, (float)aiBind.c2, (float)aiBind.c3, (float)aiBind.c4
-				// (float)aiBind.d1, (float)aiBind.d2, (float)aiBind.d3, (float)aiBind.d4
-			);
-
-			float3x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix;
-			palete[i] = palete[i] * transformation;//TODO: verify correct mult
-		}
-
-		GLuint progId = meshFilter->gameObject->GetComponent<MeshRenderer>()->GetMaterial()->GetProgramId();
-
-		glUseProgram(progId);
-
-		//indices
-		glEnableVertexAttribArray(4);
-		glBindBuffer(GL_ARRAY_BUFFER, mesh->GetBoneIndicesBufferId());
-		glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, 0, (void*)0);
-		//weights
-		glEnableVertexAttribArray(5);
-		glBindBuffer(GL_ARRAY_BUFFER, mesh->GetBoneWeightsBufferId());
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		//Palete
-		GLint paleteId = glGetUniformLocation(progId, "palette");
-		glUniformMatrix4fv(paleteId, 1, GL_FALSE, palete->ptr());
-
-		glDisableVertexAttribArray(4);
-		glDisableVertexAttribArray(5);
-
-		glUseProgram(0);
+		float3x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix;
+		palette[i] = float4x4(transformation).Transposed();
 	}
 }

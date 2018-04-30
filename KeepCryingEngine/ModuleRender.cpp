@@ -19,6 +19,7 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "ModuleScene.h"
+#include "ModuleAnim.h"
 
 const float3 ModuleRender::LIGHT_DIR = { -1.0,1.0,0.0 };
 
@@ -460,43 +461,6 @@ void ModuleRender::DrawGeometry()
 		Draw(drawInfo);
 	}
 }
-//TODO:refactor, and serializate rigging well
-void lala(Mesh* mesh, float4x4 palete[],int maxBones)
-{
-	
-
-	// float4x4 palete[MAX_BONES];
-	for(int i = 0; i < maxBones; ++i)
-	{
-		palete[i] = float4x4::identity;
-	}
-
-	for(size_t i = 0; i<mesh->GetBones().size(); ++i)
-	{
-		const Bone& bone = mesh->GetBones()[i];
-		GameObject* boneGameObject = App->scene->GetRoot()->GetChildByName(bone.name);
-
-		if(boneGameObject == nullptr)
-		{
-			return;
-		}
-
-		Transform* boneTransform = boneGameObject->GetTransform();
-		float3x4 boneMatrixToRoot = boneTransform->GetModelMatrix().Float3x4Part();
-
-		aiMatrix4x4 aiBind = bone.bind;
-		float3x4 bondBindInvertedMatrix
-		(
-			(float)aiBind.a1, (float)aiBind.a2, (float)aiBind.a3, (float)aiBind.a4,
-			(float)aiBind.b1, (float)aiBind.b2, (float)aiBind.b3, (float)aiBind.b4,
-			(float)aiBind.c1, (float)aiBind.c2, (float)aiBind.c3, (float)aiBind.c4
-			// (float)aiBind.d1, (float)aiBind.d2, (float)aiBind.d3, (float)aiBind.d4
-		);
-
-		float3x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix;
-		palete[i] = float4x4(transformation).Transposed();
-	}
-}
 
 void ModuleRender::Draw(const DrawInfo & drawInfo)
 {
@@ -545,13 +509,11 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneWeightsBufferId());
 		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-		assert(MAX_BONES > drawInfo.mesh.GetBones().size());
-		float4x4 palete[MAX_BONES];
-		lala(&drawInfo.mesh, palete,MAX_BONES);
+		float4x4* palette = App->anim->GetPalette(&drawInfo.gameObject, &drawInfo.mesh);
 
 		//Palete
 		GLint paleteId = glGetUniformLocation(progId, "palette");
-		glUniformMatrix4fv(paleteId, 100, GL_FALSE, palete->ptr());
+		glUniformMatrix4fv(paleteId, MAX_BONES, GL_FALSE, palette->ptr());
 	}
 
 	// ...
@@ -612,6 +574,7 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
 	glDisableVertexAttribArray(3);
+
 	if(!drawInfo.mesh.GetBones().empty())
 	{
 		glDisableVertexAttribArray(4);
