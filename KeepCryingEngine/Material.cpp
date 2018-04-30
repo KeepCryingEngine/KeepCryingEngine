@@ -49,48 +49,8 @@ void Material::DrawUI()
 		int tmpShaderMode = (int)shaderType;
 		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Lightning\0Cartoon\0Depth\0Color\0Rigging"))
 		{
-			int flags = 0;
-			string name = "";
-
-			shaderType = (ShaderType)tmpShaderMode;
-
-			switch(shaderType)
-			{
-				case ShaderType::Default:
-					flags |= DEFAULT;
-					name = "UberShader";
-					break;
-				case ShaderType::Lightning:
-					flags |= LIGHTNING;
-					name = "UberShader";
-					break;
-				case ShaderType::Cartoon:
-					flags |= CARTOON;
-					name = "UberShader";
-					break;
-				case ShaderType::Depth:
-					flags |= DEPTH;
-					name = "UberShader";
-					break;
-				case ShaderType::Color:
-					flags |= COLOR;
-					name = "UberShader";
-					break;
-				case ShaderType::Rigging:
-					flags |= RIGGING;
-					name = "UberShader";
-					break;
-			}
-
-			programId = App->shader->GetProgramId(flags, name);
+			SetShaderType((ShaderType)tmpShaderMode);
 		}
-
-		/* int tmpShaderMode = (int)shaderType;
-		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Cartoon\0Color\0Depth\0Diffuse"))
-		{
-			shaderType = (ShaderType)tmpShaderMode;
-			programId = App->shader->GetShaderId(shaderType);
-		} */
 	}
 }
 
@@ -133,4 +93,37 @@ ShaderType Material::GetShaderType() const
 void Material::SetShaderType(ShaderType shaderType)
 {
 	this->shaderType = shaderType;
+
+	int flags = 0;
+	string name = "";
+
+	switch(shaderType)
+	{
+		case ShaderType::Default:
+			flags |= DEFAULT;
+			name = "UberShader";
+			break;
+		case ShaderType::Lightning:
+			flags |= LIGHTNING;
+			name = "UberShader";
+			break;
+		case ShaderType::Cartoon:
+			flags |= CARTOON;
+			name = "UberShader";
+			break;
+		case ShaderType::Depth:
+			flags |= DEPTH;
+			name = "UberShader";
+			break;
+		case ShaderType::Color:
+			flags |= COLOR;
+			name = "UberShader";
+			break;
+		case ShaderType::Rigging:
+			flags |= RIGGING;
+			name = "UberShader";
+			break;
+	}
+
+	programId = App->shader->GetProgramId(flags, name);
 }
