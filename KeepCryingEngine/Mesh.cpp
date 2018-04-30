@@ -66,63 +66,10 @@ void Mesh::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& i
 	this->originalVertices = vertices;
 	this->indices = indices;
 	this->bones = bones;
-	vector<vector<int>> bIndices;
-	vector<vector<float>> bWeights;
-
-	bIndices.resize(vertices.size());
-	bWeights.resize(vertices.size());
-
-	for(size_t i =0; i<bones.size();++i)
-	{
-		for(size_t j = 0; j < bones[i].weights.size(); ++j)
-		{
-			bIndices[bones[i].weights[j].vertex].push_back(i);
-			bWeights[bones[i].weights[j].vertex].push_back(bones[i].weights[j].weight);
-		}
-	}
 
 	if(!bones.empty())
 	{
-		for(size_t i = 0; i < bIndices.size(); ++i)
-		{
-			while(bIndices[i].size() < 4)
-			{
-				bIndices[i].push_back(0);
-				bWeights[i].push_back(0.0f);
-			}
-
-			assert(bIndices[i].size() == 4);
-			assert(bWeights[i].size() == 4);
-		}
-
-		int* bIndicesArray = (int*)malloc(bIndices.size() * 4*sizeof(int)); // = new int[bIndices.size() * 4];
-		float* bWeightsArray = (float*)malloc(bWeights.size() * 4 * sizeof(float)); // = new float[bWeights.size() * 4];
-
-		for(size_t i = 0; i < bIndices.size(); i++)
-		{
-			for(size_t j = 0; j < 4; j++)
-			{
-				bIndicesArray[i * 4 + j] = bIndices[i][j];
-				bWeightsArray[i * 4 + j] = bWeights[i][j];
-			}
-		}
-
-		//Generate Vertex buffer
-		const int * boneIndicesPointer = bIndicesArray; // &bIndices[0][0];
-		glGenBuffers(1, &boneIndicesBufferId);
-		glBindBuffer(GL_ARRAY_BUFFER, boneIndicesBufferId);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GL_INT) * 4 * bIndices.size(), boneIndicesPointer, GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		//Generate Vertex buffer
-		const float * boneWeightsPointer = bWeightsArray; // &bWeights[0][0];
-		glGenBuffers(1, &boneWeightsBufferId);
-		glBindBuffer(GL_ARRAY_BUFFER, boneWeightsBufferId);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT) * 4 * bWeights.size(), boneWeightsPointer, GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		free(bIndicesArray);
-		free(bWeightsArray);
+		GenerateBoneBuffers();
 	}
 }
 
@@ -195,6 +142,65 @@ void Mesh::GenerateBuffers(const vector<Vertex>& vertices, const vector<GLushort
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * nIndices, indicesPointer, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void Mesh::GenerateBoneBuffers()
+{
+	vector<vector<int>> bIndices;
+	vector<vector<float>> bWeights;
+
+	bIndices.resize(vertices.size());
+	bWeights.resize(vertices.size());
+
+	for(size_t i = 0; i < bones.size(); ++i)
+	{
+		for(size_t j = 0; j < bones[i].weights.size(); ++j)
+		{
+			bIndices[bones[i].weights[j].vertex].push_back(i);
+			bWeights[bones[i].weights[j].vertex].push_back(bones[i].weights[j].weight);
+		}
+	}
+
+	for(size_t i = 0; i < bIndices.size(); ++i)
+	{
+		while(bIndices[i].size() < 4)
+		{
+			bIndices[i].push_back(0);
+			bWeights[i].push_back(0.0f);
+		}
+
+		assert(bIndices[i].size() == 4);
+		assert(bWeights[i].size() == 4);
+	}
+
+	int* bIndicesArray = (int*)malloc(bIndices.size() * 4 * sizeof(int)); // = new int[bIndices.size() * 4];
+	float* bWeightsArray = (float*)malloc(bWeights.size() * 4 * sizeof(float)); // = new float[bWeights.size() * 4];
+
+	for(size_t i = 0; i < bIndices.size(); i++)
+	{
+		for(size_t j = 0; j < 4; j++)
+		{
+			bIndicesArray[i * 4 + j] = bIndices[i][j];
+			bWeightsArray[i * 4 + j] = bWeights[i][j];
+		}
+	}
+
+	//Generate Vertex buffer
+	const int * boneIndicesPointer = bIndicesArray; // &bIndices[0][0];
+	glGenBuffers(1, &boneIndicesBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, boneIndicesBufferId);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_INT) * 4 * bIndices.size(), boneIndicesPointer, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	//Generate Vertex buffer
+	const float * boneWeightsPointer = bWeightsArray; // &bWeights[0][0];
+	glGenBuffers(1, &boneWeightsBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, boneWeightsBufferId);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT) * 4 * bWeights.size(), boneWeightsPointer, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	free(bIndicesArray);
+	free(bWeightsArray);
 }
 
 void Mesh::CalculateAABBForMesh(const vector<Vertex> &vertices)

@@ -52,7 +52,11 @@ void main()
 
 #ifdef RIGGING
 
-	mat4 skin_transform = palette[bone_indices[0]]*bone_weights[0]+palette[bone_indices[1]]*bone_weights[1]+ palette[bone_indices[2]]*bone_weights[2]+palette[bone_indices[3]]*bone_weights[3];
+	mat4 skin_transform = 	palette[bone_indices[0]]*bone_weights[0]+
+							palette[bone_indices[1]]*bone_weights[1]+ 
+							palette[bone_indices[2]]*bone_weights[2]+
+							palette[bone_indices[3]]*bone_weights[3];
+							
 	vec3 vertex_position = vec3(skin_transform*vec4(position, 1));
 	vec3 vertex_normal = vec3(skin_transform*vec4(normal, 0));
 //TODO: VERIFY

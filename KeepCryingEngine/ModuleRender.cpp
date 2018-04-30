@@ -460,13 +460,13 @@ void ModuleRender::DrawGeometry()
 		Draw(drawInfo);
 	}
 }
-
-void lala(Mesh* mesh, float4x4 palete[])
+//TODO:refactor, and serializate rigging well
+void lala(Mesh* mesh, float4x4 palete[],int maxBones)
 {
-	int MAX_BONES = 100;
+	
 
 	// float4x4 palete[MAX_BONES];
-	for(int i = 0; i < MAX_BONES; ++i)
+	for(int i = 0; i < maxBones; ++i)
 	{
 		palete[i] = float4x4::identity;
 	}
@@ -494,7 +494,7 @@ void lala(Mesh* mesh, float4x4 palete[])
 		);
 
 		float3x4 transformation = boneMatrixToRoot * bondBindInvertedMatrix;
-		palete[i] = palete[i] * transformation;//TODO: verify correct mult
+		palete[i] = float4x4(transformation).Transposed();
 	}
 }
 
@@ -533,22 +533,25 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	if(!drawInfo.mesh.GetBones().empty())
 	{
 		//indices
-		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneIndicesBufferId());
+		
 
 		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, 0, (void*)0);
+		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneIndicesBufferId());
+		glVertexAttribIPointer(4, 4, GL_INT, 0, (void*)0);
 		//weights
-		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneWeightsBufferId());
+		
 
 		glEnableVertexAttribArray(5);
+		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneWeightsBufferId());
 		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-		float4x4 palete[100];
-		lala(&drawInfo.mesh, palete);
+		assert(MAX_BONES > drawInfo.mesh.GetBones().size());
+		float4x4 palete[MAX_BONES];
+		lala(&drawInfo.mesh, palete,MAX_BONES);
 
 		//Palete
 		GLint paleteId = glGetUniformLocation(progId, "palette");
-		glUniformMatrix4fv(paleteId, 1, GL_FALSE, palete->ptr());
+		glUniformMatrix4fv(paleteId, 100, GL_FALSE, palete->ptr());
 	}
 
 	// ...
@@ -609,8 +612,11 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
 	glDisableVertexAttribArray(3);
-	glDisableVertexAttribArray(4);
-	glDisableVertexAttribArray(5);
+	if(!drawInfo.mesh.GetBones().empty())
+	{
+		glDisableVertexAttribArray(4);
+		glDisableVertexAttribArray(5);
+	}
 
 	glUseProgram(0);
 }

@@ -70,6 +70,7 @@ public:
 
 private:
 	void GenerateBuffers(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices);
+	void GenerateBoneBuffers();
 	void CalculateAABBForMesh(const std::vector<Vertex> &vertices);
 
 private:

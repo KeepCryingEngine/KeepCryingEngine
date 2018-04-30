@@ -11,6 +11,8 @@
 
 #include "Module.h"
 
+#define MAX_BONES 100
+
 class Mesh;
 class Camera;
 class Mesh;

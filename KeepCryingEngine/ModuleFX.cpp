@@ -44,8 +44,6 @@ void ModuleFX::Draw(const DrawInfo & drawInfo)
 		glBindTexture(GL_TEXTURE_2D, textId);
 	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.buffer.vertexPosId);
-
 	//position
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.buffer.vertexPosId);
