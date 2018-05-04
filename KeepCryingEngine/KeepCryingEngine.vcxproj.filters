@@ -187,6 +187,15 @@
     <ClCompile Include="Script.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="ModulePhysics.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugDraw.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h" />
@@ -394,6 +403,15 @@
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="Script.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ModulePhysics.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugDraw.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
       <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
