@@ -30,8 +30,9 @@ bool ModulePhysics::Init()
 
 bool ModulePhysics::Start()
 {
-	world->setDebugDrawer(debugDraw);
+	
 	world = new btDiscreteDynamicsWorld(dispatcher, broad_phase, solver, collision_conf);
+	world->setDebugDrawer(debugDraw);
 	world->setGravity(btVector3(0.0f, -10.0f, 0.0f));
 
 	return true;
