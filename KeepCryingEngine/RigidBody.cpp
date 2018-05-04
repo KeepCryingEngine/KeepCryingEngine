@@ -2,6 +2,8 @@
 
 #include "GameObject.h"
 #include "Transform.h"
+#include "Application.h"
+#include "ModulePhysics.h"
 
 RigidBody::RigidBody():Component(TYPE)
 {}
@@ -10,10 +12,14 @@ RigidBody::~RigidBody()
 {}
 
 void RigidBody::Awake()
-{}
+{
+	App->physics->Subscribe(*this);
+}
 
 void RigidBody::Destroy()
-{}
+{
+	App->physics->Unsubscribe(*this);
+}
 
 void RigidBody::DrawUI()
 {}

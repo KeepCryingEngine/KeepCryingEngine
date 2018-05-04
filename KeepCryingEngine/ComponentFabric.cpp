@@ -21,6 +21,7 @@
 #include "GridRenderer.h"
 #include "ParticleSystem.h"
 #include "Script.h"
+#include "RigidBody.h"
 
 Component * ComponentFabric::CreateComponent(Component::Type type)
 {
@@ -81,6 +82,9 @@ Component * ComponentFabric::CreateComponent(Component::Type type)
 			break;
 		case Component::Type::Script:
 			component = new Script();
+			break;
+		case Component::Type::RigidBody:
+			component = new RigidBody();
 			break;
 	}
 	assert(component);

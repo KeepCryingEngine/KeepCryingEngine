@@ -21,7 +21,7 @@ bool ModulePhysics::Init()
 	collision_conf = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collision_conf);
 	broad_phase = new btDbvtBroadphase();
-	solver = new btSequentialImpulseConstraintSolver;
+	solver = new btSequentialImpulseConstraintSolver();
 
 	debugDraw = new DebugDraw();
 
@@ -127,7 +127,7 @@ btRigidBody * ModulePhysics::AddBody(RigidBody* component)
 			break;
 	}
 
-	float mass = 1.0f; // 0.0f would create a static or inmutable body
+	float mass = 0.0f; // 0.0f would create a static or inmutable body
 	btVector3 localInertia(0.f, 0.f, 0.f);
 	if(mass != 0.f)
 	{

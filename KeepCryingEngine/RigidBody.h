@@ -41,7 +41,7 @@ public:
 	void getWorldTransform(btTransform& worldTrans) const override;
 	void setWorldTransform(const btTransform& worldTrans) override;
 private:
-	BodyType bodyType = BodyType::SPHERE;
+	BodyType bodyType = BodyType::BOX;
 
 	float3 boxShape= float3::one;
 
