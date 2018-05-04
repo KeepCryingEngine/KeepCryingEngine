@@ -34,6 +34,7 @@
 #include "InputText.h"
 #include "GridRenderer.h"
 #include "ParticleSystem.h"
+#include "RigidBody.h"
 
 using namespace std;
 
@@ -897,6 +898,10 @@ void ModuleEditorUI::DrawInspectorWindow()
 			if(ImGui::Selectable("Mesh Renderer"))
 			{
 				temp->AddComponent<MeshRenderer>();
+			}
+			if(ImGui::Selectable("RigidBody"))
+			{
+				temp->AddComponent<RigidBody>();
 			}
 			if(ImGui::Selectable("Camera"))
 			{

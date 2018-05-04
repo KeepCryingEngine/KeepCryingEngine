@@ -23,6 +23,7 @@ class ModuleTime;
 class ModuleFX;
 class ModuleScript;
 class ModuleLog;
+class ModulePhysics;
 
 
 enum class TimeState
@@ -68,6 +69,7 @@ public:
 	ModuleFX* fx = nullptr;
 	ModuleScript * script = nullptr;
 	ModuleLog* log = nullptr;
+	ModulePhysics* physics = nullptr;
 
 	TimeState state = TimeState::STOPED;
 

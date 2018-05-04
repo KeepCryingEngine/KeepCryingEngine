@@ -1,6 +1,7 @@
 #include "ModulePhysics.h"
 
 #include <btBulletDynamicsCommon.h>
+
 #include <algorithm>
 
 #include "Application.h"
@@ -50,7 +51,7 @@ update_status ModulePhysics::PreUpdate()
 
 update_status ModulePhysics::Update()
 {
-	if(debugDraw > 0 || App->uiEditor->GetDebugMode)
+	if(debugDraw->getDebugMode() > 0 || App->uiEditor->GetDebugMode())
 	{
 		world->debugDrawWorld();
 	}
@@ -62,7 +63,7 @@ void ModulePhysics::Play()
 {
 	for each (RigidBody* body in bodies)
 	{
-		BuildBody(*body);
+		body->SetBody(AddBody(body));
 	}
 }
 
@@ -86,7 +87,7 @@ void ModulePhysics::Subscribe(RigidBody & body)
 		bodies.push_back(&body);
 		if(App->state == TimeState::PLAYING)
 		{
-			BuildBody(body);
+			body.SetBody(AddBody(&body));
 		}
 	}
 }
@@ -105,11 +106,27 @@ void ModulePhysics::Unsubscribe(RigidBody & body)
 	}
 }
 
-btRigidBody * ModulePhysics::AddBody(btVector3 box_size, RigidBody* component)
+btRigidBody * ModulePhysics::AddBody(RigidBody* component)
 {
-	float mass = 1.0f; // 0.0f would create a static or inmutable body
-	btCollisionShape* colShape = new btBoxShape(box_size); // regular box
+	btCollisionShape* colShape = nullptr;
+	switch(component->GetBodyType())
+	{
+		case BodyType::SPHERE:
+			break;
+		case BodyType::BOX:
+		{
+			float3 boxSize = component->GetBoxShape();
+			btVector3 tempVec = btVector3(boxSize.x, boxSize.y, boxSize.z);
+			colShape = new btBoxShape(tempVec); // regular box
+		}
+			break;
+		case BodyType::CAPSULE:
+			break;
+		default:
+			break;
+	}
 
+	float mass = 1.0f; // 0.0f would create a static or inmutable body
 	btVector3 localInertia(0.f, 0.f, 0.f);
 	if(mass != 0.f)
 	{
@@ -120,9 +137,6 @@ btRigidBody * ModulePhysics::AddBody(btVector3 box_size, RigidBody* component)
 	world->addRigidBody(body);
 	return body;
 }
-
-void ModulePhysics::BuildBody(RigidBody & body)
-{}
 
 void ModulePhysics::DestroyBody(btRigidBody & body)
 {}

@@ -35,12 +35,15 @@ public:
 	void SetBody(btRigidBody* newBody);
 	BodyType GetBodyType() const;
 	btRigidBody* GetBody()const;
+	const float3& GetBoxShape() const;
 
 	// from btMotionState
 	void getWorldTransform(btTransform& worldTrans) const override;
 	void setWorldTransform(const btTransform& worldTrans) override;
 private:
 	BodyType bodyType = BodyType::SPHERE;
+
+	float3 boxShape= float3::one;
 
 	btRigidBody* body = nullptr;
 };

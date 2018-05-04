@@ -3,7 +3,7 @@
 
 #include "Module.h"
 
-#include <LinearMath\btTransform.h>
+#include <float3.h>
 #include <list>
 
 class btDefaultCollisionConfiguration;
@@ -35,9 +35,9 @@ public:
 	void Subscribe(RigidBody & body);
 	void Unsubscribe(RigidBody & body);
 
-	btRigidBody* AddBody(btVector3 box_size, RigidBody* component);
+
 private:
-	void BuildBody(RigidBody & body);
+	btRigidBody * AddBody(RigidBody* component);
 	void DestroyBody(btRigidBody &body);
 
 private:
