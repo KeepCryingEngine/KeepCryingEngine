@@ -30,7 +30,8 @@ public:
 		Transform2D,
 		GridRenderer,
 		ParticleSystem,
-		Script
+		Script,
+		RigidBody
 	};
 
 	Component(Component::Type type) : enabled(true), wasEnabled(true), type(type)
