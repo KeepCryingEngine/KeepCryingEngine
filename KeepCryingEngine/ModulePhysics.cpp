@@ -11,16 +11,16 @@
 #include "RigidBody.h"
 
 ModulePhysics::ModulePhysics()
-{}
+{ }
 
 ModulePhysics::~ModulePhysics()
-{}
+{ }
 
 bool ModulePhysics::Init()
 {
-	collision_conf = new btDefaultCollisionConfiguration();
-	dispatcher = new btCollisionDispatcher(collision_conf);
-	broad_phase = new btDbvtBroadphase();
+	collisionConf = new btDefaultCollisionConfiguration();
+	dispatcher = new btCollisionDispatcher(collisionConf);
+	broadPhase = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver();
 
 	debugDraw = new DebugDraw();
@@ -30,8 +30,7 @@ bool ModulePhysics::Init()
 
 bool ModulePhysics::Start()
 {
-	
-	world = new btDiscreteDynamicsWorld(dispatcher, broad_phase, solver, collision_conf);
+	world = new btDiscreteDynamicsWorld(dispatcher, broadPhase, solver, collisionConf);
 	world->setDebugDrawer(debugDraw);
 	world->setGravity(btVector3(0.0f, -10.0f, 0.0f));
 
@@ -62,7 +61,7 @@ update_status ModulePhysics::Update()
 
 void ModulePhysics::Play()
 {
-	for each (RigidBody* body in bodies)
+	for(RigidBody* body : bodies)
 	{
 		body->SetBody(AddBody(body));
 	}
@@ -70,7 +69,7 @@ void ModulePhysics::Play()
 
 void ModulePhysics::Stop()
 {
-	for each (RigidBody* body in bodies)
+	for(RigidBody* body : bodies)
 	{
 		btRigidBody* tempBody = body->GetBody();
 		if(tempBody != nullptr)
@@ -80,12 +79,10 @@ void ModulePhysics::Stop()
 	}
 }
 
-void ModulePhysics::Subscribe(RigidBody & body)
+void ModulePhysics::Subscribe(RigidBody& body)
 {
-	//If subscribe item is not already in the list, add it
-	if(find(bodies.begin(), bodies.end(), &body) == bodies.end())
+	if(bodies.insert(&body).second)
 	{
-		bodies.push_back(&body);
 		if(App->state == TimeState::PLAYING)
 		{
 			body.SetBody(AddBody(&body));
@@ -93,21 +90,20 @@ void ModulePhysics::Subscribe(RigidBody & body)
 	}
 }
 
-void ModulePhysics::Unsubscribe(RigidBody & body)
+void ModulePhysics::Unsubscribe(RigidBody& body)
 {
-	std::list<RigidBody*>::iterator it = find(bodies.begin(), bodies.end(), &body);
-	if(it != bodies.end())
+	if(bodies.erase(&body) > 0)
 	{
-		btRigidBody* tempBody = (*it)->GetBody();
+		btRigidBody* tempBody = body.GetBody();
+
 		if(tempBody != nullptr)
 		{
 			DestroyBody(*tempBody);
 		}
-		bodies.erase(it);
 	}
 }
 
-btRigidBody * ModulePhysics::AddBody(RigidBody* component)
+btRigidBody* ModulePhysics::AddBody(RigidBody* component)
 {
 	btCollisionShape* colShape = nullptr;
 	switch(component->GetBodyType())
@@ -139,5 +135,11 @@ btRigidBody * ModulePhysics::AddBody(RigidBody* component)
 	return body;
 }
 
-void ModulePhysics::DestroyBody(btRigidBody & body)
-{}
+void ModulePhysics::DestroyBody(btRigidBody& body)
+{
+	// ...
+
+	world->removeRigidBody(&body);
+
+	// ...
+}

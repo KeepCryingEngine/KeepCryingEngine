@@ -1,16 +1,16 @@
 #include "RigidBody.h"
 
-#include <btBulletDynamicsCommon.h>
 #include "GameObject.h"
 #include "Transform.h"
 #include "Application.h"
 #include "ModulePhysics.h"
+#include <btBulletDynamicsCommon.h>
 
 RigidBody::RigidBody():Component(TYPE)
-{}
+{ }
 
 RigidBody::~RigidBody()
-{}
+{ }
 
 void RigidBody::Awake()
 {
@@ -44,11 +44,17 @@ void RigidBody::DrawUI()
 			gameObject->RemoveComponent(this);
 		}
 
-		if(ImGui::DragFloat("Mass", &mass, 0.1f))
+		if(ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, 1000000.0f))
 		{
 			if(body != nullptr)
 			{
-				body->setMassProps(mass, body->getLocalInertia());
+				App->physics->Unsubscribe(*this);
+
+				btVector3 inertia;
+				body->getCollisionShape()->calculateLocalInertia(mass, inertia);
+				body->setMassProps(mass, inertia);
+
+				App->physics->Subscribe(*this);
 			}
 		}
 
@@ -57,6 +63,7 @@ void RigidBody::DrawUI()
 		{
 			bodyType = (BodyType)tempType;
 		}
+
 		switch(bodyType)
 		{
 			case BodyType::BOX:
@@ -66,7 +73,6 @@ void RigidBody::DrawUI()
 					if(body != nullptr)
 					{
 						((btBoxShape*)body->getCollisionShape())->setImplicitShapeDimensions(btVector3(boxShape.x, boxShape.y, boxShape.z));
-						//body->getCollisionShape()->setLocalScaling(btVector3(boxShape.x, boxShape.y, boxShape.z));
 					}
 				}
 			}

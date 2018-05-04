@@ -3,8 +3,8 @@
 
 #include "Module.h"
 
+#include <set>
 #include <float3.h>
-#include <list>
 
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
@@ -21,36 +21,34 @@ class ModulePhysics : public Module
 {
 public:
 	ModulePhysics();
-	~ModulePhysics();
+	virtual ~ModulePhysics();
 
-	bool Init()override;
-	bool Start()override;
-	bool CleanUp()override;
-	update_status PreUpdate()override;
-	update_status Update()override;
+	bool Init() override;
+	bool Start() override;
+	bool CleanUp() override;
+	update_status PreUpdate() override;
+	update_status Update() override;
 
-	virtual void Play()override;
-	virtual void Stop()override;
+	virtual void Play() override;
+	virtual void Stop() override;
 
-	void Subscribe(RigidBody & body);
-	void Unsubscribe(RigidBody & body);
-
-
-private:
-	btRigidBody * AddBody(RigidBody* component);
-	void DestroyBody(btRigidBody &body);
+	void Subscribe(RigidBody& body);
+	void Unsubscribe(RigidBody& body);
 
 private:
-	btDefaultCollisionConfiguration * collision_conf = nullptr;
+	btRigidBody* AddBody(RigidBody* component);
+	void DestroyBody(btRigidBody& body);
+
+private:
+	btDefaultCollisionConfiguration * collisionConf = nullptr;
 	btCollisionDispatcher* dispatcher = nullptr;
-	btBroadphaseInterface* broad_phase = nullptr;
+	btBroadphaseInterface* broadPhase = nullptr;
 	btSequentialImpulseConstraintSolver* solver = nullptr;
 	btDiscreteDynamicsWorld* world = nullptr;
 
 	DebugDraw* debugDraw = nullptr;
 
-	std::list<RigidBody*> bodies;
+	std::set<RigidBody*> bodies;
 };
 
 #endif // !_MODULEPHYSICS_H_
-
