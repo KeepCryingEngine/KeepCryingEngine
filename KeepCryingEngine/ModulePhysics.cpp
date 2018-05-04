@@ -52,7 +52,7 @@ update_status ModulePhysics::PreUpdate()
 
 update_status ModulePhysics::Update()
 {
-	if(debugDraw->getDebugMode() > 0 || App->uiEditor->GetDebugMode())
+	//if(App->uiEditor->GetDebugMode())
 	{
 		world->debugDrawWorld();
 	}
@@ -127,7 +127,7 @@ btRigidBody * ModulePhysics::AddBody(RigidBody* component)
 			break;
 	}
 
-	float mass = 0.0f; // 0.0f would create a static or inmutable body
+	float mass = component->GetMass(); // 0.0f would create a static or inmutable body
 	btVector3 localInertia(0.f, 0.f, 0.f);
 	if(mass != 0.f)
 	{

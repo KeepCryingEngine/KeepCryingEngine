@@ -1,5 +1,6 @@
 #include "RigidBody.h"
 
+#include <btBulletDynamicsCommon.h>
 #include "GameObject.h"
 #include "Transform.h"
 #include "Application.h"
@@ -22,13 +23,77 @@ void RigidBody::Destroy()
 }
 
 void RigidBody::DrawUI()
-{}
+{
+	if(ImGui::CollapsingHeader("RigidBody"))
+	{
+		if(ImGui::Checkbox("Active", &enabled))
+		{
+			if(enabled)
+			{
+				App->physics->Subscribe(*this);
+			}
+			else
+			{
+				App->physics->Unsubscribe(*this);
+			}
+		}
+		ImGui::SameLine();
+
+		if(ImGui::Button("Delete Component"))
+		{
+			gameObject->RemoveComponent(this);
+		}
+
+		if(ImGui::DragFloat("Mass", &mass, 0.1f))
+		{
+			if(body != nullptr)
+			{
+				body->setMassProps(mass, body->getLocalInertia());
+			}
+		}
+
+		int tempType = (int)bodyType;
+		if(ImGui::Combo("Body Type", &tempType, "Box\0Sphere\0Capsule"))
+		{
+			bodyType = (BodyType)tempType;
+		}
+		switch(bodyType)
+		{
+			case BodyType::BOX:
+			{
+				if(ImGui::DragFloat3("Size", boxShape.ptr(), 0.1f))
+				{
+					if(body != nullptr)
+					{
+						((btBoxShape*)body->getCollisionShape())->setImplicitShapeDimensions(btVector3(boxShape.x, boxShape.y, boxShape.z));
+						//body->getCollisionShape()->setLocalScaling(btVector3(boxShape.x, boxShape.y, boxShape.z));
+					}
+				}
+			}
+			break;
+		}
+	}
+}
 
 void RigidBody::PreLoad(const nlohmann::json & json)
-{}
+{
+	Component::PreLoad(json);
+	bodyType = json["bodyType"];
+	mass = json["mass"];
+	from_json(json["boxShape"], boxShape);
+}
 
 void RigidBody::Save(nlohmann::json & json) const
-{}
+{
+	Component::Save(json);
+	json["bodyType"] = bodyType;
+	json["mass"] = mass;
+
+	nlohmann::json jsonBoxShape;
+	to_json(jsonBoxShape, boxShape);
+
+	json["boxShape"] = jsonBoxShape;
+}
 
 void RigidBody::SetBodyType(BodyType newType)
 {
@@ -53,6 +118,11 @@ btRigidBody * RigidBody::GetBody() const
 const float3 & RigidBody::GetBoxShape() const
 {
 	return boxShape;
+}
+
+float RigidBody::GetMass() const
+{
+	return mass;
 }
 
 void RigidBody::getWorldTransform(btTransform & worldTrans) const

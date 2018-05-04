@@ -2,17 +2,22 @@
 
 #include <GL/glew.h>
 
+#include "Application.h"
+#include "ModuleShader.h"
+#include "ModuleCamera.h"
+#include "Camera.h"
+#include "Transform.h"
+
 DebugDraw::DebugDraw()
 {}
 
 DebugDraw::~DebugDraw()
 {}
 
-void DebugDraw::drawLine(const btVector3 & from, const btVector3 & to, const btVector3 & color)
+void DebugDraw::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
 {
 	glBegin(GL_LINES);
-	glLineWidth(20);
-	glColor3f(color.getX(), color.getY(), color.getZ());
+	glColor3f(255, 0, 255);
 	glVertex3d(from.getX(), from.getY(), from.getZ());
 	glVertex3d(to.getX(), to.getY(), to.getZ());
 	glEnd();

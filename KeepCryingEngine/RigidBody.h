@@ -10,8 +10,8 @@ class btRigidBody;
 
 enum class BodyType
 {
-	SPHERE,
 	BOX,
+	SPHERE,
 	CAPSULE
 };
 
@@ -36,6 +36,7 @@ public:
 	BodyType GetBodyType() const;
 	btRigidBody* GetBody()const;
 	const float3& GetBoxShape() const;
+	float GetMass()const;
 
 	// from btMotionState
 	void getWorldTransform(btTransform& worldTrans) const override;
@@ -44,6 +45,8 @@ private:
 	BodyType bodyType = BodyType::BOX;
 
 	float3 boxShape= float3::one;
+
+	float mass = 1.0f;
 
 	btRigidBody* body = nullptr;
 };

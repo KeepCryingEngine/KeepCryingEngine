@@ -18,7 +18,7 @@ public:
 	
 
 private:
-	int debugMode = 0;
+	int debugMode = 1;
 
 };
 
