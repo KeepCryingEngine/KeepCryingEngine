@@ -44,7 +44,7 @@ public:
 private:
 	BodyType bodyType = BodyType::BOX;
 
-	float3 boxShape= float3::one;
+	float3 boxShape = float3::one;
 
 	float mass = 1.0f;
 

@@ -4,6 +4,7 @@
 #include "Module.h"
 
 #include <set>
+#include <list>
 #include <float3.h>
 
 class btDefaultCollisionConfiguration;
@@ -28,6 +29,7 @@ public:
 	bool CleanUp() override;
 	update_status PreUpdate() override;
 	update_status Update() override;
+	update_status PostUpdate() override;
 
 	virtual void Play() override;
 	virtual void Stop() override;
@@ -37,7 +39,9 @@ public:
 
 private:
 	btRigidBody* AddBody(RigidBody* component);
-	void DestroyBody(btRigidBody& body);
+	void RemoveBodyFromWorld(btRigidBody& body);
+	void UpdateTransform(RigidBody* body) const;
+	void UpdateBody(RigidBody* body) const;
 
 private:
 	btDefaultCollisionConfiguration * collisionConf = nullptr;
@@ -49,6 +53,7 @@ private:
 	DebugDraw* debugDraw = nullptr;
 
 	std::set<RigidBody*> bodies;
+	std::list<btRigidBody*> btBodies;
 };
 
 #endif // !_MODULEPHYSICS_H_

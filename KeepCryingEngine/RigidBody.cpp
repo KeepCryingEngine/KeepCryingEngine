@@ -37,6 +37,7 @@ void RigidBody::DrawUI()
 				App->physics->Unsubscribe(*this);
 			}
 		}
+
 		ImGui::SameLine();
 
 		if(ImGui::Button("Delete Component"))
@@ -73,6 +74,8 @@ void RigidBody::DrawUI()
 					if(body != nullptr)
 					{
 						((btBoxShape*)body->getCollisionShape())->setImplicitShapeDimensions(btVector3(boxShape.x, boxShape.y, boxShape.z));
+
+						body->applyForce(btVector3(0.0f, 0.0f, 0.0f), btVector3(0.0f, 0.0f, 0.0f));
 					}
 				}
 			}
@@ -145,8 +148,9 @@ void RigidBody::setWorldTransform(const btTransform & worldTrans)
 	btQuaternion rot = worldTrans.getRotation();
 	btVector3 pos = worldTrans.getOrigin();
 
-	Quat tempQuat(rot.getX(),rot.getY(),rot.getZ(),rot.getW());
-	float3 tempVec(pos.getX(),pos.getY(),pos.getZ());
+	Quat tempQuat(rot.getX(), rot.getY(), rot.getZ(), rot.getW());
+	float3 tempVec(pos.getX(), pos.getY(), pos.getZ());
+
 	float4x4 new_global(tempQuat, tempVec);
 
 	// now find out our new local transformation in order to meet the global one from physics

@@ -9,6 +9,8 @@
 #include "ModuleEditorUI.h"
 #include "DebugDraw.h"
 #include "RigidBody.h"
+#include "Transform.h"
+#include "ModuleCamera.h"
 
 ModulePhysics::ModulePhysics()
 { }
@@ -39,13 +41,33 @@ bool ModulePhysics::Start()
 
 bool ModulePhysics::CleanUp()
 {
+	for(btRigidBody*& btBody : btBodies)
+	{
+		delete(btBody);
+		btBody = nullptr;
+	}
+	
+	btBodies.clear();
+
+	for(RigidBody* body : bodies)
+	{
+		body->SetBody(nullptr);
+	}
+
+	bodies.clear();
+
 	return true;
 }
 
 update_status ModulePhysics::PreUpdate()
 {
-	// Step the physics world
 	world->stepSimulation(App->time->GetDeltaTime(), 15);
+
+	for(RigidBody* body : bodies)
+	{
+		UpdateTransform(body);
+	}
+
 	return update_status::UPDATE_CONTINUE;
 }
 
@@ -53,7 +75,20 @@ update_status ModulePhysics::Update()
 {
 	//if(App->uiEditor->GetDebugMode())
 	{
-		world->debugDrawWorld();
+		if(App->camera->GetPlayOrEditorCamera() != nullptr)
+		{
+			world->debugDrawWorld();
+		}
+	}
+
+	return update_status::UPDATE_CONTINUE;
+}
+
+update_status ModulePhysics::PostUpdate()
+{
+	for(RigidBody* body : bodies)
+	{
+		UpdateBody(body);
 	}
 
 	return update_status::UPDATE_CONTINUE;
@@ -74,9 +109,11 @@ void ModulePhysics::Stop()
 		btRigidBody* tempBody = body->GetBody();
 		if(tempBody != nullptr)
 		{
-			DestroyBody(*tempBody);
+			RemoveBodyFromWorld(*tempBody);
 		}
 	}
+
+	CleanUp();
 }
 
 void ModulePhysics::Subscribe(RigidBody& body)
@@ -98,7 +135,7 @@ void ModulePhysics::Unsubscribe(RigidBody& body)
 
 		if(tempBody != nullptr)
 		{
-			DestroyBody(*tempBody);
+			RemoveBodyFromWorld(*tempBody);
 		}
 	}
 }
@@ -131,15 +168,43 @@ btRigidBody* ModulePhysics::AddBody(RigidBody* component)
 	}
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass,component,colShape,localInertia);
 	btRigidBody* body = new btRigidBody(rbInfo);
+	btBodies.push_back(body);
 	world->addRigidBody(body);
+
+	UpdateBody(component);
+
 	return body;
 }
 
-void ModulePhysics::DestroyBody(btRigidBody& body)
+void ModulePhysics::RemoveBodyFromWorld(btRigidBody& body)
 {
 	// ...
 
 	world->removeRigidBody(&body);
 
 	// ...
+}
+
+void ModulePhysics::UpdateTransform(RigidBody* body) const
+{
+	float3 position = body->gameObject->GetTransform()->GetWorldPosition();
+	Quat rotation = body->gameObject->GetTransform()->GetWorldRotation();
+
+	btTransform transform;
+	transform.setIdentity();
+	transform.setOrigin(btVector3(position.x, position.y, position.z));
+	transform.setRotation(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w));
+
+	body->setWorldTransform(transform);
+}
+
+void ModulePhysics::UpdateBody(RigidBody* body) const
+{
+	if(body->GetBody() != nullptr)
+	{
+		btTransform transform;
+		transform.setIdentity();
+		body->getWorldTransform(transform);
+		body->GetBody()->setWorldTransform(transform);
+	}
 }
