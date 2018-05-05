@@ -4,9 +4,10 @@
 #include "Component.h"
 
 #include <LinearMath\btMotionState.h>
-#include <LinearMath\btTransform.h>
 
 class btRigidBody;
+class btTransform;
+class btCollisionShape;
 
 enum class BodyType
 {
@@ -15,7 +16,7 @@ enum class BodyType
 	CAPSULE
 };
 
-class RigidBody : public Component,public btMotionState
+class RigidBody : public Component, public btMotionState
 {
 public:
 	static const Component::Type TYPE = Component::Type::RigidBody;
@@ -35,16 +36,27 @@ public:
 	void SetBody(btRigidBody* newBody);
 	BodyType GetBodyType() const;
 	btRigidBody* GetBody()const;
-	const float3& GetBoxShape() const;
 	float GetMass()const;
 
 	// from btMotionState
 	void getWorldTransform(btTransform& worldTrans) const override;
 	void setWorldTransform(const btTransform& worldTrans) override;
+
+	btCollisionShape* CreateCollisionShape() const;
+
+private:
+	struct BaseShapeInfo { };
+
+	struct BoxShapeInfo : public BaseShapeInfo { float3 dimension = float3::one; };
+
+	struct SphereShapeInfo : public BaseShapeInfo { float radius = 1.0f; };
+
+	struct CapsuleShapeInfo : public BaseShapeInfo { float radius = 1.0f; float height = 2.0f; };
+
 private:
 	BodyType bodyType = BodyType::BOX;
 
-	float3 boxShape = float3::one;
+	BaseShapeInfo* shapeInfo = nullptr;
 
 	float mass = 1.0f;
 
@@ -52,4 +64,3 @@ private:
 };
 
 #endif // !_RIGIDBODY_H_
-

@@ -142,23 +142,7 @@ void ModulePhysics::Unsubscribe(RigidBody& body)
 
 btRigidBody* ModulePhysics::AddBody(RigidBody* component)
 {
-	btCollisionShape* colShape = nullptr;
-	switch(component->GetBodyType())
-	{
-		case BodyType::SPHERE:
-			break;
-		case BodyType::BOX:
-		{
-			float3 boxSize = component->GetBoxShape();
-			btVector3 tempVec = btVector3(boxSize.x, boxSize.y, boxSize.z);
-			colShape = new btBoxShape(tempVec); // regular box
-		}
-			break;
-		case BodyType::CAPSULE:
-			break;
-		default:
-			break;
-	}
+	btCollisionShape* colShape = component->CreateCollisionShape();
 
 	float mass = component->GetMass(); // 0.0f would create a static or inmutable body
 	btVector3 localInertia(0.f, 0.f, 0.f);

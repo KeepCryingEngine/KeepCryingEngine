@@ -6,8 +6,10 @@
 #include "ModulePhysics.h"
 #include <btBulletDynamicsCommon.h>
 
-RigidBody::RigidBody():Component(TYPE)
-{ }
+RigidBody::RigidBody() : Component(TYPE)
+{
+	SetBodyType(bodyType);
+}
 
 RigidBody::~RigidBody()
 { }
@@ -67,15 +69,46 @@ void RigidBody::DrawUI()
 
 		switch(bodyType)
 		{
+			case BodyType::SPHERE:
+			{
+				float& radius = ((SphereShapeInfo*)shapeInfo)->radius;
+				if(ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, 1000000.0f))
+				{
+					if(body != nullptr)
+					{
+						((btSphereShape*)body->getCollisionShape())->setUnscaledRadius(radius);
+					}
+				}
+			}
+			break;
 			case BodyType::BOX:
 			{
-				if(ImGui::DragFloat3("Size", boxShape.ptr(), 0.1f))
+				float3& boxShape = ((BoxShapeInfo*)shapeInfo)->dimension;
+				if(ImGui::DragFloat3("Dimension", boxShape.ptr(), 0.1f))
 				{
 					if(body != nullptr)
 					{
 						((btBoxShape*)body->getCollisionShape())->setImplicitShapeDimensions(btVector3(boxShape.x, boxShape.y, boxShape.z));
-
-						body->applyForce(btVector3(0.0f, 0.0f, 0.0f), btVector3(0.0f, 0.0f, 0.0f));
+					}
+				}
+			}
+			break;
+			case BodyType::CAPSULE:
+			{
+				float& radius = ((CapsuleShapeInfo*)shapeInfo)->radius;
+				float& height = ((CapsuleShapeInfo*)shapeInfo)->height;
+				if(ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, 1000000.0f))
+				{
+					if(body != nullptr)
+					{
+						((btCapsuleShape*)body->getCollisionShape())->setImplicitShapeDimensions(btVector3(radius, 0.5f * height, radius));
+					}
+				}
+				if(ImGui::DragFloat("Height", &height, 0.1f, 0.0f, 1000000.0f))
+				{
+					if(body != nullptr)
+					{
+						((btCapsuleShape*)body->getCollisionShape())->setImplicitShapeDimensions(btVector3(radius, 0.5f * height, radius));
 					}
 				}
 			}
@@ -88,8 +121,24 @@ void RigidBody::PreLoad(const nlohmann::json & json)
 {
 	Component::PreLoad(json);
 	bodyType = json["bodyType"];
+
+	SetBodyType(bodyType);
+
 	mass = json["mass"];
-	from_json(json["boxShape"], boxShape);
+
+	switch(bodyType)
+	{
+		case BodyType::SPHERE:
+			((SphereShapeInfo*)shapeInfo)->radius = json["shapeInfo"];
+			break;
+		case BodyType::BOX:
+			from_json(json["shapeInfo"], ((BoxShapeInfo*)shapeInfo)->dimension);
+			break;
+		case BodyType::CAPSULE:
+			((CapsuleShapeInfo*)shapeInfo)->radius = json["shapeInfo"]["radius"];
+			((CapsuleShapeInfo*)shapeInfo)->height = json["shapeInfo"]["height"];
+			break;
+	}
 }
 
 void RigidBody::Save(nlohmann::json & json) const
@@ -98,18 +147,49 @@ void RigidBody::Save(nlohmann::json & json) const
 	json["bodyType"] = bodyType;
 	json["mass"] = mass;
 
-	nlohmann::json jsonBoxShape;
-	to_json(jsonBoxShape, boxShape);
+	nlohmann::json jsonShapeInfo;
 
-	json["boxShape"] = jsonBoxShape;
+	switch(bodyType)
+	{
+		case BodyType::SPHERE:
+			jsonShapeInfo = ((SphereShapeInfo*)shapeInfo)->radius;
+			break;
+		case BodyType::BOX:
+			to_json(jsonShapeInfo, ((BoxShapeInfo*)shapeInfo)->dimension);
+			break;
+		case BodyType::CAPSULE:
+			jsonShapeInfo["radius"] = ((CapsuleShapeInfo*)shapeInfo)->radius;
+			jsonShapeInfo["height"] = ((CapsuleShapeInfo*)shapeInfo)->height;
+			break;
+	}
+
+	json["shapeInfo"] = jsonShapeInfo;
 }
 
 void RigidBody::SetBodyType(BodyType newType)
 {
+	if(shapeInfo != nullptr)
+	{
+		RELEASE(shapeInfo);
+	}
+
 	bodyType = newType;
+
+	switch(bodyType)
+	{
+		case BodyType::SPHERE:
+			shapeInfo = new SphereShapeInfo();
+			break;
+		case BodyType::BOX:
+			shapeInfo = new BoxShapeInfo();
+			break;
+		case BodyType::CAPSULE:
+			shapeInfo = new CapsuleShapeInfo();
+			break;
+	}
 }
 
-void RigidBody::SetBody(btRigidBody * newBody)
+void RigidBody::SetBody(btRigidBody* newBody)
 {
 	body = newBody;
 }
@@ -119,14 +199,9 @@ BodyType RigidBody::GetBodyType() const
 	return bodyType;
 }
 
-btRigidBody * RigidBody::GetBody() const
+btRigidBody* RigidBody::GetBody() const
 {
 	return body;
-}
-
-const float3 & RigidBody::GetBoxShape() const
-{
-	return boxShape;
 }
 
 float RigidBody::GetMass() const
@@ -162,4 +237,31 @@ void RigidBody::setWorldTransform(const btTransform & worldTrans)
 	gameObject->GetTransform()->SetLocalPosition(translation);
 	gameObject->GetTransform()->SetLocalRotation(rotation);
 	gameObject->GetTransform()->SetLocalScale(scale);
+}
+
+btCollisionShape* RigidBody::CreateCollisionShape() const
+{
+	btCollisionShape* colShape = nullptr;
+
+	switch(bodyType)
+	{
+		case BodyType::SPHERE:
+		{
+			colShape = new btSphereShape(((SphereShapeInfo*)shapeInfo)->radius);
+		}
+			break;
+		case BodyType::BOX:
+		{
+			float3 dimension = ((BoxShapeInfo*)shapeInfo)->dimension;
+			colShape = new btBoxShape(btVector3(dimension.x, dimension.y, dimension.z));
+		}
+			break;
+		case BodyType::CAPSULE:
+		{
+			colShape = new btCapsuleShape(((CapsuleShapeInfo*)shapeInfo)->radius, ((CapsuleShapeInfo*)shapeInfo)->height);
+		}
+			break;
+	}
+
+	return colShape;
 }
