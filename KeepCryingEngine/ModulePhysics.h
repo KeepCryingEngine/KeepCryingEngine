@@ -42,6 +42,7 @@ public:
 
 	void SetGravity(float value);
 	float GetGravity()const;
+	btDiscreteDynamicsWorld* GetWorld() const;
 
 private:
 	btRigidBody* AddBody(RigidBody* component);
@@ -49,13 +50,12 @@ private:
 	void UpdateTransform(RigidBody* body) const;
 	void UpdateBody(RigidBody* body) const;
 
-public:
-	btDiscreteDynamicsWorld * world = nullptr;
 private:
 	btDefaultCollisionConfiguration * collisionConf = nullptr;
 	btCollisionDispatcher* dispatcher = nullptr;
 	btBroadphaseInterface* broadPhase = nullptr;
 	btSequentialImpulseConstraintSolver* solver = nullptr;
+	btDiscreteDynamicsWorld * world = nullptr;
 	
 
 	DebugDraw* debugDraw = nullptr;

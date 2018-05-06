@@ -199,6 +199,9 @@
     <ClCompile Include="BallSocket.cpp">
       <Filter>Components\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="Hinge.cpp">
+      <Filter>Components\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h" />
@@ -418,6 +421,9 @@
       <Filter>Components\Physics</Filter>
     </ClInclude>
     <ClInclude Include="BallSocket.h">
+      <Filter>Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Hinge.h">
       <Filter>Components\Physics</Filter>
     </ClInclude>
   </ItemGroup>

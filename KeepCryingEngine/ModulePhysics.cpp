@@ -180,6 +180,11 @@ float ModulePhysics::GetGravity() const
 	return gravity;
 }
 
+btDiscreteDynamicsWorld * ModulePhysics::GetWorld() const
+{
+	return world;
+}
+
 btRigidBody* ModulePhysics::AddBody(RigidBody* component)
 {
 	btCollisionShape* colShape = component->CreateCollisionShape();

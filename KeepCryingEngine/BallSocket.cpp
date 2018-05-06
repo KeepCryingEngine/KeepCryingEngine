@@ -76,11 +76,11 @@ void BallSocket::DrawUI()
 void BallSocket::ApplyConstraint(btRigidBody& ownBody)
 {	
 	constraint = new btPoint2PointConstraint(ownBody, btVector3(ownPivot.x, ownPivot.y, ownPivot.z));
-	App->physics->world->addConstraint(constraint);
+	App->physics->GetWorld()->addConstraint(constraint);
 }
 
 void BallSocket::ApplyConstraint(btRigidBody & ownBody, btRigidBody & secondBody)
 {
 	constraint = new btPoint2PointConstraint(ownBody, secondBody, btVector3(ownPivot.x, ownPivot.y, ownPivot.z), btVector3(secondPivot.x, secondPivot.y, secondPivot.z));
-	App->physics->world->addConstraint(constraint);
+	App->physics->GetWorld()->addConstraint(constraint);
 }

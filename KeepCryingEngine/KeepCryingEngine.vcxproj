@@ -114,6 +114,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="GridRenderer.h" />
+    <ClInclude Include="Hinge.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="InputText.h" />
     <ClInclude Include="json_serializer.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="external\ImGui\imgui_impl_sdl_gl3.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GridRenderer.cpp" />
+    <ClCompile Include="Hinge.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="InputText.cpp" />
     <ClCompile Include="json_serializer.cpp" />

@@ -17,6 +17,16 @@ public:
 
 	void ApplyConstraint(btRigidBody& ownBody);
 	void ApplyConstraint(btRigidBody& ownBody, btRigidBody& secondBody);
+private:
+	btHingeConstraint * constraint = nullptr;
+
+	float3 ownPivot = float3::zero;
+	float3 ownAngle = float3::one;
+
+	float3 secondPivot = float3::zero;
+	float3 secondAngle = float3::one;
+
+	bool usingSecond = false;
 };
 
 #endif // !_HINGE_H_
