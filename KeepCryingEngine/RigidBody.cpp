@@ -128,47 +128,65 @@ void RigidBody::DrawUI()
 		}
 
 		ImGui::Text("Position Constraints");
-		static bool x = !linearFactor.x;
+		bool x = !linearFactor.x;
 		if(ImGui::Checkbox("x", &x))
 		{
 			linearFactor.x = !x;
-			App->physics->SetBodyConstraints(*body,linearFactor,angularFactor);
+			if(body != nullptr)
+			{
+				App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+			}
 		}
 		ImGui::SameLine();
-		static bool y = !linearFactor.y;
+		bool y = !linearFactor.y;
 		if(ImGui::Checkbox("y", &y))
 		{
 			linearFactor.y = !y;
-			App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+			if(body != nullptr)
+			{
+				App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+			}
 		}
 		ImGui::SameLine();
-		static bool z = !linearFactor.z;
+		bool z = !linearFactor.z;
 		if(ImGui::Checkbox("z", &z))
 		{
 			linearFactor.z = !z;
-			App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+			if(body != nullptr)
+			{
+				App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+			}
 		}
 
 		ImGui::Text("Rotation Constraints");
-		static bool rx = !angularFactor.x;
-		if(ImGui::Checkbox("x", &rx))
+		bool rx = !angularFactor.x;
+		if(ImGui::Checkbox("x##Rot", &rx))
 		{
 			angularFactor.x = !rx;
-			App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+			if(body != nullptr)
+			{
+				App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+			}
 		}
 		ImGui::SameLine();
-		static bool ry = !angularFactor.y;
-		if(ImGui::Checkbox("y", &ry))
+		bool ry = !angularFactor.y;
+		if(ImGui::Checkbox("y##Rot", &ry))
 		{
 			angularFactor.y = !ry;
-			App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+			if(body != nullptr)
+			{
+				App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+			}
 		}
 		ImGui::SameLine();
-		static bool rz = !angularFactor.z;
-		if(ImGui::Checkbox("z", &rz))
+		bool rz = !angularFactor.z;
+		if(ImGui::Checkbox("z##Rot", &rz))
 		{
 			angularFactor.z = !rz;
-			App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+			if(body != nullptr)
+			{
+				App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+			}
 		}
 	}
 }

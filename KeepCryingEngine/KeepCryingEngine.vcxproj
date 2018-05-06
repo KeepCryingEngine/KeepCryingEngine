@@ -90,6 +90,7 @@
     <ClInclude Include="AudioClip.h" />
     <ClInclude Include="AudioListener.h" />
     <ClInclude Include="AudioSource.h" />
+    <ClInclude Include="BallSocket.h" />
     <ClInclude Include="Billboard.h" />
     <ClInclude Include="AudioStructures.h" />
     <ClInclude Include="Brofiler.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="AudioClip.cpp" />
     <ClCompile Include="AudioListener.cpp" />
     <ClCompile Include="AudioSource.cpp" />
+    <ClCompile Include="BallSocket.cpp" />
     <ClCompile Include="Billboard.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />

@@ -22,6 +22,8 @@
 #include "ParticleSystem.h"
 #include "Script.h"
 #include "RigidBody.h"
+#include "BallSocket.h"
+#include "Hinge.h"
 
 Component * ComponentFabric::CreateComponent(Component::Type type)
 {
@@ -85,6 +87,12 @@ Component * ComponentFabric::CreateComponent(Component::Type type)
 			break;
 		case Component::Type::RigidBody:
 			component = new RigidBody();
+			break;
+		case Component::Type::BallSocket:
+			component = new BallSocket();
+			break;
+		case Component::Type::Hinge:
+			component = new Hinge();
 			break;
 	}
 	assert(component);

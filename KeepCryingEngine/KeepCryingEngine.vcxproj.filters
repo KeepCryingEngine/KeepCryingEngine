@@ -194,7 +194,10 @@
       <Filter>Entities</Filter>
     </ClCompile>
     <ClCompile Include="RigidBody.cpp">
-      <Filter>Components</Filter>
+      <Filter>Components\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="BallSocket.cpp">
+      <Filter>Components\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -412,7 +415,10 @@
       <Filter>Entities</Filter>
     </ClInclude>
     <ClInclude Include="RigidBody.h">
-      <Filter>Components</Filter>
+      <Filter>Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="BallSocket.h">
+      <Filter>Components\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -433,6 +439,9 @@
     </Filter>
     <Filter Include="Components\UI">
       <UniqueIdentifier>{6c953053-8f29-41e6-8358-4cd9ee0a50c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Physics">
+      <UniqueIdentifier>{5c936baa-5b46-43ed-9ccf-85997bfb386e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

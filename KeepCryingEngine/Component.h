@@ -31,7 +31,10 @@ public:
 		GridRenderer,
 		ParticleSystem,
 		Script,
-		RigidBody
+		RigidBody,
+		BallSocket,
+		Hinge,
+		Slider
 	};
 
 	Component(Component::Type type) : enabled(true), wasEnabled(true), type(type)

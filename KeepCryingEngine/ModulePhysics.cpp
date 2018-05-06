@@ -11,6 +11,7 @@
 #include "RigidBody.h"
 #include "Transform.h"
 #include "ModuleCamera.h"
+#include "BallSocket.h"
 
 ModulePhysics::ModulePhysics()
 { }
@@ -142,11 +143,8 @@ void ModulePhysics::Unsubscribe(RigidBody& body)
 
 void ModulePhysics::RebuildBody(RigidBody & body)
 {	
-	Unsubscribe(body);
-	btRigidBody* tempBody = body.GetBody();
-	btBodies.remove(tempBody);
-	delete(tempBody);
-	Subscribe(body);
+	delete(body.GetBody()->getCollisionShape());
+	body.GetBody()->setCollisionShape(body.CreateCollisionShape());
 }
 
 void ModulePhysics::SetBodyFlags(btRigidBody & body, bool isStatic, bool isKinematic)

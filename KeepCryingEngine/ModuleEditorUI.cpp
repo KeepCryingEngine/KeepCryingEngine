@@ -36,6 +36,8 @@
 #include "ParticleSystem.h"
 #include "RigidBody.h"
 #include "ModulePhysics.h"
+#include "BallSocket.h"
+#include "Hinge.h"
 
 using namespace std;
 
@@ -909,9 +911,25 @@ void ModuleEditorUI::DrawInspectorWindow()
 			{
 				temp->AddComponent<MeshRenderer>();
 			}
-			if(ImGui::Selectable("RigidBody"))
+			if(ImGui::BeginMenu("Physics"))
 			{
-				temp->AddComponent<RigidBody>();
+				if(ImGui::Selectable("RigidBody"))
+				{
+					temp->AddComponent<RigidBody>();
+				}
+				if(ImGui::Selectable("BallSocket"))
+				{
+					temp->AddComponent<BallSocket>();
+				}
+				if(ImGui::Selectable("Hinge"))
+				{
+					temp->AddComponent<Hinge>();
+				}
+				if(ImGui::Selectable("BallSocket"))
+				{
+					temp->AddComponent<BallSocket>();
+				}
+				ImGui::EndMenu();
 			}
 			if(ImGui::Selectable("Camera"))
 			{
