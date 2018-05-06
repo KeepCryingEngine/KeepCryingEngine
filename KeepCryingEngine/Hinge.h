@@ -15,6 +15,9 @@ public:
 
 	virtual void DrawUI() override;
 
+	virtual void PreLoad(const nlohmann::json& json) override;
+	virtual void Save(nlohmann::json& json) const override;
+
 	void ApplyConstraint(btRigidBody& ownBody);
 	void ApplyConstraint(btRigidBody& ownBody, btRigidBody& secondBody);
 private:

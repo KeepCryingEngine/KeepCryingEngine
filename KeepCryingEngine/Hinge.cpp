@@ -6,10 +6,10 @@
 #include "ModulePhysics.h"
 
 Hinge::Hinge():Component(TYPE)
-{}
+{ }
 
 Hinge::~Hinge()
-{}
+{ }
 
 void Hinge::RealUpdate()
 {
@@ -94,8 +94,33 @@ void Hinge::DrawUI()
 		{
 			ImGui::Checkbox("Use second Body", &usingSecond);
 		}
-
 	}
+}
+
+void Hinge::PreLoad(const nlohmann::json & json)
+{
+	Component::PreLoad(json);
+
+	from_json(json["ownPivot"], ownPivot);
+	from_json(json["ownAngle"], ownAngle);
+
+	from_json(json["secondPivot"], secondPivot);
+	from_json(json["secondAngle"], secondAngle);
+
+	usingSecond = json["usingSecond"];
+}
+
+void Hinge::Save(nlohmann::json & json) const
+{
+	Component::Save(json);
+
+	to_json(json["ownPivot"], ownPivot);
+	to_json(json["ownAngle"], ownAngle);
+
+	to_json(json["secondPivot"], secondPivot);
+	to_json(json["secondAngle"], secondAngle);
+
+	json["usingSecond"] = usingSecond;
 }
 
 void Hinge::ApplyConstraint(btRigidBody & ownBody)
