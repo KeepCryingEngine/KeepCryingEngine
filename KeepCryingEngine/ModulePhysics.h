@@ -36,6 +36,10 @@ public:
 
 	void Subscribe(RigidBody& body);
 	void Unsubscribe(RigidBody& body);
+	void RebuildBody(RigidBody& body);
+
+	void SetGravity(float value);
+	float GetGravity()const;
 
 private:
 	btRigidBody* AddBody(RigidBody* component);
@@ -51,6 +55,8 @@ private:
 	btDiscreteDynamicsWorld* world = nullptr;
 
 	DebugDraw* debugDraw = nullptr;
+
+	float gravity = -9.8f;
 
 	std::set<RigidBody*> bodies;
 	std::list<btRigidBody*> btBodies;

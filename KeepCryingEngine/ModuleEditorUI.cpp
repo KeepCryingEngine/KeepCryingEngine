@@ -35,6 +35,7 @@
 #include "GridRenderer.h"
 #include "ParticleSystem.h"
 #include "RigidBody.h"
+#include "ModulePhysics.h"
 
 using namespace std;
 
@@ -195,7 +196,6 @@ void ModuleEditorUI::DrawMainMenu()
 				}
 				ImGui::EndMenu();
 			}
-
 			ImGui::EndMenu();
 		}
 
@@ -238,6 +238,16 @@ void ModuleEditorUI::DrawMainMenu()
 			//FOG Parameters
 			glFogf(GL_FOG_DENSITY, fogDensity);
 			glFogfv(GL_FOG_COLOR, color);
+			ImGui::EndMenu();
+		}
+
+		if(ImGui::BeginMenu("Physics"))
+		{
+			float gravity = App->physics->GetGravity();
+			if(ImGui::DragFloat("Gravity", &gravity, 0.01))
+			{
+				App->physics->SetGravity(gravity);
+			}
 			ImGui::EndMenu();
 		}
 

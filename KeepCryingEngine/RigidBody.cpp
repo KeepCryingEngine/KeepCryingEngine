@@ -65,6 +65,10 @@ void RigidBody::DrawUI()
 		if(ImGui::Combo("Body Type", &tempType, "Box\0Sphere\0Capsule"))
 		{
 			bodyType = (BodyType)tempType;
+			if(body != nullptr)
+			{
+				App->physics->RebuildBody(*this);
+			}
 		}
 
 		switch(bodyType)

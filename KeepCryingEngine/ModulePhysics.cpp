@@ -34,7 +34,7 @@ bool ModulePhysics::Start()
 {
 	world = new btDiscreteDynamicsWorld(dispatcher, broadPhase, solver, collisionConf);
 	world->setDebugDrawer(debugDraw);
-	world->setGravity(btVector3(0.0f, -10.0f, 0.0f));
+	world->setGravity(btVector3(0.0f, gravity, 0.0f));
 
 	return true;
 }
@@ -138,6 +138,26 @@ void ModulePhysics::Unsubscribe(RigidBody& body)
 			RemoveBodyFromWorld(*tempBody);
 		}
 	}
+}
+
+void ModulePhysics::RebuildBody(RigidBody & body)
+{	
+	Unsubscribe(body);
+	btRigidBody* tempBody = body.GetBody();
+	btBodies.remove(tempBody);
+	delete(tempBody);
+	Subscribe(body);
+}
+
+void ModulePhysics::SetGravity(float value)
+{
+	gravity = value;
+	world->setGravity(btVector3(0.0f, gravity, 0.0f));
+}
+
+float ModulePhysics::GetGravity() const
+{
+	return gravity;
 }
 
 btRigidBody* ModulePhysics::AddBody(RigidBody* component)
