@@ -5,18 +5,18 @@
 #include "Application.h"
 #include "ModulePhysics.h"
 
-BallSocket::BallSocket():Component(TYPE)
-{}
+BallSocket::BallSocket() : Component(TYPE)
+{ }
 
 BallSocket::~BallSocket()
-{}
+{ }
 
 void BallSocket::RealUpdate()
 {
 	if(App->state != TimeState::STOPED)
 	{
 		btRigidBody* ownBody = gameObject->GetComponent<RigidBody>()->GetBody();
-		if(constraint == nullptr &&  ownBody != nullptr)
+		if(constraint == nullptr && ownBody != nullptr)
 		{
 			if(usingSecond)
 			{
@@ -68,9 +68,27 @@ void BallSocket::DrawUI()
 		{
 			ImGui::Checkbox("Use second Body", &usingSecond);
 		}
-		
 	}
+}
 
+void BallSocket::PreLoad(const nlohmann::json & json)
+{
+	Component::PreLoad(json);
+
+	from_json(json["ownPivot"], ownPivot);
+	from_json(json["secondPivot"], secondPivot);
+
+	usingSecond = json["usingSecond"];
+}
+
+void BallSocket::Save(nlohmann::json & json) const
+{
+	Component::Save(json);
+
+	to_json(json["ownPivot"], ownPivot);
+	to_json(json["secondPivot"], secondPivot);
+
+	json["usingSecond"] = usingSecond;
 }
 
 void BallSocket::ApplyConstraint(btRigidBody& ownBody)
