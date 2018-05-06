@@ -144,7 +144,7 @@ nlohmann::json Script::FieldToJson(MonoClassField* field)const
 		static char value[256];
 		MonoString * tempVal;
 		mono_field_get_value(instance, field, &tempVal);
-		strcpy(value, mono_string_to_utf8(tempVal));
+		strcpy_s(value, mono_string_to_utf8(tempVal));
 		ret["value"] = value;
 	}
 	if(strcmp(typeName, "KeepCryingEngine.GameObject") == 0)//Gameobject
@@ -191,7 +191,7 @@ void Script::DrawField(MonoClassField* field)
 		static char value[256];
 		MonoString * tempVal;
 		mono_field_get_value(instance, field, &tempVal);
-		strcpy(value,mono_string_to_utf8(tempVal));
+		strcpy_s(value,mono_string_to_utf8(tempVal));
 		if(ImGui::InputText(label, value, 256))
 		{
 			tempVal = mono_string_new_wrapper(value);

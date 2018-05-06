@@ -246,7 +246,7 @@ void ModuleEditorUI::DrawMainMenu()
 		if(ImGui::BeginMenu("Physics"))
 		{
 			float gravity = App->physics->GetGravity();
-			if(ImGui::DragFloat("Gravity", &gravity, 0.01))
+			if(ImGui::DragFloat("Gravity", &gravity, 0.01f))
 			{
 				App->physics->SetGravity(gravity);
 			}

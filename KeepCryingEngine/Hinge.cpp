@@ -21,7 +21,7 @@ void Hinge::RealUpdate()
 			if(usingSecond)
 			{
 				const std::vector<GameObject*>& children = gameObject->GetChildren();
-				for(int i = 0; i < children.size(); ++i)
+				for(size_t i = 0; i < children.size(); ++i)
 				{
 					if(children[i]->GetComponent<RigidBody>() != nullptr)
 					{
