@@ -149,6 +149,28 @@ void ModulePhysics::RebuildBody(RigidBody & body)
 	Subscribe(body);
 }
 
+void ModulePhysics::SetBodyFlags(btRigidBody & body, bool isStatic, bool isKinematic)
+{
+	if(isStatic)
+	{
+		body.setCollisionFlags(body.getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
+	}
+	else if(isKinematic)
+	{
+		body.setCollisionFlags(body.getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+	}
+	else
+	{
+		body.setCollisionFlags(body.getCollisionFlags() & ~btCollisionObject::CF_STATIC_OBJECT & ~btCollisionObject::CF_KINEMATIC_OBJECT);
+	}
+}
+
+void ModulePhysics::SetBodyConstraints(btRigidBody & body, const float3& linearFactor, const float3& angularFactor)
+{
+	body.setLinearFactor(btVector3(linearFactor.x, linearFactor.y, linearFactor.z));
+	body.setAngularFactor(btVector3(angularFactor.x, angularFactor.y, angularFactor.z));
+}
+
 void ModulePhysics::SetGravity(float value)
 {
 	gravity = value;
@@ -172,6 +194,10 @@ btRigidBody* ModulePhysics::AddBody(RigidBody* component)
 	}
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass,component,colShape,localInertia);
 	btRigidBody* body = new btRigidBody(rbInfo);
+
+	SetBodyFlags(*body,component->gameObject->IsStatic(),component->GetKinematic());
+	SetBodyConstraints(*body, component->GetLinearFactor(),component->GetAngularFactor());
+
 	btBodies.push_back(body);
 	world->addRigidBody(body);
 

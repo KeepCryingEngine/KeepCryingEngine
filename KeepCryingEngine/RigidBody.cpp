@@ -61,6 +61,14 @@ void RigidBody::DrawUI()
 			}
 		}
 
+		if(ImGui::Checkbox("Kinematic",&kinematic))
+		{
+			if(body != nullptr)
+			{
+				App->physics->SetBodyFlags(*body, gameObject->IsStatic(), kinematic);
+			}
+		}
+
 		int tempType = (int)bodyType;
 		if(ImGui::Combo("Body Type", &tempType, "Box\0Sphere\0Capsule"))
 		{
@@ -117,6 +125,50 @@ void RigidBody::DrawUI()
 				}
 			}
 			break;
+		}
+
+		ImGui::Text("Position Constraints");
+		static bool x = !linearFactor.x;
+		if(ImGui::Checkbox("x", &x))
+		{
+			linearFactor.x = !x;
+			App->physics->SetBodyConstraints(*body,linearFactor,angularFactor);
+		}
+		ImGui::SameLine();
+		static bool y = !linearFactor.y;
+		if(ImGui::Checkbox("y", &y))
+		{
+			linearFactor.y = !y;
+			App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+		}
+		ImGui::SameLine();
+		static bool z = !linearFactor.z;
+		if(ImGui::Checkbox("z", &z))
+		{
+			linearFactor.z = !z;
+			App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+		}
+
+		ImGui::Text("Rotation Constraints");
+		static bool rx = !angularFactor.x;
+		if(ImGui::Checkbox("x", &rx))
+		{
+			angularFactor.x = !rx;
+			App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+		}
+		ImGui::SameLine();
+		static bool ry = !angularFactor.y;
+		if(ImGui::Checkbox("y", &ry))
+		{
+			angularFactor.y = !ry;
+			App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
+		}
+		ImGui::SameLine();
+		static bool rz = !angularFactor.z;
+		if(ImGui::Checkbox("z", &rz))
+		{
+			angularFactor.z = !rz;
+			App->physics->SetBodyConstraints(*body, linearFactor, angularFactor);
 		}
 	}
 }
@@ -211,6 +263,21 @@ btRigidBody* RigidBody::GetBody() const
 float RigidBody::GetMass() const
 {
 	return mass;
+}
+
+bool RigidBody::GetKinematic() const
+{
+	return kinematic;
+}
+
+const float3 & RigidBody::GetLinearFactor() const
+{
+	return linearFactor;
+}
+
+const float3 & RigidBody::GetAngularFactor() const
+{
+	return angularFactor;
 }
 
 void RigidBody::getWorldTransform(btTransform & worldTrans) const

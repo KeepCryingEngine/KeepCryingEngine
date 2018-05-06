@@ -37,6 +37,8 @@ public:
 	void Subscribe(RigidBody& body);
 	void Unsubscribe(RigidBody& body);
 	void RebuildBody(RigidBody& body);
+	void SetBodyFlags(btRigidBody& body,bool isStatic, bool isKinematic);
+	void SetBodyConstraints(btRigidBody& body,const float3& linearFactor, const float3& angularFactor);
 
 	void SetGravity(float value);
 	float GetGravity()const;

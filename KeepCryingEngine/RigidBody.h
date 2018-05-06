@@ -37,6 +37,9 @@ public:
 	BodyType GetBodyType() const;
 	btRigidBody* GetBody()const;
 	float GetMass()const;
+	bool GetKinematic() const;
+	const float3& GetLinearFactor() const;
+	const float3& GetAngularFactor() const;
 
 	// from btMotionState
 	void getWorldTransform(btTransform& worldTrans) const override;
@@ -59,6 +62,9 @@ private:
 	BaseShapeInfo* shapeInfo = nullptr;
 
 	float mass = 1.0f;
+	bool kinematic = false;
+	float3 linearFactor = float3::one;
+	float3 angularFactor = float3::one;
 
 	btRigidBody* body = nullptr;
 };
