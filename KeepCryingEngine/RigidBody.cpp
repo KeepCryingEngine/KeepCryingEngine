@@ -199,6 +199,9 @@ void RigidBody::PreLoad(const nlohmann::json & json)
 	SetBodyType(bodyType);
 
 	mass = json["mass"];
+	kinematic = json["kinematic"];
+	from_json(json["linearFactor"], linearFactor);
+	from_json(json["angularFactor"], angularFactor);
 
 	switch(bodyType)
 	{
@@ -218,8 +221,12 @@ void RigidBody::PreLoad(const nlohmann::json & json)
 void RigidBody::Save(nlohmann::json & json) const
 {
 	Component::Save(json);
+
 	json["bodyType"] = bodyType;
 	json["mass"] = mass;
+	json["kinematic"] = kinematic;
+	to_json(json["linearFactor"], linearFactor);
+	to_json(json["angularFactor"], angularFactor);
 
 	nlohmann::json jsonShapeInfo;
 
