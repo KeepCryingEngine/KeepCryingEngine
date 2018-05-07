@@ -24,6 +24,7 @@
 #include "RigidBody.h"
 #include "BallSocket.h"
 #include "Hinge.h"
+#include "Slider.h"
 
 Component * ComponentFabric::CreateComponent(Component::Type type)
 {
@@ -93,6 +94,9 @@ Component * ComponentFabric::CreateComponent(Component::Type type)
 			break;
 		case Component::Type::Hinge:
 			component = new Hinge();
+			break;
+		case Component::Type::Slider:
+			component = new Slider();
 			break;
 	}
 	assert(component);

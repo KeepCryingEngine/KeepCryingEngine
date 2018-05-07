@@ -1,50 +1,43 @@
-#include "Hinge.h"
+#include "Slider.h"
 
 #include "GameObject.h"
 #include "RigidBody.h"
 #include "Application.h"
 #include "ModulePhysics.h"
 
-Hinge::Hinge():Component(TYPE)
-{ }
+Slider::Slider():Component(TYPE)
+{}
 
-Hinge::~Hinge()
-{ }
+Slider::~Slider()
+{}
 
-void Hinge::RealUpdate()
+void Slider::RealUpdate()
 {
 	if(App->state != TimeState::STOPED)
 	{
 		btRigidBody* ownBody = gameObject->GetComponent<RigidBody>()->GetBody();
 		if(constraint == nullptr &&  ownBody != nullptr)
 		{
-			if(usingSecond)
+			const std::vector<GameObject*>& children = gameObject->GetChildren();
+			for(size_t i = 0; i < children.size(); ++i)
 			{
-				const std::vector<GameObject*>& children = gameObject->GetChildren();
-				for(size_t i = 0; i < children.size(); ++i)
+				if(children[i]->GetComponent<RigidBody>() != nullptr)
 				{
-					if(children[i]->GetComponent<RigidBody>() != nullptr)
+					btRigidBody* secondBody = children[i]->GetComponent<RigidBody>()->GetBody();
+					if(secondBody != nullptr)
 					{
-						btRigidBody* secondBody = children[i]->GetComponent<RigidBody>()->GetBody();
-						if(secondBody != nullptr)
-						{
-							ApplyConstraint(*ownBody, *secondBody);
-						}
-						break;
+						ApplyConstraint(*ownBody, *secondBody);
 					}
+					break;
 				}
-			}
-			else
-			{
-				ApplyConstraint(*ownBody);
 			}
 		}
 	}
 }
 
-void Hinge::DrawUI()
+void Slider::DrawUI()
 {
-	if(ImGui::CollapsingHeader("Hinge"))
+	if(ImGui::CollapsingHeader("Slider"))
 	{
 		if(ImGui::Button("Delete Component"))
 		{
@@ -72,7 +65,7 @@ void Hinge::DrawUI()
 		}
 		if(ImGui::DragFloat3("Second Pivot", secondPivot.ptr(), 0.1f))
 		{
-			if(constraint != nullptr && usingSecond)
+			if(constraint != nullptr)
 			{
 				constraint->getFrameOffsetB().setOrigin(btVector3(secondPivot.x, secondPivot.y, secondPivot.z));
 			}
@@ -81,7 +74,7 @@ void Hinge::DrawUI()
 		{
 			if(!(secondAngle.x <= 0.0f && secondAngle.y <= 0.0f && secondAngle.z <= 0.0f))
 			{
-				if(constraint != nullptr && usingSecond)
+				if(constraint != nullptr)
 				{
 					btMatrix3x3& basis = constraint->getFrameOffsetB().getBasis();
 					basis[0][2] = secondAngle.x;
@@ -90,14 +83,10 @@ void Hinge::DrawUI()
 				}
 			}
 		}
-		if(App->state == TimeState::STOPED)
-		{
-			ImGui::Checkbox("Use second Body", &usingSecond);
-		}
 	}
 }
 
-void Hinge::PreLoad(const nlohmann::json & json)
+void Slider::PreLoad(const nlohmann::json & json)
 {
 	Component::PreLoad(json);
 
@@ -106,11 +95,9 @@ void Hinge::PreLoad(const nlohmann::json & json)
 
 	from_json(json["secondPivot"], secondPivot);
 	from_json(json["secondAngle"], secondAngle);
-
-	usingSecond = json["usingSecond"];
 }
 
-void Hinge::Save(nlohmann::json & json) const
+void Slider::Save(nlohmann::json & json) const
 {
 	Component::Save(json);
 
@@ -119,21 +106,9 @@ void Hinge::Save(nlohmann::json & json) const
 
 	to_json(json["secondPivot"], secondPivot);
 	to_json(json["secondAngle"], secondAngle);
-
-	json["usingSecond"] = usingSecond;
 }
 
-void Hinge::ApplyConstraint(btRigidBody & ownBody)
-{
-	if(ownAngle.x <= 0.0f && ownAngle.y <= 0.0f && ownAngle.z <= 0.0f)
-	{
-		ownAngle = float3::one;
-	}
-	constraint = new btHingeConstraint(ownBody,	btVector3(ownPivot.x, ownPivot.y, ownPivot.z),btVector3(ownAngle.x, ownAngle.y, ownAngle.z));
-	App->physics->GetWorld()->addConstraint(constraint);
-}
-
-void Hinge::ApplyConstraint(btRigidBody & ownBody, btRigidBody & secondBody)
+void Slider::ApplyConstraint(btRigidBody & ownBody, btRigidBody & secondBody)
 {
 	if(ownAngle.x <= 0.0f && ownAngle.y <= 0.0f && ownAngle.z <= 0.0f)
 	{
@@ -143,6 +118,15 @@ void Hinge::ApplyConstraint(btRigidBody & ownBody, btRigidBody & secondBody)
 	{
 		secondAngle = float3::one;
 	}
-	constraint = new btHingeConstraint(ownBody, secondBody, btVector3(ownPivot.x, ownPivot.y, ownPivot.z),btVector3(secondPivot.x, secondPivot.y, secondPivot.z), btVector3(ownAngle.x, ownAngle.y, ownAngle.z),btVector3(secondAngle.x, secondAngle.y, secondAngle.z));
+
+	btTransform frameA;
+	frameA.setOrigin(btVector3(ownPivot.x, ownPivot.y, ownPivot.z));
+	frameA.getBasis().setEulerZYX(ownAngle.x, ownAngle.y, ownAngle.z);
+
+	btTransform frameB;
+	frameB.setOrigin(btVector3(secondPivot.x, secondPivot.y, secondPivot.z));
+	frameB.getBasis().setEulerZYX(secondAngle.x, secondAngle.y, secondAngle.z);
+
+	constraint = new btSliderConstraint(ownBody,secondBody,frameA,frameB,false);
 	App->physics->GetWorld()->addConstraint(constraint);
 }

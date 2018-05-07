@@ -38,6 +38,7 @@
 #include "ModulePhysics.h"
 #include "BallSocket.h"
 #include "Hinge.h"
+#include "Slider.h"
 
 using namespace std;
 
@@ -925,9 +926,9 @@ void ModuleEditorUI::DrawInspectorWindow()
 				{
 					temp->AddComponent<Hinge>();
 				}
-				if(ImGui::Selectable("BallSocket"))
+				if(ImGui::Selectable("Slider"))
 				{
-					temp->AddComponent<BallSocket>();
+					temp->AddComponent<Slider>();
 				}
 				ImGui::EndMenu();
 			}

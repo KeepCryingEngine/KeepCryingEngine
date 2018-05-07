@@ -202,6 +202,9 @@
     <ClCompile Include="Hinge.cpp">
       <Filter>Components\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="Slider.cpp">
+      <Filter>Components\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h" />
@@ -424,6 +427,9 @@
       <Filter>Components\Physics</Filter>
     </ClInclude>
     <ClInclude Include="Hinge.h">
+      <Filter>Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Slider.h">
       <Filter>Components\Physics</Filter>
     </ClInclude>
   </ItemGroup>

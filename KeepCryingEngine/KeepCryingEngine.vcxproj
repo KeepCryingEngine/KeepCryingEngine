@@ -152,6 +152,7 @@
     <ClInclude Include="ReverbZone.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Script.h" />
+    <ClInclude Include="Slider.h" />
     <ClInclude Include="SoundsEffects.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="ReverbZone.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="Script.cpp" />
+    <ClCompile Include="Slider.cpp" />
     <ClCompile Include="SoundsEffects.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Texture.cpp" />
