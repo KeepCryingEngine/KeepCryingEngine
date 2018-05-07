@@ -49,6 +49,7 @@ private:
 	void RemoveBodyFromWorld(btRigidBody& body);
 	void UpdateTransform(RigidBody* body) const;
 	void UpdateBody(RigidBody* body) const;
+	void ResetWorld();
 
 private:
 	btDefaultCollisionConfiguration * collisionConf = nullptr;

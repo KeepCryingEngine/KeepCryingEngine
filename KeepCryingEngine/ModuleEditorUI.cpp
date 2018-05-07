@@ -479,15 +479,15 @@ void ModuleEditorUI::DrawEditorControler()
 
 			if(ImGui::Button("Unpause"))
 			{
-				App->Play();
+				App->Unpause();
 			}
 			
 			ImGui::SameLine();
 
 			if(ImGui::Button("Stop"))
 			{
-				App->scene->Restore();
 				App->Stop();
+				App->scene->Restore();
 			}
 
 			break;

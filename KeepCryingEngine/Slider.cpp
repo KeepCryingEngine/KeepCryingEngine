@@ -35,6 +35,14 @@ void Slider::RealUpdate()
 	}
 }
 
+void Slider::Destroy()
+{
+	if(constraint != nullptr)
+	{
+		App->physics->GetWorld()->removeConstraint(constraint);
+	}
+}
+
 void Slider::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Slider"))
@@ -129,4 +137,14 @@ void Slider::ApplyConstraint(btRigidBody & ownBody, btRigidBody & secondBody)
 
 	constraint = new btSliderConstraint(ownBody,secondBody,frameA,frameB,false);
 	App->physics->GetWorld()->addConstraint(constraint);
+}
+
+std::vector<Component::Type> Slider::GetProhibitedComponents() const
+{
+	return { Slider::TYPE };
+}
+
+std::vector<Component::Type> Slider::GetNeededComponents() const
+{
+	return { RigidBody::TYPE };
 }

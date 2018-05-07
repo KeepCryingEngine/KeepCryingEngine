@@ -46,6 +46,7 @@ public:
 
 	void Play();
 	void Pause();
+	void Unpause();
 	void Stop();
 
 private:

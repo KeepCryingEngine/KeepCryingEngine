@@ -155,6 +155,13 @@ void Application::Pause()
 			(*it)->Pause();
 }
 
+void Application::Unpause()
+{
+	for(list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
+		if((*it)->IsEnabled())
+			(*it)->Unpause();
+}
+
 void Application::Stop()
 {
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)

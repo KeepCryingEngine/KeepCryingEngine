@@ -33,9 +33,7 @@ bool ModulePhysics::Init()
 
 bool ModulePhysics::Start()
 {
-	world = new btDiscreteDynamicsWorld(dispatcher, broadPhase, solver, collisionConf);
-	world->setDebugDrawer(debugDraw);
-	world->setGravity(btVector3(0.0f, gravity, 0.0f));
+	ResetWorld();
 
 	return true;
 }
@@ -74,7 +72,7 @@ update_status ModulePhysics::PreUpdate()
 
 update_status ModulePhysics::Update()
 {
-	//if(App->uiEditor->GetDebugMode())
+	if(App->uiEditor->GetDebugMode())
 	{
 		if(App->camera->GetPlayOrEditorCamera() != nullptr)
 		{
@@ -115,6 +113,7 @@ void ModulePhysics::Stop()
 	}
 
 	CleanUp();
+	ResetWorld();
 }
 
 void ModulePhysics::Subscribe(RigidBody& body)
@@ -240,4 +239,13 @@ void ModulePhysics::UpdateBody(RigidBody* body) const
 		body->getWorldTransform(transform);
 		body->GetBody()->setWorldTransform(transform);
 	}
+}
+
+void ModulePhysics::ResetWorld()
+{
+	RELEASE(world);
+
+	world = new btDiscreteDynamicsWorld(dispatcher, broadPhase, solver, collisionConf);
+	world->setDebugDrawer(debugDraw);
+	world->setGravity(btVector3(0.0f, gravity, 0.0f));
 }

@@ -11,7 +11,8 @@ public:
 	Hinge();
 	~Hinge();
 
-	void RealUpdate()override;
+	virtual void RealUpdate() override;
+	virtual void Destroy() override;
 
 	virtual void DrawUI() override;
 
@@ -20,6 +21,10 @@ public:
 
 	void ApplyConstraint(btRigidBody& ownBody);
 	void ApplyConstraint(btRigidBody& ownBody, btRigidBody& secondBody);
+
+	std::vector<Component::Type> GetProhibitedComponents() const override;
+	std::vector<Component::Type> GetNeededComponents() const override;
+
 private:
 	btHingeConstraint * constraint = nullptr;
 

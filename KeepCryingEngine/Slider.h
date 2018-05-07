@@ -11,7 +11,8 @@ public:
 	Slider();
 	~Slider();
 
-	void RealUpdate()override;
+	virtual void RealUpdate() override;
+	virtual void Destroy() override;
 
 	virtual void DrawUI() override;
 
@@ -19,6 +20,9 @@ public:
 	virtual void Save(nlohmann::json& json) const override;
 
 	void ApplyConstraint(btRigidBody& ownBody, btRigidBody& secondBody);
+
+	std::vector<Component::Type> GetProhibitedComponents() const override;
+	std::vector<Component::Type> GetNeededComponents() const override;
 
 private:
 	btSliderConstraint * constraint = nullptr;

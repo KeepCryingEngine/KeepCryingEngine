@@ -13,6 +13,7 @@ public:
 
 	void Play() override;
 	void Pause() override;
+	void Unpause() override;
 	void Stop() override;
 
 	float GetFrameCount() const;

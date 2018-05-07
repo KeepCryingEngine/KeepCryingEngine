@@ -42,6 +42,14 @@ void BallSocket::RealUpdate()
 	}
 }
 
+void BallSocket::Destroy()
+{
+	if(constraint != nullptr)
+	{
+		App->physics->GetWorld()->removeConstraint(constraint);
+	}
+}
+
 void BallSocket::DrawUI()
 {
 	if(ImGui::CollapsingHeader("BallSocket"))
@@ -101,4 +109,14 @@ void BallSocket::ApplyConstraint(btRigidBody & ownBody, btRigidBody & secondBody
 {
 	constraint = new btPoint2PointConstraint(ownBody, secondBody, btVector3(ownPivot.x, ownPivot.y, ownPivot.z), btVector3(secondPivot.x, secondPivot.y, secondPivot.z));
 	App->physics->GetWorld()->addConstraint(constraint);
+}
+
+std::vector<Component::Type> BallSocket::GetProhibitedComponents() const
+{
+	return { BallSocket::TYPE };
+}
+
+std::vector<Component::Type> BallSocket::GetNeededComponents() const
+{
+	return { RigidBody::TYPE };
 }

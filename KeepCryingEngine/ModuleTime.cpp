@@ -35,11 +35,8 @@ update_status ModuleTime::Update()
 
 void ModuleTime::Play()
 {
-	if(App->state == TimeState::STOPED)
-	{
-		time = 0;
-		realTimeSinceStartup = 0;
-	}
+	time = 0;
+	realTimeSinceStartup = 0;
 
 	App->state = TimeState::PLAYING;
 }
@@ -50,6 +47,11 @@ void ModuleTime::Pause()
 	realTimeDeltaTime = 0;
 
 	App->state = TimeState::PAUSED;
+}
+
+void ModuleTime::Unpause()
+{
+	App->state = TimeState::PLAYING;
 }
 
 void ModuleTime::Stop()

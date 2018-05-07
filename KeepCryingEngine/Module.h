@@ -66,6 +66,7 @@ public:
 
 	virtual void Play(){}
 	virtual void Pause(){}
+	virtual void Unpause(){}
 	virtual void Stop(){}
 
 private:

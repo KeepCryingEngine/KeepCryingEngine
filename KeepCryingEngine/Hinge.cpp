@@ -42,6 +42,14 @@ void Hinge::RealUpdate()
 	}
 }
 
+void Hinge::Destroy()
+{
+	if(constraint != nullptr)
+	{
+		App->physics->GetWorld()->removeConstraint(constraint);
+	}
+}
+
 void Hinge::DrawUI()
 {
 	if(ImGui::CollapsingHeader("Hinge"))
@@ -145,4 +153,14 @@ void Hinge::ApplyConstraint(btRigidBody & ownBody, btRigidBody & secondBody)
 	}
 	constraint = new btHingeConstraint(ownBody, secondBody, btVector3(ownPivot.x, ownPivot.y, ownPivot.z),btVector3(secondPivot.x, secondPivot.y, secondPivot.z), btVector3(ownAngle.x, ownAngle.y, ownAngle.z),btVector3(secondAngle.x, secondAngle.y, secondAngle.z));
 	App->physics->GetWorld()->addConstraint(constraint);
+}
+
+std::vector<Component::Type> Hinge::GetProhibitedComponents() const
+{
+	return { Hinge::TYPE };
+}
+
+std::vector<Component::Type> Hinge::GetNeededComponents() const
+{
+	return { RigidBody::TYPE };
 }
