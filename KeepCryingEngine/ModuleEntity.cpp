@@ -31,6 +31,7 @@ bool ModuleEntity::Init()
 {
 	SetUpCube();
 	SetUpSphere();
+	SetUpPlane();
 	return true;
 }
 
@@ -38,6 +39,7 @@ bool ModuleEntity::CleanUp()
 {
 	RELEASE(cube);
 	RELEASE(sphere);
+	RELEASE(plane);
 	return true;
 }
 
@@ -49,6 +51,11 @@ Mesh * ModuleEntity::GetCube()
 Mesh * ModuleEntity::GetSphere()
 {
 	return sphere;
+}
+
+Mesh * ModuleEntity::GetPlane()
+{
+	return plane;
 }
 
 void ModuleEntity::Load3DFile(const std::experimental::filesystem::path& path)
@@ -205,6 +212,19 @@ void ModuleEntity::SetUpSphere()
 	sphere = new Mesh(meshIdentifier);
 	sphere->SetMeshData(vertices, indices, vector<Bone>(), drawMode);
 	Register(sphere);
+}
+
+void ModuleEntity::SetUpPlane()
+{
+	vector<Vertex> vertices;
+	vector<GLushort> indices;
+	GLenum drawMode;
+	GetPlaneMeshData(vertices, indices, drawMode);
+
+	MeshIdentifier meshIdentifier = { "ENGINE_DEFAULTS", "PLANE" };
+	plane = new Mesh(meshIdentifier);
+	plane->SetMeshData(vertices, indices, vector<Bone>(), drawMode);
+	Register(plane);
 }
 
 void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& indices, GLenum& drawMode) const
@@ -423,6 +443,60 @@ void ModuleEntity::GetSphereMeshData(vector<Vertex>& vertices, vector<GLushort>&
 				*i++ = r * sectors + s;
 			}
 		}
+	}
+}
+
+void ModuleEntity::GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, GLenum & drawMode) const
+{
+	assert(vertices.size() == 0);
+	assert(indices.size() == 0);
+
+	drawMode = GL_TRIANGLES;
+
+	//Vertices
+	{
+		const float size = 1.0f;
+		const size_t nPlaneVertices = 4;
+		vertices.resize(nPlaneVertices);
+
+		float3 positions[nPlaneVertices] = {
+		{ -size, -size, -size }, // 0 Front bottom left
+		{ size, -size, -size }, // 1 Front bottom right
+		{ size, size, -size }, // 2 Front top right
+		{ -size, size, -size }, // 3 Front top left
+		};
+
+		float4 colors[nPlaneVertices];
+		for(size_t i = 0; i < nPlaneVertices; i++)
+		{
+			colors[i] = float4(100, 100, 100, 100);
+		}
+
+		float2 uv[nPlaneVertices] = {
+		{ 0.0f, 0.0f },
+		{ 1.0f, 0.0f },
+		{ 1.0f, 1.0f },
+		{ 0.0f, 1.0f },
+		};
+
+		float3 normals[nPlaneVertices] = {
+		{ 0.0f,0.0f,1.0f },
+		{ 0.0f,0.0f,1.0f },
+		{ 0.0f,0.0f,1.0f },
+		{ 0.0f,0.0f,1.0f }
+		};
+
+		FillVerticesData(vertices, positions, normals, colors, uv);
+	}
+
+	//Indices
+	{
+		const size_t nPlaneIndices = 6;
+		indices.reserve(nPlaneIndices);
+		indices = {
+			3, 1, 0,
+			3, 2, 1,
+		};
 	}
 }
 

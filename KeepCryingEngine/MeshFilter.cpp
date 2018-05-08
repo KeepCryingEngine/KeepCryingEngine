@@ -128,6 +128,11 @@ void MeshFilter::SetMeshMode(MeshMode mode)
 			SetMesh(App->entity->GetSphere());
 		}
 			break;
+		case MeshMode::PLANE:
+		{
+			SetMesh(App->entity->GetPlane());
+		}
+			break;
 	}
 }
 

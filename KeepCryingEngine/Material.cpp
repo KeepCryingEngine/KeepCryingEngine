@@ -47,9 +47,21 @@ void Material::DrawUI()
 		ImGui::NewLine();
 		
 		int tmpShaderMode = (int)shaderType;
-		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Lightning\0Cartoon\0Depth\0Color\0Rigging"))
+		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Lightning\0Cartoon\0Depth\0Color\0Rigging\0NormalMap\0NormalSpecular"))
 		{
 			SetShaderType((ShaderType)tmpShaderMode);
+		}
+		if(shaderType == ShaderType::NormalMap && shaderType == ShaderType::NormalSpecular)
+		{
+			static char materialNormalBuffer[252] = {};
+			ImGui::InputText("##setTextureNormalMap", materialNormalBuffer, 252); ImGui::SameLine();
+			if(ImGui::Button("Set Texture##2"))
+			{
+				string s = "Assets/";
+				s += materialNormalBuffer;
+
+				SetTextureByPath(s.c_str());
+			}
 		}
 	}
 }
@@ -62,6 +74,11 @@ GLuint Material::GetProgramId() const
 Texture* Material::GetTexture() const
 {
 	return texture;
+}
+
+Texture * Material::GetTextureNormalMap() const
+{
+	return normalMap;
 }
 
 void Material::SetTexture(Texture * texture)
@@ -82,6 +99,27 @@ void Material::SetTextureByPath(const std::experimental::filesystem::path& path)
 	{
 		App->texture->Release(this->texture);
 		this->texture = texture;
+	}
+}
+
+void Material::SetTextureNormalMap(Texture * texture)
+{
+	assert(texture != nullptr);
+	if(this->normalMap != nullptr)
+	{
+		App->texture->Release(this->normalMap);
+	}
+	this->normalMap = texture;
+}
+
+void Material::SetTextureNormalMapByPath(const std::experimental::filesystem::path & path)
+{
+	TextureIdentifier textureIdentifier = { path };
+	Texture * texture = App->texture->GetAsset(textureIdentifier);
+	if(texture != nullptr)
+	{
+		App->texture->Release(this->normalMap);
+		this->normalMap = texture;
 	}
 }
 

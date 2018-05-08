@@ -26,6 +26,7 @@ public:
 
 	Mesh* GetCube();
 	Mesh* GetSphere();
+	Mesh* GetPlane();
 	void Load3DFile(const std::experimental::filesystem::path& path);
 
 private:
@@ -39,8 +40,10 @@ private:
 
 	void SetUpCube();
 	void SetUpSphere();
+	void SetUpPlane();
 	void GetCubeMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, GLenum& drawMode) const;
 	void GetSphereMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, GLenum& drawMode) const;
+	void GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, GLenum& drawMode)const;
 
 	void FillVerticesData(std::vector<Vertex>& vertices, const float3 * positions, const float3* normals, const float4 * colors, const float2 * uvs) const;
 
@@ -55,6 +58,7 @@ protected:
 private:
 	Mesh* cube;
 	Mesh* sphere;
+	Mesh* plane;
 	std::vector<Mesh*> meshes;
 	std::vector<Material*> materials;
 

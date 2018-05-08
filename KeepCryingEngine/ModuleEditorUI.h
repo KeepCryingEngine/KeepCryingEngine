@@ -64,6 +64,7 @@ private:
 	//Create entities
 	bool addCubeGameObject = false;
 	bool addSphereGameObject = false;
+	bool addPlaneGameObject = false;
 	bool addEmptyGameObject = false;
 	bool addCameraGameObject = false;
 	bool addCanvasGameObject = false;

@@ -229,13 +229,13 @@ void ModuleRender::DrawFrustum(Camera & camera)
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(camVertex), (GLvoid*)(3 * sizeof(GLfloat)));
 
-	GLint modelView = glGetUniformLocation(progId, "model_view");
+	GLint modelView = glGetUniformLocation(progId, "view");
 	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->camera->GetViewMatrix().ptr());
 
 	GLint proyection = glGetUniformLocation(progId, "projection");
 	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
 
-	GLint transformUniformId = glGetUniformLocation(progId, "transform");
+	GLint transformUniformId = glGetUniformLocation(progId, "model");
 	float4x4 transformMatrix = camera.gameObject->GetTransform()->GetModelMatrix();
 	transformMatrix.RemoveScale();
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, transformMatrix.Transposed().ptr());
@@ -477,6 +477,21 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 		glBindTexture(GL_TEXTURE_2D, textId);
 	}
 
+	if(drawInfo.material.GetTextureNormalMap() != nullptr)
+	{
+		GLuint normalMap = drawInfo.material.GetTextureNormalMap()->GetId();
+
+		GLint normalMapShader = glGetUniformLocation(progId, "normalMap");
+		if(normalMapShader != -1)
+		{
+			glUniform1i(normalMapShader, 1);
+		}
+
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, normalMap);
+	}
+
 	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetVertexBufferId());
 
 	//position
@@ -518,13 +533,13 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 
 	// ...
 
-	GLint modelView = glGetUniformLocation(progId, "model_view");
+	GLint modelView = glGetUniformLocation(progId, "view");
 	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
 
 	GLint proyection = glGetUniformLocation(progId, "projection");
 	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetProyectionMatrix().ptr());
 
-	GLint transformUniformId = glGetUniformLocation(progId, "transform");
+	GLint transformUniformId = glGetUniformLocation(progId, "model");
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, drawInfo.transform.GetModelMatrix().Transposed().ptr());
 
 	GLint rotation = glGetUniformLocation(progId, "rotation");
@@ -568,6 +583,8 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	glDrawElements(drawInfo.mesh.GetDrawMode(), drawInfo.mesh.GetIndicesNumber(), GL_UNSIGNED_SHORT, nullptr);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glDisableVertexAttribArray(0);

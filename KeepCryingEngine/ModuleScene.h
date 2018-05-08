@@ -56,6 +56,7 @@ public:
 
 	GameObject* AddCube(GameObject& parent);
 	GameObject* AddSphere(GameObject& parent);
+	GameObject* AddPlane(GameObject& parent);
 	GameObject* AddCamera(GameObject& parent);
 	GameObject* AddCanvas(GameObject& parent);
 	GameObject* AddImage(GameObject& parent);

@@ -20,8 +20,11 @@ public:
 
 	GLuint GetProgramId() const;
 	Texture* GetTexture() const;
+	Texture* GetTextureNormalMap()const;
 	void SetTexture(Texture* texture);
 	void SetTextureByPath(const std::experimental::filesystem::path& path);
+	void SetTextureNormalMap(Texture* texture);
+	void SetTextureNormalMapByPath(const std::experimental::filesystem::path& path);
 	ShaderType GetShaderType() const;
 	void SetShaderType(ShaderType shaderType);
 
@@ -29,6 +32,7 @@ private:
 	ShaderType shaderType = ShaderType::Default;
 	GLuint programId = 0;
 	Texture* texture = nullptr;
+	Texture* normalMap = nullptr;
 };
 
 #endif // !_MATERIALENTITY_H_

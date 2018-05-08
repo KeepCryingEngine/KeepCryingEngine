@@ -9,6 +9,7 @@ enum class MeshMode
 {
 	CUBE,
 	SPHERE,
+	PLANE
 };
 
 class MeshFilter : public Component

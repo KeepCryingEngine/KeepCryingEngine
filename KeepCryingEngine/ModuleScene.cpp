@@ -233,6 +233,18 @@ GameObject* ModuleScene::AddSphere(GameObject& parent)
 	return gameObject;
 }
 
+GameObject * ModuleScene::AddPlane(GameObject & parent)
+{
+	GameObject* gameObject = AddEmpty(parent, "Plane");
+
+	gameObject->AddComponent<MeshRenderer>();
+	MeshFilter* temp = gameObject->GetComponent<MeshFilter>();
+	assert(temp);
+	temp->SetMeshMode(MeshMode::PLANE);
+
+	return gameObject;
+}
+
 GameObject* ModuleScene::AddCamera(GameObject& parent)
 {
 	GameObject* gameObject = AddEmpty(parent, "Camera");

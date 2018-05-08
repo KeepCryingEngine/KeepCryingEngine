@@ -57,13 +57,13 @@ void ModuleFX::Draw(const DrawInfo & drawInfo)
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 
-	GLint modelView = glGetUniformLocation(progId, "model_view");
+	GLint modelView = glGetUniformLocation(progId, "view");
 	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
 
 	GLint proyection = glGetUniformLocation(progId, "projection");
 	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetProyectionMatrix().ptr());
 
-	GLint transformUniformId = glGetUniformLocation(progId, "transform");
+	GLint transformUniformId = glGetUniformLocation(progId, "model");
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, drawInfo.transform.GetModelMatrix().Transposed().ptr());
 
 	GLint camera = glGetUniformLocation(progId, "actualCameraModelView");

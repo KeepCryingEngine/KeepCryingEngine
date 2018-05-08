@@ -15,7 +15,9 @@ enum class ShaderType
 	Cartoon,
 	Depth,
 	Color,
-	Rigging
+	Rigging,
+	NormalMap,
+	NormalSpecular
 };
 
 const int DEFAULT = 0;

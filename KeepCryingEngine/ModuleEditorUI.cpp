@@ -573,6 +573,11 @@ void ModuleEditorUI::CallEntityCreation()
 		App->scene->AddSphere(*App->scene->Get(selectedNodeID));
 		addSphereGameObject = false;
 	}
+	if(addPlaneGameObject)
+	{
+		App->scene->AddPlane(*App->scene->Get(selectedNodeID));
+		addPlaneGameObject = false;
+	}
 	if(addCameraGameObject)
 	{
 		App->scene->AddCamera(*App->scene->Get(selectedNodeID));
@@ -831,6 +836,10 @@ void ModuleEditorUI::DrawHierarchyWindow()
 			if(ImGui::Selectable("Sphere"))
 			{
 				addSphereGameObject = true;
+			}
+			if(ImGui::Selectable("Plane"))
+			{
+				addPlaneGameObject = true;
 			}
 			if(ImGui::Selectable("Camera"))
 			{
