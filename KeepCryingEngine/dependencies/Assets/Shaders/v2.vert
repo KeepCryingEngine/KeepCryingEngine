@@ -30,7 +30,7 @@ void main()
 	mat3 matrix = mat3(tangent2,bitangent,Normal);
 	matrix = transpose(matrix);
 
-	gl_Position = projection * view * matrix * model* vec4(position, 1.0f);
+	gl_Position = projection * view * mat4(matrix) * model* vec4(position, 1.0f);
 	LightPos = matrix * lightSourcePosition;
 	CameraPos=  matrix * cameraPosition;
 	

@@ -10,9 +10,11 @@ out vec4 color;
 uniform sampler2D ourTexture;
 uniform sampler2D normalMapShader;
 
+uniform mat4 rotation;
+
 void main()
 {
-	vec3 normal = texture2D(normalMapShader,TexCoord);
+	vec3 normal = texture2D(normalMapShader,TexCoord).rgb;
 	
 	float intensity = dot((rotation * vec4(normal , 0.0f)).xyz, normalize(LightPos));
 	
@@ -21,7 +23,7 @@ void main()
 	
 	//Specular Lightning --------
 	float shininess = 48.0f;
-	vec3 halfVector = normalize(normalize(lightDir) + normalize(CameraPos));
+	vec3 halfVector = normalize(normalize(LightPos) + normalize(CameraPos));
 	
 	float specularIntensity = dot((rotation * vec4(normal , 0.0f)).xyz, normalize(halfVector));
 	specularIntensity = max(specularIntensity, 0);		
