@@ -51,7 +51,7 @@ void Material::DrawUI()
 		{
 			SetShaderType((ShaderType)tmpShaderMode);
 		}
-		if(shaderType == ShaderType::NormalMap && shaderType == ShaderType::NormalSpecular)
+		if(shaderType == ShaderType::NormalMap || shaderType == ShaderType::NormalSpecular)
 		{
 			static char materialNormalBuffer[252] = {};
 			ImGui::InputText("##setTextureNormalMap", materialNormalBuffer, 252); ImGui::SameLine();
@@ -60,7 +60,7 @@ void Material::DrawUI()
 				string s = "Assets/";
 				s += materialNormalBuffer;
 
-				SetTextureByPath(s.c_str());
+				SetTextureNormalMapByPath(s.c_str());
 			}
 		}
 	}
@@ -118,7 +118,10 @@ void Material::SetTextureNormalMapByPath(const std::experimental::filesystem::pa
 	Texture * texture = App->texture->GetAsset(textureIdentifier);
 	if(texture != nullptr)
 	{
-		App->texture->Release(this->normalMap);
+		if(normalMap != nullptr)
+		{
+			App->texture->Release(this->normalMap);
+		}
 		this->normalMap = texture;
 	}
 }

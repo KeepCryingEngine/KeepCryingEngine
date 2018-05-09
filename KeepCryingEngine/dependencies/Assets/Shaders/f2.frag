@@ -8,13 +8,13 @@ in vec3 CameraPos;
 out vec4 color;
 
 uniform sampler2D ourTexture;
-uniform sampler2D normalMapShader;
+uniform sampler2D normalMap;
 
 uniform mat4 rotation;
 
 void main()
 {
-	vec3 normal = texture2D(normalMapShader,TexCoord).rgb;
+	vec3 normal = texture2D(normalMap,TexCoord).rgb;
 	
 	float intensity = dot((rotation * vec4(normal , 0.0f)).xyz, normalize(LightPos));
 	
