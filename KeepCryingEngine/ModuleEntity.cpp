@@ -218,12 +218,14 @@ void ModuleEntity::SetUpPlane()
 {
 	vector<Vertex> vertices;
 	vector<GLushort> indices;
+	vector<float3> tangents;
 	GLenum drawMode;
-	GetPlaneMeshData(vertices, indices, drawMode);
+	GetPlaneMeshData(vertices, indices,tangents, drawMode);
 
 	MeshIdentifier meshIdentifier = { "ENGINE_DEFAULTS", "PLANE" };
 	plane = new Mesh(meshIdentifier);
 	plane->SetMeshData(vertices, indices, vector<Bone>(), drawMode);
+	plane->SetMeshTangent(tangents);
 	Register(plane);
 }
 
@@ -446,7 +448,7 @@ void ModuleEntity::GetSphereMeshData(vector<Vertex>& vertices, vector<GLushort>&
 	}
 }
 
-void ModuleEntity::GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, GLenum & drawMode) const
+void ModuleEntity::GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices,std::vector<float3>& tangents, GLenum & drawMode) const
 {
 	assert(vertices.size() == 0);
 	assert(indices.size() == 0);
@@ -497,6 +499,44 @@ void ModuleEntity::GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<G
 			3, 1, 0,
 			3, 2, 1,
 		};
+	}
+
+	//Tangents
+	tangents.resize(vertices.size());
+	for(float3 tang : tangents)
+	{
+		tang = float3::zero;
+	}
+
+	for(int indice = 0; indice < indices.size(); indice += 3)
+	{
+		float3 p1 = vertices[indices[indice]].position;
+		float3 p2 = vertices[indices[indice +1]].position;
+		float3 p3 = vertices[indices[indice +2]].position;
+
+		float3 e1 = p1 - p2;
+		float3 e2 = p1 - p3;
+
+		float u1 = e1.x;
+		float v1 = e1.y;
+
+		float u2 = e2.x;
+		float v2 = e2.y;
+		
+		float f = 1.0f /(u1-v1 * u2 / v2);
+		float3 newTangent;
+		if(v2 == 0)
+		{
+			newTangent = e2 / u2;
+		}
+		else
+		{
+			newTangent = f * (e1 - e2 * v1 / v2);
+		}
+
+		tangents[indices[indice]] += newTangent;
+		tangents[indices[indice + 1]] += newTangent;
+		tangents[indices[indice + 2]] += newTangent;
 	}
 }
 

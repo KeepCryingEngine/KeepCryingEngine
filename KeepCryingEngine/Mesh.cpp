@@ -42,6 +42,11 @@ GLuint Mesh::GetBoneWeightsBufferId() const
 	return boneWeightsBufferId;
 }
 
+GLuint Mesh::GetTangentBufferId() const
+{
+	return tangentBufferId;
+}
+
 GLsizei Mesh::GetVerticesNumber() const
 {
 	return nVertices;
@@ -71,6 +76,20 @@ void Mesh::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& i
 	{
 		GenerateBoneBuffers();
 	}
+}
+
+void Mesh::SetMeshTangent(const std::vector<float3>& tangents)
+{
+	assert(tangents.size() > 0);
+
+	float nVertices = tangents.size();
+
+	//Generate Vertex buffer
+	const float3 * tangentsPointer = &tangents[0];
+	glGenBuffers(1, &tangentBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, tangentBufferId);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * nVertices, tangentsPointer, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 const std::vector<Vertex>& Mesh::GetVertices() const

@@ -161,6 +161,10 @@ void Material::SetShaderType(ShaderType shaderType)
 			flags |= RIGGING;
 			name = "UberShader";
 			break;
+		case ShaderType::NormalMap:
+			flags |= NORMALMAP;
+			name = "UberShader";
+			break;
 	}
 
 	programId = App->shader->GetProgramId(flags, name);

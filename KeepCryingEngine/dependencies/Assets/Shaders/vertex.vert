@@ -34,8 +34,8 @@ out vec3 vertexNormal;
 
 
 uniform mat4 projection;
-uniform mat4 model_view;
-uniform mat4 transform;
+uniform mat4 view;
+uniform mat4 model;
 
 #ifdef RIGGING
 uniform mat4 palette[MAX_BONES];
@@ -43,10 +43,10 @@ uniform mat4 palette[MAX_BONES];
 
 void main()
 {
-	gl_Position = projection * model_view * transform * vec4(position, 1.0f);
+	gl_Position = projection * view * model* vec4(position, 1.0f);
 	ourColor = color;
 	TexCoord = texCoord;
-	mat3 normalMatrix = mat3(transform);
+	mat3 normalMatrix = mat3(model);
 	normalMatrix = inverse(normalMatrix);
 	Normal = normalize(normal * normalMatrix);
 
@@ -60,16 +60,16 @@ void main()
 	vec3 vertex_position = vec3(skin_transform*vec4(position, 1));
 	vec3 vertex_normal = vec3(skin_transform*vec4(normal, 0));
 //TODO: VERIFY
-gl_Position = projection * model_view * vec4(vertex_position, 1.0f);
+gl_Position = projection * view* vec4(vertex_position, 1.0f);
 
 // Normal = normalize(vertex_normal * normalMatrix);
-Normal = normalize(vec3(model_view * vec4(vertex_normal, 0.0f)));
+Normal = normalize(vec3(view* vec4(vertex_normal, 0.0f)));
 
 #endif
 
 #ifdef DEPTH
 
-	relativeCameraPos = actualCameraModelView * transform * vec4(position, 1.0f);
+	relativeCameraPos = actualCameraModelView * model* vec4(position, 1.0f);
 
 #endif
 	

@@ -507,6 +507,12 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
 
+	if(drawInfo.mesh.GetTangentBufferId() != 0)
+	{
+		glEnableVertexAttribArray(4);
+		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetTangentBufferId());
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	}
 	// ...
 
 	if(!drawInfo.mesh.GetBones().empty())

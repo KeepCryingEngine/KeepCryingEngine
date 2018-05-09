@@ -49,12 +49,14 @@ public:
 	virtual ~Mesh();
 	
 	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, const std::vector<Bone>& bones, GLenum drawMode);
+	void SetMeshTangent(const std::vector<float3>& tangents);
 
 	const AABB& GetAABB() const;
 	GLuint GetVertexBufferId() const;
 	GLuint GetIndicesBufferId() const;
 	GLuint GetBoneIndicesBufferId() const;
 	GLuint GetBoneWeightsBufferId() const;
+	GLuint GetTangentBufferId() const;
 	GLsizei GetVerticesNumber() const;
 	GLsizei GetIndicesNumber() const;
 	GLenum GetDrawMode()const;
@@ -79,6 +81,7 @@ private:
 	GLuint indicesBufferId = 0;
 	GLuint boneIndicesBufferId = 0;
 	GLuint boneWeightsBufferId = 0;
+	GLuint tangentBufferId = 0;
 	GLsizei nVertices = 0;
 	GLsizei nIndices = 0;
 	GLenum drawMode = GL_TRIANGLES;

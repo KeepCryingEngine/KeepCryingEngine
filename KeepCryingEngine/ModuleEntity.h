@@ -43,7 +43,7 @@ private:
 	void SetUpPlane();
 	void GetCubeMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, GLenum& drawMode) const;
 	void GetSphereMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, GLenum& drawMode) const;
-	void GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, GLenum& drawMode)const;
+	void GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, std::vector<float3>& tangents, GLenum& drawMode)const;
 
 	void FillVerticesData(std::vector<Vertex>& vertices, const float3 * positions, const float3* normals, const float4 * colors, const float2 * uvs) const;
 

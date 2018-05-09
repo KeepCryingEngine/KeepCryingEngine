@@ -26,6 +26,7 @@ const int CARTOON = 2 << 0;
 const int DEPTH = 3 << 0;
 const int COLOR = 4 << 0;
 const int RIGGING = 5 << 0;
+const int NORMALMAP = 6 << 0;
 
 class ModuleShader : public Module
 {
@@ -51,6 +52,7 @@ private:
 	void SetUpDepthShader();
 	void SetUpColorProgram();
 	void SetUpRiggingProgram();
+	void SetUpNormalMapProgram();
 
 	void SetUpUberShader();
 
