@@ -1,6 +1,7 @@
 in vec4 ourColor;
 in vec2 TexCoord;
 in vec3 Normal;
+in vec3 FragmentPos;
 in vec3 LightPos;
 in vec3 CameraPos;
 
@@ -15,21 +16,23 @@ uniform mat4 rotation;
 void main()
 {
 	vec3 normal = texture2D(normalMap,TexCoord).rgb;
-	
-	float intensity = dot((rotation * vec4(normal , 0.0f)).xyz, normalize(LightPos));
+		
+	vec3 lightDir =   normalize(FragmentPos - LightPos) ;
+	float intensity = dot(normal, lightDir);
 	
 	float diffuse = max(intensity, 0);
 	// --------------------------
-	
+
 	//Specular Lightning --------
 	float shininess = 48.0f;
-	vec3 halfVector = normalize(normalize(LightPos) + normalize(CameraPos));
+	vec3 cameraDir =  FragmentPos - CameraPos;
+	vec3 halfVector = normalize(lightDir + normalize(cameraDir));
 	
-	float specularIntensity = dot((rotation * vec4(normal , 0.0f)).xyz, normalize(halfVector));
+	float specularIntensity = dot(normal, halfVector);
 	specularIntensity = max(specularIntensity, 0);		
 	float specular = pow(specularIntensity, shininess);	
 	//---------------------------
-	
+
 	//Ambient Lightning ---------
 	vec4 ambientLight = vec4(0.0, 0.0, 0.0, 1.0); 
 	// --------------------------
