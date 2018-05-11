@@ -494,10 +494,10 @@ void ModuleEntity::GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<G
 		};
 
 		float3 normals[nPlaneVertices] = {
-		{ 0.0f,0.0f,1.0f },
-		{ 0.0f,0.0f,1.0f },
-		{ 0.0f,0.0f,1.0f },
-		{ 0.0f,0.0f,1.0f }
+		{ 0.0f,0.0f,-1.0f },
+		{ 0.0f,0.0f,-1.0f },
+		{ 0.0f,0.0f,-1.0f },
+		{ 0.0f,0.0f,-1.0f }
 		};
 
 		FillVerticesData(vertices, positions, normals, colors, uv);

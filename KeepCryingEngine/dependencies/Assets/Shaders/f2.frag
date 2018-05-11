@@ -18,7 +18,7 @@ void main()
 	vec3 normal = texture2D(normalMap,TexCoord).rgb;
 	normal = normalize(normal*2.0 - 1.0);
 		
-	vec3 lightDir =   normalize(FragmentPos - LightPos) ;
+	vec3 lightDir =   normalize(LightPos - FragmentPos) ;
 	float intensity = dot(normal, lightDir);
 	
 	float diffuse = max(intensity, 0);
@@ -26,7 +26,7 @@ void main()
 
 	//Specular Lightning --------
 	float shininess = 30.0f;
-	vec3 cameraDir =  normalize(FragmentPos - CameraPos);
+	vec3 cameraDir =  normalize(CameraPos -FragmentPos);
 	vec3 halfVector = normalize(lightDir + cameraDir);
 	
 	float specularIntensity = dot(normal, halfVector);
