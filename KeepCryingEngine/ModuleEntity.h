@@ -35,14 +35,14 @@ private:
 	void ExtractMaterialsFromScene(std::vector<Material *> &createdMaterials, const aiScene * scene, const std::experimental::filesystem::path & path) const;
 	void ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, const aiScene * scene, const std::experimental::filesystem::path& path) const;
 	Mesh* ExtractMeshFromScene(const aiScene* aiScene, size_t meshIndex, const std::experimental::filesystem::path & meshIdentifier) const;
-	void ExtractVerticesAndIndicesFromScene(const aiScene * scene, const aiMesh* mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices) const;
+	void ExtractVertexDataFromScene(const aiScene * scene, const aiMesh* mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices, std::vector<float3>& tangents) const;
 	void ExtractBonesFromMesh(const aiScene * scene, const aiMesh* mesh, std::vector<Bone> &bones) const;
 
 	void SetUpCube();
 	void SetUpSphere();
 	void SetUpPlane();
-	void GetCubeMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, GLenum& drawMode) const;
-	void GetSphereMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, GLenum& drawMode) const;
+	void GetCubeMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, std::vector<float3>& tangents, GLenum& drawMode) const;
+	void GetSphereMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, std::vector<float3>& tangents, GLenum& drawMode) const;
 	void GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices, std::vector<float3>& tangents, GLenum& drawMode)const;
 
 	void FillVerticesData(std::vector<Vertex>& vertices, const float3 * positions, const float3* normals, const float4 * colors, const float2 * uvs) const;
@@ -54,6 +54,11 @@ private:
 protected:
 	Mesh * Load(const MeshIdentifier & identifier) override;
 	void Unload(Mesh * asset) override;
+
+private:
+	void CalculateTangents(const std::vector<Vertex>& vertices, const  std::vector<GLushort>& indices, std::vector<float3>& tangents,const GLenum& drawMode)const;
+	void CalculateTangentsQuad(const std::vector<Vertex>& vertices, const  std::vector<GLushort>& indices, std::vector<float3>& tangents)const;
+	void CalculateTangentsTri(const std::vector<Vertex>& vertices, const  std::vector<GLushort>& indices, std::vector<float3>& tangents)const;
 
 private:
 	Mesh* cube;

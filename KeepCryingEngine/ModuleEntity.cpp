@@ -132,14 +132,15 @@ Mesh * ModuleEntity::ExtractMeshFromScene(const aiScene* aiScene, size_t meshInd
 	vector<Vertex> vertices;
 	vector<GLushort> indices;
 	vector<Bone> bones;
+	vector<float3> tangents;
 
-	ExtractVerticesAndIndicesFromScene(aiScene, aiMesh, vertices, indices);
+	ExtractVertexDataFromScene(aiScene, aiMesh, vertices, indices, tangents);
 	ExtractBonesFromMesh(aiScene, aiMesh, bones);
 
 	string meshName = aiMesh->mName.C_Str() + meshIndex;
 	MeshIdentifier meshIdentifier = { path, meshName };
 	Mesh* mesh = new Mesh(meshIdentifier);
-	mesh->SetMeshData(vertices, indices, bones, GL_TRIANGLES);
+	mesh->SetMeshData(vertices, indices, bones,tangents, GL_TRIANGLES);
 
 	return mesh;
 }
@@ -165,7 +166,7 @@ void ModuleEntity::ExtractBonesFromMesh(const aiScene * scene, const aiMesh* mes
 	}
 }
 
-void ModuleEntity::ExtractVerticesAndIndicesFromScene(const aiScene * scene, const aiMesh* mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices) const
+void ModuleEntity::ExtractVertexDataFromScene(const aiScene * scene, const aiMesh* mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices,std::vector<float3>& tangents) const
 {	
 	for (unsigned int k = 0; k < mesh->mNumVertices; k++)
 	{
@@ -178,6 +179,8 @@ void ModuleEntity::ExtractVerticesAndIndicesFromScene(const aiScene * scene, con
 		vertex.color = float4(100, 100, 100, 255);
 		vertex.uv = float2(mesh->mTextureCoords[0][k].x, mesh->mTextureCoords[0][k].y);
 		vertices.push_back(vertex);
+
+		tangents[k] = float3(mesh->mTangents[k].x, mesh->mTangents[k].y, mesh->mTangents[k].z);
 	}
 	for (unsigned int k = 0; k < mesh->mNumFaces; k++)
 	{
@@ -192,12 +195,13 @@ void ModuleEntity::SetUpCube()
 {
 	vector<Vertex> vertices;
 	vector<GLushort> indices;
+	vector<float3> tangents;
 	GLenum drawMode;
-	GetCubeMeshData(vertices, indices, drawMode);
+	GetCubeMeshData(vertices, indices, tangents, drawMode);
 
 	MeshIdentifier meshIdentifier = { "ENGINE_DEFAULTS", "CUBE" };
 	cube = new Mesh(meshIdentifier);
-	cube->SetMeshData(vertices,indices, vector<Bone>(), drawMode);
+	cube->SetMeshData(vertices,indices, vector<Bone>(),tangents, drawMode);
 	Register(cube);
 }
 
@@ -205,12 +209,13 @@ void ModuleEntity::SetUpSphere()
 {
 	vector<Vertex> vertices;
 	vector<GLushort> indices;
+	vector<float3> tangents;
 	GLenum drawMode;
-	GetSphereMeshData(vertices, indices, drawMode);
+	GetSphereMeshData(vertices, indices, tangents, drawMode);
 
 	MeshIdentifier meshIdentifier = { "ENGINE_DEFAULTS", "SPHERE" };
 	sphere = new Mesh(meshIdentifier);
-	sphere->SetMeshData(vertices, indices, vector<Bone>(), drawMode);
+	sphere->SetMeshData(vertices, indices, vector<Bone>(),tangents, drawMode);
 	Register(sphere);
 }
 
@@ -220,16 +225,15 @@ void ModuleEntity::SetUpPlane()
 	vector<GLushort> indices;
 	vector<float3> tangents;
 	GLenum drawMode;
-	GetPlaneMeshData(vertices, indices,tangents, drawMode);
+	GetPlaneMeshData(vertices, indices, tangents, drawMode);
 
 	MeshIdentifier meshIdentifier = { "ENGINE_DEFAULTS", "PLANE" };
 	plane = new Mesh(meshIdentifier);
-	plane->SetMeshData(vertices, indices, vector<Bone>(), drawMode);
-	plane->SetMeshTangent(tangents);
+	plane->SetMeshData(vertices, indices, vector<Bone>(),tangents, drawMode);
 	Register(plane);
 }
 
-void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& indices, GLenum& drawMode) const
+void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& indices, std::vector<float3>& tangents, GLenum& drawMode) const
 {
 	assert(vertices.size() == 0);
 	assert(indices.size() == 0);
@@ -312,35 +316,39 @@ void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& i
 			{ 0.0f, 1.0f },
 		};
 
-		float3 normals[nCubeVertices]; // TODO FILL THE NORMALS WITH THE NORMAL VALUE
-		/*float offset = 3;
-		for(size_t i = 0; i < 36; i+=3)
-		{
-		int x1 = indicesArray[i] * offset;
-		int x2 = indicesArray[i + 1] * offset;
-		int x3 = indicesArray[i + 2] * offset;
+		
 
-		int y1 = (indicesArray[i] * offset) + 1;
-		int y2 = (indicesArray[i + 1] * offset) + 1;
-		int y3 = (indicesArray[i + 2] * offset) + 1;
+		float3 normals[nCubeVertices] = {
+		{ 0,0,-1 },
+		{ 0,0,-1 },
+		{ 0,0,-1 },
+		{ 0,0,-1 },
 
-		int z1 = (indicesArray[i] * offset) + 2;
-		int z2 = (indicesArray[i + 1] * offset) + 2;
-		int z3 = (indicesArray[i + 2] * offset) + 2;
+		{ -1,0,0 },
+		{ -1,0,0 },
+		{ -1,0,0 },
+		{ -1,0,0 },
 
-		float edge1X = uniqueVertex[x2] - uniqueVertex[x1];
-		float edge1Y = uniqueVertex[y2] - uniqueVertex[y1];
-		float edge1Z = uniqueVertex[z2] - uniqueVertex[z1];
+		{ 0,0,1 },
+		{ 0,0,1 },
+		{ 0,0,1 },
+		{ 0,0,1 },
 
-		float edge2X = uniqueVertex[x3] - uniqueVertex[x1];
-		float edge2Y = uniqueVertex[y3] - uniqueVertex[y1];
-		float edge2Z = uniqueVertex[z3] - uniqueVertex[z1];
+		{ 1,0,0 },
+		{ 1,0,0 },
+		{ 1,0,0 },
+		{ 1,0,0 },
 
-		float3 vNormal = Cross(float3(edge1X, edge1Y, edge1Z), float3(edge2X, edge2Y, edge2Z)).Normalized();
-		normal[i] = vNormal.x;
-		normal[i + 1] = vNormal.y;
-		normal[i + 2] = vNormal.z;
-		}*/
+		{ 0,-1,0 },
+		{ 0,-1,0 },
+		{ 0,-1,0 },
+		{ 0,-1,0 },
+
+		{ 0,1,0 },
+		{ 0,1,0 },
+		{ 0,1,0 },
+		{ 0,1,0 }
+		};
 
 		FillVerticesData(vertices, positions, normals, colors, uv);
 	}
@@ -369,9 +377,11 @@ void ModuleEntity::GetCubeMeshData(vector<Vertex>& vertices, vector<GLushort>& i
 			23, 22, 21
 		};
 	}
+
+	CalculateTangents(vertices, indices, tangents, drawMode);
 }
 	
-void ModuleEntity::GetSphereMeshData(vector<Vertex>& vertices, vector<GLushort>& indices, GLenum& drawMode) const
+void ModuleEntity::GetSphereMeshData(vector<Vertex>& vertices, vector<GLushort>& indices, std::vector<float3>& tangents, GLenum& drawMode) const
 {
 	assert(vertices.size() == 0);
 	assert(indices.size() == 0);
@@ -446,6 +456,8 @@ void ModuleEntity::GetSphereMeshData(vector<Vertex>& vertices, vector<GLushort>&
 			}
 		}
 	}
+
+	CalculateTangents(vertices, indices, tangents, drawMode);
 }
 
 void ModuleEntity::GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<GLushort>& indices,std::vector<float3>& tangents, GLenum & drawMode) const
@@ -501,43 +513,7 @@ void ModuleEntity::GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<G
 		};
 	}
 
-	//Tangents
-	tangents.resize(vertices.size());
-	for(int i=0; i<tangents.size(); ++i)
-	{
-		tangents[i] = float3::zero;
-	}
-
-	for(int indice = 0; indice < indices.size(); indice += 3)
-	{
-		float3 p1 = vertices[indices[indice]].position;
-		float3 p2 = vertices[indices[indice +1]].position;
-		float3 p3 = vertices[indices[indice +2]].position;
-
-		float3 e1 = p1 - p2;
-		float3 e2 = p1 - p3;
-
-		float u1 = e1.x;
-		float v1 = e1.y;
-
-		float u2 = e2.x;
-		float v2 = e2.y;
-		
-		float f = 1.0f /(u1-v1 * u2 / v2);
-		float3 newTangent;
-		if(v2 == 0)
-		{
-			newTangent = e2 / u2;
-		}
-		else
-		{
-			newTangent = f * (e1 - e2 * v1 / v2);
-		}
-
-		tangents[indices[indice]] -= newTangent;
-		tangents[indices[indice + 1]] -= newTangent;
-		tangents[indices[indice + 2]] -= newTangent;
-	}
+	CalculateTangents(vertices,indices,tangents,drawMode);
 }
 
 void ModuleEntity::FillVerticesData(vector<Vertex>& vertices, const float3 * positions, const float3* normals, const float4 * colors, const float2 * uvs) const
@@ -613,4 +589,99 @@ Mesh * ModuleEntity::Load(const MeshIdentifier & identifier)
 void ModuleEntity::Unload(Mesh * asset)
 {
 	delete asset;
+}
+
+void ModuleEntity::CalculateTangents(const std::vector<Vertex>& vertices, const  std::vector<GLushort>& indices, std::vector<float3>& tangents, const GLenum& drawMode)const
+{
+	switch(drawMode)
+	{
+		case GL_QUADS:
+			CalculateTangentsQuad(vertices,indices,tangents);
+			break;
+		case GL_TRIANGLES:
+			CalculateTangentsTri(vertices, indices, tangents);
+			break;
+	}
+}
+
+void ModuleEntity::CalculateTangentsQuad(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, std::vector<float3>& tangents)const
+{
+	tangents.resize(vertices.size());
+	for(int i = 0; i<tangents.size(); ++i)
+	{
+		tangents[i] = float3::zero;
+	}
+
+	for(int indice = 0; indice < indices.size(); indice += 4)
+	{
+		float3 p1 = vertices[indices[indice]].position;
+		float3 p2 = vertices[indices[indice + 1]].position;
+		float3 p3 = vertices[indices[indice + 2]].position;
+		float3 p4 = vertices[indices[indice + 3]].position;
+
+		float3 e1 = p1 - p2;
+		float3 e2 = p1 - p3;
+
+		float u1 = e1.x;
+		float v1 = e1.y;
+
+		float u2 = e2.x;
+		float v2 = e2.y;
+
+		float f = 1.0f / (u1 - v1 * u2 / v2);
+		float3 newTangent;
+		if(v2 == 0)
+		{
+			newTangent = e2 / u2;
+		}
+		else
+		{
+			newTangent = f * (e1 - e2 * v1 / v2);
+		}
+
+		tangents[indices[indice]] -= newTangent;
+		tangents[indices[indice + 1]] -= newTangent;
+		tangents[indices[indice + 2]] -= newTangent;
+		tangents[indices[indice + 3]] -= newTangent;
+	}
+}
+
+void ModuleEntity::CalculateTangentsTri(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, std::vector<float3>& tangents)const
+{
+	tangents.resize(vertices.size());
+	for(int i = 0; i<tangents.size(); ++i)
+	{
+		tangents[i] = float3::zero;
+	}
+
+	for(int indice = 0; indice < indices.size(); indice += 3)
+	{
+		float3 p1 = vertices[indices[indice]].position;
+		float3 p2 = vertices[indices[indice + 1]].position;
+		float3 p3 = vertices[indices[indice + 2]].position;
+
+		float3 e1 = p1 - p2;
+		float3 e2 = p1 - p3;
+
+		float u1 = e1.x;
+		float v1 = e1.y;
+
+		float u2 = e2.x;
+		float v2 = e2.y;
+
+		float f = 1.0f / (u1 - v1 * u2 / v2);
+		float3 newTangent;
+		if(v2 == 0)
+		{
+			newTangent = e2 / u2;
+		}
+		else
+		{
+			newTangent = f * (e1 - e2 * v1 / v2);
+		}
+
+		tangents[indices[indice]] -= newTangent;
+		tangents[indices[indice + 1]] -= newTangent;
+		tangents[indices[indice + 2]] -= newTangent;
+	}
 }

@@ -48,8 +48,7 @@ public:
 	Mesh(const MeshIdentifier& meshIdentifier);
 	virtual ~Mesh();
 	
-	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, const std::vector<Bone>& bones, GLenum drawMode);
-	void SetMeshTangent(const std::vector<float3>& tangents);
+	void SetMeshData(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, const std::vector<Bone>& bones, const std::vector<float3>& tangents, GLenum drawMode);
 
 	const AABB& GetAABB() const;
 	GLuint GetVertexBufferId() const;
@@ -71,7 +70,7 @@ public:
 	void SetDynamicDraw(bool dynamicDraw);
 
 private:
-	void GenerateBuffers(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices);
+	void GenerateBuffers(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, const std::vector<float3>& tangents);
 	void GenerateBoneBuffers();
 	void CalculateAABBForMesh(const std::vector<Vertex> &vertices);
 

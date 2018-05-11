@@ -62,9 +62,9 @@ GLenum Mesh::GetDrawMode() const
 	return drawMode;
 }
 
-void Mesh::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& indices, const vector<Bone>& bones, GLenum drawMode)
+void Mesh::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& indices, const vector<Bone>& bonesconst,const std::vector<float3>& tangents, GLenum drawMode)
 {
-	GenerateBuffers(vertices, indices);
+	GenerateBuffers(vertices, indices,tangents);
 	CalculateAABBForMesh(vertices);
 	this->drawMode = drawMode;
 	this->vertices = vertices;
@@ -76,20 +76,6 @@ void Mesh::SetMeshData(const vector<Vertex>& vertices, const vector<GLushort>& i
 	{
 		GenerateBoneBuffers();
 	}
-}
-
-void Mesh::SetMeshTangent(const std::vector<float3>& tangents)
-{
-	assert(tangents.size() > 0);
-
-	float nVertices = tangents.size();
-
-	//Generate Vertex buffer
-	const float3 * tangentsPointer = &tangents[0];
-	glGenBuffers(1, &tangentBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, tangentBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * nVertices, tangentsPointer, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 const std::vector<Vertex>& Mesh::GetVertices() const
@@ -140,10 +126,11 @@ void Mesh::SetDynamicDraw(bool dynamicDraw)
 	this->dynamicDraw = dynamicDraw;
 }
 
-void Mesh::GenerateBuffers(const vector<Vertex>& vertices, const vector<GLushort>& indices)
+void Mesh::GenerateBuffers(const vector<Vertex>& vertices, const vector<GLushort>& indices, const std::vector<float3>& tangents)
 {
 	assert(vertices.size() > 0);
 	assert(indices.size() > 0);
+	assert(tangents.size() > 0);
 
 	nVertices = vertices.size();
 	nIndices = indices.size();
@@ -161,6 +148,15 @@ void Mesh::GenerateBuffers(const vector<Vertex>& vertices, const vector<GLushort
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBufferId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * nIndices, indicesPointer, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	float nVertices = tangents.size();
+
+	//Generate Vertex buffer
+	const float3 * tangentsPointer = &tangents[0];
+	glGenBuffers(1, &tangentBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, tangentBufferId);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * nVertices, tangentsPointer, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Mesh::GenerateBoneBuffers()
