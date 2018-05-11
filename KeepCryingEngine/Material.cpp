@@ -47,11 +47,11 @@ void Material::DrawUI()
 		ImGui::NewLine();
 		
 		int tmpShaderMode = (int)shaderType;
-		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Lightning\0Cartoon\0Depth\0Color\0Rigging\0NormalMap\0NormalSpecular"))
+		if(ImGui::Combo("Shader", &tmpShaderMode, "Default\0Lightning\0Cartoon\0Depth\0Color\0Rigging\0NormalMap\0NormalMapRigging"))
 		{
 			SetShaderType((ShaderType)tmpShaderMode);
 		}
-		if(shaderType == ShaderType::NormalMap || shaderType == ShaderType::NormalSpecular)
+		if(shaderType == ShaderType::NormalMap || shaderType == ShaderType::NormalMapRigging)
 		{
 			static char materialNormalBuffer[252] = {};
 			ImGui::InputText("##setTextureNormalMap", materialNormalBuffer, 252); ImGui::SameLine();
@@ -166,6 +166,10 @@ void Material::SetShaderType(ShaderType shaderType)
 			break;
 		case ShaderType::NormalMap:
 			flags |= NORMALMAP;
+			name = "UberShader";
+			break;
+		case ShaderType::NormalMapRigging:
+			flags |= NORMALMAPRIGGING;
 			name = "UberShader";
 			break;
 	}

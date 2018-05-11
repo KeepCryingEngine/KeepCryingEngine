@@ -503,9 +503,9 @@ void ModuleEntity::GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<G
 
 	//Tangents
 	tangents.resize(vertices.size());
-	for(float3 tang : tangents)
+	for(int i=0; i<tangents.size(); ++i)
 	{
-		tang = float3::zero;
+		tangents[i] = float3::zero;
 	}
 
 	for(int indice = 0; indice < indices.size(); indice += 3)
@@ -534,9 +534,9 @@ void ModuleEntity::GetPlaneMeshData(std::vector<Vertex>& vertices, std::vector<G
 			newTangent = f * (e1 - e2 * v1 / v2);
 		}
 
-		tangents[indices[indice]] += newTangent;
-		tangents[indices[indice + 1]] += newTangent;
-		tangents[indices[indice + 2]] += newTangent;
+		tangents[indices[indice]] -= newTangent;
+		tangents[indices[indice + 1]] -= newTangent;
+		tangents[indices[indice + 2]] -= newTangent;
 	}
 }
 

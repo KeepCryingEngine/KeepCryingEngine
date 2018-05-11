@@ -182,14 +182,14 @@ void Mesh::GenerateBoneBuffers()
 
 	for(size_t i = 0; i < bIndices.size(); ++i)
 	{
+		assert(bIndices[i].size() <= 4);
+		assert(bWeights[i].size() <= 4);
+
 		while(bIndices[i].size() < 4)
 		{
 			bIndices[i].push_back(0);
 			bWeights[i].push_back(0.0f);
 		}
-
-		assert(bIndices[i].size() == 4);
-		assert(bWeights[i].size() == 4);
 	}
 
 	int* bIndicesArray = (int*)malloc(bIndices.size() * 4 * sizeof(int));

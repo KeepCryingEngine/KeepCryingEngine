@@ -232,6 +232,16 @@ void ModuleShader::SetUpNormalMapProgram()
 	shaders[make_pair(NORMALMAP, "UberShader")] = program;
 }
 
+void ModuleShader::SetUpNormalMapRiggingProgram()
+{
+	uint vertexId = AddShaderPath("Assets/Shaders/v3.vert", GL_VERTEX_SHADER);
+	uint fragmentId = AddShaderPath("Assets/Shaders/f3.frag", GL_FRAGMENT_SHADER);
+
+	int program = AddProgram({ vertexId, fragmentId });
+
+	shaders[make_pair(NORMALMAPRIGGING, "UberShader")] = program;
+}
+
 void ModuleShader::SetUpUberShader()
 {
 	SetUpDefaultShader();
@@ -241,4 +251,5 @@ void ModuleShader::SetUpUberShader()
 	SetUpColorProgram();
 	SetUpRiggingProgram();
 	SetUpNormalMapProgram();
+	SetUpNormalMapRiggingProgram();
 }

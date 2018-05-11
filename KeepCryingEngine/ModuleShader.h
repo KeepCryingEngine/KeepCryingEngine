@@ -17,7 +17,7 @@ enum class ShaderType
 	Color,
 	Rigging,
 	NormalMap,
-	NormalSpecular
+	NormalMapRigging
 };
 
 const int DEFAULT = 0;
@@ -27,6 +27,7 @@ const int DEPTH = 3 << 0;
 const int COLOR = 4 << 0;
 const int RIGGING = 5 << 0;
 const int NORMALMAP = 6 << 0;
+const int NORMALMAPRIGGING = 7 << 0;
 
 class ModuleShader : public Module
 {
@@ -53,6 +54,7 @@ private:
 	void SetUpColorProgram();
 	void SetUpRiggingProgram();
 	void SetUpNormalMapProgram();
+	void SetUpNormalMapRiggingProgram();
 
 	void SetUpUberShader();
 
