@@ -614,7 +614,7 @@ void ModuleEntity::CalculateTangentsQuad(const std::vector<Vertex>& vertices, co
 
 	for(int indice = 0; indice < indices.size(); indice += 4)
 	{
-		float3 p1 = vertices[indices[indice]].position;
+		/*float3 p1 = vertices[indices[indice]].position;
 		float3 p2 = vertices[indices[indice + 1]].position;
 		float3 p3 = vertices[indices[indice + 2]].position;
 		float3 p4 = vertices[indices[indice + 3]].position;
@@ -637,7 +637,33 @@ void ModuleEntity::CalculateTangentsQuad(const std::vector<Vertex>& vertices, co
 		else
 		{
 			newTangent = f * (e1 - e2 * v1 / v2);
-		}
+		}*/
+		float3 newTangent;
+		const float3& v1 = vertices[indices[indice]].position;
+		const float3& v2 = vertices[indices[indice + 1]].position;
+		const float3& v3 = vertices[indices[indice + 2]].position;
+		const float3& v4 = vertices[indices[indice + 3]].position;
+
+		const float2& w1 = vertices[indices[indice]].uv;
+		const float2& w2 = vertices[indices[indice + 1]].uv;
+		const float2& w3 = vertices[indices[indice + 2]].uv;
+		const float2& w4 = vertices[indices[indice + 3]].uv;
+
+		float x1 = v2.x - v1.x;
+		float x2 = v3.x - v1.x;
+		float y1 = v2.y - v1.y;
+		float y2 = v3.y - v1.y;
+		float z1 = v2.z - v1.z;
+		float z2 = v3.z - v1.z;
+
+		float s1 = w2.x - w1.x;
+		float s2 = w3.x - w1.x;
+		float t1 = w2.y - w1.y;
+		float t2 = w3.y - w1.y;
+
+		float r = 1.0F / (s1 * t2 - s2 * t1);
+		newTangent = float3((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r,
+			(t2 * z1 - t1 * z2) * r);
 
 		tangents[indices[indice]] -= newTangent;
 		tangents[indices[indice + 1]] -= newTangent;
@@ -656,29 +682,60 @@ void ModuleEntity::CalculateTangentsTri(const std::vector<Vertex>& vertices, con
 
 	for(int indice = 0; indice < indices.size(); indice += 3)
 	{
-		float3 p1 = vertices[indices[indice]].position;
-		float3 p2 = vertices[indices[indice + 1]].position;
-		float3 p3 = vertices[indices[indice + 2]].position;
+		//float3 p1 = vertices[indices[indice]].position;
+		//float3 p2 = vertices[indices[indice + 1]].position;
+		//float3 p3 = vertices[indices[indice + 2]].position;
 
-		float3 e1 = p1 - p2;
-		float3 e2 = p1 - p3;
+		//float3 e1 = p2 - p1;
+		//float3 e2 = p3 - p1;
 
-		float u1 = e1.x;
-		float v1 = e1.y;
+		//const float2 w1 = vertices[indices[indice]].uv;
+		//const float2 w2 = vertices[indices[indice + 1]].uv;
+		//const float2 w3 = vertices[indices[indice + 2]].uv;
 
-		float u2 = e2.x;
-		float v2 = e2.y;
+		//float3 uv1 = p2 - p1;
+		//float3 uv2 = p3 - p1;
 
-		float f = 1.0f / (u1 - v1 * u2 / v2);
+		//float u1 = uv1.z;
+		//float v1 = uv1.y;
+
+		//float u2 = uv2.z;
+		//float v2 = uv2.y;
+
+		//float f = 1.0f / (u1 - v1 * u2 / v2);
+		//float3 newTangent;
+		//if(v2 == 0)
+		//{
+		//	newTangent = e2 / u2;
+		//}
+		//else
+		//{
+		//	newTangent = f * (e1 - e2 * v1 / v2);
+		//}
 		float3 newTangent;
-		if(v2 == 0)
-		{
-			newTangent = e2 / u2;
-		}
-		else
-		{
-			newTangent = f * (e1 - e2 * v1 / v2);
-		}
+		const float3& v1 = vertices[indices[indice]].position;
+		const float3& v2 = vertices[indices[indice + 1]].position;
+		const float3& v3 = vertices[indices[indice + 2]].position;
+
+		const float2& w1 = vertices[indices[indice]].uv;
+		const float2& w2 = vertices[indices[indice + 1]].uv;
+		const float2& w3 = vertices[indices[indice + 2]].uv;
+
+		float x1 = v2.x - v1.x;
+		float x2 = v3.x - v1.x;
+		float y1 = v2.y - v1.y;
+		float y2 = v3.y - v1.y;
+		float z1 = v2.z - v1.z;
+		float z2 = v3.z - v1.z;
+
+		float s1 = w2.x - w1.x;
+		float s2 = w3.x - w1.x;
+		float t1 = w2.y - w1.y;
+		float t2 = w3.y - w1.y;
+
+		float r = 1.0F / (s1 * t2 - s2 * t1);
+		newTangent = float3((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r,
+			(t2 * z1 - t1 * z2) * r);
 
 		tangents[indices[indice]] -= newTangent;
 		tangents[indices[indice + 1]] -= newTangent;
