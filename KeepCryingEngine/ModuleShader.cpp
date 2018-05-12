@@ -238,8 +238,8 @@ void ModuleShader::SetUpRiggingProgram()
 
 void ModuleShader::SetUpNormalMapProgram()
 {
-	uint vertexId = AddShaderPath("Assets/Shaders/v2.vert", GL_VERTEX_SHADER);
-	uint fragmentId = AddShaderPath("Assets/Shaders/f2.frag", GL_FRAGMENT_SHADER);
+	uint vertexId = AddShaderPath("Assets/Shaders/vertex.vert", GL_VERTEX_SHADER, "#define NORMALMAP\n");
+	uint fragmentId = AddShaderPath("Assets/Shaders/fragment.frag", GL_FRAGMENT_SHADER, "#define NORMALMAP\n");
 
 	int program = AddProgram({ vertexId, fragmentId });
 

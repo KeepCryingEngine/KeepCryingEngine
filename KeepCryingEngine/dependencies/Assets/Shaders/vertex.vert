@@ -3,9 +3,15 @@ layout (location = 1) in vec4 color;
 layout (location = 2) in vec2 texCoord;
 layout (location = 3) in vec3 normal;
 
+#ifdef NORMALMAP
+
+layout (location = 4) in vec3 tangent;
+
+#endif
+
 #ifdef RIGGING
-layout (location = 4) in ivec4 bone_indices;
-layout (location = 5) in vec4 bone_weights;
+layout (location = 5) in ivec4 bone_indices;
+layout (location = 6) in vec4 bone_weights;
 
 #define MAX_BONES 100
 
@@ -32,6 +38,14 @@ out vec3 vertexNormal;
 
 #endif
 
+#ifdef NORMALMAP
+
+out vec3 FragmentPos;
+out vec3 LightPos;
+out vec3 CameraPos;
+
+#endif
+
 //Uniforms
 layout(std140) uniform camera{
 	uniform mat4 projection;
@@ -43,9 +57,17 @@ uniform mat4 model;
 uniform mat4 palette[MAX_BONES];
 #endif
 
+#ifdef NORMALMAP
+
+uniform vec3 lightSourcePosition;
+uniform vec3 cameraPosition;
+
+#endif
+
 void main()
 {
-	gl_Position = projection * view * model* vec4(position, 1.0f);
+	vec4 worldPos =model* vec4(position, 1.0f);
+	gl_Position = projection * view  * worldPos;
 	ourColor = color;
 	TexCoord = texCoord;
 	mat3 normalMatrix = mat3(model);
@@ -66,6 +88,19 @@ gl_Position = projection * view* vec4(vertex_position, 1.0f);
 
 // Normal = normalize(vertex_normal * normalMatrix);
 Normal = normalize(vec3(view* vec4(vertex_normal, 0.0f)));
+
+#endif
+
+#ifdef NORMALMAP
+
+	vec3 tangent2 = normalize(tangent * normalMatrix);
+	vec3 bitangent = cross(Normal,tangent2);
+	mat3 tangentSpaceMatrix = mat3(tangent2,bitangent,Normal);
+	tangentSpaceMatrix = transpose(tangentSpaceMatrix);
+
+	FragmentPos = tangentSpaceMatrix * vec3(worldPos);
+	LightPos = tangentSpaceMatrix * lightSourcePosition;
+	CameraPos= tangentSpaceMatrix * cameraPosition;
 
 #endif
 

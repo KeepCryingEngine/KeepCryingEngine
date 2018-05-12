@@ -537,15 +537,15 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 		//indices
 		
 
-		glEnableVertexAttribArray(4);
+		glEnableVertexAttribArray(5);
 		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneIndicesBufferId());
-		glVertexAttribIPointer(4, 4, GL_INT, 0, (void*)0);
+		glVertexAttribIPointer(5, 4, GL_INT, 0, (void*)0);
 		//weights
 		
 
-		glEnableVertexAttribArray(5);
+		glEnableVertexAttribArray(6);
 		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneWeightsBufferId());
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 		float4x4* palette = App->anim->GetPalette(&drawInfo.gameObject, &drawInfo.mesh);
 
