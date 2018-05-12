@@ -39,6 +39,8 @@ public:
 
 	GLuint GetProgramId(int flags, const std::string& name) const;
 
+	int LinkUniformBlock(const std::string& name);
+
 private:
 
 	uint AddShaderPath(const char* path, GLenum shaderType, const char* defines = "");
@@ -60,6 +62,7 @@ private:
 
 private:
 	std::map<std::pair<int, std::string>, GLuint> shaders;
+	static int nextUniformIndex;
 };
 
 #endif

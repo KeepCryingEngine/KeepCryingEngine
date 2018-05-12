@@ -33,6 +33,7 @@ public:
 	virtual ~ModuleRender();
 
 	bool Init() override;
+	bool Start() override;
 	update_status PreUpdate() override;
 	update_status Update() override;
 	update_status PostUpdate() override;
@@ -70,6 +71,7 @@ private:
 	//std::list<Mesh*> drawBuffer;
 
 	std::vector<DrawInfo> drawBuffer;
+	GLuint uniformCameraBufferId = 0;
 
 	static const float3 LIGHT_DIR;
 

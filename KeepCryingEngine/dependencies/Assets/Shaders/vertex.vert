@@ -32,9 +32,11 @@ out vec3 vertexNormal;
 
 #endif
 
-
-uniform mat4 projection;
-uniform mat4 view;
+//Uniforms
+layout(std140) uniform camera{
+	uniform mat4 projection;
+	uniform mat4 view;
+};
 uniform mat4 model;
 
 #ifdef RIGGING

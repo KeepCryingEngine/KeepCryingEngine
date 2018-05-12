@@ -96,6 +96,18 @@ bool ModuleRender::Init()
 	return ret;
 }
 
+bool ModuleRender::Start()
+{
+	//Set up uniform block
+	glGenBuffers(1, &uniformCameraBufferId);
+	glBindBuffer(GL_UNIFORM_BUFFER, uniformCameraBufferId);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(float4x4) * 2, 0, GL_DYNAMIC_DRAW);
+
+	glBindBufferBase(GL_UNIFORM_BUFFER, App->shader->LinkUniformBlock("camera"), uniformCameraBufferId);
+
+	return true;
+}
+
 update_status ModuleRender::PreUpdate()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -112,6 +124,12 @@ update_status ModuleRender::Update()
 		glLoadMatrixf(cam->GetProyectionMatrix().ptr());
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(cam->GetViewMatrix().ptr());
+
+		//Update uniform Block
+		glBindBuffer(GL_UNIFORM_BUFFER, uniformCameraBufferId);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float4x4), App->camera->GetPlayOrEditorCamera()->GetProyectionMatrix().ptr());
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(float4x4), sizeof(float4x4), App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		if(App->state == TimeState::STOPED)
 		{
@@ -513,7 +531,6 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetTangentBufferId());
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	}
-	// ...
 
 	if(!drawInfo.mesh.GetBones().empty())
 	{
@@ -536,14 +553,6 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 		GLint paleteId = glGetUniformLocation(progId, "palette");
 		glUniformMatrix4fv(paleteId, MAX_BONES, GL_FALSE, palette->ptr());
 	}
-
-	// ...
-
-	GLint modelView = glGetUniformLocation(progId, "view");
-	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
-
-	GLint proyection = glGetUniformLocation(progId, "projection");
-	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->GetPlayOrEditorCamera()->GetProyectionMatrix().ptr());
 
 	GLint transformUniformId = glGetUniformLocation(progId, "model");
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, drawInfo.transform.GetModelMatrix().Transposed().ptr());

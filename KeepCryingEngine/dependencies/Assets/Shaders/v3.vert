@@ -12,8 +12,11 @@ out vec3 LightPos;
 out vec3 CameraPos;
 
 
-uniform mat4 projection;
-uniform mat4 view;
+//Uniforms
+layout(std140) uniform camera{
+	uniform mat4 projection;
+	uniform mat4 view;
+};
 uniform mat4 model;
 uniform vec3 lightSourcePosition;
 uniform vec3 cameraPosition;

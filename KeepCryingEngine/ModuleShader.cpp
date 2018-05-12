@@ -5,6 +5,8 @@
 
 using namespace std;
 
+int ModuleShader::nextUniformIndex = 0;
+
 ModuleShader::ModuleShader()
 {}
 
@@ -133,6 +135,18 @@ GLuint ModuleShader::GetProgramId(int flags, const std::string& name) const
 	assert(it != shaders.end());
 
 	return it->second;
+}
+
+int ModuleShader::LinkUniformBlock(const std::string & name)
+{
+	std::map<std::pair<int, std::string>, GLuint>::iterator it = shaders.begin();
+	while(it != shaders.end())
+	{
+		GLuint progId = (*it).second;
+		glUniformBlockBinding(progId, glGetUniformBlockIndex(progId, name.c_str()), nextUniformIndex);
+		++it;
+	}
+	return nextUniformIndex++;
 }
 
 uint ModuleShader::AddProgram(const list<uint>& shaders)
