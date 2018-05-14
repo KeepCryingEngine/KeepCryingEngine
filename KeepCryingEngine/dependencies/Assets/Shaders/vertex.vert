@@ -84,10 +84,10 @@ void main()
 	vec3 vertex_position = vec3(skin_transform*vec4(position, 1));
 	vec3 vertex_normal = vec3(skin_transform*vec4(normal, 0));
 //TODO: VERIFY
-gl_Position = projection * view* vec4(vertex_position, 1.0f);
+gl_Position = projection * view  * vec4(vertex_position, 1.0f);
 
-// Normal = normalize(vertex_normal * normalMatrix);
-Normal = normalize(vec3(view* vec4(vertex_normal, 0.0f)));
+Normal = normalize(vertex_normal * normalMatrix);
+//Normal = normalize(vec3(view* vec4(vertex_normal, 0.0f)));
 
 #endif
 
