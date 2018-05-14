@@ -105,6 +105,12 @@ void MeshRenderer::PreLoad(const nlohmann::json & json)
 	material->SetShaderType(json["material"]["shaderType"]);
 	material->SetTextureByPath(json["material"]["texture"]["path"].get<std::string>());
 	material->GetTexture()->SetTextureConfiguration(json["material"]["texture"]["jsonConfiguration"]);
+	if(json["material"]["chargeNormal"])
+	{
+		material->SetTextureNormalMapByPath(json["material"]["normalTexture"]["path"].get<std::string>());
+		material->GetTexture()->SetTextureConfiguration(json["material"]["normalTexture"]["jsonConfiguration"]);
+	}
+
 }
 
 void MeshRenderer::Save(nlohmann::json& json) const
@@ -119,5 +125,18 @@ void MeshRenderer::Save(nlohmann::json& json) const
 	
 	jsonMaterial["texture"] = jsonTexture;
 
+	bool chargeNormal = false;
+	if(material->GetTextureNormalMap() != nullptr)
+	{
+		nlohmann::json jsonNormalTexture;
+		jsonNormalTexture["path"] = material->GetTextureNormalMap()->Identifier().path.string();
+		jsonNormalTexture["jsonConfiguration"] = material->GetTextureNormalMap()->GetTextureConfiguration();
+
+		jsonMaterial["normalTexture"] = jsonNormalTexture;
+		chargeNormal = true;
+	}
+	jsonMaterial["chargeNormal"] = chargeNormal;
+
 	json["material"] = jsonMaterial;
+
 }
