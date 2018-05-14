@@ -130,7 +130,6 @@ void Mesh::GenerateBuffers(const vector<Vertex>& vertices, const vector<GLushort
 {
 	assert(vertices.size() > 0);
 	assert(indices.size() > 0);
-	assert(tangents.size() > 0);
 
 	nVertices = vertices.size();
 	nIndices = indices.size();
@@ -151,12 +150,15 @@ void Mesh::GenerateBuffers(const vector<Vertex>& vertices, const vector<GLushort
 
 	float nVertices = tangents.size();
 
-	//Generate Vertex buffer
-	const float3 * tangentsPointer = &tangents[0];
-	glGenBuffers(1, &tangentBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, tangentBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * nVertices, tangentsPointer, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	if(tangents.size() > 0)
+	{
+		//Generate Tangent buffer
+		const float3 * tangentsPointer = &tangents[0];
+		glGenBuffers(1, &tangentBufferId);
+		glBindBuffer(GL_ARRAY_BUFFER, tangentBufferId);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float3) * nVertices, tangentsPointer, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
 }
 
 void Mesh::GenerateBoneBuffers()

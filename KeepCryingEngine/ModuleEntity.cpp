@@ -180,7 +180,10 @@ void ModuleEntity::ExtractVertexDataFromScene(const aiScene * scene, const aiMes
 		vertex.uv = float2(mesh->mTextureCoords[0][k].x, mesh->mTextureCoords[0][k].y);
 		vertices.push_back(vertex);
 
-		tangents[k] = float3(mesh->mTangents[k].x, mesh->mTangents[k].y, mesh->mTangents[k].z);
+		if(mesh->mTangents != nullptr)
+		{
+			tangents[k] = float3(mesh->mTangents[k].x, mesh->mTangents[k].y, mesh->mTangents[k].z);
+		}
 	}
 	for (unsigned int k = 0; k < mesh->mNumFaces; k++)
 	{
