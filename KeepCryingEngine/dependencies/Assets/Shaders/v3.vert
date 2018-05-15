@@ -46,7 +46,7 @@ void main()
 	vec3 vertex_tangents = vec3(skin_transform * vec4(tangents,0));
 	//TODO: VERIFY
 	worldPos = model* vec4(vertex_position, 1.0f)
-	gl_Position = projection * view * worldPos;
+	gl_Position = projection * view * vec4(vertex_position, 1.0f);
 
 	//Normal = normalize(vec3(view* vec4(vertex_normal, 0.0f)));
 

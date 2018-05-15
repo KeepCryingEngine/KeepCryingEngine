@@ -60,7 +60,7 @@ Mesh * ModuleEntity::GetPlane()
 
 void ModuleEntity::Load3DFile(const std::experimental::filesystem::path& path)
 {
-	const aiScene * scene = aiImportFile(path.string().c_str(), aiProcess_Triangulate | aiProcess_GenSmoothNormals);
+	const aiScene * scene = aiImportFile(path.string().c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_OptimizeGraph);
 
 	if (scene != nullptr)
 	{
@@ -168,6 +168,7 @@ void ModuleEntity::ExtractBonesFromMesh(const aiScene * scene, const aiMesh* mes
 
 void ModuleEntity::ExtractVertexDataFromScene(const aiScene * scene, const aiMesh* mesh, std::vector<Vertex> &vertices, std::vector<GLushort> &indices,std::vector<float3>& tangents) const
 {	
+	tangents.resize(mesh->mNumVertices);
 	for (unsigned int k = 0; k < mesh->mNumVertices; k++)
 	{
 		Vertex vertex;

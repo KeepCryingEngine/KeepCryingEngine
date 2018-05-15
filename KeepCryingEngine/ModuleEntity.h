@@ -66,8 +66,6 @@ private:
 	Mesh* plane;
 	std::vector<Mesh*> meshes;
 	std::vector<Material*> materials;
-
-	
 };
 
 #endif // !_MODULEENTITY_H_

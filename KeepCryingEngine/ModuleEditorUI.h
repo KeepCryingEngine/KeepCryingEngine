@@ -27,6 +27,7 @@ public:
 
 	bool GetFrustumCulling()const;
 	bool GetDebugMode()const;
+	bool GetReduceTo4Bone_Vertex()const;
 	ClickMode GetClickMode() const;
 	void SetSelectedNodeID(int id);
 	int GetSelectedNode()const;
@@ -84,6 +85,7 @@ private:
 	bool colormaterialEnabled = true;
 	bool fogEnabled = false;
 	bool debugMode = false;
+	bool reduceTo4Bone_Vertex = false;
 
 	//One bool control for each window
 	bool cameraWindow = false;

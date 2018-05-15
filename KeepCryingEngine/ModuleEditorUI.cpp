@@ -100,6 +100,11 @@ bool ModuleEditorUI::GetDebugMode() const
 	return debugMode;
 }
 
+bool ModuleEditorUI::GetReduceTo4Bone_Vertex() const
+{
+	return reduceTo4Bone_Vertex;
+}
+
 ClickMode ModuleEditorUI::GetClickMode() const
 {
 	return clickMode;
@@ -207,7 +212,7 @@ void ModuleEditorUI::DrawMainMenu()
 			ImGui::LabelText("##LoadMeshLabel", "Mesh");
 			
 			// TMP
-			static char pathToMesh[180] = "Assets/ArmyPilot/ArmyPilot.dae";
+			static char pathToMesh[180] = "Assets/Squirrel/source/Squirrel.fbx";
 			
 			ImGui::InputText("##PathToMesh", pathToMesh, sizeof(pathToMesh)); ImGui::SameLine();
 			if (ImGui::Button("Add mesh"))
@@ -215,6 +220,8 @@ void ModuleEditorUI::DrawMainMenu()
 				std::experimental::filesystem::path path(pathToMesh);
 				App->entity->Load3DFile(path);
 			}
+
+			ImGui::Checkbox("Reduction to 4 bone-vertex",&reduceTo4Bone_Vertex);
 
 			ImGui::EndMenu();
 		}

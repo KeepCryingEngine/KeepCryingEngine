@@ -3,6 +3,8 @@
 #include <vector>
 
 #include "Globals.h"
+#include "Application.h"
+#include "ModuleEditorUI.h"
 
 using namespace std;
 
@@ -180,8 +182,24 @@ void Mesh::GenerateBoneBuffers()
 
 	for(size_t i = 0; i < bIndices.size(); ++i)
 	{
-		assert(bIndices[i].size() <= 4);
-		assert(bWeights[i].size() <= 4);
+		assert(bIndices[i].size() <= 4 && App->uiEditor->GetReduceTo4Bone_Vertex());
+		assert(bWeights[i].size() <= 4 && App->uiEditor->GetReduceTo4Bone_Vertex());
+		while(bIndices[i].size() > 4)
+		{
+			float min = bWeights[i][0];
+			int index = 0;
+			for(int j = 1; j < bWeights[i].size(); ++j)
+			{
+				if(bWeights[i][j] < min)
+				{
+					min = bWeights[i][j];
+					index = j;
+				}
+			}
+			bIndices[i].erase(bIndices[i].begin() + index);
+			bWeights[i].erase(bWeights[i].begin() + index);
+		}
+
 
 		while(bIndices[i].size() < 4)
 		{
