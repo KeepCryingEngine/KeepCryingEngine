@@ -17,6 +17,16 @@ layout (location = 6) in vec4 bone_weights;
 
 #endif
 
+#ifdef NORMALMAPRIGGING
+
+layout (location = 4) in vec3 tangent;
+layout (location = 5) in ivec4 bone_indices;
+layout (location = 6) in vec4 bone_weights;
+
+#define MAX_BONES 100
+
+#endif
+
 
 out vec4 ourColor;
 out vec2 TexCoord;
@@ -46,6 +56,14 @@ out vec3 CameraPos;
 
 #endif
 
+#ifdef NORMALMAPRIGGING
+
+out vec3 FragmentPos;
+out vec3 LightPos;
+out vec3 CameraPos;
+
+#endif
+
 //Uniforms
 layout(std140) uniform camera{
 	uniform mat4 projection;
@@ -61,6 +79,14 @@ uniform mat4 palette[MAX_BONES];
 
 uniform vec3 lightSourcePosition;
 uniform vec3 cameraPosition;
+
+#endif
+
+#ifdef NORMALMAPRIGGING
+
+uniform vec3 lightSourcePosition;
+uniform vec3 cameraPosition;
+uniform mat4 palette[MAX_BONES];
 
 #endif
 
@@ -94,6 +120,34 @@ Normal = normalize(vertex_normal * normalMatrix);
 #ifdef NORMALMAP
 
 	vec3 tangent2 = normalize(tangent * normalMatrix);
+	vec3 bitangent = cross(Normal,tangent2);
+	mat3 tangentSpaceMatrix = mat3(tangent2,bitangent,Normal);
+	tangentSpaceMatrix = transpose(tangentSpaceMatrix);
+
+	FragmentPos = tangentSpaceMatrix * vec3(worldPos);
+	LightPos = tangentSpaceMatrix * lightSourcePosition;
+	CameraPos= tangentSpaceMatrix * cameraPosition;
+
+#endif
+
+#ifdef NORMALMAPRIGGING
+
+mat4 skin_transform = 	palette[bone_indices[0]]*bone_weights[0]+
+							palette[bone_indices[1]]*bone_weights[1]+ 
+							palette[bone_indices[2]]*bone_weights[2]+
+							palette[bone_indices[3]]*bone_weights[3];
+							
+	vec3 vertex_position = vec3(skin_transform*vec4(position, 1));
+	vec3 vertex_normal = vec3(skin_transform*vec4(normal, 0));
+	vec3 vertex_tangents = vec3(skin_transform * vec4(tangent,0));
+
+	worldPos = model* vec4(vertex_position, 1.0f);
+	gl_Position = projection * view * worldPos;
+
+	vertex_tangents = normalize(vertex_tangents - vertex_normal * dot(vertex_normal,vertex_tangents));
+
+	vec3 tangent2 = normalize(vertex_tangents * normalMatrix);
+	Normal = normalize(vertex_normal * normalMatrix);
 	vec3 bitangent = cross(Normal,tangent2);
 	mat3 tangentSpaceMatrix = mat3(tangent2,bitangent,Normal);
 	tangentSpaceMatrix = transpose(tangentSpaceMatrix);
