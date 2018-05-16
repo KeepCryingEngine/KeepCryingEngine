@@ -17,6 +17,8 @@ const float ModuleCamera::WHEEL_FORCE = 10.0f;
 const float ModuleCamera::ORBIT_FORCE_REDUCTION = 10.0f;
 const float ModuleCamera::KEYBOARD_ROTATION_SPEED_MULTIPLIER = 4;
 
+const float3 ORBIT_CROSS_COLOR = float3 { 255, 0, 0 };
+
 ModuleCamera::ModuleCamera()
 { }
 
@@ -225,7 +227,7 @@ void ModuleCamera::OrbitMouse()
 	if(zoomAmount > 1.0f)
 	{
 		float3 orbitCenter = cameraTransform->GetWorldPosition() + (cameraTransform->Forward() * zoomAmount);
-		App->renderer->DrawCross(orbitCenter, zoomAmount);
+		App->renderer->DrawCross(orbitCenter, ORBIT_CROSS_COLOR, zoomAmount);
 		MovementMouseDrag(movementOrbitSpeed * App->time->GetEditorDeltaTime() * zoomAmount / ORBIT_FORCE_REDUCTION);
 		cameraTransform->LookAt(orbitCenter);
 	}

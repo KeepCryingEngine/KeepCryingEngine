@@ -86,7 +86,7 @@ Mesh * ModuleEntity::ExtractNamedMeshFromScene(const aiScene * scene, const Mesh
 	for (size_t meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
 	{
 		aiMesh * aiMesh = scene->mMeshes[meshIndex];
-		if (meshIdentifier.name == aiMesh->mName.C_Str()+meshIndex)
+		if (meshIdentifier.name == aiMesh->mName.C_Str()+to_string(meshIndex))
 		{
 			return ExtractMeshFromScene(scene, meshIndex, meshIdentifier.path);
 		}
@@ -147,7 +147,7 @@ Mesh * ModuleEntity::ExtractMeshFromScene(const aiScene* aiScene, size_t meshInd
 	ExtractVertexDataFromScene(aiScene, aiMesh, vertices, indices, tangents);
 	ExtractBonesFromMesh(aiScene, aiMesh, bones);
 
-	string meshName = aiMesh->mName.C_Str() + meshIndex;
+	string meshName = aiMesh->mName.C_Str() + to_string(meshIndex);
 	MeshIdentifier meshIdentifier = { path, meshName };
 	Mesh* mesh = new Mesh(meshIdentifier);
 	mesh->SetMeshData(vertices, indices, bones,tangents, GL_TRIANGLES);
@@ -593,7 +593,7 @@ GameObject* ModuleEntity::CreateGameObjectForNode(const aiScene* scene, aiNode *
 Mesh * ModuleEntity::Load(const MeshIdentifier & identifier)
 {
 	Mesh * mesh = nullptr;
-	const aiScene * scene = aiImportFile(identifier.path.string().c_str(), aiProcess_Triangulate | aiProcess_GenSmoothNormals);
+	const aiScene * scene = aiImportFile(identifier.path.string().c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_OptimizeGraph);
 
 	if (scene != nullptr)
 	{

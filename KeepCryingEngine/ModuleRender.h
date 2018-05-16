@@ -39,7 +39,7 @@ public:
 	update_status PostUpdate() override;
 	bool CleanUp() override;
 
-	void DrawCross(const float3& pos, float scale) const;
+	void DrawCross(const float3& pos, const float3& color, float scale) const;
 
 	void AddToDrawBuffer(Mesh& mesh, Material& material, GameObject& gameObject, Transform& transform);
 
