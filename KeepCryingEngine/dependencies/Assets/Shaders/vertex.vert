@@ -70,6 +70,7 @@ layout(std140) uniform camera{
 	uniform mat4 view;
 };
 uniform mat4 model;
+uniform bool shadow;
 
 #ifdef RIGGING
 uniform mat4 palette[MAX_BONES];
@@ -92,83 +93,104 @@ uniform mat4 palette[MAX_BONES];
 
 void main()
 {
-	vec4 worldPos =model* vec4(position, 1.0f);
-	gl_Position = projection * view  * worldPos;
-	ourColor = color;
-	TexCoord = texCoord;
-	mat3 normalMatrix = mat3(model);
-	normalMatrix = inverse(normalMatrix);
-	Normal = normalize(normal * normalMatrix);
+if(shadow){
+	gl_Position = projection*view*model*vec4(vertex, 1.0);
 
-#ifdef RIGGING
+	#ifdef RIGGING
+	mat4 skin_transform = 	palette[bone_indices[0]]*bone_weights[0]+
+								palette[bone_indices[1]]*bone_weights[1]+ 
+								palette[bone_indices[2]]*bone_weights[2]+
+								palette[bone_indices[3]]*bone_weights[3];
+	 gl_Position = projection*view*model*skin_transform*vec4(vertex, 1.0);
+	#endif
+
+	#ifdef NORMALMAPRIGGING
+	mat4 skin_transform = 	palette[bone_indices[0]]*bone_weights[0]+
+								palette[bone_indices[1]]*bone_weights[1]+ 
+								palette[bone_indices[2]]*bone_weights[2]+
+								palette[bone_indices[3]]*bone_weights[3];
+	 gl_Position = projection*view*model*skin_transform*vec4(vertex, 1.0);
+	#end
+
+}else{
+		vec4 worldPos =model* vec4(position, 1.0f);
+		gl_Position = projection * view  * worldPos;
+		ourColor = color;
+		TexCoord = texCoord;
+		mat3 normalMatrix = mat3(model);
+		normalMatrix = inverse(normalMatrix);
+		Normal = normalize(normal * normalMatrix);
+
+	#ifdef RIGGING
+
+		mat4 skin_transform = 	palette[bone_indices[0]]*bone_weights[0]+
+								palette[bone_indices[1]]*bone_weights[1]+ 
+								palette[bone_indices[2]]*bone_weights[2]+
+								palette[bone_indices[3]]*bone_weights[3];
+								
+		vec3 vertex_position = vec3(skin_transform*vec4(position, 1));
+		vec3 vertex_normal = vec3(skin_transform*vec4(normal, 0));
+	//TODO: VERIFY
+	gl_Position = projection * view  * vec4(vertex_position, 1.0f);
+
+	Normal = normalize(vertex_normal * normalMatrix);
+	//Normal = normalize(vec3(view* vec4(vertex_normal, 0.0f)));
+
+	#endif
+
+	#ifdef NORMALMAP
+
+		vec3 tangent2 = normalize(tangent * normalMatrix);
+		vec3 bitangent = cross(Normal,tangent2);
+		mat3 tangentSpaceMatrix = mat3(tangent2,bitangent,Normal);
+		tangentSpaceMatrix = transpose(tangentSpaceMatrix);
+
+		FragmentPos = tangentSpaceMatrix * vec3(worldPos);
+		LightPos = tangentSpaceMatrix * lightSourcePosition;
+		CameraPos= tangentSpaceMatrix * cameraPosition;
+
+	#endif
+
+	#ifdef NORMALMAPRIGGING
 
 	mat4 skin_transform = 	palette[bone_indices[0]]*bone_weights[0]+
-							palette[bone_indices[1]]*bone_weights[1]+ 
-							palette[bone_indices[2]]*bone_weights[2]+
-							palette[bone_indices[3]]*bone_weights[3];
-							
-	vec3 vertex_position = vec3(skin_transform*vec4(position, 1));
-	vec3 vertex_normal = vec3(skin_transform*vec4(normal, 0));
-//TODO: VERIFY
-gl_Position = projection * view  * vec4(vertex_position, 1.0f);
+								palette[bone_indices[1]]*bone_weights[1]+ 
+								palette[bone_indices[2]]*bone_weights[2]+
+								palette[bone_indices[3]]*bone_weights[3];
+								
+		vec3 vertex_position = vec3(skin_transform*vec4(position, 1));
+		vec3 vertex_normal = vec3(skin_transform*vec4(normal, 0));
+		vec3 vertex_tangents = vec3(skin_transform * vec4(tangent,0));
 
-Normal = normalize(vertex_normal * normalMatrix);
-//Normal = normalize(vec3(view* vec4(vertex_normal, 0.0f)));
+		worldPos = model* vec4(vertex_position, 1.0f);
+		gl_Position = projection * view * worldPos;
 
-#endif
+		vertex_tangents = normalize(vertex_tangents - vertex_normal * dot(vertex_normal,vertex_tangents));
 
-#ifdef NORMALMAP
+		vec3 tangent2 = normalize(vertex_tangents * normalMatrix);
+		Normal = normalize(vertex_normal * normalMatrix);
+		vec3 bitangent = cross(Normal,tangent2);
+		mat3 tangentSpaceMatrix = mat3(tangent2,bitangent,Normal);
+		tangentSpaceMatrix = transpose(tangentSpaceMatrix);
 
-	vec3 tangent2 = normalize(tangent * normalMatrix);
-	vec3 bitangent = cross(Normal,tangent2);
-	mat3 tangentSpaceMatrix = mat3(tangent2,bitangent,Normal);
-	tangentSpaceMatrix = transpose(tangentSpaceMatrix);
+		FragmentPos = tangentSpaceMatrix * vec3(worldPos);
+		LightPos = tangentSpaceMatrix * lightSourcePosition;
+		CameraPos= tangentSpaceMatrix * cameraPosition;
 
-	FragmentPos = tangentSpaceMatrix * vec3(worldPos);
-	LightPos = tangentSpaceMatrix * lightSourcePosition;
-	CameraPos= tangentSpaceMatrix * cameraPosition;
+	#endif
 
-#endif
+	#ifdef DEPTH
 
-#ifdef NORMALMAPRIGGING
+		relativeCameraPos = actualCameraModelView * model* vec4(position, 1.0f);
 
-mat4 skin_transform = 	palette[bone_indices[0]]*bone_weights[0]+
-							palette[bone_indices[1]]*bone_weights[1]+ 
-							palette[bone_indices[2]]*bone_weights[2]+
-							palette[bone_indices[3]]*bone_weights[3];
-							
-	vec3 vertex_position = vec3(skin_transform*vec4(position, 1));
-	vec3 vertex_normal = vec3(skin_transform*vec4(normal, 0));
-	vec3 vertex_tangents = vec3(skin_transform * vec4(tangent,0));
+	#endif
+		
 
-	worldPos = model* vec4(vertex_position, 1.0f);
-	gl_Position = projection * view * worldPos;
+	#ifdef LIGHTNING
 
-	vertex_tangents = normalize(vertex_tangents - vertex_normal * dot(vertex_normal,vertex_tangents));
+		vertexPosition = position;
+		vertexNormal = normal;
 
-	vec3 tangent2 = normalize(vertex_tangents * normalMatrix);
-	Normal = normalize(vertex_normal * normalMatrix);
-	vec3 bitangent = cross(Normal,tangent2);
-	mat3 tangentSpaceMatrix = mat3(tangent2,bitangent,Normal);
-	tangentSpaceMatrix = transpose(tangentSpaceMatrix);
-
-	FragmentPos = tangentSpaceMatrix * vec3(worldPos);
-	LightPos = tangentSpaceMatrix * lightSourcePosition;
-	CameraPos= tangentSpaceMatrix * cameraPosition;
-
-#endif
-
-#ifdef DEPTH
-
-	relativeCameraPos = actualCameraModelView * model* vec4(position, 1.0f);
-
-#endif
-	
-
-#ifdef LIGHTNING
-
-	vertexPosition = position;
-	vertexNormal = normal;
-
-#endif
+	#endif
+}
 }

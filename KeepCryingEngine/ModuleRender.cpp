@@ -97,6 +97,25 @@ bool ModuleRender::Init()
 
 bool ModuleRender::Start()
 {
+	////Set up shadowFrame
+	glGenFramebuffers(1,&shadowFrameBufferId);
+	glBindFramebuffer(GL_FRAMEBUFFER,shadowFrameBufferId);
+	glGenTextures(1,&shadowTextureId);
+
+	glBindTexture(GL_TEXTURE_2D, shadowTextureId);
+
+	glTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT16,App->configuration.screenWidth,App->configuration.screenHeight,0,GL_DEPTH_COMPONENT,GL_FLOAT,0);
+	glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowTextureId,0);
+	glDrawBuffer(GL_NONE);
+
+	glBindFramebuffer(GL_FRAMEBUFFER,0);
+	glBindTexture(GL_TEXTURE_2D,0);
+
 	//Set up uniform block
 	glGenBuffers(1, &uniformCameraBufferId);
 	glBindBuffer(GL_UNIFORM_BUFFER, uniformCameraBufferId);
@@ -124,7 +143,15 @@ update_status ModuleRender::Update()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(cam->GetViewMatrix().ptr());
 
-		//Update uniform Block
+		//Update uniform Block for shadow
+		glBindBuffer(GL_UNIFORM_BUFFER, uniformCameraBufferId);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float4x4), App->camera->GetPlayOrEditorCamera()->GetProyectionMatrix().ptr());
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(float4x4), sizeof(float4x4), App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		DrawShadowTexture();
+
+		//Update uniform Block for second draw
 		glBindBuffer(GL_UNIFORM_BUFFER, uniformCameraBufferId);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float4x4), App->camera->GetPlayOrEditorCamera()->GetProyectionMatrix().ptr());
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(float4x4), sizeof(float4x4), App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
@@ -631,4 +658,27 @@ void ModuleRender::DrawLastRay()
 	glEnd();
 
 	glLineWidth(lineWidth);
+}
+
+void ModuleRender::DrawShadowTexture()
+{
+	for(const DrawInfo& drawInfo : drawBuffer)
+	{
+		DrawShadowTexture(drawInfo);
+	}
+	
+}
+
+void ModuleRender::DrawShadowTexture(const DrawInfo & drawInfo)
+{
+	glBindFramebuffer(1, shadowFrameBufferId);
+	glViewport(0, 0, App->configuration.screenWidth, App->configuration.screenHeight);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	GLuint progId = drawInfo.material.GetProgramId();
+
+	glUseProgram(progId);
+
+	GLint transformUniformId = glGetUniformLocation(progId, "model");
+	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, drawInfo.transform.GetModelMatrix().Transposed().ptr());
 }

@@ -63,6 +63,9 @@ private:
 
 	void DrawLastRay();
 
+	void DrawShadowTexture();
+	void DrawShadowTexture(const DrawInfo& drawInfo);
+
 public:
 	GLfloat globalAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };	
 
@@ -72,6 +75,8 @@ private:
 
 	std::vector<DrawInfo> drawBuffer;
 	GLuint uniformCameraBufferId = 0;
+	GLuint shadowFrameBufferId = 0;
+	GLuint shadowTextureId = 0;
 
 	static const float3 LIGHT_DIR;
 
