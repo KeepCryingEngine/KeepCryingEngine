@@ -182,8 +182,8 @@ void Mesh::GenerateBoneBuffers()
 
 	for(size_t i = 0; i < bIndices.size(); ++i)
 	{
-		assert(bIndices[i].size() <= 4 && App->uiEditor->GetReduceTo4Bone_Vertex());
-		assert(bWeights[i].size() <= 4 && App->uiEditor->GetReduceTo4Bone_Vertex());
+		assert(bIndices[i].size() <= 4 || App->uiEditor->GetReduceTo4Bone_Vertex());
+		assert(bWeights[i].size() <= 4 || App->uiEditor->GetReduceTo4Bone_Vertex());
 		while(bIndices[i].size() > 4)
 		{
 			float min = bWeights[i][0];

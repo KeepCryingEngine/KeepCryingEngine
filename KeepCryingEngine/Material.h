@@ -33,6 +33,9 @@ private:
 	GLuint programId = 0;
 	Texture* texture = nullptr;
 	Texture* normalMap = nullptr;
+
+	static const float TEXTURE_WINDOW_WIDTH_PERCENTAGE;
+	static const float TEXTURE_WINDOW_HEIGHT_PERCENTAGE;
 };
 
 #endif // !_MATERIALENTITY_H_
