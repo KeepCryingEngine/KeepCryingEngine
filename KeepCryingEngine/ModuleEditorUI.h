@@ -52,6 +52,7 @@ private:
 	void DrawSpacePartitioningWindow();
 	void DrawLoadedTexturesInfoWindow();
 	void DrawPerformanceInfoWindow();
+	void DrawLightParametersWindow();
 
 	void PrintChildrenOnHierarchy(std::vector<GameObject*> children);
 
@@ -98,6 +99,7 @@ private:
 	bool loadedTexturesInfoWindow = false;
 	bool editorControler = true;
 	bool performanceInfoWindow = false;
+	bool lightParametersWindow = false;
 
 	//Editor click
 	ClickMode clickMode = ClickMode::Pick;

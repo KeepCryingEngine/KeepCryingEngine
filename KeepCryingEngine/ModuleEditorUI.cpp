@@ -39,6 +39,7 @@
 #include "BallSocket.h"
 #include "Hinge.h"
 #include "Slider.h"
+#include "ModuleLight.h"
 
 using namespace std;
 
@@ -198,9 +199,13 @@ void ModuleEditorUI::DrawMainMenu()
 				{
 					performanceInfoWindow ^= 1;
 				}
-				if (ImGui::Selectable("Debug Object Generation"))
+				if(ImGui::Selectable("Debug Object Generation"))
 				{
 					generateGameObjectWindow ^= 1;
+				}
+				if(ImGui::Selectable("Light Parameters"))
+				{
+					lightParametersWindow ^= 1;
 				}
 				ImGui::EndMenu();
 			}
@@ -659,6 +664,10 @@ void ModuleEditorUI::CallWindows()
 	{
 		DrawPerformanceInfoWindow();
 	}
+	if(lightParametersWindow)
+	{
+		DrawLightParametersWindow();
+	}
 }
 
 void ModuleEditorUI::CallGuizmo()
@@ -1100,6 +1109,27 @@ void ModuleEditorUI::DrawPerformanceInfoWindow()
 	else
 	{
 		ImGui::Text("Fps: -, Ms: -");
+	}
+
+	ImGui::End();
+}
+
+void ModuleEditorUI::DrawLightParametersWindow()
+{
+	ImGui::Begin("Light Parameters", &lightParametersWindow, ImGuiWindowFlags_MenuBar);
+
+	float3 lightDirection = App->light->GetDirection();
+
+	if(ImGui::DragFloat3("Direction", lightDirection.ptr(), 0.1f))
+	{
+		App->light->SetDirection(lightDirection);
+	}
+
+	static float lightRirectionRotation = 0.0f;
+
+	if(ImGui::DragFloat("Rotation", &lightRirectionRotation, 0.01f, 0.0f, 1.0f))
+	{
+		App->light->SetRotation(lightRirectionRotation);
 	}
 
 	ImGui::End();

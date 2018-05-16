@@ -24,7 +24,7 @@ class ModuleFX;
 class ModuleScript;
 class ModuleLog;
 class ModulePhysics;
-
+class ModuleLight;
 
 enum class TimeState
 {
@@ -71,6 +71,7 @@ public:
 	ModuleScript * script = nullptr;
 	ModuleLog* log = nullptr;
 	ModulePhysics* physics = nullptr;
+	ModuleLight* light = nullptr;
 
 	TimeState state = TimeState::STOPED;
 

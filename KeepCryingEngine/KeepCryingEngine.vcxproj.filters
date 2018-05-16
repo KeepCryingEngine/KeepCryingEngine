@@ -205,6 +205,9 @@
     <ClCompile Include="Slider.cpp">
       <Filter>Components\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleLight.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h" />
@@ -431,6 +434,9 @@
     </ClInclude>
     <ClInclude Include="Slider.h">
       <Filter>Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleLight.h">
+      <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

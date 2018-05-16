@@ -20,8 +20,7 @@
 #include "Texture.h"
 #include "ModuleScene.h"
 #include "ModuleAnim.h"
-
-const float3 ModuleRender::LIGHT_DIR = { -1.0,1.0,0.0 };
+#include "ModuleLight.h"
 
 using namespace std;
 
@@ -572,7 +571,8 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	GLint light = glGetUniformLocation(progId, "lightDir");
 	if (light != -1)
 	{
-		glUniform3f(light, LIGHT_DIR.x, LIGHT_DIR.y, LIGHT_DIR.z);
+		const float3& lightDirection = App->light->GetDirection();
+		glUniform3f(light, lightDirection.x, lightDirection.y, lightDirection.z);
 	}
 
 	GLint camera = glGetUniformLocation(progId, "actualCameraModelView");

@@ -134,6 +134,7 @@
     <ClInclude Include="ModuleGameUI.h" />
     <ClInclude Include="ModuleFont.h" />
     <ClInclude Include="ModuleInput.h" />
+    <ClInclude Include="ModuleLight.h" />
     <ClInclude Include="ModuleLog.h" />
     <ClInclude Include="ModulePhysics.h" />
     <ClInclude Include="ModuleRender.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="ModuleGameUI.cpp" />
     <ClCompile Include="ModuleFont.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
+    <ClCompile Include="ModuleLight.cpp" />
     <ClCompile Include="ModuleLog.cpp" />
     <ClCompile Include="ModulePhysics.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
