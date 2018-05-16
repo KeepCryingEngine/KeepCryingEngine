@@ -1138,6 +1138,12 @@ void ModuleEditorUI::DrawLightParametersWindow()
 	{
 		App->light->SetRotation(lightRirectionRotation);
 	}
+	if(App->renderer->shadowTextureId != 0)
+	{
+		ImGui::GetWindowDrawList()->AddImage((void*)App->renderer->shadowTextureId, ImGui::GetCursorScreenPos(),
+			ImVec2(ImGui::GetCursorScreenPos().x + App->configuration.screenWidth * 0.1,
+				ImGui::GetCursorScreenPos().y + App->configuration.screenHeight*0.1), ImVec2(0, 1), ImVec2(1, 0));
+	}
 
 	ImGui::End();
 }

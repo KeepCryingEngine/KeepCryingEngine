@@ -70,7 +70,7 @@ layout(std140) uniform camera{
 	uniform mat4 view;
 };
 uniform mat4 model;
-uniform bool shadow;
+uniform int shadow;
 
 #ifdef RIGGING
 uniform mat4 palette[MAX_BONES];
@@ -93,15 +93,15 @@ uniform mat4 palette[MAX_BONES];
 
 void main()
 {
-if(shadow){
-	gl_Position = projection*view*model*vec4(vertex, 1.0);
+if(shadow == 1){
+	gl_Position = projection*view*model*vec4(position, 1.0);
 
 	#ifdef RIGGING
 	mat4 skin_transform = 	palette[bone_indices[0]]*bone_weights[0]+
 								palette[bone_indices[1]]*bone_weights[1]+ 
 								palette[bone_indices[2]]*bone_weights[2]+
 								palette[bone_indices[3]]*bone_weights[3];
-	 gl_Position = projection*view*model*skin_transform*vec4(vertex, 1.0);
+	 gl_Position = projection*view*model*skin_transform*vec4(position, 1.0);
 	#endif
 
 	#ifdef NORMALMAPRIGGING
@@ -109,8 +109,8 @@ if(shadow){
 								palette[bone_indices[1]]*bone_weights[1]+ 
 								palette[bone_indices[2]]*bone_weights[2]+
 								palette[bone_indices[3]]*bone_weights[3];
-	 gl_Position = projection*view*model*skin_transform*vec4(vertex, 1.0);
-	#end
+	 gl_Position = projection*view*model*skin_transform*vec4(position, 1.0);
+	#endif
 
 }else{
 		vec4 worldPos =model* vec4(position, 1.0f);

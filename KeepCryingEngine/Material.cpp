@@ -66,11 +66,14 @@ void Material::DrawUI()
 				SetTextureNormalMapByPath(s.c_str());
 			}
 		}
-		if(texture->GetId() != 0)		{
+		if(texture->GetId() != 0)
+		{
 			ImGui::Begin("Texture");
 			ImGui::GetWindowDrawList()->AddImage((void*)texture->GetId(),ImGui::GetCursorScreenPos(),
 			ImVec2(ImGui::GetCursorScreenPos().x + App->configuration.screenWidth * TEXTURE_WINDOW_WIDTH_PERCENTAGE,
-			ImGui::GetCursorScreenPos().y + App->configuration.screenHeight*TEXTURE_WINDOW_HEIGHT_PERCENTAGE), ImVec2(0, 1), ImVec2(1, 0));			ImGui::End();		}
+			ImGui::GetCursorScreenPos().y + App->configuration.screenHeight*TEXTURE_WINDOW_HEIGHT_PERCENTAGE), ImVec2(0, 1), ImVec2(1, 0));
+			ImGui::End();
+		}
 	}
 }
 

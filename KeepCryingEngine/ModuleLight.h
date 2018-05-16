@@ -2,15 +2,25 @@
 #define _MODULELIGHT_H_
 
 #include <float3.h>
+#include <float4.h>
+#include <float4x4.h>
+#include <Frustum.h>
 
 #include "Module.h"
+
+struct lightVertex
+{
+	float3 pos;
+	float4 color;
+};
 
 class ModuleLight : public Module
 {
 public:
 	ModuleLight();
 	virtual ~ModuleLight();
-
+	
+	bool Start()override;
 	update_status Update() override;
 
 	const float3& GetPosition() const;
@@ -21,8 +31,18 @@ public:
 
 	void SetRotation(float amount);
 
+	const Frustum& GetFrustum()const;
+	float4x4 GetViewMatrix()const;
+	float4x4 GetProyectionMatrix() const;
+
+	uint GetFrustumBufferId()const;
+	uint GetFrustumIndicesId()const;
+	int GetNumberOfPoints()const;
+
 private:
 	void DrawLight() const;
+	void ComputeFrustum();
+	void SetUpFrustumBuffer();
 
 private:
 	const float3 INITIAL_POSITION = float3{ -100.0f, 0.0f, 0.0f };
@@ -33,6 +53,11 @@ private:
 
 	float3 baseDirection = INITIAL_ROTATION;
 	float3 currentDirection = INITIAL_ROTATION;
+
+	Frustum frustum;
+	uint frustumBufferId = 0;
+	uint frustumIndicesId = 0;
+	int numberOfPoints;
 };
 
 #endif

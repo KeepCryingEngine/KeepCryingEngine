@@ -5,7 +5,7 @@ in vec3 Normal;
 out vec4 color;
 
 uniform sampler2D ourTexture;
-uniform bool shadow;
+uniform int shadow;
 
 
 #ifdef DEPTH
@@ -48,7 +48,7 @@ uniform vec3 lightDir;
 
 void main()
 {
-if(shadow){
+if(shadow == 1){
 
 }else{
 	color = texture2D(ourTexture,TexCoord);

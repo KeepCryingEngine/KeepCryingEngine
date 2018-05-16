@@ -45,6 +45,8 @@ public:
 
 	void DrawFrustum(Camera& camera);
 
+	void DrawLightFrustum();
+
 	void DrawCube(const float3& offset, const float3& color, float radius) const;
 
 	void DrawRectangularBox(const float3& position, const float3& rotation, const float3& scale, const float3& color, float w, float h, float d) const;
@@ -68,7 +70,7 @@ private:
 
 public:
 	GLfloat globalAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };	
-
+	GLuint shadowTextureId = 0;
 private:	
 	SDL_GLContext glcontext = nullptr;
 	//std::list<Mesh*> drawBuffer;
@@ -76,7 +78,7 @@ private:
 	std::vector<DrawInfo> drawBuffer;
 	GLuint uniformCameraBufferId = 0;
 	GLuint shadowFrameBufferId = 0;
-	GLuint shadowTextureId = 0;
+	
 
 	static const float3 LIGHT_DIR;
 

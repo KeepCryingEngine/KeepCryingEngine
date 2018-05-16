@@ -99,7 +99,7 @@ bool ModuleRender::Start()
 {
 	////Set up shadowFrame
 	glGenFramebuffers(1,&shadowFrameBufferId);
-	glBindFramebuffer(GL_FRAMEBUFFER,shadowFrameBufferId);
+	/*glBindFramebuffer(GL_FRAMEBUFFER,shadowFrameBufferId);
 	glGenTextures(1,&shadowTextureId);
 
 	glBindTexture(GL_TEXTURE_2D, shadowTextureId);
@@ -114,7 +114,7 @@ bool ModuleRender::Start()
 	glDrawBuffer(GL_NONE);
 
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
-	glBindTexture(GL_TEXTURE_2D,0);
+	glBindTexture(GL_TEXTURE_2D,0);*/
 
 	//Set up uniform block
 	glGenBuffers(1, &uniformCameraBufferId);
@@ -145,8 +145,8 @@ update_status ModuleRender::Update()
 
 		//Update uniform Block for shadow
 		glBindBuffer(GL_UNIFORM_BUFFER, uniformCameraBufferId);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float4x4), App->camera->GetPlayOrEditorCamera()->GetProyectionMatrix().ptr());
-		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(float4x4), sizeof(float4x4), App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float4x4), App->light->GetProyectionMatrix().ptr());
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(float4x4), sizeof(float4x4), App->light->GetViewMatrix().ptr());
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		DrawShadowTexture();
@@ -286,6 +286,49 @@ void ModuleRender::DrawFrustum(Camera & camera)
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, camera.GetFrustumIndicesId());
 	glDrawElements(GL_LINES, camera.GetNumberOfPoints(), GL_UNSIGNED_SHORT, nullptr);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+
+	glUseProgram(0);
+
+	glLineWidth(lineWidth);
+}
+
+void ModuleRender::DrawLightFrustum()
+{
+	float lineWidth;
+
+	glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+
+	glLineWidth(1.0f);
+
+	uint progId = App->shader->GetProgramId(COLOR, "UberShader");
+	glUseProgram(progId);
+
+	glBindBuffer(GL_ARRAY_BUFFER, App->light->GetFrustumBufferId());
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(lightVertex), (GLvoid*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(lightVertex), (GLvoid*)(3 * sizeof(GLfloat)));
+
+	GLint modelView = glGetUniformLocation(progId, "view");
+	glUniformMatrix4fv(modelView, 1, GL_FALSE, App->camera->camera->GetViewMatrix().ptr());
+
+	GLint proyection = glGetUniformLocation(progId, "projection");
+	glUniformMatrix4fv(proyection, 1, GL_FALSE, App->camera->camera->GetProyectionMatrix().ptr());
+
+	GLint transformUniformId = glGetUniformLocation(progId, "model");
+	float3 rot = App->light->GetDirection().Normalized();
+	float4x4 transformMatrix = float4x4::FromTRS(App->light->GetPosition(), Quat::FromEulerXYZ(rot.x,rot.y,rot.z), float3::one);;
+	transformMatrix.RemoveScale();
+	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, transformMatrix.Transposed().ptr());
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->light->GetFrustumIndicesId());
+	glDrawElements(GL_LINES, App->light->GetNumberOfPoints(), GL_UNSIGNED_SHORT, nullptr);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -583,6 +626,9 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	GLint transformUniformId = glGetUniformLocation(progId, "model");
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, drawInfo.transform.GetModelMatrix().Transposed().ptr());
 
+	GLint shadowUniformId = glGetUniformLocation(progId, "shadow");
+	glUniform1i(shadowUniformId, 0);
+
 	GLint rotation = glGetUniformLocation(progId, "rotation");
 	if (rotation != -1)
 	{
@@ -672,7 +718,17 @@ void ModuleRender::DrawShadowTexture()
 
 void ModuleRender::DrawShadowTexture(const DrawInfo & drawInfo)
 {
-	glBindFramebuffer(1, shadowFrameBufferId);
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowFrameBufferId);
+	glGenTextures(1, &shadowTextureId);
+
+	glBindTexture(GL_TEXTURE_2D, shadowTextureId);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, App->configuration.screenWidth, App->configuration.screenHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
 	glViewport(0, 0, App->configuration.screenWidth, App->configuration.screenHeight);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -680,6 +736,70 @@ void ModuleRender::DrawShadowTexture(const DrawInfo & drawInfo)
 
 	glUseProgram(progId);
 
+	//position
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+	//color
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
+	//uv
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(10 * sizeof(GLfloat)));
+	//normal
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
+
+	if(drawInfo.mesh.GetTangentBufferId() != 0)
+	{
+		glEnableVertexAttribArray(4);
+		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetTangentBufferId());
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	}
+
+	if(!drawInfo.mesh.GetBones().empty())
+	{
+		//indices
+
+
+		glEnableVertexAttribArray(5);
+		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneIndicesBufferId());
+		glVertexAttribIPointer(5, 4, GL_INT, 0, (void*)0);
+		//weights
+
+
+		glEnableVertexAttribArray(6);
+		glBindBuffer(GL_ARRAY_BUFFER, drawInfo.mesh.GetBoneWeightsBufferId());
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+		float4x4* palette = App->anim->GetPalette(&drawInfo.gameObject, &drawInfo.mesh);
+
+		//Palete
+		GLint paleteId = glGetUniformLocation(progId, "palette");
+		glUniformMatrix4fv(paleteId, MAX_BONES, GL_FALSE, palette->ptr());
+	}
+
 	GLint transformUniformId = glGetUniformLocation(progId, "model");
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, drawInfo.transform.GetModelMatrix().Transposed().ptr());
+
+	GLint shadowUniformId = glGetUniformLocation(progId, "shadow");
+	glUniform1i(shadowUniformId, 1);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowTextureId, 0);
+	glDrawBuffer(GL_NONE);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+	glDisableVertexAttribArray(3);
+
+	if(!drawInfo.mesh.GetBones().empty())
+	{
+		glDisableVertexAttribArray(4);
+		glDisableVertexAttribArray(5);
+	}
+
+	glUseProgram(0);
 }
