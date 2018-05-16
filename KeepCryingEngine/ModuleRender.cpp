@@ -193,7 +193,7 @@ void ModuleRender::DrawGrid() const
 	glPopMatrix();
 }
 
-void ModuleRender::DrawCross(const float3& pos,float scale)const
+void ModuleRender::DrawCross(const float3& pos, const float3& color, float scale)const
 {
 	float crossSize = 0.01f * scale;
 	glPushMatrix();
@@ -206,7 +206,7 @@ void ModuleRender::DrawCross(const float3& pos,float scale)const
 
 	glBegin(GL_LINES);
 
-	glColor3f(255, 0, 0);
+	glColor3f(color.x, color.y, color.z);
 
 	glVertex3f(-crossSize, 0, 0);
 	glVertex3f(crossSize, 0, 0);
@@ -565,7 +565,8 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	GLint lightSourcePosition = glGetUniformLocation(progId, "lightSourcePosition");
 	if (lightSourcePosition != -1)
 	{
-		glUniform3f(lightSourcePosition, -100, 0, 0);
+		const float3& lightPosition = App->light->GetPosition();
+		glUniform3f(lightSourcePosition, lightPosition.x, lightPosition.y, lightPosition.z);
 	}
 
 	GLint light = glGetUniformLocation(progId, "lightDir");

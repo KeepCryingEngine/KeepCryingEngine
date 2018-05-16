@@ -1118,6 +1118,13 @@ void ModuleEditorUI::DrawLightParametersWindow()
 {
 	ImGui::Begin("Light Parameters", &lightParametersWindow, ImGuiWindowFlags_MenuBar);
 
+	float3 lightPosition = App->light->GetPosition();
+
+	if(ImGui::DragFloat3("Position", lightPosition.ptr(), 0.1f))
+	{
+		App->light->SetPosition(lightPosition);
+	}
+
 	float3 lightDirection = App->light->GetDirection();
 
 	if(ImGui::DragFloat3("Direction", lightDirection.ptr(), 0.1f))
