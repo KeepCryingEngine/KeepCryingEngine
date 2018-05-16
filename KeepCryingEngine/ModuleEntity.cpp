@@ -103,32 +103,25 @@ void ModuleEntity::ExtractMaterialsFromScene(std::vector<Material *> &createdMat
 	for (unsigned int i = 0; i < scene->mNumMaterials; i++)
 	{
 		aiString relativeTexturePath;
-		scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &relativeTexturePath);
-		std::experimental::filesystem::path texturePath(baseTexturePath);
-		texturePath.append(relativeTexturePath.C_Str());
-		
+		aiString relativeNormalMapPath;
 		Material* mat = new Material();
-		mat->SetTextureByPath(texturePath);
-		
+		if(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) > 0)
+		{
+			scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &relativeTexturePath);
+			std::experimental::filesystem::path texturePath(baseTexturePath);
+			texturePath.append(relativeTexturePath.C_Str());
+			mat->SetTextureByPath(texturePath);
+		}
+		if(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_NORMALS) > 0)
+		{
+			scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_NORMALS, 0, &relativeNormalMapPath);
+			std::experimental::filesystem::path normalsPath(baseTexturePath);
+			normalsPath.append(relativeNormalMapPath.C_Str());
+			mat->SetTextureNormalMapByPath(normalsPath);
+		}
+
 		createdMaterials.push_back(mat);
 	}
-	/*aiString relativeTexturePath;
-	aiString relativeNormalMapPath;
-	Material* mat = new Material();
-	if(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) > 0)
-	{
-		scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &relativeTexturePath);
-		std::experimental::filesystem::path texturePath(baseTexturePath);
-		texturePath.append(relativeTexturePath.C_Str());
-		mat->SetTextureByPath(texturePath);
-	}
-	if(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_NORMALS) > 0)
-	{
-		scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_NORMALS, 0, &relativeNormalMapPath);
-		std::experimental::filesystem::path normalsPath(baseTexturePath);
-		normalsPath.append(relativeNormalMapPath.C_Str());
-		mat->SetTextureNormalMapByPath(normalsPath);
-	}*/
 }
 
 void ModuleEntity::ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, const aiScene * scene, const std::experimental::filesystem::path& path) const
@@ -195,7 +188,10 @@ void ModuleEntity::ExtractVertexDataFromScene(const aiScene * scene, const aiMes
 			vertex.normal = float3(mesh->mNormals[k].x, mesh->mNormals[k].y, mesh->mNormals[k].z);
 		}
 		vertex.color = float4(100, 100, 100, 255);
-		vertex.uv = float2(mesh->mTextureCoords[0][k].x, mesh->mTextureCoords[0][k].y);
+		if(mesh->HasTextureCoords(0))
+		{
+			vertex.uv = float2(mesh->mTextureCoords[0][k].x, mesh->mTextureCoords[0][k].y);
+		}
 		vertices.push_back(vertex);
 
 		if(mesh->mTangents != nullptr)
