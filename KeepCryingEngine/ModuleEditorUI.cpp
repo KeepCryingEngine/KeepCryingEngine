@@ -212,7 +212,7 @@ void ModuleEditorUI::DrawMainMenu()
 			ImGui::LabelText("##LoadMeshLabel", "Mesh");
 			
 			// TMP
-			static char pathToMesh[180] = "Assets/Squirrel/source/Squirrel.fbx";
+			static char pathToMesh[180] = "Assets/Character/Bl.fbx";
 			
 			ImGui::InputText("##PathToMesh", pathToMesh, sizeof(pathToMesh)); ImGui::SameLine();
 			if (ImGui::Button("Add mesh"))

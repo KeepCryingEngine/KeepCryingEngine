@@ -112,6 +112,23 @@ void ModuleEntity::ExtractMaterialsFromScene(std::vector<Material *> &createdMat
 		
 		createdMaterials.push_back(mat);
 	}
+	/*aiString relativeTexturePath;
+	aiString relativeNormalMapPath;
+	Material* mat = new Material();
+	if(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) > 0)
+	{
+		scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &relativeTexturePath);
+		std::experimental::filesystem::path texturePath(baseTexturePath);
+		texturePath.append(relativeTexturePath.C_Str());
+		mat->SetTextureByPath(texturePath);
+	}
+	if(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_NORMALS) > 0)
+	{
+		scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_NORMALS, 0, &relativeNormalMapPath);
+		std::experimental::filesystem::path normalsPath(baseTexturePath);
+		normalsPath.append(relativeNormalMapPath.C_Str());
+		mat->SetTextureNormalMapByPath(normalsPath);
+	}*/
 }
 
 void ModuleEntity::ExtractMeshesFromScene(std::vector<Mesh *> &createdMeshes, const aiScene * scene, const std::experimental::filesystem::path& path) const

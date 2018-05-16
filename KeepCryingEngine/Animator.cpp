@@ -47,7 +47,7 @@ void Animator::DrawUI()
 			gameObject->RemoveComponent(this);
 		}
 
-		static char animatorLoadBuffer[252] = "Squirrel/source/Squirrel.fbx";
+		static char animatorLoadBuffer[252] = "Character/Animations/RUN.fbx";
 		ImGui::InputText("##loadAnimation", animatorLoadBuffer, 252); ImGui::SameLine();
 		if(ImGui::Button("Load"))
 		{
