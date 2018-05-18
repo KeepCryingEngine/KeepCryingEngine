@@ -1141,7 +1141,7 @@ void ModuleEditorUI::DrawLightParametersWindow()
 
 	float bias = App->light->GetBias();
 
-	if(ImGui::DragFloat("Bias", &bias, 0.001f, 0.0f, 1.0f))
+	if(ImGui::DragFloat("Bias", &bias, 0.001f, 0.0f, 0.01f))
 	{
 		App->light->SetBias(bias);
 	}

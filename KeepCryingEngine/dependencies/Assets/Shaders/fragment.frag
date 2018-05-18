@@ -145,13 +145,13 @@ if(shadow == 1){
 
 	#endif
 
-	 vec3 projCoords = shadowCoord.xyz / shadowCoord.w;
+	vec3 projCoords = shadowCoord.xyz / shadowCoord.w;
     projCoords = projCoords * 0.5 + 0.5;
-    float closestDepth = texture(shadowMap, projCoords.xy).r; 
+    float closestDepth = texture(shadowMap, projCoords.xy).z; 
     float currentDepth = projCoords.z;
-
-    if(currentDepth - bias > closestDepth){
-    	color = vec4(1,1,1,1);
+    if(currentDepth > closestDepth){
+    	color *= 0.5;
     }
+
 }
 }

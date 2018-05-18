@@ -123,7 +123,7 @@ if(shadow == 1){
 		mat3 normalMatrix = mat3(model);
 		normalMatrix = inverse(normalMatrix);
 		Normal = normalize(normal * normalMatrix);
-		shadowCoord = lightProj*lightView*vec4(position, 1.0); 
+		shadowCoord = lightProj * lightView * worldPos; 
 
 	#ifdef RIGGING
 

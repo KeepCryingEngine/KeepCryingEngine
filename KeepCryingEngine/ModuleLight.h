@@ -48,8 +48,8 @@ private:
 	void SetUpFrustumBuffer();
 
 private:
-	const float3 INITIAL_POSITION = float3{ -100.0f, 0.0f, 0.0f };
-	const float3 INITIAL_ROTATION = float3{ -1.0f, 1.0f, 0.0f };
+	const float3 INITIAL_POSITION = float3{ 0.0f, 50.0f, 0.0f };
+	const float3 INITIAL_ROTATION = float3{ 0.0f, -1.0f, 0.0f };
 
 	float3 basePosition = INITIAL_POSITION;
 	float3 currentPosition = INITIAL_POSITION;
@@ -61,7 +61,7 @@ private:
 	uint frustumBufferId = 0;
 	uint frustumIndicesId = 0;
 	int numberOfPoints;
-	float bias = 0.5f;
+	float bias = 0.001f;
 };
 
 #endif

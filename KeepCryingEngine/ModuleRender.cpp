@@ -160,7 +160,7 @@ update_status ModuleRender::Update()
 		//Prepare for real draw(we do this here, because if we do on draw geometry, the grid will disappear)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, App->configuration.screenWidth, App->configuration.screenHeight);
-		glCullFace(GL_BACK);
+		//glCullFace(GL_BACK);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		if(App->state == TimeState::STOPED)
@@ -566,11 +566,17 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 		GLint texture = glGetUniformLocation(progId, "ourTexture");
 		glUniform1i(texture, 0);
 
-		GLint shadowTexture = glGetUniformLocation(progId, "shadowMap");
-		glUniform1i(shadowTexture, 2);
+		
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textId);
+	}
+
+	if(shadowTextureId != 0)
+	{
+		GLint shadowTexture = glGetUniformLocation(progId, "shadowMap");
+		glUniform1i(shadowTexture, 2);
+
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, shadowTextureId);
 	}
@@ -733,7 +739,7 @@ void ModuleRender::DrawShadowTexture()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFrameBufferId);
 	glViewport(0, 0, App->configuration.screenWidth, App->configuration.screenHeight);
-	glCullFace(GL_FRONT);
+	//glCullFace(GL_FRONT);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	for(const DrawInfo& drawInfo : drawBuffer)
 	{
@@ -744,19 +750,6 @@ void ModuleRender::DrawShadowTexture()
 
 void ModuleRender::DrawShadowTexture(const DrawInfo & drawInfo)
 {
-
-	//glGenTextures(1, &shadowTextureId);
-
-	//glBindTexture(GL_TEXTURE_2D, shadowTextureId);
-
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, App->configuration.screenWidth, App->configuration.screenHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-	//glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-
-
 	GLuint progId = drawInfo.material.GetProgramId();
 
 	glUseProgram(progId);
