@@ -145,13 +145,13 @@ if(shadow == 1){
 
 	#endif
 
-	vec3 projCoords = shadowCoord.xyz / shadowCoord.w;
-    projCoords = projCoords * 0.5 + 0.5;
-    float closestDepth = texture(shadowMap, projCoords.xy).z; 
-    float currentDepth = projCoords.z;
-    if(currentDepth > closestDepth){
-    	color *= 0.5;
-    }
-
+	vec3 shadowCoordTmp = shadowCoord.xyz/shadowCoord.w;
+	shadowCoordTmp = shadowCoordTmp*0.5f+0.5f;
+	if(shadowCoordTmp.x >= 0.0 && shadowCoordTmp.x <= 1.0 && shadowCoordTmp.y >= 0.0 && shadowCoordTmp.y <= 1.0 && texture2D(shadowMap, shadowCoordTmp.xy).z < shadowCoordTmp.z)
+	{
+		color.r *= 0.5f;
+		color.g *= 0.5f;
+		color.b *= 0.5f;
+	}
 }
 }

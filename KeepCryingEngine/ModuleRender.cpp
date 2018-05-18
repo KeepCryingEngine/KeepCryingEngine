@@ -100,11 +100,11 @@ bool ModuleRender::Start()
 	////Set up shadowFrame
 	glGenFramebuffers(1,&shadowFrameBufferId);
 	glBindFramebuffer(GL_FRAMEBUFFER,shadowFrameBufferId);
+	
 	glGenTextures(1,&shadowTextureId);
-
 	glBindTexture(GL_TEXTURE_2D, shadowTextureId);
 
-	glTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT16,App->configuration.screenWidth,App->configuration.screenHeight,0,GL_DEPTH_COMPONENT,GL_FLOAT,0);
+	glTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT,1024,1024,0,GL_DEPTH_COMPONENT,GL_FLOAT, NULL);
 	glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -738,7 +738,7 @@ void ModuleRender::DrawLastRay()
 void ModuleRender::DrawShadowTexture()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFrameBufferId);
-	glViewport(0, 0, App->configuration.screenWidth, App->configuration.screenHeight);
+	glViewport(0, 0, 1024, 1024);
 	//glCullFace(GL_FRONT);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	for(const DrawInfo& drawInfo : drawBuffer)
