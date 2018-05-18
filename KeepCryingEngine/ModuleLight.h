@@ -39,6 +39,9 @@ public:
 	uint GetFrustumIndicesId()const;
 	int GetNumberOfPoints()const;
 
+	void SetBias(float value);
+	float GetBias()const;
+
 private:
 	void DrawLight() const;
 	void ComputeFrustum();
@@ -58,6 +61,7 @@ private:
 	uint frustumBufferId = 0;
 	uint frustumIndicesId = 0;
 	int numberOfPoints;
+	float bias = 0.5f;
 };
 
 #endif

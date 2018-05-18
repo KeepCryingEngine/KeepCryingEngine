@@ -117,6 +117,16 @@ int ModuleLight::GetNumberOfPoints() const
 	return numberOfPoints;
 }
 
+void ModuleLight::SetBias(float value)
+{
+	bias = value;
+}
+
+float ModuleLight::GetBias() const
+{
+	return bias;
+}
+
 uint ModuleLight::GetFrustumBufferId() const
 {
 	return frustumBufferId;

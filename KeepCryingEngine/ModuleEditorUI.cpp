@@ -1138,6 +1138,13 @@ void ModuleEditorUI::DrawLightParametersWindow()
 	{
 		App->light->SetRotation(lightRirectionRotation);
 	}
+
+	float bias = App->light->GetBias();
+
+	if(ImGui::DragFloat("Bias", &bias, 0.001f, 0.0f, 1.0f))
+	{
+		App->light->SetBias(bias);
+	}
 	if(App->renderer->shadowTextureId != 0)
 	{
 		ImGui::GetWindowDrawList()->AddImage((void*)App->renderer->shadowTextureId, ImGui::GetCursorScreenPos(),

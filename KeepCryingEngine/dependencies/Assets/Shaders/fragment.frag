@@ -1,11 +1,14 @@
 in vec4 ourColor;
 in vec2 TexCoord;
 in vec3 Normal;
+in vec4 shadowCoord;
 
 out vec4 color;
 
 uniform sampler2D ourTexture;
+uniform sampler2D shadowMap;
 uniform int shadow;
+uniform float bias;
 
 
 #ifdef DEPTH
@@ -52,7 +55,6 @@ if(shadow == 1){
 
 }else{
 	color = texture2D(ourTexture,TexCoord);
-
 
 	#ifdef LIGHTNING
 
@@ -142,5 +144,14 @@ if(shadow == 1){
 		color = ourColor;
 
 	#endif
+
+	 vec3 projCoords = shadowCoord.xyz / shadowCoord.w;
+    projCoords = projCoords * 0.5 + 0.5;
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
+    float currentDepth = projCoords.z;
+
+    if(currentDepth - bias > closestDepth){
+    	color = vec4(1,1,1,1);
+    }
 }
 }

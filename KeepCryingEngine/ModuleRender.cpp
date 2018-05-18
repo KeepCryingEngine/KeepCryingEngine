@@ -157,6 +157,12 @@ update_status ModuleRender::Update()
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(float4x4), sizeof(float4x4), App->camera->GetPlayOrEditorCamera()->GetViewMatrix().ptr());
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
+		//Prepare for real draw(we do this here, because if we do on draw geometry, the grid will disappear)
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, App->configuration.screenWidth, App->configuration.screenHeight);
+		glCullFace(GL_BACK);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		if(App->state == TimeState::STOPED)
 		{
 			DrawGrid();
@@ -543,9 +549,6 @@ void ModuleRender::SetUpLight() const
 
 void ModuleRender::DrawGeometry()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, App->configuration.screenWidth, App->configuration.screenHeight);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	for (const DrawInfo& drawInfo : drawBuffer) 
 	{
 		Draw(drawInfo);
@@ -563,8 +566,13 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 		GLint texture = glGetUniformLocation(progId, "ourTexture");
 		glUniform1i(texture, 0);
 
+		GLint shadowTexture = glGetUniformLocation(progId, "shadowMap");
+		glUniform1i(shadowTexture, 2);
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textId);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, shadowTextureId);
 	}
 
 	if(drawInfo.material.GetTextureNormalMap() != nullptr)
@@ -629,8 +637,17 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 	GLint transformUniformId = glGetUniformLocation(progId, "model");
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, drawInfo.transform.GetModelMatrix().Transposed().ptr());
 
+	GLint lightProjId = glGetUniformLocation(progId, "lightProj");
+	glUniformMatrix4fv(lightProjId, 1, GL_FALSE, App->light->GetProyectionMatrix().ptr());
+
+	GLint lightViewId = glGetUniformLocation(progId, "lightView");
+	glUniformMatrix4fv(lightViewId, 1, GL_FALSE, App->light->GetViewMatrix().ptr());
+
 	GLint shadowUniformId = glGetUniformLocation(progId, "shadow");
 	glUniform1i(shadowUniformId, 0);
+
+	GLint biasId = glGetUniformLocation(progId, "bias");
+	glUniform1f(biasId, App->light->GetBias());
 
 	GLint rotation = glGetUniformLocation(progId, "rotation");
 	if (rotation != -1)
@@ -676,6 +693,8 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -714,6 +733,7 @@ void ModuleRender::DrawShadowTexture()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFrameBufferId);
 	glViewport(0, 0, App->configuration.screenWidth, App->configuration.screenHeight);
+	glCullFace(GL_FRONT);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	for(const DrawInfo& drawInfo : drawBuffer)
 	{

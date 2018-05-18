@@ -31,6 +31,7 @@ layout (location = 6) in vec4 bone_weights;
 out vec4 ourColor;
 out vec2 TexCoord;
 out vec3 Normal;
+out vec4 shadowCoord;
 
 
 #ifdef DEPTH
@@ -70,6 +71,8 @@ layout(std140) uniform camera{
 	uniform mat4 view;
 };
 uniform mat4 model;
+uniform mat4 lightProj;
+uniform mat4 lightView;
 uniform int shadow;
 
 #ifdef RIGGING
@@ -120,6 +123,7 @@ if(shadow == 1){
 		mat3 normalMatrix = mat3(model);
 		normalMatrix = inverse(normalMatrix);
 		Normal = normalize(normal * normalMatrix);
+		shadowCoord = lightProj*lightView*vec4(position, 1.0); 
 
 	#ifdef RIGGING
 
