@@ -650,14 +650,29 @@ void ModuleScene::SaveToFile(const char* fileName) const
 	file.close();
 }
 
-AABB ModuleScene::ComputeAABB() const
+OBB ModuleScene::ComputeOBB() const
 {
-	AABB sceneAABB;
-	sceneAABB.SetNegativeInfinity();
+	OBB sceneOBB;
+	sceneOBB.SetNegativeInfinity();
 
-	EncloseAABB(root, sceneAABB);
+	sceneOBB.r = float3::zero;
+	sceneOBB.pos = float3::zero;
+	
+	float4x4 lightMatrixInverted = App->light->GetRotationMatrix().Inverted();
+	
+	sceneOBB.axis[0] = lightMatrixInverted.Col(0).xyz();
+	sceneOBB.axis[1] = lightMatrixInverted.Col(1).xyz();
+	sceneOBB.axis[2] = lightMatrixInverted.Col(2).xyz();
 
-	return sceneAABB;
+	EncloseOBB(root, sceneOBB);
+
+	/* float4x4 model = float4x4::identity;
+	float4x4 inverseLightRotation = App->light->GetRotationMatrix().Inverted();
+
+	OBB sceneOBB;
+	sceneOBB.SetFrom(sceneAABB, model * inverseLightRotation); */
+
+	return sceneOBB;
 }
 
 bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
@@ -908,35 +923,68 @@ void ModuleScene::SaveScene(nlohmann::json& jsonScene) const
 	// more scene stuff ...
 }
 
-AABB ModuleScene::AABBLightOrientation(GameObject* gameObject) const
+OBB ModuleScene::OBBLightOrientation(GameObject* gameObject) const
 {
-	AABB aabb = gameObject->GetAABB();
+	OBB obb;
+	// obb.SetNegativeInfinity();
 
-	float4x4 inverseLightRotation = App->light->GetRotationMatrix().Inverted();
-	float4x4 model = gameObject->GetTransform()->GetModelMatrix();
+	AABB aabb = gameObject->GetLocalAABB();
 
-	float3 cornerPoints[8];
-	aabb.GetCornerPoints(cornerPoints);
-
-	for(size_t i = 0; i < 8; ++i)
+	if(aabb.Volume() > 0.0f)
 	{
-		cornerPoints[i] = (inverseLightRotation * model * float4(cornerPoints[i], 1.0f)).xyz();
+		// aabb.Translate(-gameObject->GetTransform()->GetLocalPosition());
+
+		float4x4 model = gameObject->GetTransform()->GetModelMatrix();
+		// model = model * gameObject->GetTransform()->GetLocalRotation().ToFloat4x4().Inverted();
+
+		float4x4 inverseLightRotation = App->light->GetRotationMatrix().Inverted();
+
+		// aabb.Transform(model * inverseLightRotation);
+
+		float3 points[8];
+		aabb.GetCornerPoints(points);
+
+		for(size_t i = 0; i < 8; ++i)
+		{
+			points[i] = (model * inverseLightRotation * float4(points[i], 1.0f)).xyz();
+		}
+
+		aabb.SetFrom(points, 8);
+
+		aabb.Translate(-gameObject->GetTransform()->GetLocalPosition());
+
+		obb.SetFrom(aabb, inverseLightRotation);
+
+		obb.Translate(gameObject->GetTransform()->GetLocalPosition());
+
+		App->renderer->DrawOBB(obb, float3{ 255.0f, 0.0f, 255.0f }); // tmp
+	}
+	else
+	{
+		obb.SetNegativeInfinity();
 	}
 
-	aabb.SetFrom(cornerPoints, 8);
-
-	App->renderer->DrawAABB(aabb, float3{ 255.0f, 0.0f, 255.0f }); // tmp
-
-	return aabb;
+	return obb;
 }
 
-void ModuleScene::EncloseAABB(GameObject* gameObject, AABB& aabb) const
+void ModuleScene::EncloseOBB(GameObject* gameObject, OBB& obb) const
 {
-	aabb.Enclose(AABBLightOrientation(gameObject));
+	OBB obbLightOrientation = OBBLightOrientation(gameObject);
+
+	if(obbLightOrientation.Volume() > 0.0f)
+	{
+		float3 points[8];
+		obbLightOrientation.GetCornerPoints(points);
+
+		for(size_t i = 0; i < 8; ++i)
+		{
+			obb.Enclose(points[i]);
+		}
+	}
 
 	for(GameObject* child : gameObject->GetChildren())
 	{
-		EncloseAABB(child, aabb);
+		EncloseOBB(child, obb);
 	}
 }
 

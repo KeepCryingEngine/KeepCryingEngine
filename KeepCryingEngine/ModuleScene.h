@@ -82,7 +82,7 @@ public:
 	void Save();
 	void SaveToFile(const char* fileName) const;
 
-	AABB ComputeAABB() const;
+	OBB ComputeOBB() const;
 
 private:
 	GameObject* AddEmptyEmpty(GameObject& parent, const char* name = "EmptyEmpty");
@@ -115,9 +115,9 @@ private:
 
 	void SaveScene(nlohmann::json& jsonScene) const;
 
-	AABB AABBLightOrientation(GameObject* gameObject) const;
+	OBB OBBLightOrientation(GameObject* gameObject) const;
 
-	void EncloseAABB(GameObject* gameObject, AABB& aabb) const;
+	void EncloseOBB(GameObject* gameObject, OBB& obb) const;
 
 private:
 	GameObject* root = nullptr;

@@ -9,6 +9,8 @@
 #include "ComponentFabric.h"
 #include "Transform.h"
 #include "ModuleEditorUI.h"
+#include "MeshFilter.h"
+#include "Mesh.h"
 
 using namespace std;
 using namespace nlohmann;
@@ -200,8 +202,23 @@ void GameObject::OnDestroy()
 	components.clear();
 }
 
-AABB & GameObject::GetAABB()
+AABB& GameObject::GetAABB()
 {
+	return aabb;
+}
+
+AABB GameObject::GetLocalAABB()
+{
+	AABB aabb;
+	aabb.SetNegativeInfinity();
+
+	MeshFilter* meshFilter = GetComponent<MeshFilter>();
+
+	if(meshFilter != nullptr)
+	{
+		aabb = meshFilter->GetMesh()->GetAABB();
+	}
+
 	return aabb;
 }
 

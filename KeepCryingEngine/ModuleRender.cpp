@@ -538,10 +538,58 @@ void ModuleRender::DrawSphere(const float3& offset, const float3& color, float r
 	}
 }
 
+void ModuleRender::DrawOBB(const OBB& obb, const float3& color) const
+{
+	float3 obbCorners[8];
+	obb.GetCornerPoints(obbCorners);
+
+	glLineWidth(5.0f);
+
+	float currentColor[4];
+	glGetFloatv(GL_CURRENT_COLOR, currentColor);
+
+	glBegin(GL_LINES);
+	glColor4f(color.x, color.y, color.z, 255.0f);
+
+	glVertex3f(obbCorners[0].x, obbCorners[0].y, obbCorners[0].z);
+	glVertex3f(obbCorners[1].x, obbCorners[1].y, obbCorners[1].z);
+	glVertex3f(obbCorners[1].x, obbCorners[1].y, obbCorners[1].z);
+	glVertex3f(obbCorners[3].x, obbCorners[3].y, obbCorners[3].z);
+	glVertex3f(obbCorners[3].x, obbCorners[3].y, obbCorners[3].z);
+	glVertex3f(obbCorners[2].x, obbCorners[2].y, obbCorners[2].z);
+	glVertex3f(obbCorners[2].x, obbCorners[2].y, obbCorners[2].z);
+	glVertex3f(obbCorners[0].x, obbCorners[0].y, obbCorners[0].z);
+
+	glVertex3f(obbCorners[4].x, obbCorners[4].y, obbCorners[4].z);
+	glVertex3f(obbCorners[5].x, obbCorners[5].y, obbCorners[5].z);
+	glVertex3f(obbCorners[5].x, obbCorners[5].y, obbCorners[5].z);
+	glVertex3f(obbCorners[7].x, obbCorners[7].y, obbCorners[7].z);
+	glVertex3f(obbCorners[7].x, obbCorners[7].y, obbCorners[7].z);
+	glVertex3f(obbCorners[6].x, obbCorners[6].y, obbCorners[6].z);
+	glVertex3f(obbCorners[6].x, obbCorners[6].y, obbCorners[6].z);
+	glVertex3f(obbCorners[4].x, obbCorners[4].y, obbCorners[4].z);
+
+	glVertex3f(obbCorners[7].x, obbCorners[7].y, obbCorners[7].z);
+	glVertex3f(obbCorners[3].x, obbCorners[3].y, obbCorners[3].z);
+	glVertex3f(obbCorners[5].x, obbCorners[5].y, obbCorners[5].z);
+	glVertex3f(obbCorners[1].x, obbCorners[1].y, obbCorners[1].z);
+	glVertex3f(obbCorners[4].x, obbCorners[4].y, obbCorners[4].z);
+	glVertex3f(obbCorners[0].x, obbCorners[0].y, obbCorners[0].z);
+	glVertex3f(obbCorners[6].x, obbCorners[6].y, obbCorners[6].z);
+	glVertex3f(obbCorners[2].x, obbCorners[2].y, obbCorners[2].z);
+
+	glColor4f(currentColor[0], currentColor[1], currentColor[2], currentColor[3]);
+	glEnd();
+
+	glLineWidth(1.0f);
+}
+
 void ModuleRender::DrawAABB(const AABB& aabb, const float3& color) const
 {
 	float3 aabbcorners[8];
 	aabb.GetCornerPoints(aabbcorners);
+
+	glLineWidth(5.0f);
 
 	float currentColor[4];
 	glGetFloatv(GL_CURRENT_COLOR, currentColor);
@@ -578,6 +626,8 @@ void ModuleRender::DrawAABB(const AABB& aabb, const float3& color) const
 
 	glColor4f(currentColor[0], currentColor[1], currentColor[2], currentColor[3]);
 	glEnd();
+
+	glLineWidth(1.0f);
 }
 
 void ModuleRender::SetUpLight() const
@@ -762,6 +812,8 @@ void ModuleRender::Draw(const DrawInfo & drawInfo)
 
 void ModuleRender::DrawLastRay()
 {
+	return; // tmp
+
 	LineSegment ray = App->camera->GetLastRay();
 
 	float lineWidth;

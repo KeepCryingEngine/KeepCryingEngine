@@ -3,6 +3,7 @@
 #include <Quat.h>
 #include <MathFunc.h>
 #include <vector>
+#include <OBB.h>
 
 #include "Application.h"
 #include "ModuleRender.h"
@@ -98,7 +99,7 @@ void ModuleLight::DrawLight() const
 	App->renderer->DrawSphere(currentPosition, LIGHT_POSITION_COLOR, 5.0f);
 	App->renderer->DrawCross(currentPosition + 10.0f * currentDirection, LIGHT_DIRECTION_COLOR, 100.0f);
 	App->renderer->DrawLightFrustum();
-	App->renderer->DrawAABB(App->scene->ComputeAABB(), float3 { 255.0f, 0.0f, 255.0f });
+	App->renderer->DrawOBB(App->scene->ComputeOBB(), float3 { 255.0f, 0.0f, 255.0f });
 }
 
 float4x4 ModuleLight::GetViewMatrix() const
@@ -111,25 +112,25 @@ float4x4 ModuleLight::GetProyectionMatrix() const
 	return frustum.ProjectionMatrix().Transposed();
 }
 
-float3x3 ModuleLight::GetRotationMatrix() const
+float4x4 ModuleLight::GetRotationMatrix() const
 {
-	// return Quat::RotateFromTo(float3::unitY, frustum.up).Mul(float3x3::identity);
+	// return Quat::RotateFromTo(frustum.up, float3::unitY).ToFloat4x4();
 
 	float3 direction = frustum.front;
 	float3 up = frustum.up;
 
-	float3x3 matrix;
+	float4x4 matrix;
 	matrix.SetIdentity();
 	
 	float3 xaxis = Cross(up, direction);
-	xaxis.Normalized();
+	xaxis.Normalize();
 
 	float3 yaxis = Cross(direction, xaxis);
-	yaxis.Normalized();
+	yaxis.Normalize();
 
-	matrix.SetRow(0, xaxis);
-	matrix.SetRow(1, yaxis);
-	matrix.SetRow(2, direction);
+	matrix.SetRow(0, float4(xaxis, 0.0f));
+	matrix.SetRow(2, float4(yaxis, 0.0f));
+	matrix.SetRow(1, float4(-direction, 0.0f));
 
 	return matrix;
 }

@@ -35,7 +35,7 @@ public:
 	float4x4 GetViewMatrix()const;
 	float4x4 GetProyectionMatrix() const;
 
-	float3x3 GetRotationMatrix() const;
+	float4x4 GetRotationMatrix() const;
 
 	uint GetFrustumBufferId()const;
 	uint GetFrustumIndicesId()const;

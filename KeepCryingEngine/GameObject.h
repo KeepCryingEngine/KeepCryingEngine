@@ -70,7 +70,9 @@ public:
 
 	void OnDestroy();
 
-	AABB &GetAABB();
+	AABB& GetAABB();
+
+	AABB GetLocalAABB();
 
 	Component* GetComponentByUUID(const ENGINE_UUID& uuid);
 
