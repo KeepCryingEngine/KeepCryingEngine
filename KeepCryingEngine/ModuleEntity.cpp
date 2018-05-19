@@ -624,12 +624,12 @@ void ModuleEntity::CalculateTangents(const std::vector<Vertex>& vertices, const 
 void ModuleEntity::CalculateTangentsQuad(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, std::vector<float3>& tangents)const
 {
 	tangents.resize(vertices.size());
-	for(int i = 0; i<tangents.size(); ++i)
+	for(size_t i = 0; i<tangents.size(); ++i)
 	{
 		tangents[i] = float3::zero;
 	}
 
-	for(int indice = 0; indice < indices.size(); indice += 4)
+	for(size_t indice = 0; indice < indices.size(); indice += 4)
 	{
 		/*float3 p1 = vertices[indices[indice]].position;
 		float3 p2 = vertices[indices[indice + 1]].position;
@@ -692,12 +692,12 @@ void ModuleEntity::CalculateTangentsQuad(const std::vector<Vertex>& vertices, co
 void ModuleEntity::CalculateTangentsTri(const std::vector<Vertex>& vertices, const std::vector<GLushort>& indices, std::vector<float3>& tangents)const
 {
 	tangents.resize(vertices.size());
-	for(int i = 0; i<tangents.size(); ++i)
+	for(size_t i = 0; i<tangents.size(); ++i)
 	{
 		tangents[i] = float3::zero;
 	}
 
-	for(int indice = 0; indice < indices.size(); indice += 3)
+	for(size_t indice = 0; indice < indices.size(); indice += 3)
 	{
 		//float3 p1 = vertices[indices[indice]].position;
 		//float3 p2 = vertices[indices[indice + 1]].position;
@@ -750,7 +750,7 @@ void ModuleEntity::CalculateTangentsTri(const std::vector<Vertex>& vertices, con
 		float t1 = w2.y - w1.y;
 		float t2 = w3.y - w1.y;
 
-		float r = 1.0F / (s1 * t2 - s2 * t1);
+		float r = 1.0f / (s1 * t2 - s2 * t1);
 		newTangent = float3((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r,
 			(t2 * z1 - t1 * z2) * r);
 

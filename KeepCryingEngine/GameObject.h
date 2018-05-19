@@ -70,7 +70,6 @@ public:
 
 	void OnDestroy();
 
-	void SetAABB(const AABB& newAABB);
 	AABB &GetAABB();
 
 	Component* GetComponentByUUID(const ENGINE_UUID& uuid);

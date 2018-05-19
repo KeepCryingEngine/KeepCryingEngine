@@ -200,11 +200,6 @@ void GameObject::OnDestroy()
 	components.clear();
 }
 
-void GameObject::SetAABB(const AABB & newAABB)
-{
-	aabb = newAABB;
-}
-
 AABB & GameObject::GetAABB()
 {
 	return aabb;

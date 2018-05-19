@@ -7,6 +7,7 @@
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleEditorUI.h"
+#include "ModuleScene.h"
 
 const float3 LIGHT_POSITION_COLOR = float3 { 255, 255, 0 };
 const float3 LIGHT_DIRECTION_COLOR = float3 { 255, 255, 0 };
@@ -40,6 +41,8 @@ update_status ModuleLight::Update()
 
 void ModuleLight::ComputeFrustum()
 {
+	// AABB sceneAABB = App->scene->ComputeAABB();
+
 	frustum.farPlaneDistance = 100;
 	frustum.orthographicHeight = 20;
 	frustum.orthographicWidth = 20;
@@ -95,6 +98,7 @@ void ModuleLight::DrawLight() const
 	App->renderer->DrawSphere(currentPosition, LIGHT_POSITION_COLOR, 5.0f);
 	App->renderer->DrawCross(currentPosition + 10.0f * currentDirection, LIGHT_DIRECTION_COLOR, 100.0f);
 	App->renderer->DrawLightFrustum();
+	App->renderer->DrawAABB(App->scene->ComputeAABB(), float3 { 255.0f, 0.0f, 255.0f });
 }
 
 float4x4 ModuleLight::GetViewMatrix() const
@@ -105,6 +109,29 @@ float4x4 ModuleLight::GetViewMatrix() const
 float4x4 ModuleLight::GetProyectionMatrix() const
 {
 	return frustum.ProjectionMatrix().Transposed();
+}
+
+float3x3 ModuleLight::GetRotationMatrix() const
+{
+	// return Quat::RotateFromTo(float3::unitY, frustum.up).Mul(float3x3::identity);
+
+	float3 direction = frustum.front;
+	float3 up = frustum.up;
+
+	float3x3 matrix;
+	matrix.SetIdentity();
+	
+	float3 xaxis = Cross(up, direction);
+	xaxis.Normalized();
+
+	float3 yaxis = Cross(direction, xaxis);
+	yaxis.Normalized();
+
+	matrix.SetRow(0, xaxis);
+	matrix.SetRow(1, yaxis);
+	matrix.SetRow(2, direction);
+
+	return matrix;
 }
 
 uint ModuleLight::GetFrustumIndicesId() const

@@ -53,6 +53,8 @@ public:
 
 	void DrawSphere(const float3& offset, const float3& color, float radius) const;
 
+	void DrawAABB(const AABB& aabb, const float3& color) const;
+
 private:
 	void DrawGrid() const;
 

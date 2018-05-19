@@ -26,6 +26,8 @@
 #include "Button.h"
 #include "Text.h"
 #include "InputText.h"
+#include "ModuleLight.h"
+#include "ModuleRender.h"
 
 using namespace std;
 using namespace nlohmann;
@@ -648,6 +650,16 @@ void ModuleScene::SaveToFile(const char* fileName) const
 	file.close();
 }
 
+AABB ModuleScene::ComputeAABB() const
+{
+	AABB sceneAABB;
+	sceneAABB.SetNegativeInfinity();
+
+	EncloseAABB(root, sceneAABB);
+
+	return sceneAABB;
+}
+
 bool ModuleScene::RayCastGameObject(GameObject * gameObject, const LineSegment & worldSpaceLineSegment, RayCastHit& rayCastHit) const
 {
 	bool hit = false;
@@ -894,6 +906,38 @@ void ModuleScene::SaveScene(nlohmann::json& jsonScene) const
 	jsonScene["gameObjects"] = jsonGameObjects;
 
 	// more scene stuff ...
+}
+
+AABB ModuleScene::AABBLightOrientation(GameObject* gameObject) const
+{
+	AABB aabb = gameObject->GetAABB();
+
+	float4x4 inverseLightRotation = App->light->GetRotationMatrix().Inverted();
+	float4x4 model = gameObject->GetTransform()->GetModelMatrix();
+
+	float3 cornerPoints[8];
+	aabb.GetCornerPoints(cornerPoints);
+
+	for(size_t i = 0; i < 8; ++i)
+	{
+		cornerPoints[i] = (inverseLightRotation * model * float4(cornerPoints[i], 1.0f)).xyz();
+	}
+
+	aabb.SetFrom(cornerPoints, 8);
+
+	App->renderer->DrawAABB(aabb, float3{ 255.0f, 0.0f, 255.0f }); // tmp
+
+	return aabb;
+}
+
+void ModuleScene::EncloseAABB(GameObject* gameObject, AABB& aabb) const
+{
+	aabb.Enclose(AABBLightOrientation(gameObject));
+
+	for(GameObject* child : gameObject->GetChildren())
+	{
+		EncloseAABB(child, aabb);
+	}
 }
 
 int32_t ModuleScene_InstantiateCubeInternal()
