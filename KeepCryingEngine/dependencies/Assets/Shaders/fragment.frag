@@ -147,7 +147,7 @@ if(shadow == 1){
 
 	vec3 shadowCoordTmp = shadowCoord.xyz/shadowCoord.w;
 	shadowCoordTmp = shadowCoordTmp*0.5f+0.5f;
-	if(shadowCoordTmp.x >= 0.0 && shadowCoordTmp.x <= 1.0 && shadowCoordTmp.y >= 0.0 && shadowCoordTmp.y <= 1.0 && texture2D(shadowMap, shadowCoordTmp.xy).z < shadowCoordTmp.z)
+	if(shadowCoordTmp.x >= 0.0 && shadowCoordTmp.x <= 1.0 && shadowCoordTmp.y >= 0.0 && shadowCoordTmp.y <= 1.0 && texture2D(shadowMap, shadowCoordTmp.xy).z < shadowCoordTmp.z - bias)
 	{
 		color.r *= 0.5f;
 		color.g *= 0.5f;

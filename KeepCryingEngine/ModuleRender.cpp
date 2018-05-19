@@ -160,7 +160,7 @@ update_status ModuleRender::Update()
 		//Prepare for real draw(we do this here, because if we do on draw geometry, the grid will disappear)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, App->configuration.screenWidth, App->configuration.screenHeight);
-		//glCullFace(GL_BACK);
+		glCullFace(GL_BACK);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		if(App->state == TimeState::STOPED)
@@ -739,7 +739,7 @@ void ModuleRender::DrawShadowTexture()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFrameBufferId);
 	glViewport(0, 0, 1024, 1024);
-	//glCullFace(GL_FRONT);
+	glCullFace(GL_FRONT);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	for(const DrawInfo& drawInfo : drawBuffer)
 	{
