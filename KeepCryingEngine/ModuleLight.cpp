@@ -48,13 +48,6 @@ void ModuleLight::ComputeFrustum()
 	frustum.up = Quat::RotateFromTo(float3::unitZ, frustum.front) * float3::unitY;
 	OBB sceneObb = App->scene->ComputeOBB();
 
-	float3 farPoint = sceneObb.ExtremePoint(frustum.front);
-	float3 nearPoint = sceneObb.ExtremePoint(-frustum.front);
-	float3 topPoint = sceneObb.ExtremePoint(frustum.up);
-	float3 bottomPoint = sceneObb.ExtremePoint(-frustum.up);
-	float3 rightPoint = sceneObb.ExtremePoint(frustum.WorldRight());
-	float3 leftPoint = sceneObb.ExtremePoint(-frustum.WorldRight());
-
 	frustum.farPlaneDistance = sceneObb.r.y *2;
 	frustum.orthographicHeight = sceneObb.r.z*2;
 	frustum.orthographicWidth = sceneObb.r.x*2;
