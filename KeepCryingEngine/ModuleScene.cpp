@@ -666,12 +666,6 @@ OBB ModuleScene::ComputeOBB() const
 
 	EncloseOBB(root, sceneOBB);
 
-	/* float4x4 model = float4x4::identity;
-	float4x4 inverseLightRotation = App->light->GetRotationMatrix().Inverted();
-
-	OBB sceneOBB;
-	sceneOBB.SetFrom(sceneAABB, model * inverseLightRotation); */
-
 	return sceneOBB;
 }
 
@@ -956,8 +950,10 @@ OBB ModuleScene::OBBLightOrientation(GameObject* gameObject) const
 		obb.SetFrom(aabb, inverseLightRotation);
 
 		obb.Translate(gameObject->GetTransform()->GetLocalPosition());
-
-		App->renderer->DrawOBB(obb, float3{ 255.0f, 0.0f, 255.0f }); // tmp
+		if(App->uiEditor->GetDebugMode())
+		{
+			App->renderer->DrawOBB(obb, float3{ 255.0f, 0.0f, 255.0f });
+		}
 	}
 	else
 	{

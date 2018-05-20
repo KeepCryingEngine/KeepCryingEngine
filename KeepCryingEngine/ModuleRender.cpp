@@ -329,8 +329,8 @@ void ModuleRender::DrawLightFrustum()
 
 	GLint transformUniformId = glGetUniformLocation(progId, "model");
 	float3 rot = App->light->GetDirection().Normalized();
-	float4x4 transformMatrix = float4x4::FromTRS(App->light->GetPosition(), Quat::FromEulerXYZ(rot.x,rot.y,rot.z), float3::one);;
-	transformMatrix.RemoveScale();
+	float4x4 transformMatrix = float4x4::FromTRS(App->light->GetPosition(), Quat::identity, float3::one);;
+	//transformMatrix.RemoveScale();
 	glUniformMatrix4fv(transformUniformId, 1, GL_FALSE, transformMatrix.Transposed().ptr());
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->light->GetFrustumIndicesId());

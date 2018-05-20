@@ -24,7 +24,7 @@ ModuleLight::~ModuleLight()
 bool ModuleLight::Start()
 {
 	frustum.type = OrthographicFrustum;
-	frustum.nearPlaneDistance = 0;
+	frustum.nearPlaneDistance = 0.1f;
 	ComputeFrustum();
 	return true;
 }
@@ -36,33 +36,36 @@ update_status ModuleLight::Update()
 		DrawLight();
 	}
 
+	ComputeFrustum();
+
 	return update_status::UPDATE_CONTINUE;
 }
 
 
 void ModuleLight::ComputeFrustum()
 {
-	// AABB sceneAABB = App->scene->ComputeAABB();
-
-	frustum.farPlaneDistance = 100;
-	frustum.orthographicHeight = 20;
-	frustum.orthographicWidth = 20;
-	frustum.pos = currentPosition;
 	frustum.front = currentDirection.Normalized();
-	frustum.up =  Quat::RotateFromTo(float3::unitZ,frustum.front) * float3::unitY;
+	frustum.up = Quat::RotateFromTo(float3::unitZ, frustum.front) * float3::unitY;
+	OBB sceneObb = App->scene->ComputeOBB();
+
+	float3 farPoint = sceneObb.ExtremePoint(frustum.front);
+	float3 nearPoint = sceneObb.ExtremePoint(-frustum.front);
+	float3 topPoint = sceneObb.ExtremePoint(frustum.up);
+	float3 bottomPoint = sceneObb.ExtremePoint(-frustum.up);
+	float3 rightPoint = sceneObb.ExtremePoint(frustum.WorldRight());
+	float3 leftPoint = sceneObb.ExtremePoint(-frustum.WorldRight());
+
+	frustum.farPlaneDistance = sceneObb.r.y *2;
+	frustum.orthographicHeight = sceneObb.r.z*2;
+	frustum.orthographicWidth = sceneObb.r.x*2;
+	float3 tmp=sceneObb.CenterPoint();
+	frustum.pos = sceneObb.CenterPoint()-frustum.front * frustum.farPlaneDistance / 2.0f;
 	SetUpFrustumBuffer();
 }
 
 const float3& ModuleLight::GetPosition() const
 {
-	return currentPosition;
-}
-
-void ModuleLight::SetPosition(const float3& position)
-{
-	basePosition = position;
-	currentPosition = position;
-	ComputeFrustum();
+	return frustum.pos;
 }
 
 const float3& ModuleLight::GetDirection() const
@@ -84,7 +87,6 @@ void ModuleLight::SetRotation(float amount)
 
 	Quat rotation = Quat::RotateY(DegToRad(360.0f * amount));
 
-	currentPosition = rotation * basePosition;
 	currentDirection = rotation * baseDirection;
 	ComputeFrustum();
 }
@@ -96,8 +98,8 @@ const Frustum & ModuleLight::GetFrustum() const
 
 void ModuleLight::DrawLight() const
 {
-	App->renderer->DrawSphere(currentPosition, LIGHT_POSITION_COLOR, 5.0f);
-	App->renderer->DrawCross(currentPosition + 10.0f * currentDirection, LIGHT_DIRECTION_COLOR, 100.0f);
+	App->renderer->DrawSphere(frustum.pos, LIGHT_POSITION_COLOR, 5.0f);
+	App->renderer->DrawCross(frustum.pos + 10.0f * frustum.front, LIGHT_DIRECTION_COLOR, 100.0f);
 	App->renderer->DrawLightFrustum();
 	App->renderer->DrawOBB(App->scene->ComputeOBB(), float3 { 255.0f, 0.0f, 255.0f });
 }
