@@ -5,9 +5,9 @@
 
 ### Description:
 
-Game Engine made for the UPC Master's degree in videogame creation and design. This engine features C++ and OpenGL.
-Repository: https://github.com/KeepCryingEngine/KeepCryingEngine
-License: MIT License
+Game Engine made for the UPC Master's degree in videogame creation and design. This engine features C++ and OpenGL.  
+**Repository:** https://github.com/KeepCryingEngine/KeepCryingEngine  
+**License:** MIT License  
 
 ### Authors:
 
